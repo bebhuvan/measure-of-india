@@ -13,7 +13,7 @@ const ent = (d) => ({ d, h: headlineOf(d), s: sparkOf(d) });
 const F = bySlug.cpi, FH = headlineOf(F);
 const linked = JSON.parse(fs.readFileSync("data/series/cpi-2024-linked.json", "utf8"));
 const featured = lineSVG({ dates: linked.dates, values: linked.series.headline.data },
-  { w: 660, h: 300, band: [F.bands.floor, F.bands.ceiling], target: F.bands.target, liveFrom: "2025-01-01",
+  { w: 500, h: 280, band: [F.bands.floor, F.bands.ceiling], target: F.bands.target, liveFrom: "2025-01-01",
     label: "Consumer price inflation since 2014, against the RBI's band of 2 to 6 per cent", endLabel: FH.period });
 ---
 <Base
@@ -30,11 +30,11 @@ const featured = lineSVG({ dates: linked.dates, values: linked.series.headline.d
   </header>
 
   <article class="feat break" aria-labelledby="feat-h">
+    <div class="feat-m"><b>{FH.value}</b><span>{FH.what}, {FH.period}</span></div>
     <div class="feat-t">
       <p class="feat-k">{F.section}</p>
       <h2 id="feat-h"><a href="/guides/cpi/">{F.title}</a></h2>
       <p class="feat-b">{F.blurb}</p>
-      <div class="feat-v"><b>{FH.value}</b><span>{FH.what}, {FH.period}</span></div>
       <a class="go" href="/guides/cpi/">Read the guide</a>
     </div>
     <div class="feat-c" set:html={featured} />

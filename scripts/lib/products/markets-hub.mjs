@@ -1,4 +1,4 @@
-// scripts/lib/products/markets-hub.mjs: two RBI products the local Data Bank cannot hold (DBIE
+// scripts/lib/products/markets-hub.mjs: legacy mirror adapter for two RBI products (DBIE
 // gates them behind an input prompt), read from the Reserve Bank Innovation Hub's DBIE data
 // service (scripts/lib/rbihub.mjs, docs/reference/rbihub.md):
 //
@@ -26,6 +26,10 @@
 //    come from the companies that reported that quarter (a count is published with each): the
 //    growth rates compare the same companies a year apart and form a series; the rupee levels
 //    are kept in their own bundles and never read as a series across quarters.
+//    Canonical output is emitted only while markets-listed.product is markets-hub.
+//    markets-rbi owns official CAS/report output; SPF refreshes keep the mirror archive
+//    for audit but cannot overwrite that owner's listed bundles. Offline replay reads
+//    the existing archive without network access or archive writes.
 //    Checked identities (2026-10-10, October-December 2025): operating profit = value of
 //    production less expenditure; EBITDA = operating profit + other income; EBIT = EBITDA less
 //    depreciation; EBT before non-operating items = EBIT less interest; interest coverage = EBIT /
@@ -136,33 +140,47 @@ function parseSpf(rows) {
   return { rounds, misfiled };
 }
 
-export async function buildMarketsHub(root, dcfg, VINTAGE, cfg, { only } = {}) {
-  const cat = await rbihubCatalogue();
-  const entry = (pred) => cat.find(pred);
-  // ---------------- fetch, archive ----------------
-  const spfEntry = entry((e) => String(e.report_id) === "1475" && e.status === "loaded");
-  const spf1476 = entry((e) => String(e.report_id) === "1476" && e.status === "loaded");
-  if (!spfEntry) throw new Error("markets-hub: SPF report 1475 is not loaded on the service");
-  const spfCsv = await rbihubCsv(spfEntry.schema_name, spfEntry.table_name);
-  const spfMeta = await rbihubTable(spfEntry.schema_name, spfEntry.table_name);
-  const csv1476 = spf1476 ? await rbihubCsv(spf1476.schema_name, spf1476.table_name) : null;
+export async function buildMarketsHub(root, dcfg, VINTAGE, cfg, { only, replay = false } = {}) {
+  let spfCsv, V;
   const listed = [];
-  for (const [table, kind, cut, f] of LISTED_TABLES) {
-    const e = entry((x) => x.table_name === table && x.status === "loaded");
-    if (!e) throw new Error(`markets-hub: listed-company table ${table} is not loaded on the service`);
-    const meta = await rbihubTable(e.schema_name, table);
-    const text = await rbihubCsv(e.schema_name, table);
-    const cl = await rbihubCodelist(meta.data.dsd_code);
-    listed.push({ table, kind, cut, f, meta: meta.data, provenance: meta.provenance, csv: text, codelist: cl });
+  if (replay) {
+    // Replay exercises the real adapter without a network call or raw-archive write.
+    const raw = readRaw(root, "data/raw/markets-hub.json");
+    spfCsv = raw.spf.csv;
+    V = raw.vintage;
+    for (const t of raw.listed) {
+      const definition = LISTED_TABLES.find(([table]) => table === t.table);
+      if (!definition) throw new Error(`markets-hub replay: unknown table ${t.table}`);
+      const [, kind, cut, f] = definition;
+      listed.push({ ...t, kind, cut, f });
+    }
+  } else {
+    const cat = await rbihubCatalogue();
+    const entry = (pred) => cat.find(pred);
+    // ---------------- fetch, archive ----------------
+    const spfEntry = entry((e) => String(e.report_id) === "1475" && e.status === "loaded");
+    const spf1476 = entry((e) => String(e.report_id) === "1476" && e.status === "loaded");
+    if (!spfEntry) throw new Error("markets-hub: SPF report 1475 is not loaded on the service");
+    spfCsv = await rbihubCsv(spfEntry.schema_name, spfEntry.table_name);
+    const spfMeta = await rbihubTable(spfEntry.schema_name, spfEntry.table_name);
+    const csv1476 = spf1476 ? await rbihubCsv(spf1476.schema_name, spf1476.table_name) : null;
+    for (const [table, kind, cut, f] of LISTED_TABLES) {
+      const e = entry((x) => x.table_name === table && x.status === "loaded");
+      if (!e) throw new Error(`markets-hub: listed-company table ${table} is not loaded on the service`);
+      const meta = await rbihubTable(e.schema_name, table);
+      const text = await rbihubCsv(e.schema_name, table);
+      const cl = await rbihubCodelist(meta.data.dsd_code);
+      listed.push({ table, kind, cut, f, meta: meta.data, provenance: meta.provenance, csv: text, codelist: cl });
+    }
+    const rawRel = "data/raw/markets-hub.json";
+    writeRaw(root, rawRel, {
+      vintage: VINTAGE,
+      note: "Read from the Reserve Bank Innovation Hub's DBIE data service (data-api.dbie.rbihub.in): the SPF round-wise tables (report 1475) and the time-series view (1476) as CSV, and the listed-company SDMX datasets as CSV with their code lists. Each table's own metadata (loaded_at, DBIE provenance, source sha256) is kept beside it.",
+      spf: { entry: spfEntry, meta: spfMeta, csv: spfCsv, report1476: spf1476 ? { entry: spf1476, csv: csv1476 } : null },
+      listed: listed.map(({ table, meta, provenance, csv, codelist }) => ({ table, meta, provenance, csv, codelist })),
+    });
+    V = readRaw(root, rawRel).vintage;
   }
-  const rawRel = "data/raw/markets-hub.json";
-  writeRaw(root, rawRel, {
-    vintage: VINTAGE,
-    note: "Read from the Reserve Bank Innovation Hub's DBIE data service (data-api.dbie.rbihub.in): the SPF round-wise tables (report 1475) and the time-series view (1476) as CSV, and the listed-company SDMX datasets as CSV with their code lists. Each table's own metadata (loaded_at, DBIE provenance, source sha256) is kept beside it.",
-    spf: { entry: spfEntry, meta: spfMeta, csv: spfCsv, report1476: spf1476 ? { entry: spf1476, csv: csv1476 } : null },
-    listed: listed.map(({ table, meta, provenance, csv, codelist }) => ({ table, meta, provenance, csv, codelist })),
-  });
-  const V = readRaw(root, rawRel).vintage;
   const out = [];
 
   // ---------------- SPF ----------------
@@ -215,7 +233,10 @@ export async function buildMarketsHub(root, dcfg, VINTAGE, cfg, { only } = {}) {
   }
 
   // ---------------- listed companies ----------------
-  {
+  // This adapter also runs for SPF, after markets-listed in sources.yml. Only
+  // the registered product owner may emit listed canonical bundles. Keep the
+  // archived mirror above for source audits even when official CAS/reports own them.
+  if (cfg.dossiers["markets-listed"]?.product === "markets-hub") {
     const META = { dossier: "markets-listed", source: SRC, vintage: V, mock: false, geo: "IND", releaseDate: null, revisionPolicy: cfg.dossiers["markets-listed"].revision_policy, base: "as published" };
     for (const t of listed) {
       const labels = {};

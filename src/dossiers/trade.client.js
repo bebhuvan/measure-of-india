@@ -6,7 +6,7 @@
 
 import * as Plot from "@observablehq/plot";
 import { CHAPTER } from "./trade-chapters.js";
-import { MONO as sans, a11y, addCrosshair, spark, downloadSVG, downloadPNG, saveBlob, fmt } from "../charts/plumbing.js";
+import { MONO as sans, a11y, addCrosshair, spark, downloadSVG, downloadPNG, saveBlob, fmt, panelPlotWidth } from "../charts/plumbing.js";
 
 const T = JSON.parse(document.getElementById("trade-data")?.textContent || "{}");
 const esc = (v) => String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -80,7 +80,7 @@ if (T.qe) {
     const data = g.dates.map((d, i) => ({ date: D(d), value: g.values[i] })).filter((d) => d.value != null);
     const max = Math.max(...data.map((d) => d.value));
     const plot = Plot.plot({
-      width: 280, height: 130, marginLeft: 4, marginRight: 4, marginTop: 8, marginBottom: 20, style: { ...baseStyle, fontSize: "11px" },
+      width: panelPlotWidth(grid, 280), height: 130, marginLeft: 24, marginRight: 24, marginTop: 8, marginBottom: 20, style: { ...baseStyle, fontSize: "11px" },
       x: { label: null, tickSize: 0, ticks: [2018, 2022, 2026].map((y) => new Date(Date.UTC(y, 0, 1))), tickFormat: (d) => String(d.getUTCFullYear()) },
       y: { axis: null, domain: [0, max * 1.05] },
       marks: [

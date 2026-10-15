@@ -1,0 +1,77 @@
+{
+ "meta": {
+  "dossier": "energy",
+  "geo": "IND",
+  "base": "Ember India subnational electricity release, jk-ladakh-separate",
+  "revisionPolicy": "Agency revisions retained as new raw vintages before rebaking.",
+  "source": "Ember, India subnational electricity data",
+  "sourceUrl": "https://files.ember-energy.org/public-downloads/india_yearly_full_release_long_format.csv",
+  "product": "ember-india-states",
+  "frequency": "annual",
+  "calendar": "calendar",
+  "unit": "g_co2e_per_kwh",
+  "rawFile": "data/raw/energy-ember-states-yearly.json",
+  "unitDefinitionEvidence": {
+   "rawFile": "data/raw/energy-ember-methodology-subnational.json",
+   "sha256": "0d5c13d7c9a8656af7c97b40770ea5a8ade904a990f138aa89825d10322b324d",
+   "sourceUrl": "https://files.ember-energy.org/public-downloads/ember_subnational_data_methodology.pdf"
+  },
+  "note": "Emissions and intensity are estimated lifecycle greenhouse gases expressed as CO2-equivalent. The state release excludes captive generation that national estimates include. Historical renewable capacity can contain upstream imputation; cell-level imputation flags are unavailable. Earlier Ladakh and Jammu-and-Kashmir reporting combines jurisdictions. Complete original release, including India Total and Others. Generation is at plant location, not electricity consumed by residents. Capacity is installed MW, generation is GWh. Emissions/intensity are source estimates. Clean includes nuclear; Renewable excludes nuclear. Aggregate fuel rows overlap individual fuels; do not add both. Source blanks remain null; all-empty series stay in raw and the catalogue with a reason. Geographic instrument: jk-ladakh-separate. July 2021 is the first separate Ladakh monthly observation; annual 2021 is isolated as a mixed reporting-scope transition. No canonical history crosses this boundary.",
+  "geographicInstrument": "jk-ladakh-separate",
+  "vintage": null,
+  "vintageStatus": "unknown",
+  "apiRevisionDate": null,
+  "sourceRevisionDate": null,
+  "vintageNote": "The original Ember record does not publish a data release or revision date. Archive capture and response timestamps are separate provenance and cannot establish that date.",
+  "archiveCapturedDate": "2026-06-13",
+  "archiveCapturedAt": "2026-06-13T11:05:01.339Z",
+  "archiveCaptureNote": "Original parsed yearly CSV envelope fetchedAt, linked by rawSnapshot CSV SHA256; derived manifest timestamps are excluded.",
+  "archiveSourceSha256": "747c3c05d76a45b6a95877e0484cbf214f302f18f996bc199fe2815db410d8ed",
+  "latestPeriod": "2024"
+ },
+ "dates": [
+  "2022-01-01",
+  "2023-01-01",
+  "2024-01-01"
+ ],
+ "series": {
+  "c_cf7bb4c5ed4e8afd49a4": {
+   "name": "c_cf7bb4c5ed4e8afd49a4",
+   "label": "Jammu and Kashmir / JK / Power sector emissions / CO2 intensity / CO2 intensity",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Power sector emissions",
+    "subcategory": "CO2 intensity",
+    "variable": "CO2 intensity"
+   },
+   "unit": "g_co2e_per_kwh",
+   "color": "#2E4BD8",
+   "data": [
+    24,
+    24,
+    24
+   ],
+   "sourceCells": 3
+  },
+  "c_d5722238f23b70342fb7": {
+   "name": "c_d5722238f23b70342fb7",
+   "label": "Ladakh / LA / Power sector emissions / CO2 intensity / CO2 intensity",
+   "dims": {
+    "state": "Ladakh",
+    "state_code": "LA",
+    "category": "Power sector emissions",
+    "subcategory": "CO2 intensity",
+    "variable": "CO2 intensity"
+   },
+   "unit": "g_co2e_per_kwh",
+   "color": "#2E4BD8",
+   "data": [
+    23.99,
+    24.01,
+    24
+   ],
+   "sourceCells": 3
+  }
+ }
+}

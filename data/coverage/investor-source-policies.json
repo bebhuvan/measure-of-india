@@ -1,0 +1,734 @@
+{
+  "schemaVersion": 1,
+  "rules": [
+    {
+      "id": "investor-reviewed-national-monthly-net-flow",
+      "selector": {
+        "bundle": "investor-monthly-categories-2026-inr-crore",
+        "seriesKeys": [
+          "8966f35dc7a8cfaa0125"
+        ]
+      },
+      "status": "source-column-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "comparisonReason": "Only the literal source column and its two monthly observations have been reviewed. Cross-series comparisons, ratios, rankings by change, growth and other derived rates are not approved.",
+      "publicTitle": "Conventional mutual-fund net inflow or outflow during the month",
+      "definition": "Grand Total net inflow (+ve) or outflow (-ve) for August and September 2026, in INR crore, as headed in the AMFI workbooks. Negative values remain source observations. This is a monthly net transaction measure, not the change in asset value or household saving.",
+      "observationKind": "observed-activity",
+      "referenceBasis": "The date axis is a first-of-month key for the named August or September 2026 reporting month. The official headers distinguish month-end stock, monthly average and monthly net transactions; the key is not a literal observation day.",
+      "reason": "Six exact cells and their original workbook headers, Grand Total label, INR crore unit and domestic FoF informational footnote were independently reread from two hash-verified official originals. This attests three literal source records only.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ],
+      "review": {
+        "reviewedAt": "2026-10-15",
+        "sourceVersion": "81ef11259b217008241009334a95f67abe23e650cd030b838f5815405a8273e2",
+        "reviewer": "Atlas local original-workbook source review; canonical admission pending",
+        "rationale": "Every observation of this two-month source record exactly matches its original Grand Total cell and explicit stock, average or transaction header. No extrapolation to categories, historic layouts, geography, people, other columns or derived measures.",
+        "evidenceVersion": "81ef11259b217008241009334a95f67abe23e650cd030b838f5815405a8273e2"
+      },
+      "binding": {
+        "rawFile": "data/raw/investor/source-documents/b1daaaf1a8c71260c10e9056272bebf7f3367559ac66d5ad5d6d0ec8a9f09967.xls",
+        "rawSha256": "b1daaaf1a8c71260c10e9056272bebf7f3367559ac66d5ad5d6d0ec8a9f09967",
+        "records": {
+          "8966f35dc7a8cfaa0125": "ad95e224c6b479b8153b191dbcdf30bf52d98da6b902ce8583804a895b032926"
+        }
+      },
+      "supportingOriginals": [
+        {
+          "sha256": "0cbf67cad1254c60748a635c31bc5e96cff46900b842e205d821b3834ee9c31e",
+          "url": "https://portal.amfiindia.com/spages/amaug2026repo.xls",
+          "bytes": 116736
+        },
+        {
+          "sha256": "b1daaaf1a8c71260c10e9056272bebf7f3367559ac66d5ad5d6d0ec8a9f09967",
+          "url": "https://portal.amfiindia.com/spages/amsep2026repo.xls",
+          "bytes": 110080
+        }
+      ]
+    },
+    {
+      "id": "investor-reviewed-national-monthly-average-aum",
+      "selector": {
+        "bundle": "investor-monthly-categories-2026-inr-crore",
+        "seriesKeys": [
+          "3e27339c52a83574d6e7"
+        ]
+      },
+      "status": "source-column-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "comparisonReason": "Only the literal source column and its two monthly observations have been reviewed. Cross-series comparisons, ratios, rankings by change, growth and other derived rates are not approved.",
+      "publicTitle": "Conventional mutual-fund average net assets during the month",
+      "definition": "Grand Total average net assets under management for August and September 2026, in INR crore, as explicitly headed in the AMFI monthly workbooks. The arithmetic averaging methodology is not established by this header review. This is the source monthly average asset measure, not month-end assets or money subscribed.",
+      "observationKind": "observed-period-average",
+      "referenceBasis": "The date axis is a first-of-month key for the named August or September 2026 reporting month. The official headers distinguish month-end stock, monthly average and monthly net transactions; the key is not a literal observation day.",
+      "reason": "Six exact cells and their original workbook headers, Grand Total label, INR crore unit and domestic FoF informational footnote were independently reread from two hash-verified official originals. This attests three literal source records only.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ],
+      "review": {
+        "reviewedAt": "2026-10-15",
+        "sourceVersion": "81ef11259b217008241009334a95f67abe23e650cd030b838f5815405a8273e2",
+        "reviewer": "Atlas local original-workbook source review; canonical admission pending",
+        "rationale": "Every observation of this two-month source record exactly matches its original Grand Total cell and explicit stock, average or transaction header. No extrapolation to categories, historic layouts, geography, people, other columns or derived measures.",
+        "evidenceVersion": "81ef11259b217008241009334a95f67abe23e650cd030b838f5815405a8273e2"
+      },
+      "binding": {
+        "rawFile": "data/raw/investor/source-documents/b1daaaf1a8c71260c10e9056272bebf7f3367559ac66d5ad5d6d0ec8a9f09967.xls",
+        "rawSha256": "b1daaaf1a8c71260c10e9056272bebf7f3367559ac66d5ad5d6d0ec8a9f09967",
+        "records": {
+          "3e27339c52a83574d6e7": "1f6e73b6d019652a6d0f9fe4a9a331266dec622bb7051bc3d9e0751613cb71fd"
+        }
+      },
+      "supportingOriginals": [
+        {
+          "sha256": "0cbf67cad1254c60748a635c31bc5e96cff46900b842e205d821b3834ee9c31e",
+          "url": "https://portal.amfiindia.com/spages/amaug2026repo.xls",
+          "bytes": 116736
+        },
+        {
+          "sha256": "b1daaaf1a8c71260c10e9056272bebf7f3367559ac66d5ad5d6d0ec8a9f09967",
+          "url": "https://portal.amfiindia.com/spages/amsep2026repo.xls",
+          "bytes": 110080
+        }
+      ]
+    },
+    {
+      "id": "investor-reviewed-national-month-end-aum",
+      "selector": {
+        "bundle": "investor-monthly-categories-2026-inr-crore",
+        "seriesKeys": [
+          "71c202ab560558e4e0f6"
+        ]
+      },
+      "status": "source-column-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "comparisonReason": "Only the literal source column and its two monthly observations have been reviewed. Cross-series comparisons, ratios, rankings by change, growth and other derived rates are not approved.",
+      "publicTitle": "Conventional mutual-fund net assets at month end",
+      "definition": "Grand Total net assets under management as on the final calendar day of August and September 2026, in INR crore. Domestic funds of funds appear as a separate informational memo, already included through underlying schemes. This is an asset valuation stock, not subscriptions, household saving or a count of investors.",
+      "observationKind": "observed-stock",
+      "referenceBasis": "The date axis is a first-of-month key for the named August or September 2026 reporting month. The official headers distinguish month-end stock, monthly average and monthly net transactions; the key is not a literal observation day.",
+      "reason": "Six exact cells and their original workbook headers, Grand Total label, INR crore unit and domestic FoF informational footnote were independently reread from two hash-verified official originals. This attests three literal source records only.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ],
+      "review": {
+        "reviewedAt": "2026-10-15",
+        "sourceVersion": "81ef11259b217008241009334a95f67abe23e650cd030b838f5815405a8273e2",
+        "reviewer": "Atlas local original-workbook source review; canonical admission pending",
+        "rationale": "Every observation of this two-month source record exactly matches its original Grand Total cell and explicit stock, average or transaction header. No extrapolation to categories, historic layouts, geography, people, other columns or derived measures.",
+        "evidenceVersion": "81ef11259b217008241009334a95f67abe23e650cd030b838f5815405a8273e2"
+      },
+      "binding": {
+        "rawFile": "data/raw/investor/source-documents/b1daaaf1a8c71260c10e9056272bebf7f3367559ac66d5ad5d6d0ec8a9f09967.xls",
+        "rawSha256": "b1daaaf1a8c71260c10e9056272bebf7f3367559ac66d5ad5d6d0ec8a9f09967",
+        "records": {
+          "71c202ab560558e4e0f6": "0b9dcb093cd39199c8ab1ae821dde3fd8a5692e60103e6b4a002c9159235f745"
+        }
+      },
+      "supportingOriginals": [
+        {
+          "sha256": "0cbf67cad1254c60748a635c31bc5e96cff46900b842e205d821b3834ee9c31e",
+          "url": "https://portal.amfiindia.com/spages/amaug2026repo.xls",
+          "bytes": 116736
+        },
+        {
+          "sha256": "b1daaaf1a8c71260c10e9056272bebf7f3367559ac66d5ad5d6d0ec8a9f09967",
+          "url": "https://portal.amfiindia.com/spages/amsep2026repo.xls",
+          "bytes": 110080
+        }
+      ]
+    },
+    {
+      "id": "investor-pending-investor-channels-native-inr-crore",
+      "selector": {
+        "bundle": "investor-channels-native-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "AMFI API T15/B15 city keys have not been reconciled with the later SEBI T30/B30 disclosure definition. Source values and literal keys remain archival; no geography or other channel interpretation is certified by this policy.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-combined-native-count",
+      "selector": {
+        "bundle": "investor-combined-native-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-combined-native-inr-crore",
+      "selector": {
+        "bundle": "investor-combined-native-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-direct-native-inr-crore",
+      "selector": {
+        "bundle": "investor-direct-native-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-holding-quarterly-inr-crore",
+      "selector": {
+        "bundle": "investor-holding-quarterly-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-holding-quarterly-pct",
+      "selector": {
+        "bundle": "investor-holding-quarterly-pct"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-holding-semiannual-inr-crore",
+      "selector": {
+        "bundle": "investor-holding-semiannual-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-holding-semiannual-pct",
+      "selector": {
+        "bundle": "investor-holding-semiannual-pct"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-investors-quarterly-count",
+      "selector": {
+        "bundle": "investor-investors-quarterly-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-investors-quarterly-inr-crore",
+      "selector": {
+        "bundle": "investor-investors-quarterly-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-investors-quarterly-pct",
+      "selector": {
+        "bundle": "investor-investors-quarterly-pct"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-investors-semiannual-count",
+      "selector": {
+        "bundle": "investor-investors-semiannual-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-investors-semiannual-inr-crore",
+      "selector": {
+        "bundle": "investor-investors-semiannual-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-investors-semiannual-pct",
+      "selector": {
+        "bundle": "investor-investors-semiannual-pct"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-monthly-categories-2026-count",
+      "selector": {
+        "bundle": "investor-monthly-categories-2026-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-monthly-categories-2026-inr-crore",
+      "selector": {
+        "bundle": "investor-monthly-categories-2026-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-monthly-categories-2026-sip-count",
+      "selector": {
+        "bundle": "investor-monthly-categories-2026-sip-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-monthly-categories-2026-sip-inr-crore",
+      "selector": {
+        "bundle": "investor-monthly-categories-2026-sip-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-monthly-mcr-2019-count",
+      "selector": {
+        "bundle": "investor-monthly-mcr-2019-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-monthly-mcr-2019-inr-crore",
+      "selector": {
+        "bundle": "investor-monthly-mcr-2019-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-passive-native-count",
+      "selector": {
+        "bundle": "investor-passive-native-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-passive-native-inr-crore",
+      "selector": {
+        "bundle": "investor-passive-native-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-legacy-count",
+      "selector": {
+        "bundle": "investor-sebi-legacy-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-legacy-crore",
+      "selector": {
+        "bundle": "investor-sebi-legacy-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-legacy-inr-crore",
+      "selector": {
+        "bundle": "investor-sebi-legacy-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-legacy-lakh",
+      "selector": {
+        "bundle": "investor-sebi-legacy-lakh"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-legacy-million",
+      "selector": {
+        "bundle": "investor-sebi-legacy-million"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-legacy-percent",
+      "selector": {
+        "bundle": "investor-sebi-legacy-percent"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-modern-count",
+      "selector": {
+        "bundle": "investor-sebi-modern-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-modern-crore",
+      "selector": {
+        "bundle": "investor-sebi-modern-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-modern-inr-crore",
+      "selector": {
+        "bundle": "investor-sebi-modern-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-modern-lakh",
+      "selector": {
+        "bundle": "investor-sebi-modern-lakh"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-modern-million",
+      "selector": {
+        "bundle": "investor-sebi-modern-million"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-modern-percent",
+      "selector": {
+        "bundle": "investor-sebi-modern-percent"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sif-native-count",
+      "selector": {
+        "bundle": "investor-sif-native-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sif-native-inr-crore",
+      "selector": {
+        "bundle": "investor-sif-native-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sif-native-sip-count",
+      "selector": {
+        "bundle": "investor-sif-native-sip-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sif-native-sip-inr-crore",
+      "selector": {
+        "bundle": "investor-sif-native-sip-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-states-categories-2026-inr-crore",
+      "selector": {
+        "bundle": "investor-states-categories-2026-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-states-ladakh-listed-inr-crore",
+      "selector": {
+        "bundle": "investor-states-ladakh-listed-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-states-legacy-geography-inr-crore",
+      "selector": {
+        "bundle": "investor-states-legacy-geography-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-states-totals-native-inr-crore",
+      "selector": {
+        "bundle": "investor-states-totals-native-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    }
+  ]
+}

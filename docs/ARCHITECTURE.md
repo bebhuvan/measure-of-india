@@ -124,3 +124,40 @@ Nothing Indian leaks into machinery that serves all families:
 - The design system (`docs/DESIGN.md`) — new dossiers render in the same
   voice and furniture. An international dossier differs in content, not in
   temperament.
+
+## Supplemental individual indicators (13 October 2026)
+
+The explorer is a second entrance to the existing canonical bundles, not a new
+source pipeline. `scripts/explore-pack.mjs` processes one bundle at a time after
+Astro renders the static site. Each bundle has a manifest, packed with other manifests into a deterministic bounded hash bucket, containing the shared
+axis, provenance, guide connections and sorted stable-anchor chunk bounds. Exact
+records retain their complete canonical series fields (including conditional
+units/dimensions, estimates, nulls and source cells) in content-addressed chunks. Tiny chunks can share a bounded container while retaining separate instrument namespaces.
+A manifest lookup and binary/range lookup replace a whole-cube browser download.
+
+`src/explore/model.js` owns identity parsing, exact exports, comparison eligibility
+and date alignment; `loader.js` owns bounded published-file loading, validation and
+cache lifetime. The view reuses Atlas Plot and image export plumbing. Existing
+search emits both exact explorer and parent-guide destinations using bundle/anchor
+identity, while global numeric posting offsets remain internal to that release.
+
+Static per-record rendering would require over a million pages/assets. A Worker
+lookup would add operational/cache duties to a product already expressible as
+bounded first-party files. The chosen shared route and static shards keep source
+coverage while bounding reader payloads. No live government endpoint is contacted.
+The narrowly authorized render-contract exception and mechanical budgets are in
+CONTRACT-render. Full packaging coverage/size/memory evidence lives in
+`docs/status/explorer-catalogue-audit.json`; current readiness is tracked in
+`docs/status/indicator-explorer.md`.
+
+Heavy-guide rendering can yield between approximately 45 ms batches through the shared `queueCharts` helper. All authored charts still mount, with aggregate completion/error promises awaited by QC/lint and complete chart-count readiness in browser QA. Printing drains pending charts synchronously without duplicate rendering. The explorer owns its separate asynchronous data-read/selection readiness and synchronous single-chart drawing.
+
+
+Source-value preservation and interpretation eligibility are distinct. The governed
+source-quality ledger is compiled into each instrument manifest and shared search
+policy. Under-review records remain addressable as source records, with neutral
+labels and archival/source access, while numeric interpretation and selected exports
+are withheld. Scoped source audits can opt named records in only while versioned
+raw/canonical bindings still match. Compiled page/core/manifest policy versions prevent
+mixed-release safety fallback. Public source revision metadata can disclose an
+unpublished timestamp without overwriting the archived canonical metadata.

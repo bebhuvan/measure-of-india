@@ -1,22 +1,22 @@
 {
  "meta": {
   "dossier": "markets-listed",
-  "source": "Reserve Bank of India, DBIE, via the Reserve Bank Innovation Hub's data service",
-  "vintage": "2026-10-10",
-  "mock": false,
+  "source": "Reserve Bank of India, DBIE (official CAS and prompted statistical reports), via the local Data Bank",
+  "vintage": null,
+  "vintageStatus": "unknown",
+  "vintageNote": "The archived RBI CAS and prompted report exports do not publish a source revision timestamp. Archive capture is recorded separately and does not establish when estimates were revised.",
+  "archiveCapturedDate": "2026-10-10",
   "geo": "IND",
+  "mock": false,
+  "base": "as published",
   "releaseDate": null,
   "revisionPolicy": "Each quarter's figures come from the companies that reported in that quarter; growth rates compare the same companies a year apart and are final as printed.",
-  "base": "as published",
   "frequency": "annual",
-  "product": "SDMX dataset PRF_LNGNFC_IND_ANN_RN (Performance of Listed Non-Government Non-Financial Companies Annually - Industry)",
-  "dsd": "PRF_LNGNFC_IND_ANN_RN",
-  "loadedAt": "2026-09-18T15:11:43.73267Z",
-  "cut": "Sector",
   "unit": "pct",
-  "coverage": "Listed private non-financial companies, growth on a year earlier by sector, annual",
-  "note": "Growth on the same period a year earlier, per cent, for the same companies in both periods. Shares (where given) are the cut's share of all companies' sales or paid-up capital.",
-  "latestPeriod": "2024-04"
+  "product": "Listed non-government non-financial companies",
+  "coverage": "Annual results of listed non-government non-financial companies by manufacturing, IT and other services: growth on a year earlier for the same companies and reporting-company counts.",
+  "note": "Direct RBI DBIE: CAS full history, newest prompted report restatements preferred. Growth compares common companies; period totals and ratios use changing samples. Amounts are not a comparable time series. CAS omits some zero or |rate| ≥150 cells; reports preserve meaningful numeric cells and quarantine the exact 999999999 sentinel. Zero-filled CAS amount vectors and rupee-valued growth are missing, never true zero. Historical duplicate-key ratios retain the inherited mirror selection with an ambiguity flag until official reports resolve them. See sourceByDate for each cell; full source defects and overlap in markets-rbi.source-quality.json.",
+  "latestPeriod": "2025-04"
  },
  "dates": [
   "2015-04-01",
@@ -28,234 +28,1366 @@
   "2021-04-01",
   "2022-04-01",
   "2023-04-01",
-  "2024-04-01"
+  "2024-04-01",
+  "2025-04-01"
  ],
  "series": {
   "icc_manf__deprc": {
    "label": "Manufacturing: Depreciation: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Manufacturing",
+   "measure": "growth",
+   "itemCode": "DEPRC",
+   "groupCode": "ICC_MANF",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1885
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1875
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1891
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1918
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1841
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1830
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1865
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1821
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 784,
+     "companies": 1846
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 784,
+     "companies": 2055
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1808,
+     "companies": 2255
+    }
+   },
    "data": [
-    1.6278,
-    6.0374,
-    4.8161,
-    6.7703,
-    10.6704,
-    -0.5543,
-    6.9313,
-    7.1502,
-    12.5539,
-    8.2448
+    1.627757446586,
+    6.037422034197,
+    4.816121438557,
+    6.770321672116,
+    10.670371248034,
+    -0.55425660724,
+    6.931322517698,
+    7.15021392252,
+    12.553852029001,
+    8.24476849889,
+    7.872499210577
    ]
   },
   "icc_manf__ebitda": {
    "label": "Manufacturing: EBITDA: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Manufacturing",
+   "measure": "growth",
+   "itemCode": "EBITDA",
+   "groupCode": "ICC_MANF",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1885
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1875
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1891
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1918
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1841
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1830
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1865
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1821
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 688,
+     "companies": 1846
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 688,
+     "companies": 2055
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1712,
+     "companies": 2255
+    }
+   },
    "data": [
-    7.2256,
-    11.649,
-    9.9849,
-    15.2278,
-    -10.6744,
-    11.2249,
-    28.5526,
-    2.1151,
-    10.3553,
-    8.2066
+    7.225595819089,
+    11.64896395019,
+    9.984896490017,
+    15.227806639596,
+    -10.674430728703,
+    11.224943335561,
+    28.552603311823,
+    2.115092774499,
+    10.35532628964,
+    8.206649293912,
+    11.619885713424
    ]
   },
   "icc_manf__ebt_before_nop": {
    "label": "Manufacturing: EBT (before NOP): growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Manufacturing",
+   "measure": "growth",
+   "itemCode": "EBT_BEFORE_NOP",
+   "groupCode": "ICC_MANF",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1885
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1875
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1891
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1918
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1841
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1830
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1865
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1821
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 2096,
+     "companies": 1846
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 2096,
+     "companies": 2055
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 2992,
+     "companies": 2255
+    }
+   },
    "data": [
-    12.5963,
-    19.0423,
-    13.7296,
-    21.4597,
-    -19.473,
-    19.7607,
-    47.0886,
-    -1.6954,
-    9.6396,
-    9.6229
-   ]
-  },
-  "icc_manf__expd": {
-   "label": "Manufacturing: Expenditure: growth on a year earlier, same companies",
-   "unit": "pct",
-   "group": "Manufacturing",
-   "data": [
-    -6.5809,
-    4.6846,
-    11.2817,
-    15.5333,
-    -7.6473,
-    -5.4099,
-    40.2743,
-    19.872,
-    1.9201,
-    6.5375
+    12.596302641501,
+    19.042311831217,
+    13.729561091914,
+    21.45970019624,
+    -19.473025148333,
+    19.760748858978,
+    47.088643687175,
+    -1.69539694661,
+    9.639554297795,
+    9.622859844419,
+    14.458270764715
    ]
   },
   "icc_manf__expd_pnf": {
    "label": "Manufacturing: Power & fuel: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Manufacturing",
+   "measure": "growth",
+   "itemCode": "EXPD_PNF",
+   "groupCode": "ICC_MANF",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1885
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1875
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1891
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1918
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1841
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1830
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1865
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1821
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 400,
+     "companies": 1846
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 400,
+     "companies": 2055
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1424,
+     "companies": 2255
+    }
+   },
    "data": [
-    -1.4712,
-    -1.3182,
-    21.161,
-    16.8863,
-    -8.9152,
-    -11.403,
-    53.1908,
-    43.3077,
-    -14.2112,
-    -6.4217
+    -1.471249716534,
+    -1.318207758462,
+    21.161004695789,
+    16.88634723744,
+    -8.91518094711,
+    -11.402975491134,
+    53.190824973673,
+    43.307742627584,
+    -14.211167954333,
+    -6.421665978567,
+    -0.350285738322
    ]
   },
   "icc_manf__expd_raw_matr": {
    "label": "Manufacturing: Raw Material: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Manufacturing",
+   "measure": "growth",
+   "itemCode": "EXPD_RAW_MATR",
+   "groupCode": "ICC_MANF",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1885
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1875
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1891
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1918
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1841
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1830
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1865
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1821
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 208,
+     "companies": 1846
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 208,
+     "companies": 2055
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1232,
+     "companies": 2255
+    }
+   },
    "data": [
-    -12.7326,
-    5.7572,
-    12.5301,
-    18.0203,
-    -10.4329,
-    -6.5662,
-    48.613,
-    20.2383,
-    0.0045,
-    6.5618
+    -12.732625834513,
+    5.757238023562,
+    12.530142732273,
+    18.020266518861,
+    -10.43293157783,
+    -6.566175138276,
+    48.612964663891,
+    20.238264668369,
+    0.004518387873,
+    6.561799751034,
+    12.035063669752
    ]
   },
   "icc_manf__expd_staff_cost": {
    "label": "Manufacturing: Staff Cost: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Manufacturing",
+   "measure": "growth",
+   "itemCode": "EXPD_STAFF_COST",
+   "groupCode": "ICC_MANF",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1885
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1875
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1891
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1918
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1841
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1830
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1865
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1821
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 304,
+     "companies": 1846
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 304,
+     "companies": 2055
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1328,
+     "companies": 2255
+    }
+   },
    "data": [
-    8.2214,
-    8.0344,
-    8.9092,
-    9.7143,
-    3.9847,
-    -1.3902,
-    11.9084,
-    9.8934,
-    10.7617,
-    9.9846
+    8.221384424041,
+    8.034444335962,
+    8.909235332819,
+    9.714317543329,
+    3.984663783341,
+    -1.390242279159,
+    11.908413611578,
+    9.893354619664,
+    10.761662374845,
+    9.984595890677,
+    10.723436207546
+   ]
+  },
+  "icc_manf__expd": {
+   "label": "Manufacturing: Expenditure: growth on a year earlier, same companies",
+   "unit": "pct",
+   "group": "Manufacturing",
+   "measure": "growth",
+   "itemCode": "EXPD",
+   "groupCode": "ICC_MANF",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1885
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1875
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1891
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1918
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1841
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1830
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1865
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1821
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 112,
+     "companies": 1846
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 112,
+     "companies": 2055
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1136,
+     "companies": 2255
+    }
+   },
+   "data": [
+    -6.580934422341,
+    4.684585405937,
+    11.281681300957,
+    15.533346942218,
+    -7.647276629294,
+    -5.409919454013,
+    40.274257004798,
+    19.871967722603,
+    1.920098498207,
+    6.537504328222,
+    11.212682057919
    ]
   },
   "icc_manf__gross_pft_ebit": {
    "label": "Manufacturing: Gross Profits (EBIT): growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Manufacturing",
+   "measure": "growth",
+   "itemCode": "GROSS_PFT_EBIT",
+   "groupCode": "ICC_MANF",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1885
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1875
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1891
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1918
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1841
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1830
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1865
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1821
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 880,
+     "companies": 1846
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 880,
+     "companies": 2055
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1904,
+     "companies": 2255
+    }
+   },
    "data": [
-    9.0649,
-    13.4163,
-    11.4243,
-    17.4893,
-    -15.8537,
-    14.9648,
-    34.3937,
-    1.0598,
-    9.8639,
-    8.1978
+    9.064907222241,
+    13.416254567728,
+    11.424264889203,
+    17.489258678657,
+    -15.85372264577,
+    14.964838788928,
+    34.393706220347,
+    1.059800806679,
+    9.863882393551,
+    8.19780418371,
+    12.521414013595
    ]
   },
   "icc_manf__int": {
    "label": "Manufacturing: Interest: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Manufacturing",
+   "measure": "growth",
+   "itemCode": "INT",
+   "groupCode": "ICC_MANF",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1885
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1875
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1891
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1918
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1841
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1830
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1865
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1821
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 976,
+     "companies": 1846
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 976,
+     "companies": 2055
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 2000,
+     "companies": 2255
+    }
+   },
    "data": [
-    1.6649,
-    0.8804,
-    3.0205,
-    2.7784,
-    -1.1909,
-    -0.9014,
-    -18.1375,
-    22.9329,
-    11.2929,
-    -0.6749
+    1.664906627852,
+    0.880399026957,
+    3.020504283166,
+    2.778355894587,
+    -1.190923426497,
+    -0.901351225392,
+    -18.137500046305,
+    22.932933497333,
+    11.292900620706,
+    -0.674852938113,
+    -1.026551554063
    ]
   },
   "icc_manf__net_pft": {
    "label": "Manufacturing: Net Profits: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Manufacturing",
+   "measure": "growth",
+   "itemCode": "NET_PFT",
+   "groupCode": "ICC_MANF",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1885
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1875
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1891
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1918
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1841
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1830
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1865
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1821
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 2288,
+     "companies": 1846
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 2288,
+     "companies": 2055
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 3184,
+     "companies": 2255
+    }
+   },
    "data": [
-    12.6029,
-    27.9581,
-    1.9932,
-    42.2323,
-    -11.0017,
-    22.9998,
-    50.1588,
-    -3.7598,
-    8.5445,
-    12.1905
+    12.60290760336,
+    27.958118580909,
+    1.993167594732,
+    42.232271304093,
+    -11.001655943666,
+    22.99980756631,
+    50.158817585638,
+    -3.759764382499,
+    8.544459670911,
+    12.190476292761,
+    28.308788128216
    ]
   },
   "icc_manf__opr_pft": {
    "label": "Manufacturing: Operating Profits: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Manufacturing",
+   "measure": "growth",
+   "itemCode": "OPR_PFT",
+   "groupCode": "ICC_MANF",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1885
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1875
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1891
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1918
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1841
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1830
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1865
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1821
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 496,
+     "companies": 1846
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 496,
+     "companies": 2055
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1520,
+     "companies": 2255
+    }
+   },
    "data": [
-    9.6218,
-    12.2077,
-    10.3984,
-    16.3498,
-    -11.6426,
-    10.6446,
-    34.5099,
-    -1.2009,
-    12.3574,
-    5.9674
+    9.621831872222,
+    12.20765211374,
+    10.398368353572,
+    16.349829137304,
+    -11.642633984795,
+    10.644566877875,
+    34.509867361943,
+    -1.200934313432,
+    12.357351210323,
+    5.967366596816,
+    10.27185361594
    ]
   },
   "icc_manf__oth_inc": {
    "label": "Manufacturing: Other Income: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Manufacturing",
+   "measure": "growth",
+   "itemCode": "OTH_INC",
+   "groupCode": "ICC_MANF",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1885
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1875
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1891
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1918
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1841
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1830
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1865
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1821
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 592,
+     "companies": 1846
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 592,
+     "companies": 2055
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1616,
+     "companies": 2255
+    }
+   },
    "data": [
-    -4.907,
-    8.4891,
-    7.5792,
-    8.6206,
-    -5.2978,
-    14.1602,
-    -1.7834,
-    25.9561,
-    -1.0604,
-    22.87
+    -4.906991052147,
+    8.489054265815,
+    7.579160612099,
+    8.620558507071,
+    -5.2978028321,
+    14.160234665618,
+    -1.783365008727,
+    25.956127347793,
+    -1.060385459719,
+    22.870035314728,
+    19.504024031411
    ]
   },
   "icc_manf__sales": {
    "label": "Manufacturing: Sales: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Manufacturing",
+   "measure": "growth",
+   "itemCode": "SALES",
+   "groupCode": "ICC_MANF",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1885
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1875
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1891
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1918
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1841
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1830
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1865
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1821
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 16,
+     "companies": 1846
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 16,
+     "companies": 2055
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1040,
+     "companies": 2255
+    }
+   },
    "data": [
-    -3.7468,
-    4.2207,
-    11.9322,
-    14.8215,
-    -7.4431,
-    -2.7723,
-    36.7456,
-    18.0375,
-    3.486,
-    6.0173
+    -3.746794903055,
+    4.220654672563,
+    11.932238755521,
+    14.821457430171,
+    -7.443117570165,
+    -2.77232085649,
+    36.745608000283,
+    18.037546361936,
+    3.486027907887,
+    6.017292689717,
+    10.769876452031
    ]
   },
   "icc_manf__companies": {
    "label": "Manufacturing: number of companies in the period",
    "unit": "count",
+   "measure": "count",
    "group": "Manufacturing",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1885
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1875
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1891
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1918
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1841
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1830
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1865
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1821
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 16,
+     "companies": 1846
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 16,
+     "companies": 2055
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1040,
+     "companies": 2255
+    }
+   },
    "data": [
     1885,
     1875,
@@ -266,234 +1398,1366 @@
     1865,
     1821,
     1846,
-    2055
+    2055,
+    2255
    ]
   },
   "icc_manf__tax_prov": {
    "label": "Manufacturing: Tax Provision: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Manufacturing",
+   "measure": "growth",
+   "itemCode": "TAX_PROV",
+   "groupCode": "ICC_MANF",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1885
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1875
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1891
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1918
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1841
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1830
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1865
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 1821
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 2192,
+     "companies": 1846
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 2192,
+     "companies": 2055
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 3088,
+     "companies": 2255
+    }
+   },
    "data": [
-    3.3332,
-    9.4475,
-    19.1966,
-    15.8093,
-    -30.1892,
-    7.4654,
-    62.4186,
-    3.4036,
-    13.0883,
-    4.5254
+    3.33323437898,
+    9.447534065661,
+    19.19664264979,
+    15.809308566101,
+    -30.189243949484,
+    7.46536088766,
+    62.418591019333,
+    3.403567714719,
+    13.088256817421,
+    4.525361904906,
+    11.759989280551
    ]
   },
   "icc_srv_it__deprc": {
    "label": "Services - IT: Depreciation: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - IT",
+   "measure": "growth",
+   "itemCode": "DEPRC",
+   "groupCode": "ICC_SRV_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 203
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 199
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 192
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 202
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 195
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 198
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 216
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 215
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 848,
+     "companies": 211
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 816,
+     "companies": 255
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1840,
+     "companies": 274
+    }
+   },
    "data": [
-    0.1669,
-    1.6584,
-    7.379,
-    8.5271,
-    47.2741,
-    11.6617,
-    4.8807,
-    10.005,
-    3.289,
-    1.4228
+    0.166870412807,
+    1.658407243416,
+    7.379006295607,
+    8.527147718287,
+    47.274095355359,
+    11.661673156338,
+    4.880650937669,
+    10.005021510104,
+    3.288950651197,
+    1.422820659503,
+    2.179651570729
    ]
   },
   "icc_srv_it__ebitda": {
    "label": "Services - IT: EBITDA: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - IT",
+   "measure": "growth",
+   "itemCode": "EBITDA",
+   "groupCode": "ICC_SRV_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 203
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 199
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 192
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 202
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 195
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 198
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 216
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 215
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 752,
+     "companies": 211
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 720,
+     "companies": 255
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1744,
+     "companies": 274
+    }
+   },
    "data": [
-    9.5984,
-    6.413,
-    6.4988,
-    12.2805,
-    8.3073,
-    8.5339,
-    15.3761,
-    4.8819,
-    10.2092,
-    7.3518
+    9.598394478031,
+    6.412982183274,
+    6.49878664229,
+    12.280458617677,
+    8.307270489936,
+    8.533892256285,
+    15.376146774422,
+    4.881924393852,
+    10.209231947564,
+    7.351771659475,
+    11.253610526059
    ]
   },
   "icc_srv_it__ebt_before_nop": {
    "label": "Services - IT: EBT (before NOP): growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - IT",
+   "measure": "growth",
+   "itemCode": "EBT_BEFORE_NOP",
+   "groupCode": "ICC_SRV_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 203
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 199
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 192
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 202
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 195
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 198
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 216
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 215
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 2160,
+     "companies": 211
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 2128,
+     "companies": 255
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 3024,
+     "companies": 274
+    }
+   },
    "data": [
-    10.7002,
-    7.1187,
-    6.7587,
-    12.2607,
-    3.6598,
-    8.9282,
-    17.0005,
-    3.9264,
-    10.8056,
-    7.9074
-   ]
-  },
-  "icc_srv_it__expd": {
-   "label": "Services - IT: Expenditure: growth on a year earlier, same companies",
-   "unit": "pct",
-   "group": "Services - IT",
-   "data": [
-    11.0076,
-    9.5823,
-    5.4744,
-    16.9926,
-    8.229,
-    0.8806,
-    23.0253,
-    22.8228,
-    5.468,
-    7.3576
+    10.700183929854,
+    7.118740757938,
+    6.758716748626,
+    12.260662790071,
+    3.659835294198,
+    8.928173271669,
+    17.000510461199,
+    3.926407093845,
+    10.805576120371,
+    7.907445831255,
+    12.01638494242
    ]
   },
   "icc_srv_it__expd_raw_matr": {
    "label": "Services - IT: Raw Material: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - IT",
+   "measure": "growth",
+   "itemCode": "EXPD_RAW_MATR",
+   "groupCode": "ICC_SRV_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 203
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 199
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 192
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 202
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 195
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 198
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 216
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 215
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 272,
+     "companies": 211
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 240,
+     "companies": 255
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1264,
+     "companies": 274
+    }
+   },
    "data": [
-    6.3479,
-    22.9486,
-    -28.4828,
-    -19.8893,
-    -18.975,
-    2.2205,
-    5.7027,
-    38.6893,
-    32.6183,
-    0.6595
+    6.347906514245,
+    22.948606881048,
+    -28.482823671153,
+    -19.889337360669,
+    -18.974988555495,
+    2.22052475441,
+    5.702696761475,
+    38.689272905119,
+    32.618302714448,
+    0.659494686905,
+    16.983591357152
    ]
   },
   "icc_srv_it__expd_staff_cost": {
    "label": "Services - IT: Staff Cost: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - IT",
+   "measure": "growth",
+   "itemCode": "EXPD_STAFF_COST",
+   "groupCode": "ICC_SRV_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 203
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 199
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 192
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 202
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 195
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 198
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 216
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 215
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 368,
+     "companies": 211
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 336,
+     "companies": 255
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1360,
+     "companies": 274
+    }
+   },
    "data": [
-    21.3735,
-    10.2388,
-    5.6893,
-    11.7168,
-    11.8116,
-    5.5303,
-    20.1736,
-    21.9669,
-    6.5726,
-    4.4239
+    21.373489053843,
+    10.238796800962,
+    5.689325074343,
+    11.716763155497,
+    11.811578678123,
+    5.530309751421,
+    20.173597330432,
+    21.966949722428,
+    6.57258938364,
+    4.423919910169,
+    6.136478272774
+   ]
+  },
+  "icc_srv_it__expd": {
+   "label": "Services - IT: Expenditure: growth on a year earlier, same companies",
+   "unit": "pct",
+   "group": "Services - IT",
+   "measure": "growth",
+   "itemCode": "EXPD",
+   "groupCode": "ICC_SRV_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 203
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 199
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 192
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 202
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 195
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 198
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 216
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 215
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 176,
+     "companies": 211
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 144,
+     "companies": 255
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1168,
+     "companies": 274
+    }
+   },
+   "data": [
+    11.007600295486,
+    9.582331697352,
+    5.474380531192,
+    16.992573199395,
+    8.228996454796,
+    0.880580083867,
+    23.025293157449,
+    22.822786018173,
+    5.468026566603,
+    7.357640579519,
+    7.15975425144
    ]
   },
   "icc_srv_it__gross_pft_ebit": {
    "label": "Services - IT: Gross Profits (EBIT): growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - IT",
+   "measure": "growth",
+   "itemCode": "GROSS_PFT_EBIT",
+   "groupCode": "ICC_SRV_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 203
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 199
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 192
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 202
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 195
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 198
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 216
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 215
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 944,
+     "companies": 211
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 912,
+     "companies": 255
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1936,
+     "companies": 274
+    }
+   },
    "data": [
-    10.4573,
-    6.8144,
-    6.4281,
-    12.5861,
-    5.2582,
-    8.1951,
-    16.5872,
-    4.3364,
-    10.9823,
-    7.9737
+    10.457332349547,
+    6.814403233048,
+    6.428134514868,
+    12.586093415108,
+    5.258194062942,
+    8.195128031999,
+    16.587195949115,
+    4.336366049812,
+    10.982348045438,
+    7.973664240105,
+    12.166378668664
    ]
   },
   "icc_srv_it__int": {
    "label": "Services - IT: Interest: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - IT",
+   "measure": "growth",
+   "itemCode": "INT",
+   "groupCode": "ICC_SRV_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 203
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 199
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 192
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 202
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 195
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 198
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 216
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 215
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 2064,
+     "companies": 211
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1008,
+     "companies": 255
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 2032,
+     "companies": 274
+    }
+   },
    "data": [
-    0.5519,
-    -7.8694,
-    -13.2029,
-    34.6104,
-    96.0133,
-    -19.1891,
-    -2.9012,
-    26.2819,
-    19.0545,
-    10.9397
+    0.551912826077,
+    -7.869441816462,
+    -13.202872168285,
+    34.610432410061,
+    96.013309966439,
+    -19.189119575115,
+    -2.901152699654,
+    26.281882073448,
+    19.054502569286,
+    10.939700231509,
+    18.479678441521
    ]
   },
   "icc_srv_it__net_pft": {
    "label": "Services - IT: Net Profits: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - IT",
+   "measure": "growth",
+   "itemCode": "NET_PFT",
+   "groupCode": "ICC_SRV_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 203
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 199
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 192
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 202
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 195
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 198
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 216
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 215
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 2352,
+     "companies": 211
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 2320,
+     "companies": 255
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 3216,
+     "companies": 274
+    }
+   },
    "data": [
-    14.453,
-    8.6893,
-    10.1373,
-    3.6126,
-    10.0257,
-    8.0453,
-    21.0583,
-    -0.4165,
-    10.5476,
-    6.9917
+    14.453002689146,
+    8.689262933394,
+    10.137276986421,
+    3.612616230097,
+    10.025718452334,
+    8.045286783093,
+    21.058302142819,
+    -0.416456332704,
+    10.547553784387,
+    6.991699920704,
+    35.691914024621
    ]
   },
   "icc_srv_it__opr_pft": {
    "label": "Services - IT: Operating Profits: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - IT",
+   "measure": "growth",
+   "itemCode": "OPR_PFT",
+   "groupCode": "ICC_SRV_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 203
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 199
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 192
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 202
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 195
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 198
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 216
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 215
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 560,
+     "companies": 211
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 528,
+     "companies": 255
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1552,
+     "companies": 274
+    }
+   },
    "data": [
-    11.8895,
-    8.0382,
-    3.2038,
-    13.9942,
-    8.73,
-    15.4848,
-    11.0008,
-    8.8208,
-    5.578,
-    6.0924
+    11.889501450655,
+    8.038193275508,
+    3.203819591252,
+    13.994151697798,
+    8.729997724417,
+    15.484831793009,
+    11.000760181689,
+    8.820832178813,
+    5.578015666198,
+    6.092402994479,
+    10.711409939554
    ]
   },
   "icc_srv_it__oth_inc": {
    "label": "Services - IT: Other Income: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - IT",
+   "measure": "growth",
+   "itemCode": "OTH_INC",
+   "groupCode": "ICC_SRV_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 203
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 199
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 192
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 202
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 195
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 198
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 216
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 215
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 656,
+     "companies": 211
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 624,
+     "companies": 255
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1648,
+     "companies": 274
+    }
+   },
    "data": [
-    -1.0969,
-    -1.6007,
-    24.0694,
-    4.7582,
-    6.2932,
-    -25.3487,
-    47.2135,
-    -16.5005,
-    41.3692,
-    13.5206
+    -1.096940383739,
+    -1.600656147849,
+    24.069424788877,
+    4.758204990734,
+    6.293174895554,
+    -25.348664197526,
+    47.21348363341,
+    -16.500460958283,
+    41.36916369879,
+    13.520619949701,
+    13.717654051794
    ]
   },
   "icc_srv_it__sales": {
    "label": "Services - IT: Sales: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - IT",
+   "measure": "growth",
+   "itemCode": "SALES",
+   "groupCode": "ICC_SRV_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 203
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 199
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 192
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 202
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 195
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 198
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 216
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 215
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 80,
+     "companies": 211
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 48,
+     "companies": 255
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1072,
+     "companies": 274
+    }
+   },
    "data": [
-    11.2899,
-    9.3627,
-    4.9585,
-    16.166,
-    8.4101,
-    4.4385,
-    19.8164,
-    19.3673,
-    5.491,
-    7.0819
+    11.289911311179,
+    9.362652151258,
+    4.958477808968,
+    16.165967325689,
+    8.410137606845,
+    4.43851041931,
+    19.816358006235,
+    19.367267514425,
+    5.491048307871,
+    7.08191567321,
+    7.920164626401
    ]
   },
   "icc_srv_it__companies": {
    "label": "Services - IT: number of companies in the period",
    "unit": "count",
+   "measure": "count",
    "group": "Services - IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 203
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 199
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 192
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 202
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 195
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 198
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 216
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 215
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 80,
+     "companies": 211
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 48,
+     "companies": 255
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1072,
+     "companies": 274
+    }
+   },
    "data": [
     203,
     199,
@@ -504,194 +2768,1025 @@
     216,
     215,
     211,
-    255
+    255,
+    274
    ]
   },
   "icc_srv_it__tax_prov": {
    "label": "Services - IT: Tax Provision: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - IT",
+   "measure": "growth",
+   "itemCode": "TAX_PROV",
+   "groupCode": "ICC_SRV_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 203
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 199
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 192
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 202
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 195
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 198
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 216
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 215
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 2256,
+     "companies": 211
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 2224,
+     "companies": 255
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 3120,
+     "companies": 274
+    }
+   },
    "data": [
-    8.158,
-    1.1828,
-    1.0688,
-    25.3493,
-    -8.3567,
-    21.0923,
-    15.9403,
-    9.6526,
-    2.3581,
-    20.44
+    8.158013909591,
+    1.182836406116,
+    1.068815462257,
+    25.349296042068,
+    -8.356736139804,
+    21.092306852169,
+    15.940307141783,
+    9.652557397365,
+    2.35810266538,
+    20.440033478031,
+    -6.74099842578
    ]
   },
   "icc_srv_non_it__deprc": {
    "label": "Services - Non IT: Depreciation: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - Non IT",
+   "measure": "growth",
+   "itemCode": "DEPRC",
+   "groupCode": "ICC_SRV_NON_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 547
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 579
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 626
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 628
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 616
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 637
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 699
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 689
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 816,
+     "companies": 927
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 848,
+     "companies": 1223
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1872,
+     "companies": 1389
+    }
+   },
    "data": [
-    13.3336,
-    15.539,
-    6.4372,
-    10.392,
-    57.1253,
-    0.1461,
-    4.3176,
-    4.1667,
-    8.5668,
-    8.7375
+    13.333552762793,
+    15.539012306037,
+    6.437235213352,
+    10.391952505267,
+    57.125343204113,
+    0.146061883259,
+    4.317603155566,
+    4.166673780455,
+    8.566790812067,
+    8.737497904206,
+    9.139766453732
    ]
   },
   "icc_srv_non_it__ebitda": {
    "label": "Services - Non IT: EBITDA: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - Non IT",
+   "measure": "growth",
+   "itemCode": "EBITDA",
+   "groupCode": "ICC_SRV_NON_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 547
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 579
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 626
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 628
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 616
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 637
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 699
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 689
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 720,
+     "companies": 927
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 752,
+     "companies": 1223
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1776,
+     "companies": 1389
+    }
+   },
    "data": [
-    8.1867,
-    -5.4317,
-    -15.6313,
-    -8.6211,
-    53.1065,
-    -1.5883,
-    18.5856,
-    18.1368,
-    24.5206,
-    19.5163
+    8.186674629712,
+    -5.431680791082,
+    -15.631318309062,
+    -8.62114412661,
+    53.106495678683,
+    -1.588324416871,
+    18.585641613581,
+    18.136808276746,
+    24.520623175798,
+    19.516328175492,
+    6.297721066318
    ]
   },
   "icc_srv_non_it__ebt_before_nop": {
    "label": "Services - Non IT: EBT (before NOP): growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - Non IT",
+   "measure": "growth",
+   "itemCode": "EBT_BEFORE_NOP",
+   "groupCode": "ICC_SRV_NON_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 547
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 579
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 626
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 628
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 2160,
+     "companies": 1223
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 2128,
+     "companies": 927
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 3056,
+     "companies": 1389
+    }
+   },
    "data": [
-    2.7609,
-    -40.5116,
-    -66.2702,
-    -51.2408,
+    2.760935311488,
+    -40.511640960754,
+    -66.270205465986,
+    -51.240838402102,
     null,
     null,
     null,
     null,
-    null,
-    54.8709
+    187.420047061814,
+    54.870862004403,
+    5.968310999038
    ],
    "gaps": [
     "2019-04-01",
     "2020-04-01",
     "2021-04-01",
-    "2022-04-01",
-    "2023-04-01"
+    "2022-04-01"
    ],
-   "gapsNote": "No figure for this period (the cut had too few companies, or the item was not published); left empty."
-  },
-  "icc_srv_non_it__expd": {
-   "label": "Services - Non IT: Expenditure: growth on a year earlier, same companies",
-   "unit": "pct",
-   "group": "Services - Non IT",
-   "data": [
-    0.2654,
-    0.0388,
-    6.1735,
-    16.0861,
-    0.186,
-    -18.4882,
-    31.705,
-    37.7737,
-    2.6231,
-    10.7511
-   ]
+   "gapsNote": "Not published, not meaningful, or quarantined source defect; see sourceByDate and the source-quality download."
   },
   "icc_srv_non_it__expd_pnf": {
    "label": "Services - Non IT: Power & fuel: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - Non IT",
+   "measure": "growth",
+   "itemCode": "EXPD_PNF",
+   "groupCode": "ICC_SRV_NON_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 547
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 579
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 626
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 628
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 616
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 637
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 699
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 689
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 432,
+     "companies": 927
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 464,
+     "companies": 1223
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1488,
+     "companies": 1389
+    }
+   },
    "data": [
-    -47.8937,
-    20.2492,
-    26.0241,
-    51.1038,
-    10.1882,
-    -66.9267,
-    133.254,
-    69.6383,
-    1.9001,
-    4.1431
+    -47.893745507224,
+    20.249169995113,
+    26.024130091184,
+    51.103818201831,
+    10.188163705288,
+    -66.926693896781,
+    133.253996080335,
+    69.638298159964,
+    1.900136777444,
+    4.143134787299,
+    -0.8934290326
    ]
   },
   "icc_srv_non_it__expd_raw_matr": {
    "label": "Services - Non IT: Raw Material: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - Non IT",
+   "measure": "growth",
+   "itemCode": "EXPD_RAW_MATR",
+   "groupCode": "ICC_SRV_NON_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 547
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 579
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 626
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 628
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 616
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 637
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 699
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 689
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 240,
+     "companies": 927
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 272,
+     "companies": 1223
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1296,
+     "companies": 1389
+    }
+   },
    "data": [
-    -6.7237,
-    6.9799,
-    3.3051,
-    8.7849,
-    -11.8858,
-    -6.1848,
-    62.6217,
-    16.182,
-    4.2845,
-    11.9736
+    -6.723695879639,
+    6.979907046319,
+    3.305125131116,
+    8.784928514374,
+    -11.885829454075,
+    -6.184819389168,
+    62.621670545323,
+    16.18196658354,
+    4.284471022542,
+    11.973601421167,
+    21.533332987154
    ]
   },
   "icc_srv_non_it__expd_staff_cost": {
    "label": "Services - Non IT: Staff Cost: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - Non IT",
+   "measure": "growth",
+   "itemCode": "EXPD_STAFF_COST",
+   "groupCode": "ICC_SRV_NON_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 547
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 579
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 626
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 628
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 616
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 637
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 699
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 689
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 336,
+     "companies": 927
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 368,
+     "companies": 1223
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1392,
+     "companies": 1389
+    }
+   },
    "data": [
-    8.2307,
-    8.1193,
-    9.5384,
-    10.741,
-    10.8356,
-    -14.5349,
-    15.0751,
-    17.7029,
-    15.5954,
-    11.9844
+    8.230741069523,
+    8.119307402546,
+    9.538355212084,
+    10.741013266551,
+    10.835631452411,
+    -14.534899905594,
+    15.07514036972,
+    17.702913783957,
+    15.59544115649,
+    11.984399383451,
+    9.041600238861
+   ]
+  },
+  "icc_srv_non_it__expd": {
+   "label": "Services - Non IT: Expenditure: growth on a year earlier, same companies",
+   "unit": "pct",
+   "group": "Services - Non IT",
+   "measure": "growth",
+   "itemCode": "EXPD",
+   "groupCode": "ICC_SRV_NON_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 547
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 579
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 626
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 628
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 616
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 637
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 699
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 689
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 144,
+     "companies": 927
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 176,
+     "companies": 1223
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1200,
+     "companies": 1389
+    }
+   },
+   "data": [
+    0.265356892512,
+    0.038758155693,
+    6.173490025,
+    16.086149582692,
+    0.185987383157,
+    -18.488235636926,
+    31.705003406616,
+    37.773708578863,
+    2.623105298798,
+    10.751107233977,
+    15.132532959022
    ]
   },
   "icc_srv_non_it__gross_pft_ebit": {
    "label": "Services - Non IT: Gross Profits (EBIT): growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - Non IT",
+   "measure": "growth",
+   "itemCode": "GROSS_PFT_EBIT",
+   "groupCode": "ICC_SRV_NON_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 547
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 579
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 626
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 628
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 616
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 637
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 699
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 689
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 912,
+     "companies": 927
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 944,
+     "companies": 1223
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1968,
+     "companies": 1389
+    }
+   },
    "data": [
-    5.3545,
-    -17.2656,
-    -31.155,
-    -22.8401,
-    41.001,
-    -7.505,
-    55.1266,
-    39.1962,
-    41.0825,
-    27.4651
+    5.354471489321,
+    -17.265591285903,
+    -31.155016819663,
+    -22.840130244524,
+    41.000992835241,
+    -7.504958009608,
+    55.12659577374,
+    39.196171202086,
+    41.082542230858,
+    27.465058998882,
+    4.441704773199
    ]
   },
   "icc_srv_non_it__int": {
    "label": "Services - Non IT: Interest: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - Non IT",
+   "measure": "growth",
+   "itemCode": "INT",
+   "groupCode": "ICC_SRV_NON_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 547
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 579
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 626
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 628
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 616
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 637
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 699
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 689
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 1008,
+     "companies": 927
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 2064,
+     "companies": 1223
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 2960,
+     "companies": 1389
+    }
+   },
    "data": [
-    9.314,
-    22.9315,
-    10.5484,
-    3.0037,
-    59.0903,
-    6.4923,
-    13.0207,
-    9.7256,
-    6.0488,
-    5.4413
+    9.313980532064,
+    22.931529891111,
+    10.548355093693,
+    3.003691481949,
+    59.090290702104,
+    6.492334039808,
+    13.02073750944,
+    9.725575290899,
+    6.048846868655,
+    5.441270828878,
+    2.727768280405
    ]
   },
   "icc_srv_non_it__net_pft": {
    "label": "Services - Non IT: Net Profits: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - Non IT",
+   "measure": "growth",
+   "itemCode": "NET_PFT",
+   "groupCode": "ICC_SRV_NON_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 547
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 579
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 2320,
+     "companies": 927,
+     "omission": "DBIE not-meaningful sentinel 999999999"
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 2352,
+     "companies": 1223
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 3248,
+     "companies": 1389
+    }
+   },
    "data": [
-    -16.9471,
-    -114.53,
+    -16.947085939382,
+    -114.530045759318,
     null,
     null,
     null,
@@ -699,64 +3794,396 @@
     null,
     null,
     null,
-    null
-   ]
+    175.494368128628,
+    52.137303862113
+   ],
+   "gaps": [
+    "2017-04-01",
+    "2018-04-01",
+    "2019-04-01",
+    "2020-04-01",
+    "2021-04-01",
+    "2022-04-01",
+    "2023-04-01"
+   ],
+   "gapsNote": "Not published, not meaningful, or quarantined source defect; see sourceByDate and the source-quality download."
   },
   "icc_srv_non_it__opr_pft": {
    "label": "Services - Non IT: Operating Profits: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - Non IT",
+   "measure": "growth",
+   "itemCode": "OPR_PFT",
+   "groupCode": "ICC_SRV_NON_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 547
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 579
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 626
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 628
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 616
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 637
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 699
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 689
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 528,
+     "companies": 927
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 560,
+     "companies": 1223
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1584,
+     "companies": 1389
+    }
+   },
    "data": [
-    21.9148,
-    -7.7371,
-    -17.9469,
-    -12.8194,
-    47.8886,
-    3.0774,
-    21.8889,
-    15.0575,
-    27.9165,
-    15.8698
+    21.914756068446,
+    -7.737112453785,
+    -17.946893861386,
+    -12.819441977109,
+    47.888597468644,
+    3.077381216971,
+    21.888930959315,
+    15.057470410136,
+    27.916543985847,
+    15.869837086775,
+    7.136474660265
    ]
   },
   "icc_srv_non_it__oth_inc": {
    "label": "Services - Non IT: Other Income: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - Non IT",
+   "measure": "growth",
+   "itemCode": "OTH_INC",
+   "groupCode": "ICC_SRV_NON_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 547
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 579
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 626
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 628
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 616
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 637
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 699
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 689
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 624,
+     "companies": 927
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 656,
+     "companies": 1223
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1680,
+     "companies": 1389
+    }
+   },
    "data": [
-    -39.8503,
-    11.6289,
-    -2.4468,
-    11.915,
-    77.7373,
-    -19.3348,
-    4.6628,
-    39.6339,
-    5.2574,
-    44.1518
+    -39.850279466648,
+    11.628869675063,
+    -2.446840408785,
+    11.914980979164,
+    77.737294005692,
+    -19.334817166352,
+    4.662848026976,
+    39.633944040992,
+    5.257429470152,
+    44.151752480844,
+    2.039492439952
    ]
   },
   "icc_srv_non_it__sales": {
    "label": "Services - Non IT: Sales: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - Non IT",
+   "measure": "growth",
+   "itemCode": "SALES",
+   "groupCode": "ICC_SRV_NON_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 547
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 579
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 626
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 628
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 616
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 637
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 699
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 689
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 48,
+     "companies": 927
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 80,
+     "companies": 1223
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1104,
+     "companies": 1389
+    }
+   },
    "data": [
-    4.8787,
-    -1.5181,
-    1.7709,
-    11.3278,
-    6.9139,
-    -14.5808,
-    27.2252,
-    33.5272,
-    7.939,
-    11.3812
+    4.878667990008,
+    -1.518138045004,
+    1.770864316817,
+    11.327762688483,
+    6.913885244885,
+    -14.580814431509,
+    27.225223919868,
+    33.527205074367,
+    7.939013622635,
+    11.381175078499,
+    12.935301223552
    ]
   },
   "icc_srv_non_it__companies": {
    "label": "Services - Non IT: number of companies in the period",
    "unit": "count",
+   "measure": "count",
    "group": "Services - Non IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 547
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 579
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 626
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 628
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 616
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 637
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 699
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 689
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 48,
+     "companies": 927
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 80,
+     "companies": 1223
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1104,
+     "companies": 1389
+    }
+   },
    "data": [
     547,
     579,
@@ -767,24 +4194,156 @@
     699,
     689,
     927,
-    1223
+    1223,
+    1389
    ]
   },
   "icc_srv_non_it__tax_prov": {
    "label": "Services - Non IT: Tax Provision: growth on a year earlier, same companies",
    "unit": "pct",
    "group": "Services - Non IT",
+   "measure": "growth",
+   "itemCode": "TAX_PROV",
+   "groupCode": "ICC_SRV_NON_IT",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 547
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 579
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 626
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 628
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 616
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 637
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 699
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "63950737a8860167e7afc8946ec74178f38ec99d1578f72a6dd7c9f26819fe91",
+     "dsd": "PRF_LNGNFC_IND_ANN_RN",
+     "companies": 689
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 2224,
+     "companies": 927
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 2256,
+     "companies": 1223
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 3152,
+     "companies": 1389
+    }
+   },
    "data": [
-    -17.2105,
-    -38.2117,
-    9.6837,
-    -1.8758,
-    -15.5171,
-    -33.536,
-    16.5873,
-    15.2547,
-    34.2251,
-    4.9252
+    -17.210480331759,
+    -38.211661444304,
+    9.68367592437,
+    -1.875767262202,
+    -15.517137482594,
+    -33.536009169512,
+    16.587262537652,
+    15.254671492671,
+    34.225100433518,
+    4.925249210241,
+    4.193775892423
+   ]
+  },
+  "icc_srv_it__expd_pnf": {
+   "label": "Services - IT: Power & fuel: growth on a year earlier, same companies",
+   "unit": "pct",
+   "group": "Services - IT",
+   "measure": "growth",
+   "itemCode": "EXPD_PNF",
+   "groupCode": "ICC_SRV_IT",
+   "sourceByDate": {
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "c943f44749e41be5c4fb4158747a6291a84ce6bd21991dcaaa47e4ec5c2a2733",
+     "report": "1118",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 464,
+     "companies": 211
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 432,
+     "companies": 255
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0bb24e258200e6ad7e67153c3ce628d58875bdd62903045f0ee18b7a75579aba",
+     "report": "1118",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1456,
+     "companies": 274
+    }
+   },
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0
    ]
   }
  }

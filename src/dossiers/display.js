@@ -20,6 +20,7 @@
 //                    allowed only where no bundle fact exists
 
 import fs from "node:fs";
+import {vintageText, isIsoDate} from "../../scripts/lib/vintage.mjs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -39,6 +40,10 @@ const MF = ["January", "February", "March", "April", "May", "June", "July", "Aug
 
 const cap = (s) => (s ? s[0].toUpperCase() + s.slice(1) : s);
 const monthYearFull = (iso) => cap(`${MF[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}`);
+export function monthYearStamp(iso) {
+  if(!isIsoDate(iso))throw new Error('Source month stamp requires an ISO source coordinate');
+  return monthYearFull(iso);
+}
 const monthYearShort = (iso) => `${MS[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}`;
 const dateShort = (iso) => `${Number(iso.slice(8, 10))} ${MS[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}`;
 const shiftMonth = (ym, n) => {
@@ -69,6 +74,9 @@ function stampValue(d, which) {
   if (which === "vintage" && s.vintageText) return s.vintageText;
   const label = (str) => (which === "date" ? monthYearFull(str) : (s.vintagePrefix ?? "Vintage ") + monthYearShort(str));
   switch (style) {
+    case "edition":
+      if(!isIsoDate(b.meta.reportEditionDate))throw new Error("Edition stamp requires reportEditionDate");
+      return which === "date" ? monthYearFull(b.meta.reportEditionDate) : "Report edition " + dateShort(b.meta.reportEditionDate);
     case "release":
       return which === "date" ? monthYearFull(rel) : (s.vintagePrefix ?? "Vintage ") + dateShort(rel);
     case "month":
@@ -77,6 +85,7 @@ function stampValue(d, which) {
       return label(shiftMonth(String(b.meta.latestPeriod), 1));
     case "vintageMonth":
     case "vintage":
+      if(b.meta.vintage===null)return vintageText(b.meta);
       return which === "date" ? monthYearFull(b.meta.vintage) : (s.vintagePrefix ?? "Vintage ") + dateShort(b.meta.vintage);
     case "retired":
       return (s.vintagePrefix ?? "Vintage ") + dateShort(bundleOf(s.retiredBundle).meta.vintage);

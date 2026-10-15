@@ -1,0 +1,616 @@
+{
+ "meta": {
+  "dossier": "energy",
+  "geo": "IND",
+  "base": "Energy Statistics India 2026 edition",
+  "revisionPolicy": "Agency revisions retained as new raw vintages before rebaking.",
+  "source": "MoSPI, Energy Statistics India 2026, original Excel tables",
+  "sourceUrl": "https://www.mospi.gov.in/uploads/documents/publicationsReports/1776238032990-Chapter%207.xlsx",
+  "product": "energy-report-2026-commodity",
+  "frequency": "annual",
+  "calendar": "fiscal-apr",
+  "unit": "mmscm",
+  "rawFile": "data/raw/energy-report-2026-workbook-rows.json",
+  "note": "2026 report edition; revised historical balances kept separate from the 2025 API edition. Workbook precision retained without rounding source cells. Latest year provisional. Nested totals overlap parts; blanks are unpublished, not zeros. Bunkers have source sign/total inconsistencies disclosed by validation. PJ electricity-output rows are scaled despite GWh headings and are audit-only.",
+  "vintage": "2026-03-30",
+  "vintageStatus": "known",
+  "vintageBasis": "publisher-publication-edition",
+  "vintageNote": "This is the publisher listing date of the report edition; it does not assert the date of any later undocumented file revision.",
+  "reportEditionDate": "2026-03-30",
+  "reportEditionYear": 2026,
+  "sourceDateURL": "https://www.mospi.gov.in/publications-reports/innerpage/2817",
+  "sourceDateEvidence": {
+   "rawFile": "data/raw/energy-report-2026-list.json",
+   "chapterId": "3690",
+   "field": "published_date",
+   "sourceFileURL": "https://www.mospi.gov.in/uploads/documents/publicationsReports/1776238032990-Chapter%207.xlsx"
+  },
+  "sourceRevisionDate": null,
+  "archiveCapturedDate": null,
+  "archiveCapturedAt": null,
+  "archiveCaptureNote": "Capture time was not recorded in the preserved workbook envelope.",
+  "latestPeriod": "2024–25"
+ },
+ "dates": [
+  "2023-04-01",
+  "2024-04-01"
+ ],
+ "series": {
+  "c_6116e93064c814eed32b": {
+   "name": "c_6116e93064c814eed32b",
+   "label": "Natural Gas / Production",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    36437.8672613518,
+    36110
+   ],
+   "sourceCells": 2
+  },
+  "c_ab085eb332258e0c15aa": {
+   "name": "c_ab085eb332258e0c15aa",
+   "label": "Natural Gas / Imports",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    31795.201479375,
+    35720.3055953
+   ],
+   "sourceCells": 2
+  },
+  "c_707a87f239c7f00869c9": {
+   "name": "c_707a87f239c7f00869c9",
+   "label": "Natural Gas / Exports",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_e84e0bb3c2d373a9f279": {
+   "name": "c_e84e0bb3c2d373a9f279",
+   "label": "Natural Gas / Domestic Supply",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Domestic Supply",
+    "sector": ""
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    68233.0687407268,
+    71830.3055953
+   ],
+   "sourceCells": 2
+  },
+  "c_0c71a952859e7a9de083": {
+   "name": "c_0c71a952859e7a9de083",
+   "label": "Natural Gas / Statistical difference",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Statistical difference",
+    "sector": ""
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    -6878.232524367253,
+    -5431.601880316986
+   ],
+   "sourceCells": 2
+  },
+  "c_0454840dc35a26788cd2": {
+   "name": "c_0454840dc35a26788cd2",
+   "label": "Natural Gas / Transformation",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Transformation",
+    "sector": ""
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    9082.512861233767,
+    8891.83088221559
+   ],
+   "sourceCells": 2
+  },
+  "c_b1b78c990f2c6f77bd0a": {
+   "name": "c_b1b78c990f2c6f77bd0a",
+   "label": "Natural Gas / Electricity plants",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Electricity plants",
+    "sector": ""
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    9082.512861233767,
+    8891.83088221559
+   ],
+   "sourceCells": 2
+  },
+  "c_bad3fb0068f8c571a54c": {
+   "name": "c_bad3fb0068f8c571a54c",
+   "label": "Natural Gas / Energy industry own use",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Energy industry own use",
+    "sector": ""
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    11135.73773256888,
+    11410.163518574098
+   ],
+   "sourceCells": 2
+  },
+  "c_43fe63f8a0d7a4cb81d4": {
+   "name": "c_43fe63f8a0d7a4cb81d4",
+   "label": "Natural Gas / Oil and Gas extraction",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Oil and Gas extraction",
+    "sector": ""
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    5581.476362039999,
+    5546.5277822240005
+   ],
+   "sourceCells": 2
+  },
+  "c_e5b8ce653c3c4162d8fc": {
+   "name": "c_e5b8ce653c3c4162d8fc",
+   "label": "Natural Gas / Petroleum refineries",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Petroleum refineries",
+    "sector": ""
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    5554.261370528881,
+    5863.635736350097
+   ],
+   "sourceCells": 2
+  },
+  "c_4cc6047c9a8f75c29521": {
+   "name": "c_4cc6047c9a8f75c29521",
+   "label": "Natural Gas / Distribution losses",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Distribution losses",
+    "sector": ""
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    720.946312928,
+    519.532765741
+   ],
+   "sourceCells": 2
+  },
+  "c_57051e9663c3584ad136": {
+   "name": "c_57051e9663c3584ad136",
+   "label": "Natural Gas / Final Consumption",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Final Consumption",
+    "sector": ""
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    54172.1043583634,
+    56440.38030908629
+   ],
+   "sourceCells": 2
+  },
+  "c_729573d62e8e70944a93": {
+   "name": "c_729573d62e8e70944a93",
+   "label": "Natural Gas / Industry Sector / Industry Sector",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Industry Sector",
+    "sector": "Industry Sector"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    1457.4656047411124,
+    2802.529553645199
+   ],
+   "sourceCells": 2
+  },
+  "c_29df379f458bef96f8d6": {
+   "name": "c_29df379f458bef96f8d6",
+   "label": "Natural Gas / Iron and steel / Industry Sector",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Iron and steel",
+    "sector": "Industry Sector"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    null
+   ],
+   "sourceCells": 2
+  },
+  "c_12c4c050e042035e6399": {
+   "name": "c_12c4c050e042035e6399",
+   "label": "Natural Gas / Chemical and petrochemical / Industry Sector",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Chemical and petrochemical",
+    "sector": "Industry Sector"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    null
+   ],
+   "sourceCells": 1
+  },
+  "c_367b9374357de3d3dc3a": {
+   "name": "c_367b9374357de3d3dc3a",
+   "label": "Natural Gas / Non-ferrous metals / Industry Sector",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Non-ferrous metals",
+    "sector": "Industry Sector"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    null
+   ],
+   "sourceCells": 2
+  },
+  "c_11127f212ca3c8fa76f6": {
+   "name": "c_11127f212ca3c8fa76f6",
+   "label": "Natural Gas / Non-metallic minerals / Industry Sector",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Non-metallic minerals",
+    "sector": "Industry Sector"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    null
+   ],
+   "sourceCells": 2
+  },
+  "c_b9de05dc7d7ab00f80fa": {
+   "name": "c_b9de05dc7d7ab00f80fa",
+   "label": "Natural Gas / Machinery / Transport equipment",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Machinery",
+    "sector": "Transport equipment"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    null
+   ],
+   "sourceCells": 2
+  },
+  "c_4d85d95b559c068cf67a": {
+   "name": "c_4d85d95b559c068cf67a",
+   "label": "Natural Gas / Mining & Quarrying / Transport equipment",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Mining & Quarrying",
+    "sector": "Transport equipment"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    null
+   ],
+   "sourceCells": 2
+  },
+  "c_69f930d90aef0e03fa7b": {
+   "name": "c_69f930d90aef0e03fa7b",
+   "label": "Natural Gas / Paper, pulp and print / Transport equipment",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Paper, pulp and print",
+    "sector": "Transport equipment"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    null
+   ],
+   "sourceCells": 2
+  },
+  "c_c685dc0f1c0e79259293": {
+   "name": "c_c685dc0f1c0e79259293",
+   "label": "Natural Gas / Construction / Transport equipment",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Construction",
+    "sector": "Transport equipment"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    null
+   ],
+   "sourceCells": 2
+  },
+  "c_f82733a324a9c4c63e44": {
+   "name": "c_f82733a324a9c4c63e44",
+   "label": "Natural Gas / Textile and leather / Transport equipment",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Textile and leather",
+    "sector": "Transport equipment"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    null
+   ],
+   "sourceCells": 2
+  },
+  "c_58d7e0bc0c24ceeb5959": {
+   "name": "c_58d7e0bc0c24ceeb5959",
+   "label": "Natural Gas / Non-specified / Transport equipment",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Non-specified",
+    "sector": "Transport equipment"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    1457.4656047411124,
+    2802.529553645199
+   ],
+   "sourceCells": 2
+  },
+  "c_235a4249ebe2d4fe91db": {
+   "name": "c_235a4249ebe2d4fe91db",
+   "label": "Natural Gas / Transport Sector / Transport Sector",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Transport Sector",
+    "sector": "Transport Sector"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    15413.6791217536,
+    17019.865491366003
+   ],
+   "sourceCells": 2
+  },
+  "c_d0491ea9c9fb8efcdd1b": {
+   "name": "c_d0491ea9c9fb8efcdd1b",
+   "label": "Natural Gas / Road / Transport Sector",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Road",
+    "sector": "Transport Sector"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    13491.562735267156,
+    15051.460906148233
+   ],
+   "sourceCells": 2
+  },
+  "c_04d21fb5351ed322441f": {
+   "name": "c_04d21fb5351ed322441f",
+   "label": "Natural Gas / Domestic Aviation / Transport Sector",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Domestic Aviation",
+    "sector": "Transport Sector"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    null
+   ],
+   "sourceCells": 2
+  },
+  "c_0b48d9cf2b5464237160": {
+   "name": "c_0b48d9cf2b5464237160",
+   "label": "Natural Gas / Rail / Transport Sector",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Rail",
+    "sector": "Transport Sector"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    null
+   ],
+   "sourceCells": 2
+  },
+  "c_193fd6cf32cb95fd685a": {
+   "name": "c_193fd6cf32cb95fd685a",
+   "label": "Natural Gas / Pipeline transport / Transport Sector",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Pipeline transport",
+    "sector": "Transport Sector"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    1922.1163864864425,
+    1968.4045852177708
+   ],
+   "sourceCells": 2
+  },
+  "c_1b4af8787f103951de71": {
+   "name": "c_1b4af8787f103951de71",
+   "label": "Natural Gas / Domestic navigation / Transport Sector",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Domestic navigation",
+    "sector": "Transport Sector"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    null
+   ],
+   "sourceCells": 2
+  },
+  "c_5ce03b58e6919fd18d55": {
+   "name": "c_5ce03b58e6919fd18d55",
+   "label": "Natural Gas / Non-specified / Transport Sector",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Non-specified",
+    "sector": "Transport Sector"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    null
+   ],
+   "sourceCells": 2
+  },
+  "c_aa5c8f477d374390eb5c": {
+   "name": "c_aa5c8f477d374390eb5c",
+   "label": "Natural Gas / Other Sectors / Other Sectors",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Other Sectors",
+    "sector": "Other Sectors"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    11112.80396613216,
+    10528.459321615392
+   ],
+   "sourceCells": 2
+  },
+  "c_4b180b21c05b18dd95a3": {
+   "name": "c_4b180b21c05b18dd95a3",
+   "label": "Natural Gas / Residential / Other Sectors",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Residential",
+    "sector": "Other Sectors"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    null
+   ],
+   "sourceCells": 2
+  },
+  "c_e0e69d568733242123d3": {
+   "name": "c_e0e69d568733242123d3",
+   "label": "Natural Gas / Comm. And public services / Other Sectors",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Comm. And public services",
+    "sector": "Other Sectors"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    null
+   ],
+   "sourceCells": 2
+  },
+  "c_552c93e94ae09a0c66ac": {
+   "name": "c_552c93e94ae09a0c66ac",
+   "label": "Natural Gas / Agriculture/forestry / Other Sectors",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Agriculture/forestry",
+    "sector": "Other Sectors"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    141.741132,
+    152.687688
+   ],
+   "sourceCells": 2
+  },
+  "c_5613a05e599e2983d480": {
+   "name": "c_5613a05e599e2983d480",
+   "label": "Natural Gas / Non-specified / Other Sectors",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Non-specified",
+    "sector": "Other Sectors"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    10971.06283413216,
+    10375.771633615392
+   ],
+   "sourceCells": 2
+  },
+  "c_7ef60f1cdc85161b67c5": {
+   "name": "c_7ef60f1cdc85161b67c5",
+   "label": "Natural Gas / Non-Energy Use / Other Sectors",
+   "dims": {
+    "fuel": "Natural Gas",
+    "flow": "Non-Energy Use",
+    "sector": "Other Sectors"
+   },
+   "unit": "mmscm",
+   "color": "#2E4BD8",
+   "data": [
+    26188.155665736525,
+    26089.525942459695
+   ],
+   "sourceCells": 2
+  }
+ }
+}

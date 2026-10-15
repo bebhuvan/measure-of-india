@@ -1,0 +1,223 @@
+{
+  "checkedAt": "2026-10-10T16:20:25.541Z",
+  "bankRoot": "/home/bhuvanesh.r/Documents/Data/Data bank",
+  "methodology": "Read only the Data Bank publications selected by its CLI, with --lineage-only. Exact duplicate records are removed within the listed query columns; counts are not cross-provider reconciled or assertions of statistical correctness. Data readiness still requires keys, units, identities and source-cell checks.",
+  "probes": [
+    {
+      "dataset": "amfi_industry_flows",
+      "sql": "SELECT COUNT(*) AS rows, COUNT(DISTINCT period_end) AS periods, MIN(period_end) AS first_period, MAX(period_end) AS last_period, COUNT(DISTINCT sub_category) AS categories FROM (SELECT DISTINCT period_end, parent_category, sub_category, row_kind, n_schemes, n_folios, funds_mobilized_inr_cr, repurchase_redemption_inr_cr, net_flow_inr_cr, net_aum_inr_cr, avg_aum_inr_cr FROM {table}) ORDER BY first_period",
+      "rows": [
+        {
+          "categories": 14,
+          "first_period": "2023-04-30",
+          "last_period": "2026-07-31",
+          "periods": 39,
+          "rows": 546
+        }
+      ]
+    },
+    {
+      "dataset": "amfi_statewise_aum",
+      "sql": "SELECT COUNT(*) AS rows, COUNT(DISTINCT state) AS states, COUNT(DISTINCT category) AS categories, MIN(date) AS first_period, MAX(date) AS last_period FROM (SELECT DISTINCT state, date, category, aum_inr_cr FROM {table}) ORDER BY first_period",
+      "rows": [
+        {
+          "categories": 16,
+          "first_period": "2014-03-01",
+          "last_period": "2026-08-01",
+          "rows": 50255,
+          "states": 38
+        }
+      ]
+    },
+    {
+      "dataset": "sebi_bulletin_series",
+      "sql": "SELECT family, COUNT(*) AS rows, COUNT(DISTINCT series) AS series, MIN(period_month) AS first_period, MAX(period_month) AS last_period FROM (SELECT DISTINCT family, entity, series, measure, unit, period_month, value FROM {table}) GROUP BY family ORDER BY family",
+      "rows": [
+        {
+          "family": "cash_market",
+          "first_period": "2014-04-01",
+          "last_period": "2026-08-01",
+          "rows": 6219,
+          "series": 8
+        },
+        {
+          "family": "custody",
+          "first_period": "2014-04-01",
+          "last_period": "2026-08-01",
+          "rows": 4171,
+          "series": 14
+        },
+        {
+          "family": "depository",
+          "first_period": "2014-04-01",
+          "last_period": "2026-08-01",
+          "rows": 4321,
+          "series": 1
+        },
+        {
+          "family": "equity_derivatives",
+          "first_period": "2014-04-01",
+          "last_period": "2026-08-01",
+          "rows": 5558,
+          "series": 11
+        },
+        {
+          "family": "equity_derivatives_index",
+          "first_period": "2013-04-01",
+          "last_period": "2026-08-01",
+          "rows": 2685,
+          "series": 28
+        },
+        {
+          "family": "fpi",
+          "first_period": "2014-04-01",
+          "last_period": "2026-08-01",
+          "rows": 726,
+          "series": 1
+        },
+        {
+          "family": "mutual_fund_investors",
+          "first_period": "2025-04-01",
+          "last_period": "2026-08-01",
+          "rows": 17,
+          "series": 1
+        },
+        {
+          "family": "mutual_funds",
+          "first_period": "2014-04-01",
+          "last_period": "2026-08-01",
+          "rows": 1508,
+          "series": 4
+        },
+        {
+          "family": "mutual_funds_category",
+          "first_period": "2021-03-01",
+          "last_period": "2026-08-01",
+          "rows": 16920,
+          "series": 225
+        },
+        {
+          "family": "portfolio_managers",
+          "first_period": "2014-07-01",
+          "last_period": "2026-07-01",
+          "rows": 5569,
+          "series": 20
+        },
+        {
+          "family": "primary_market",
+          "first_period": "2014-04-01",
+          "last_period": "2026-08-01",
+          "rows": 6094,
+          "series": 16
+        },
+        {
+          "family": "primary_market_consolidated",
+          "first_period": "2023-04-01",
+          "last_period": "2026-08-01",
+          "rows": 4298,
+          "series": 26
+        },
+        {
+          "family": "primary_market_industry",
+          "first_period": "2014-08-01",
+          "last_period": "2026-08-01",
+          "rows": 8522,
+          "series": 101
+        },
+        {
+          "family": "primary_market_region",
+          "first_period": "2014-04-01",
+          "last_period": "2026-08-01",
+          "rows": 2388,
+          "series": 9
+        },
+        {
+          "family": "primary_market_size",
+          "first_period": "2014-04-01",
+          "last_period": "2026-08-01",
+          "rows": 1966,
+          "series": 8
+        }
+      ]
+    },
+    {
+      "dataset": "imf_portwatch_ports_daily",
+      "sql": "SELECT iso3, COUNT(*) AS rows, COUNT(DISTINCT portid) AS ports, MIN(date) AS first_period, MAX(date) AS last_period FROM (SELECT DISTINCT iso3, portid, date FROM {table}) GROUP BY iso3 ORDER BY iso3",
+      "rows": [
+        {
+          "first_period": "2019-01-01",
+          "iso3": "IND",
+          "last_period": "2026-09-25",
+          "ports": 37,
+          "rows": 104525
+        }
+      ]
+    },
+    {
+      "dataset": "rbi_dbie_webi_prompted_rows",
+      "sql": "SELECT report_id, report_name, COUNT(*) AS rows, COUNT(DISTINCT prompt_answer) AS prompt_answers FROM (SELECT DISTINCT report_id, report_name, prompt_answer, dataprovider_id, row_no, record_json FROM {table}) GROUP BY report_id, report_name ORDER BY report_id, report_name",
+      "rows": [
+        {
+          "prompt_answers": 4,
+          "report_id": "1067",
+          "report_name": "1. Performance of Listed Non-Government Non-Financial Companies",
+          "rows": 3204
+        },
+        {
+          "prompt_answers": 2,
+          "report_id": "1068",
+          "report_name": "3. Performance of Listed Non-Government Non-Financial Companies according to Size of Paid-up-Capital",
+          "rows": 868
+        },
+        {
+          "prompt_answers": 4,
+          "report_id": "1069",
+          "report_name": "3. Performance of Listed Non-Government Non-Financial Companies according to Size of Paid-up-Capital",
+          "rows": 4032
+        },
+        {
+          "prompt_answers": 2,
+          "report_id": "1070",
+          "report_name": "4. Performance of Listed Non-Government Non-Financial Companies according to Size of Sales",
+          "rows": 970
+        },
+        {
+          "prompt_answers": 4,
+          "report_id": "1071",
+          "report_name": "4. Performance of Listed Non-Government Non-Financial Companies according to Size of Sales",
+          "rows": 2588
+        },
+        {
+          "prompt_answers": 4,
+          "report_id": "1072",
+          "report_name": "5. Performance of Listed Non-Government Non-Financial Companies according to Industry",
+          "rows": 79274
+        },
+        {
+          "prompt_answers": 2,
+          "report_id": "1073",
+          "report_name": "5. Performance of Listed Non-Government Non-Financial Companies according to Industry",
+          "rows": 6556
+        },
+        {
+          "prompt_answers": 2,
+          "report_id": "1074",
+          "report_name": "1. Performance of Listed Non-Government Non-Financial Companies",
+          "rows": 2776
+        },
+        {
+          "prompt_answers": 4,
+          "report_id": "1117",
+          "report_name": "2. Performance of Listed Non-Government Non-Financial Companies - Sector - wise",
+          "rows": 9132
+        },
+        {
+          "prompt_answers": 2,
+          "report_id": "1118",
+          "report_name": "2. Performance of Listed Non-Government Non-Financial Companies - Sector - wise",
+          "rows": 7924
+        }
+      ]
+    }
+  ]
+}

@@ -13,6 +13,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import YAML from "yaml";
+import { readCatalogue } from "./lib/catalogue.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const COV = path.join(ROOT, "data", "coverage");
@@ -46,9 +47,8 @@ for (const file of ledgers) {
   const L = YAML.parse(fs.readFileSync(path.join(COV, file), "utf8")) || {};
   for (const g of asList(L.guides)) guidesCovered.add(g);
   if (!L.catalogue) { fail(`${where}: no catalogue path`); continue; }
-  const catPath = path.join(ROOT, L.catalogue);
-  if (!fs.existsSync(catPath)) { fail(`${where}: catalogue ${L.catalogue} missing — run its generator`); continue; }
-  const cat = JSON.parse(fs.readFileSync(catPath, "utf8"));
+  const cat = readCatalogue(L.catalogue, ROOT);
+  if (!cat) { fail(`${where}: catalogue ${L.catalogue} missing — run its generator`); continue; }
   if (!cat.generator) fail(`${where}: catalogue has no "generator" — catalogues are generated, never typed`);
   const items = cat.items || [];
   const ids = new Set();

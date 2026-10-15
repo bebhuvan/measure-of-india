@@ -1,11 +1,23 @@
 #!/usr/bin/env node
+import {execFileSync} from 'node:child_process';
+import {assertInvestorArchiveReady} from '../src/dossiers/investor-governed-downloads.js';
+import {validateInvestorPolicyEvidence} from './lib/investor-source-policy-evidence.mjs';
 // scripts/validate.mjs — fails the build if baked series are malformed.
 // Per-product checks: monotonic gapless dates, plausible ranges, weights sum
 // to 100, computed-vs-published cross-checks, and the base-year rule (every
 // series file's base must be the base declared for its dossier in
 // data/sources.yml — a series that crossed a base revision would fail this).
 
+import {unpublishedSnapshotProblem} from './lib/source-unpublished-snapshot.mjs';
+import {expectedScheduleProblem} from './lib/source-expected-schedule.mjs';
+import {replayPensionExpectedProofs} from './lib/pensions-expected-schedule-factory.mjs';
+import {validatePensionPolicyEvidence} from './lib/pensions-source-policy-evidence.mjs';
+const registeredExpectedSchedules = new Map();
+import {registeredSeriesRanges} from './lib/series-range-contract.mjs';
+import {vintageError} from './lib/vintage.mjs';
 import fs from "node:fs";
+import { validateMarketsRbi } from "./lib/markets-rbi-validation.mjs";
+import {isWageRate} from "./lib/measure-semantics.mjs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import YAML from "yaml";
@@ -15,11 +27,33 @@ const rawFileExists = (f) => fs.existsSync(f) || fs.existsSync(f + ".gz");
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const cfg = YAML.parse(fs.readFileSync(path.join(ROOT, "data/sources.yml"), "utf8"));
+// Fail before canonical validation or downstream publication if reviewed meaning
+// depends on missing/revised supporting source evidence, even before family promotion.
+validateInvestorPolicyEvidence(ROOT,JSON.parse(fs.readFileSync(path.join(ROOT,'data/source-quality.json'),'utf8')),{registered:Boolean(cfg.dossiers?.['investor-participation']),requireCanonical:Boolean(cfg.dossiers?.['investor-participation'])});
+if(cfg.dossiers?.['investor-participation']){execFileSync(process.execPath,[path.join(ROOT,'scripts/investor-client-certificate.mjs'),'--check'],{cwd:ROOT,stdio:'pipe'});assertInvestorArchiveReady(ROOT);}
+validatePensionPolicyEvidence(ROOT,JSON.parse(fs.readFileSync(path.join(ROOT,'data/source-quality.json'),'utf8')),{registered:Boolean(cfg.dossiers?.pensions)});
 let failures = 0;
 const fail = (msg) => { failures++; console.error("FAIL:", msg); };
 const ok = (msg) => console.log("  ok:", msg);
 
 const load = (slug) => JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", slug + ".json"), "utf8"));
+// Register only the independently pinned five-record pension schedule after its canonical
+// classification exists. Neither arbitrary flags nor another dossier can enable this map.
+if (cfg.dossiers?.pensions && fs.existsSync(path.join(ROOT, "data/series/pensions-a23.json"))) {
+  const expectedBundle = load("pensions-a23");
+  if (expectedBundle.meta?.dossier === "pensions" && expectedBundle.meta?.sourceTable === "A23" && expectedBundle.meta?.observationKind === "expected-schedule") {
+    try {
+      const proofs = replayPensionExpectedProofs(ROOT), keys = Object.keys(expectedBundle.series);
+      if (proofs.size !== 5 || keys.length !== 5 || keys.some(key => !proofs.has(`pensions-a23:${key}`))) throw Error("Expected pension record scope differs from pinned five-record review");
+      for (const key of keys) {
+        const issue = expectedScheduleProblem(expectedBundle, key, proofs.get(`pensions-a23:${key}`), "pensions-a23");
+        if (issue) throw Error(issue);
+      }
+      for (const [key, proof] of proofs) registeredExpectedSchedules.set(key, proof);
+    } catch (error) { fail(`pensions-a23: expected source replay failed: ${error.message}`); }
+  }
+}
+
 
 function checkCadence(dates, stepMonths, slug) {
   let prev = null;
@@ -42,12 +76,14 @@ function trailingEst(s, dates, i, last) {
   return true;
 }
 
-function checkRange(bundle, lo, hi, slug, seriesRange) {
+function checkRange(bundle, lo, hi, slug, seriesRange, verifiedSourceSnapshots = new Map(), verifiedExpectedSchedules = registeredExpectedSchedules) {
   // CONTRACT-series rule 2: disclosure lives on the series. A bundle-level
   // meta.gaps union survived only in the legacy shape; writeSeries migrates
   // it, so any meta.gaps here bypassed the writer by hand.
   if (bundle.meta?.gaps?.length) fail(`${slug}: bundle-level meta.gaps is retired — declare gaps on the series that miss the dates (writeSeries migrates automatically)`);
   for (const [k, s] of Object.entries(bundle.series)) {
+    const expectedIssue = expectedScheduleProblem(bundle, k, verifiedExpectedSchedules.get(`${slug}:${k}`), slug);
+    if (expectedIssue) fail(`${slug}.${k}: ${expectedIssue}`);
     // a bundle may mix units (a % share beside a constant-US$ level); a
     // per-series range overrides the bundle default
     const [slo, shi] = seriesRange?.[k] ?? [lo, hi];
@@ -56,7 +92,12 @@ function checkRange(bundle, lo, hi, slug, seriesRange) {
     // span are fine, interior nulls must be disclosed in that series' gaps.
     const first = s.data.findIndex((v) => v != null);
     const last = s.data.length - 1 - [...s.data].reverse().findIndex((v) => v != null);
-    if (first === -1) { fail(`${slug}.${k}: entirely empty`); continue; }
+    if (first === -1) {
+      const problem = unpublishedSnapshotProblem(bundle, k, verifiedSourceSnapshots.get(`${slug}:${k}`));
+      if (problem) fail(`${slug}.${k}: entirely empty (${problem})`);
+      continue;
+    }
+    if (s.unavailable) fail(`${slug}.${k}: source-unpublished declaration on a numeric observation`);
     const gaps = new Set(s.gaps ?? []);
     const estimated = new Set(s.estimated ?? []);
     for (const d of s.estimated ?? []) {
@@ -79,11 +120,12 @@ function checkRange(bundle, lo, hi, slug, seriesRange) {
 
 function checkMeta(bundle, slug, dossierKey, baseOverride, freqOverride) {
   const m = bundle.meta ?? {};
-  for (const k of ["source", "vintage", "base", "frequency"]) {
+  for (const k of ["source", "base", "frequency"]) {
     if (m[k] == null) fail(`${slug}: meta.${k} missing`);
   }
   const declared = baseOverride ?? cfg.dossiers[dossierKey]?.base;
   if (declared && m.base !== declared) fail(`${slug}: meta.base "${m.base}" != sources.yml "${declared}" (base-year rule)`);
+  const vintageIssue=vintageError(m);if(vintageIssue)fail(`${slug}: ${vintageIssue}`);
   const freq = freqOverride ?? cfg.dossiers[dossierKey]?.frequency;
   // a dossier whose bundles legitimately mix frequencies (multi-survey
   // compendia) declares frequency_exempt in sources.yml — never a hardcoded
@@ -108,8 +150,7 @@ function checkMeta(bundle, slug, dossierKey, baseOverride, freqOverride) {
 //    the floor is a minimum, so late-arriving history can never false-fail.
 function checkFreshness(bundle, slug, row, dossierKey) {
   const m = bundle.meta ?? {};
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(m.vintage ?? ""))) fail(`${slug}: meta.vintage "${m.vintage}" is not an ISO date`);
-  else if (m.vintage > new Date().toISOString().slice(0, 10)) fail(`${slug}: meta.vintage ${m.vintage} is in the future — vintage is the data vintage, not the fetch date`);
+  const vintageIssue=vintageError(m);if(vintageIssue)fail(`${slug}: ${vintageIssue}`);
   const last = bundle.dates.at(-1);
   const lp = m.latestPeriod;
   if (typeof lp === "string") {
@@ -3458,7 +3499,13 @@ withBundle("wages-rural-2013", (b) => {
     checkMeta(b, slug, b.meta.dossier, b.meta.base, b.meta.frequency);
     if (b.dates.length > 1 && CAD[b.meta.frequency]) checkCadence(b.dates, CAD[b.meta.frequency], slug);
     const sr = {};
-    for (const [k, s] of Object.entries(b.series)) { const u = s.unit ?? b.meta.unit; if (!UR[u]) fail(`${slug}.${k}: unit "${u}" has no range`); sr[k] = UR[u] ?? [-Infinity, Infinity]; }
+    for (const [k, s] of Object.entries(b.series)) { const u = s.unit ?? b.meta.unit; if (!UR[u]) fail(`${slug}.${k}: unit "${u}" has no range`); // Listed-company growth and coverage ratios have no economic +/-200 or
+      // +/-15000 ceiling: a small denominator can produce a valid extreme.
+      // Source-native lineage, exact sentinel rejection and accounting identities
+      // are checked separately by validateMarketsRbi; retain a broad corruption guard.
+      sr[k] = b.meta.dossier === "markets-listed" && s.measure === "share"
+        ? [0, 100.05] : b.meta.dossier === "markets-listed" && ["growth", "ratio"].includes(s.measure) && ["pct", "times"].includes(u)
+        ? [-1e6, 1e6] : UR[u] ?? [-Infinity, Infinity]; }
     checkRange(b, -Infinity, Infinity, slug, sr);
     checkFreshness(b, slug, FLOOR[slug] ? { staleAfter: FLOOR[slug] } : { stale: false }, b.meta.dossier);
     n++;
@@ -3505,6 +3552,8 @@ withBundle("wages-rural-2013", (b) => {
     b.dates.forEach((d, i) => { const e = g("ebitda", i), o = g("opr_pft", i), oi = g("oth_inc", i), dp = g("deprc", i), eb = g("gross_pft_ebit", i); if ([e, o, oi, dp, eb].includes(undefined) || [e, o, oi, dp, eb].includes(null)) return; c++;
       if (Math.abs(o + oi - e) > 5e-4 * Math.abs(e) + 1 || Math.abs(e - dp - eb) > 5e-4 * Math.abs(e) + 1) bad++; });
     if (!c || bad) fail(`markets-listed-q-levels: EBITDA/EBIT identities fail in ${bad} of ${c} quarters`); else ok(`markets-listed-q-levels: EBITDA = operating profit + other income, EBIT = EBITDA - depreciation in all ${c} quarters`); });
+  // markets-rbi: all split identities and cell lineage, exact reviewed conflict set.
+  { const result = validateMarketsRbi(ROOT); for (const error of result.errors) fail(error); if (!result.errors.length) ok(`markets-rbi: ${result.identities} accounting identities, ${result.provenance} cells with source lineage`); }
   // SPF: lowest <= median <= highest, quartiles inside
   for (const sl of ["markets-spf", "markets-spf-2019", "markets-spf-quarterly", "markets-spf-quarterly-2019", "markets-spf-inflation", "markets-spf-inflation-2019"]) withBundle(sl, (b) => {
     let c = 0, bad = 0;
@@ -3908,6 +3957,29 @@ withBundle("farms-states-production", (b) => withBundle("farms-production", (n) 
   });
 }
 
+// Schools: complete source-cell replay, collection seam and independent identities.
+if (fs.existsSync(path.join(ROOT, "data/coverage/schools.manifest.json"))) {
+  const { validateSchools } = await import("./lib/schools-validation.mjs");
+  for(const {slug} of JSON.parse(fs.readFileSync(path.join(ROOT,"data/coverage/schools.manifest.json"))).bundles){
+    const b=load(slug);checkMeta(b,slug,"schools",b.meta.base,b.meta.frequency);checkFreshness(b,slug,{},"schools");
+    if(b.meta.frequency==="annual")checkCadence(b.dates,12,slug);
+  }
+  const result = validateSchools(ROOT);
+  for (const error of result.errors) fail(error);
+  if (!result.errors.length) ok(`schools: ${result.stats.sourceCells} source cells replayed; ${result.stats.identities} count/share identities; collection seam clean`);
+}
+
+// AIDIS source-cell replay and statistical identities, separate stock/flow axes.
+if (fs.existsSync(path.join(ROOT, "data/coverage/households.manifest.json"))) {
+ const {validateHouseholds}=await import("./lib/households-validation.mjs");
+ for(const {slug} of JSON.parse(fs.readFileSync(path.join(ROOT,"data/coverage/households.manifest.json"))).bundles){
+  const b=load(slug);checkMeta(b,slug,"households",b.meta.base,b.meta.frequency);checkFreshness(b,slug,{},"households");
+ }
+ const result=validateHouseholds(ROOT);for(const e of result.errors)fail(e);
+ fs.writeFileSync(path.join(ROOT,"data/coverage/households.source-quality.json"),JSON.stringify(result,null,1)+'\n');
+ if(!result.errors.length)ok(`households: ${result.stats.sourceCells} source cells replayed; ${result.stats.identities} statistical identities; ${result.issues.length} published discrepancies flagged`);
+}
+
 // META TEXT — every bundle on disk, whatever check family it belongs to, and every sources.yml
 // entry the adapters copy text from: meta.geo is a three-letter code on every bundle (CONTRACT-series
 // rule 8), and a revision policy, where one is given, reads as a sentence, never a placeholder
@@ -3919,9 +3991,25 @@ withBundle("farms-states-production", (b) => withBundle("farms-production", (n) 
   let n = 0, noPolicy = 0, bad = 0;
   for (const f of fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => f.endsWith(".json")).sort()) {
     const slug = f.replace(/\.json$/, "");
-    let m;
-    try { m = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", f), "utf8")).meta ?? {}; } catch (e) { fail(`${slug}: unreadable (${e.message})`); bad++; continue; }
+    let m, canonical;
+    try { canonical = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", f), "utf8")); m = canonical.meta ?? {}; } catch (e) { fail(`${slug}: unreadable (${e.message})`); bad++; continue; }
     n++;
+    if (m.observationKind !== undefined || Object.values(canonical.series || {}).some(series => series.expected !== undefined)) {
+      if (m.observationKind !== undefined && m.observationKind !== "expected-schedule") { fail(`${slug}: unsupported observationKind ${JSON.stringify(m.observationKind)}`); bad++; }
+      if (!Object.keys(canonical.series || {}).length) { fail(`${slug}: empty expected-source bundle`); bad++; }
+      for (const key of Object.keys(canonical.series || {})) {
+        const problem = expectedScheduleProblem(canonical, key, registeredExpectedSchedules.get(`${slug}:${key}`), slug);
+        if (problem) { fail(`${slug}.${key}: ${problem}`); bad++; }
+      }
+    }
+    if (m.periodLabelMode !== undefined && m.periodLabelMode !== "source-date") { fail(`${slug}: unknown meta.periodLabelMode ${JSON.stringify(m.periodLabelMode)}`); bad++; }
+    if (m.periodLabelMode === "source-date") {
+      const bundle = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", f), "utf8"));
+      for (const iso of bundle.dates) {
+        const date = new Date(iso + "T00:00:00Z");
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(iso) || !Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== iso) { fail(`${slug}: invalid exact source date ${JSON.stringify(iso)}`); bad++; }
+      }
+    }
     if (typeof m.geo !== "string" || !/^[A-Z]{3}$/.test(m.geo)) { fail(`${slug}: meta.geo ${JSON.stringify(m.geo)} is not a three-letter code (every bundle names its geography)`); bad++; }
     if (m.revisionPolicy == null) noPolicy++;
     else if (!sentence(m.revisionPolicy)) { fail(`${slug}: meta.revisionPolicy ${JSON.stringify(m.revisionPolicy)} is not a sentence (fix sources.yml revision_policy or the adapter, then rebake)`); bad++; }
@@ -3967,7 +4055,7 @@ export const NONZERO = [
   { why: "a parity index or pupil-teacher ratio is never 0", test: (s, u) => u === "gpi" || u === "pupils_per_teacher" },
   { why: "a crop yield is never 0 (a crop not grown has no yield)", test: (s, u) => u === "kg_per_hectare" && /yield/i.test(`${s.label} ${s.name}`) },
   // a wage rate (rupees a day, a month, a year per person), not a wage bill (ASI's crore totals can be 0)
-  { why: "a wage or earning per person is never 0", test: (s, u, k, m) => /^inr(_per_(day|hour|month|30_days|year))?$/.test(u ?? "") && /\b(wages?|emoluments?|earnings?)\b/i.test(`${s.label} ${s.name} ${m?.coverage ?? ""}`) },
+  { why: "a wage or earning per person is never 0", test: (s, u, k, m) => isWageRate(s,u,m) },
   { why: "a rupee figure per worker or per establishment is never 0", test: (s, u) => u === "inr_per_year" && /per (hired )?worker|per est/i.test(`${s.label} ${s.name}`) },
   // for a state's whole population or one sex; a narrow cell (diploma holders, young urban women of
   // one UT) can be 0 in a survey sample, so education and age-band cuts are left out
@@ -4001,6 +4089,60 @@ const { bornStandIns } = await import("./lib/util.mjs");
   if (!bad) ok(`no-estimate zeros: none in ${n} series that cannot be 0 (exchange rates, indices, ratios, yields, wages)`);
 }
 // ---- end datafix ----
+
+// ---- energy expansion ----
+if(fs.existsSync(path.join(ROOT,"data/coverage/energy.manifest.json"))){
+ const {validateEnergy}=await import("./lib/energy-validation.mjs");
+ for(const {slug} of JSON.parse(fs.readFileSync(path.join(ROOT,"data/coverage/energy.manifest.json"))).bundles){const b=load(slug);checkMeta(b,slug,"energy",b.meta.base,b.meta.frequency);checkRange(b,-1e8,1e8,slug);checkCadence(b.dates,b.meta.frequency==="monthly"?1:12,slug);}
+ const result=validateEnergy(ROOT);for(const e of result.errors)fail(e);
+ fs.writeFileSync(path.join(ROOT,"data/coverage/energy.source-quality.json"),JSON.stringify(result,null,1)+'\n');
+ if(!result.errors.length)ok("energy: "+result.stats.sourceCells+" source cells replayed; "+result.stats.identities+" identities; "+result.issues.length+" published discrepancies disclosed");
+}
+// ---- end energy expansion ----
+
+// ---- farm-households: exact source replay, report recovery and identities ----
+if(fs.existsSync(path.join(ROOT,'data/coverage/farm-households.manifest.json'))){
+ const {validateFarmHouseholds}=await import('./lib/farm-households-validation.mjs');
+ for(const {slug} of JSON.parse(fs.readFileSync(path.join(ROOT,'data/coverage/farm-households.manifest.json'))).bundles){const b=load(slug);checkMeta(b,slug,'farm-households',b.meta.base,b.meta.frequency);if(b.dates.length!==1||Object.values(b.series).some(s=>s.data.length!==1))fail('Farm snapshot axis mismatch '+slug);}
+ const r=validateFarmHouseholds(ROOT);for(const e of r.errors)fail(e);
+ fs.writeFileSync(path.join(ROOT,'data/coverage/farm-households.source-quality.json'),JSON.stringify(r,null,1)+'\n');
+ if(!r.errors.length)ok(`farm-households: ${r.stats.sourceCells} API/report cells replayed; ${r.stats.identities} identities; ${r.stats.withheld} source heading cells withheld`);
+}
+// ---- end farm-households ----
+
+// Digital access: ordinary finite ranges plus independently replayed source-unpublished snapshots.
+if(fs.existsSync(path.join(ROOT,'data/coverage/digital-access.manifest.json'))){
+ const trusted=cfg.dossiers['digital-access'];
+ const manifest=JSON.parse(fs.readFileSync(path.join(ROOT,'data/coverage/digital-access.manifest.json')));
+ const bundles=new Map([...manifest.bundles,...manifest.supportTables].map(({slug})=>[slug,load(slug)]));
+ const {replayDigitalSnapshotProofs}=await import('./lib/digital-source-snapshot-factory.mjs');
+ const source=replayDigitalSnapshotProofs(ROOT,{relativeContractFile:trusted.snapshotSourceContract,reviewedConfigSha256:trusted.snapshotSourceContractSha256,canonicalBundles:bundles});
+ const {validateDigitalAccess}=await import('./lib/digital-access-validation.mjs');
+ const result=validateDigitalAccess(ROOT,{reportPins:source.config.reportArchive,verifiedSourceSnapshots:source.proofs});
+ for(const error of result.errors)fail(error);
+ for(const [slug,b]of bundles){
+  checkMeta(b,slug,'digital-access',b.meta.base,b.meta.frequency);
+  const ranges=registeredSeriesRanges(b,trusted.ranges,slug);
+  checkRange(b,0,100,slug,ranges,source.proofs);
+ }
+ if(!result.errors.length)ok(`digital-access: ${result.stats.sourceCells} API cells and ${result.stats.supportCells} support cells; ${source.proofs.size} independently proved unpublished snapshots`);
+}
+
+// Pensions: full record/metadata fingerprints are the source replay boundary.
+// The finite envelope checks archival numbers without certifying pending units.
+if (cfg.dossiers?.pensions) {
+  try {
+    const {pensionsModel}=await import('../src/dossiers/pensions.model.js');
+    const model=pensionsModel({root:ROOT});
+    for(const {slug} of model.manifest.bundles){
+      const b=load(slug);checkMeta(b,slug,'pensions',b.meta.base,b.meta.frequency);
+      if(!b.dates.length||b.dates.some((d,i)=>!/^\d{4}-\d{2}-\d{2}$/.test(d)||!Number.isFinite(Date.parse(d))||(i&&d<=b.dates[i-1])))fail(`${slug}: invalid or unordered source axis`);
+      for(const [key,row] of Object.entries(b.series))if(row.data.some(v=>v!==null&&!Number.isFinite(v)))fail(`${slug}.${key}: non-finite source value`);
+      checkRange(b,-1e15,1e15,slug);
+    }
+    ok(`pensions: ${model.manifest.bundles.length} source-bound bundles; ${model.coverage.reviewedStandaloneRecords} reviewed, ${model.coverage.pendingRecords} pending, ${model.coverage.sourceOnlyRecords} source-only`);
+  } catch(error){fail(`pensions: ${error.message}`);}
+}
 
 if (failures) { console.error(`\n${failures} validation failure(s)`); process.exit(1); }
 console.log("validate: all checks passed");

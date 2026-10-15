@@ -15,7 +15,7 @@ disagree, file a bug — one of them is wrong.
     "base": "2012=100 | 2024=100 | null",
     "frequency": "monthly | quarterly | annual | irregular",
     "unit": "pct_yoy | index | inr_lakh | count | …",
-    "vintage": "YYYY-MM-DD  — the date the DATA changed, not the fetch date",
+    "vintage": "YYYY-MM-DD — data vintage, or null under the declared-unknown contract below",
     "geo": "ISO3 country/economy code of the series' coverage",
     "latestPeriod": "human label of the last published period",
     "releaseDate": "YYYY-MM-DD of the source's press release, when knowable",
@@ -45,7 +45,8 @@ disagree, file a bug — one of them is wrong.
    that misses them (validate fails otherwise) — a bundle-level `meta.gaps`
    union is retired, because it cannot say which series actually misses
    which date. Trailing nulls are forbidden — the axis ends at the last
-   published period of the bundle as a whole.
+   published period of the bundle as a whole, except for the independently
+   proved source-unpublished snapshot class in rule 2c.
 2b. **Estimated points are disclosed where they live.** A value produced by
    an estimator (linear interpolation, imputation) is data — it stays in
    `data`, never becomes `null` — but its date must be listed in that
@@ -55,6 +56,40 @@ disagree, file a bug — one of them is wrong.
    series (an agency's extrapolation of its latest periods, such as BIS's
    India credit after the last financial-accounts quarter). Say how the
    estimate was made in the series' `estimatedNote`.
+2c. **Source-unpublished survey cells are a narrow snapshot class.** A
+   cross-sectional bundle with exactly one source period may retain a series
+   containing exactly one null only when the original archived source prints
+   an exact dash for that exact observed cut. This is not an all-null history,
+   an estimate, a zero or a claim that the denominator is zero. The series
+   declares `unavailable.kind: "source-unpublished"` and its exact source record
+   key/marker; the bundle shares the portable archival file, stored-body hash,
+   instrument, context, sole period and plain reason. An independent raw/report
+   replay must bind every declaration, unit and full measure label to the
+   original source cell. Canonical flags alone never authorize this exception.
+   Missing proof, altered source/provenance, alternate blank/null markers,
+   mismatched rulers, multiple periods and all-null histories fail. Numeric
+   observations remain subject to ordinary range checks. Qualified records stay
+   discoverable with their known period and reason, a null/em dash and no
+   calculated change; downloads retain the same identity and source marker.
+   This exception requires explicit reviewed source-contract wiring and never
+   applies automatically to other missing cells or statistical families.
+2d. **A fully expected source schedule is separate from observed estimates.**
+   Optional `meta.observationKind: "expected-schedule"` declares a source-bound
+   administrative schedule, never realised events or an observed current stock.
+   `series.expected` lists every and only non-null source date; `expectedNote`
+   gives the source method. Unknown forecast as-of is `forecastAsOfDate: null`
+   and `forecastAsOfStatus: "unknown"`, never a capture date or a date borrowed
+   from another edition. A pinned independently reviewed descriptor and original
+   source replay must prove title, method, unit, population, ruler, exact dates,
+   cells and values, with private process-branded proofs plus exact canonical
+   record fingerprints. Flags or copied proof JSON cannot authorize this class.
+   All-null records receive no exception. Expected dates cannot also be observed
+   estimate dates. Rule2b and its first-point rejection remain unchanged for
+   ordinary estimates. Consumers label every expected observation, retain the
+   entire source schedule, and withhold observed latest, YoY, realised-exit
+   headlines and current state-profile claims. CSV/JSON preserve exact dates,
+   values and nulls with explicit expected flags; legacy exports are unchanged.
+   Source headings and actual table windows that disagree remain disclosed.
 3. **One bundle, one instrument.** A base-year change, methodology revision,
    or coverage break starts a NEW bundle (`cpi.json` → `cpi-2024.json`).
    Never splice. Pages may show both, labelled as different rulers. Every base
@@ -77,6 +112,18 @@ disagree, file a bug — one of them is wrong.
    like base years (rule 3). `meta.geo` is the ISO3 code; validate.mjs checks
    it against the dossier's `geo` in `data/sources.yml`.
 
+## Exact source-date display
+
+Optional `meta.periodLabelMode: "source-date"` declares that an ISO axis key is
+an exact source reference or valuation date. EveryCut formats it as `8 Oct 2026`
+(including January's day) before legacy calendar heuristics or single-period
+labels. Omitted mode retains existing calendar labels. Any other supplied value,
+including null, is invalid. Source-date axes must contain real ISO calendar dates;
+CSV date columns and JSON dates remain the original ISO keys; CSV reference-period
+labels retain the same full source day. This flag
+changes display only: it grants no observed status, freshness, comparability,
+territorial scope or permission to interpret a record.
+
 ## Producers and consumers
 
 - Producers: `scripts/lib/products/*.mjs` (one adapter per source product).
@@ -85,3 +132,19 @@ disagree, file a bug — one of them is wrong.
 - QC loads bundles lazily by slug and fails cleanly on a missing file; its
   dossier-page coverage is guarded against `src/dossiers/registry.js` — a
   dossier cannot ship with unverified rendered numbers.
+
+### Explicitly unpublished revision dates
+
+A source without a published data revision timestamp must not borrow its archive
+capture date or a report publication date as `meta.vintage`. In this case only,
+use `vintage: null`, `vintageStatus: "unknown"` and a substantive `vintageNote`
+explaining the unavailable source date. Missing or undeclared null vintages
+remain errors. Dated vintages must remain real, nonfuture ISO dates.
+
+Keep `archiveCapturedDate`, `reportEditionDate` and `apiRevisionDate` as separate
+provenance fields when known; a missing revision date stays null. A dated report
+edition can retain its publication date with `vintageBasis: "report-edition"`;
+that does not establish a revision date for a separately served API. Shared
+validation and display use `scripts/lib/vintage.mjs`. Mixed families must expose
+unknown revisions rather than silently selecting the newest known date. Guide
+headers can derive an explicitly labelled edition stamp from `reportEditionDate`.

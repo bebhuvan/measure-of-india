@@ -1,0 +1,4 @@
+import fs from 'node:fs';import path from 'node:path';import zlib from 'node:zlib';
+// Compression is an external staging/storage choice; production canonical files remain plain JSON.
+export function readInvestorBundle(root,slug){const plain=path.join(root,'data/series',slug+'.json');const file=fs.existsSync(plain)?plain:plain+'.gz';const bytes=fs.readFileSync(file);return JSON.parse((bytes[0]===31&&bytes[1]===139?zlib.gunzipSync(bytes):bytes).toString('utf8'));}
+export function investorBundleNames(root){const files=fs.readdirSync(path.join(root,'data/series')).filter(f=>/^investor-.*\.json(?:\.gz)?$/.test(f));const names=files.map(f=>f.replace(/\.json(?:\.gz)?$/,''));if(new Set(names).size!==names.length)throw Error('Duplicate compressed/plain investor candidates; complete staged compression first');return names.sort();}

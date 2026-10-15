@@ -1,0 +1,5080 @@
+{
+ "meta": {
+  "dossier": "energy",
+  "geo": "IND",
+  "base": "Energy Statistics India 2026 edition",
+  "revisionPolicy": "Agency revisions retained as new raw vintages before rebaking.",
+  "source": "MoSPI, Energy Statistics India 2026, original Excel tables",
+  "sourceUrl": "https://www.mospi.gov.in/uploads/documents/publicationsReports/1776238032990-Chapter%207.xlsx",
+  "product": "energy-report-2026-commodity",
+  "frequency": "annual",
+  "calendar": "fiscal-apr",
+  "unit": "thousand_tonnes",
+  "rawFile": "data/raw/energy-report-2026-workbook-rows.json",
+  "note": "2026 report edition; revised historical balances kept separate from the 2025 API edition. Workbook precision retained without rounding source cells. Latest year provisional. Nested totals overlap parts; blanks are unpublished, not zeros. Bunkers have source sign/total inconsistencies disclosed by validation. PJ electricity-output rows are scaled despite GWh headings and are audit-only.",
+  "vintage": "2026-03-30",
+  "vintageStatus": "known",
+  "vintageBasis": "publisher-publication-edition",
+  "vintageNote": "This is the publisher listing date of the report edition; it does not assert the date of any later undocumented file revision.",
+  "reportEditionDate": "2026-03-30",
+  "reportEditionYear": 2026,
+  "sourceDateURL": "https://www.mospi.gov.in/publications-reports/innerpage/2817",
+  "sourceDateEvidence": {
+   "rawFile": "data/raw/energy-report-2026-list.json",
+   "chapterId": "3690",
+   "field": "published_date",
+   "sourceFileURL": "https://www.mospi.gov.in/uploads/documents/publicationsReports/1776238032990-Chapter%207.xlsx"
+  },
+  "sourceRevisionDate": null,
+  "archiveCapturedDate": null,
+  "archiveCapturedAt": null,
+  "archiveCaptureNote": "Capture time was not recorded in the preserved workbook envelope.",
+  "latestPeriod": "2024–25"
+ },
+ "dates": [
+  "2023-04-01",
+  "2024-04-01"
+ ],
+ "series": {
+  "c_dfb8388a49880b5c6ec8": {
+   "name": "c_dfb8388a49880b5c6ec8",
+   "label": "Coal / Production",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    997825.9999999999,
+    1047522.607546
+   ],
+   "sourceCells": 2
+  },
+  "c_090e2d2865c47246dd2d": {
+   "name": "c_090e2d2865c47246dd2d",
+   "label": "Lignite / Production",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    42921,
+    45133.498154
+   ],
+   "sourceCells": 2
+  },
+  "c_5dff8b5d2992d23d8917": {
+   "name": "c_5dff8b5d2992d23d8917",
+   "label": "LPG / Production",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    12776.939382857,
+    12787.802160320001
+   ],
+   "sourceCells": 2
+  },
+  "c_62550bccb0ab6520bdd6": {
+   "name": "c_62550bccb0ab6520bdd6",
+   "label": "Naphtha / Production",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    18274.078490347,
+    17924.407373656002
+   ],
+   "sourceCells": 2
+  },
+  "c_e914ede8106960df2f09": {
+   "name": "c_e914ede8106960df2f09",
+   "label": "Kerosene / Production",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    983.111925442041,
+    1008.486442553
+   ],
+   "sourceCells": 2
+  },
+  "c_46c7c6fe229fe5753179": {
+   "name": "c_46c7c6fe229fe5753179",
+   "label": "Diesel (HSD+ LDO) / Production",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    116600.131495936,
+    118852.962782061
+   ],
+   "sourceCells": 2
+  },
+  "c_b296d676c5d4e2f5d6c6": {
+   "name": "c_b296d676c5d4e2f5d6c6",
+   "label": "Fuel Oil / Production",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    10442.221163631999,
+    10858.739431840995
+   ],
+   "sourceCells": 2
+  },
+  "c_18506850e72d4a2e2ce2": {
+   "name": "c_18506850e72d4a2e2ce2",
+   "label": "Lubricants / Production",
+   "dims": {
+    "fuel": "Lubricants",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    1351.586901786,
+    1299.6821793390002
+   ],
+   "sourceCells": 2
+  },
+  "c_7c04da1c45cfd421a6ad": {
+   "name": "c_7c04da1c45cfd421a6ad",
+   "label": "Bitumin / Production",
+   "dims": {
+    "fuel": "Bitumin",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    5239.973847394,
+    5303.346233443999
+   ],
+   "sourceCells": 2
+  },
+  "c_88b3d64929b740e39524": {
+   "name": "c_88b3d64929b740e39524",
+   "label": "Petrol/Motor Spirit / Production",
+   "dims": {
+    "fuel": "Petrol/Motor Spirit",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    45080.5595740739,
+    48264.58893680663
+   ],
+   "sourceCells": 2
+  },
+  "c_9576e9e05924e7fee679": {
+   "name": "c_9576e9e05924e7fee679",
+   "label": "ATF / Production",
+   "dims": {
+    "fuel": "ATF",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    17124.078880875,
+    17754.527740008005
+   ],
+   "sourceCells": 2
+  },
+  "c_a0d86b2b8a11269075c1": {
+   "name": "c_a0d86b2b8a11269075c1",
+   "label": "Petroleum Coke / Production",
+   "dims": {
+    "fuel": "Petroleum Coke",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    15054.181391506081,
+    14963.43123739771
+   ],
+   "sourceCells": 2
+  },
+  "c_a6b0b3e74610df42e6e4": {
+   "name": "c_a6b0b3e74610df42e6e4",
+   "label": "Other Petroleum Products* / Production",
+   "dims": {
+    "fuel": "Other Petroleum Products*",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    33129.19172280647,
+    34752.67413536884
+   ],
+   "sourceCells": 2
+  },
+  "c_841af79d147a3b2c0fd7": {
+   "name": "c_841af79d147a3b2c0fd7",
+   "label": "Coal / Imports",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    264531.365711,
+    243622.319943
+   ],
+   "sourceCells": 2
+  },
+  "c_ad3f7743c00b70c1bd61": {
+   "name": "c_ad3f7743c00b70c1bd61",
+   "label": "Lignite / Imports",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    52.116931,
+    140
+   ],
+   "sourceCells": 2
+  },
+  "c_338bb7bc658ff2d66e8e": {
+   "name": "c_338bb7bc658ff2d66e8e",
+   "label": "LPG / Imports",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    18514.197282,
+    20666.855391
+   ],
+   "sourceCells": 2
+  },
+  "c_25864e2993ea5e25294d": {
+   "name": "c_25864e2993ea5e25294d",
+   "label": "Naphtha / Imports",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    1210.7779389999998,
+    940.696646
+   ],
+   "sourceCells": 2
+  },
+  "c_71632036005b49ad4698": {
+   "name": "c_71632036005b49ad4698",
+   "label": "Kerosene / Imports",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_7f894578fab20c7538e6": {
+   "name": "c_7f894578fab20c7538e6",
+   "label": "Diesel (HSD+ LDO) / Imports",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    42.058901000000006,
+    41.94735
+   ],
+   "sourceCells": 2
+  },
+  "c_814dbb4b86fa995fdadc": {
+   "name": "c_814dbb4b86fa995fdadc",
+   "label": "Fuel Oil / Imports",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    9052.639272,
+    7673.976284
+   ],
+   "sourceCells": 2
+  },
+  "c_3620261c6c4ff972f59b": {
+   "name": "c_3620261c6c4ff972f59b",
+   "label": "Lubricants / Imports",
+   "dims": {
+    "fuel": "Lubricants",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    2412.471288,
+    2864.117811
+   ],
+   "sourceCells": 2
+  },
+  "c_4113a00e0d658dfecfc1": {
+   "name": "c_4113a00e0d658dfecfc1",
+   "label": "Bitumin / Imports",
+   "dims": {
+    "fuel": "Bitumin",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    3243.617271,
+    2899.915331
+   ],
+   "sourceCells": 2
+  },
+  "c_5988c2353c94966090f0": {
+   "name": "c_5988c2353c94966090f0",
+   "label": "Petrol/Motor Spirit / Imports",
+   "dims": {
+    "fuel": "Petrol/Motor Spirit",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    717.4010170000001,
+    234.583479
+   ],
+   "sourceCells": 2
+  },
+  "c_92db48339370a216c1f9": {
+   "name": "c_92db48339370a216c1f9",
+   "label": "ATF / Imports",
+   "dims": {
+    "fuel": "ATF",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0.00235,
+    0.014612
+   ],
+   "sourceCells": 2
+  },
+  "c_489c420322b99bcff27e": {
+   "name": "c_489c420322b99bcff27e",
+   "label": "Petroleum Coke / Imports",
+   "dims": {
+    "fuel": "Petroleum Coke",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    10955.784716999999,
+    13152.580267
+   ],
+   "sourceCells": 2
+  },
+  "c_937908c1229fdc37f817": {
+   "name": "c_937908c1229fdc37f817",
+   "label": "Other Petroleum Products* / Imports",
+   "dims": {
+    "fuel": "Other Petroleum Products*",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    2543.874926999997,
+    2428.330621000001
+   ],
+   "sourceCells": 2
+  },
+  "c_d08555dcc17b383c808a": {
+   "name": "c_d08555dcc17b383c808a",
+   "label": "Coal / Exports",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -1545.3649509999998,
+    -1914.173849
+   ],
+   "sourceCells": 2
+  },
+  "c_fd58dcf47bf94ef4888a": {
+   "name": "c_fd58dcf47bf94ef4888a",
+   "label": "Lignite / Exports",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -1.6180889999999999,
+    -20
+   ],
+   "sourceCells": 2
+  },
+  "c_9eae2aa1510e0c549750": {
+   "name": "c_9eae2aa1510e0c549750",
+   "label": "LPG / Exports",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -525.3820000000001,
+    -551.1856379999999
+   ],
+   "sourceCells": 2
+  },
+  "c_a32602b711e114f739eb": {
+   "name": "c_a32602b711e114f739eb",
+   "label": "Naphtha / Exports",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -5275.269656,
+    -5168.998305
+   ],
+   "sourceCells": 2
+  },
+  "c_73cdf336ef14f3e1677c": {
+   "name": "c_73cdf336ef14f3e1677c",
+   "label": "Kerosene / Exports",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -10.890999999999998,
+    -11.961593
+   ],
+   "sourceCells": 2
+  },
+  "c_2fcd0192dca99315db8b": {
+   "name": "c_2fcd0192dca99315db8b",
+   "label": "Diesel (HSD+ LDO) / Exports",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -28204.495859190098,
+    -28027.261155991702
+   ],
+   "sourceCells": 2
+  },
+  "c_5eb0d62599825f3cb323": {
+   "name": "c_5eb0d62599825f3cb323",
+   "label": "Fuel Oil / Exports",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -2102.956147841,
+    -2413.1793500000003
+   ],
+   "sourceCells": 2
+  },
+  "c_cb848784fbd0a28972be": {
+   "name": "c_cb848784fbd0a28972be",
+   "label": "Lubricants / Exports",
+   "dims": {
+    "fuel": "Lubricants",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -14.8082859868,
+    -17.049557995100002
+   ],
+   "sourceCells": 2
+  },
+  "c_288c8ae63d55be102e76": {
+   "name": "c_288c8ae63d55be102e76",
+   "label": "Bitumin / Exports",
+   "dims": {
+    "fuel": "Bitumin",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -17.564695999999998,
+    -23.067804000000002
+   ],
+   "sourceCells": 2
+  },
+  "c_93d34367ebe21a60dcac": {
+   "name": "c_93d34367ebe21a60dcac",
+   "label": "Petrol/Motor Spirit / Exports",
+   "dims": {
+    "fuel": "Petrol/Motor Spirit",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -13472.477672666999,
+    -15830.4789225684
+   ],
+   "sourceCells": 2
+  },
+  "c_74594d657fea751181ff": {
+   "name": "c_74594d657fea751181ff",
+   "label": "ATF / Exports",
+   "dims": {
+    "fuel": "ATF",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -8579.373902,
+    -8553.955524
+   ],
+   "sourceCells": 2
+  },
+  "c_e9c3c04f88c1692dddcb": {
+   "name": "c_e9c3c04f88c1692dddcb",
+   "label": "Petroleum Coke / Exports",
+   "dims": {
+    "fuel": "Petroleum Coke",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -27.5,
+    -692.2932
+   ],
+   "sourceCells": 2
+  },
+  "c_44cb610f17a22fb61f8a": {
+   "name": "c_44cb610f17a22fb61f8a",
+   "label": "Other Petroleum Products* / Exports",
+   "dims": {
+    "fuel": "Other Petroleum Products*",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -4362.147287699998,
+    -3786.2591122690064
+   ],
+   "sourceCells": 2
+  },
+  "c_3c434b40fbaa392eb3f1": {
+   "name": "c_3c434b40fbaa392eb3f1",
+   "label": "Diesel (HSD+ LDO) / International marine bunkers",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "International marine bunkers",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    867,
+    974
+   ],
+   "sourceCells": 2
+  },
+  "c_0a17b1a621788ac0143f": {
+   "name": "c_0a17b1a621788ac0143f",
+   "label": "ATF / International aviation bunkers",
+   "dims": {
+    "fuel": "ATF",
+    "flow": "International aviation bunkers",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    2057,
+    2303
+   ],
+   "sourceCells": 2
+  },
+  "c_2962b0adbeeeba4b37a4": {
+   "name": "c_2962b0adbeeeba4b37a4",
+   "label": "Coal / Stock changes",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Stock changes",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -24330,
+    -22141
+   ],
+   "sourceCells": 2
+  },
+  "c_69fb776608f5cdc8821e": {
+   "name": "c_69fb776608f5cdc8821e",
+   "label": "Lignite / Stock changes",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Stock changes",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -326.99999999999994,
+    -697
+   ],
+   "sourceCells": 2
+  },
+  "c_589c5ac2ccc038997c6a": {
+   "name": "c_589c5ac2ccc038997c6a",
+   "label": "Coal / Domestic Supply",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Domestic Supply",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    1236482.0007599997,
+    1267089.7536400002
+   ],
+   "sourceCells": 2
+  },
+  "c_ac0d8a7aa5d086b7879b": {
+   "name": "c_ac0d8a7aa5d086b7879b",
+   "label": "Lignite / Domestic Supply",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Domestic Supply",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    42644.49884199999,
+    44556.498154
+   ],
+   "sourceCells": 2
+  },
+  "c_dcacba526f05575396fc": {
+   "name": "c_dcacba526f05575396fc",
+   "label": "LPG / Domestic Supply",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Domestic Supply",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    30765.754664857,
+    32903.47191332
+   ],
+   "sourceCells": 2
+  },
+  "c_d1351c051641284f24e0": {
+   "name": "c_d1351c051641284f24e0",
+   "label": "Naphtha / Domestic Supply",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Domestic Supply",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    14209.586773347,
+    13696.105714656002
+   ],
+   "sourceCells": 2
+  },
+  "c_db0fb97505bc49a99177": {
+   "name": "c_db0fb97505bc49a99177",
+   "label": "Kerosene / Domestic Supply",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Domestic Supply",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    972.220925442041,
+    996.524849553
+   ],
+   "sourceCells": 2
+  },
+  "c_aabaf0f6d5aba435a0d9": {
+   "name": "c_aabaf0f6d5aba435a0d9",
+   "label": "Diesel (HSD+ LDO) / Domestic Supply",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Domestic Supply",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    89304.6945377459,
+    91841.64897606931
+   ],
+   "sourceCells": 2
+  },
+  "c_063803baa7fbda9fe0c8": {
+   "name": "c_063803baa7fbda9fe0c8",
+   "label": "Fuel Oil / Domestic Supply",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Domestic Supply",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    17391.904287791,
+    16119.536365840997
+   ],
+   "sourceCells": 2
+  },
+  "c_74dad877336ab2c2d1f3": {
+   "name": "c_74dad877336ab2c2d1f3",
+   "label": "Lubricants / Domestic Supply",
+   "dims": {
+    "fuel": "Lubricants",
+    "flow": "Domestic Supply",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    3749.2499037992,
+    4146.7504323439
+   ],
+   "sourceCells": 2
+  },
+  "c_199f813a4738198fb7d6": {
+   "name": "c_199f813a4738198fb7d6",
+   "label": "Bitumin / Domestic Supply",
+   "dims": {
+    "fuel": "Bitumin",
+    "flow": "Domestic Supply",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    8466.026422394001,
+    8180.193760443999
+   ],
+   "sourceCells": 2
+  },
+  "c_6fa1501c5b4d2915bb7e": {
+   "name": "c_6fa1501c5b4d2915bb7e",
+   "label": "Petrol/Motor Spirit / Domestic Supply",
+   "dims": {
+    "fuel": "Petrol/Motor Spirit",
+    "flow": "Domestic Supply",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    32325.482918406906,
+    32668.69349323823
+   ],
+   "sourceCells": 2
+  },
+  "c_db1091f1b980edff8432": {
+   "name": "c_db1091f1b980edff8432",
+   "label": "ATF / Domestic Supply",
+   "dims": {
+    "fuel": "ATF",
+    "flow": "Domestic Supply",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    10601.707328875,
+    11503.586828008003
+   ],
+   "sourceCells": 2
+  },
+  "c_9fe3ab284c968016b6b3": {
+   "name": "c_9fe3ab284c968016b6b3",
+   "label": "Petroleum Coke / Domestic Supply",
+   "dims": {
+    "fuel": "Petroleum Coke",
+    "flow": "Domestic Supply",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    25982.46610850608,
+    27423.71830439771
+   ],
+   "sourceCells": 2
+  },
+  "c_08010a9116f62a126f36": {
+   "name": "c_08010a9116f62a126f36",
+   "label": "Other Petroleum Products* / Domestic Supply",
+   "dims": {
+    "fuel": "Other Petroleum Products*",
+    "flow": "Domestic Supply",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    31310.91936210647,
+    33394.745644099836
+   ],
+   "sourceCells": 2
+  },
+  "c_1d433ed8dd11596f077e": {
+   "name": "c_1d433ed8dd11596f077e",
+   "label": "Coal / Statistical difference",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Statistical difference",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -1217.1602400003467,
+    -2014.0220706071705
+   ],
+   "sourceCells": 2
+  },
+  "c_e523b5685b063b49f68e": {
+   "name": "c_e523b5685b063b49f68e",
+   "label": "Lignite / Statistical difference",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Statistical difference",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -1.5011580000063987,
+    -20.540846000003512
+   ],
+   "sourceCells": 2
+  },
+  "c_b54e3ef4913970644f85": {
+   "name": "c_b54e3ef4913970644f85",
+   "label": "LPG / Statistical difference",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Statistical difference",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    1102.1382694134045,
+    1575.5614717084609
+   ],
+   "sourceCells": 2
+  },
+  "c_e1e1f74dc4fa171034a2": {
+   "name": "c_e1e1f74dc4fa171034a2",
+   "label": "Naphtha / Statistical difference",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Statistical difference",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    397.52269840700137,
+    667.6648836560034
+   ],
+   "sourceCells": 2
+  },
+  "c_98711c9f4f4b073e9082": {
+   "name": "c_98711c9f4f4b073e9082",
+   "label": "Kerosene / Statistical difference",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Statistical difference",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    493.14563787005625,
+    588.524849553
+   ],
+   "sourceCells": 2
+  },
+  "c_7fa4b0a59f09faee35d6": {
+   "name": "c_7fa4b0a59f09faee35d6",
+   "label": "Diesel (HSD+ LDO) / Statistical difference",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Statistical difference",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -1103.305462254095,
+    -403.6241680237872
+   ],
+   "sourceCells": 2
+  },
+  "c_f1c2ecef7d0ac87d689c": {
+   "name": "c_f1c2ecef7d0ac87d689c",
+   "label": "Fuel Oil / Statistical difference",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Statistical difference",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    10871.584315681524,
+    9609.08092119989
+   ],
+   "sourceCells": 2
+  },
+  "c_19edc28a3c8ee9b4b7f5": {
+   "name": "c_19edc28a3c8ee9b4b7f5",
+   "label": "Lubricants / Statistical difference",
+   "dims": {
+    "fuel": "Lubricants",
+    "flow": "Statistical difference",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -337.95474665846587,
+    -433.98717945407407
+   ],
+   "sourceCells": 2
+  },
+  "c_3a6e0b890433a394d872": {
+   "name": "c_3a6e0b890433a394d872",
+   "label": "Bitumin / Statistical difference",
+   "dims": {
+    "fuel": "Bitumin",
+    "flow": "Statistical difference",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -341.2214346060209,
+    -401.3491400560015
+   ],
+   "sourceCells": 2
+  },
+  "c_a94b22f3c4710761eb73": {
+   "name": "c_a94b22f3c4710761eb73",
+   "label": "Petrol/Motor Spirit / Statistical difference",
+   "dims": {
+    "fuel": "Petrol/Motor Spirit",
+    "flow": "Statistical difference",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    -4893.879493761549,
+    -7335.843633701043
+   ],
+   "sourceCells": 2
+  },
+  "c_f715d5a5352db66422a5": {
+   "name": "c_f715d5a5352db66422a5",
+   "label": "ATF / Statistical difference",
+   "dims": {
+    "fuel": "ATF",
+    "flow": "Statistical difference",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    2354.6694131100267,
+    2518.8973696670473
+   ],
+   "sourceCells": 2
+  },
+  "c_f50df111d3b8947ba975": {
+   "name": "c_f50df111d3b8947ba975",
+   "label": "Petroleum Coke / Statistical difference",
+   "dims": {
+    "fuel": "Petroleum Coke",
+    "flow": "Statistical difference",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    5663.927785506097,
+    5421.444759397709
+   ],
+   "sourceCells": 2
+  },
+  "c_89445e29c794f061f42b": {
+   "name": "c_89445e29c794f061f42b",
+   "label": "Other Petroleum Products* / Statistical difference",
+   "dims": {
+    "fuel": "Other Petroleum Products*",
+    "flow": "Statistical difference",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    16614.845928735074,
+    21834.224431522664
+   ],
+   "sourceCells": 2
+  },
+  "c_b72526802aee418e1de2": {
+   "name": "c_b72526802aee418e1de2",
+   "label": "Coal / Transformation",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Transformation",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    925065.180471,
+    964537.5182634383
+   ],
+   "sourceCells": 2
+  },
+  "c_2acefce7632aa4259b74": {
+   "name": "c_2acefce7632aa4259b74",
+   "label": "Lignite / Transformation",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Transformation",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    35695,
+    35624.73900000001
+   ],
+   "sourceCells": 2
+  },
+  "c_3aa02861c4a43a7ad81f": {
+   "name": "c_3aa02861c4a43a7ad81f",
+   "label": "LPG / Transformation",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Transformation",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0.287928,
+    0.017299
+   ],
+   "sourceCells": 2
+  },
+  "c_30bc9eee2abe45f9a73d": {
+   "name": "c_30bc9eee2abe45f9a73d",
+   "label": "Naphtha / Transformation",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Transformation",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0.037770000000000005
+   ],
+   "sourceCells": 2
+  },
+  "c_4496c6a8ec11ffaef050": {
+   "name": "c_4496c6a8ec11ffaef050",
+   "label": "Kerosene / Transformation",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Transformation",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_7cd0669e2a14b5768860": {
+   "name": "c_7cd0669e2a14b5768860",
+   "label": "Diesel (HSD+ LDO) / Transformation",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Transformation",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    1758.5616,
+    1818.3387593466805
+   ],
+   "sourceCells": 2
+  },
+  "c_292c9337af7713c1b7b7": {
+   "name": "c_292c9337af7713c1b7b7",
+   "label": "Fuel Oil / Transformation",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Transformation",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    207.60881561588647,
+    327.106786997314
+   ],
+   "sourceCells": 2
+  },
+  "c_71f1e10855955061eb4c": {
+   "name": "c_71f1e10855955061eb4c",
+   "label": "Lubricants / Transformation",
+   "dims": {
+    "fuel": "Lubricants",
+    "flow": "Transformation",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_c988c00f69ed562a01cf": {
+   "name": "c_c988c00f69ed562a01cf",
+   "label": "Bitumin / Transformation",
+   "dims": {
+    "fuel": "Bitumin",
+    "flow": "Transformation",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_16a559ae2a2373a33aaa": {
+   "name": "c_16a559ae2a2373a33aaa",
+   "label": "Petrol/Motor Spirit / Transformation",
+   "dims": {
+    "fuel": "Petrol/Motor Spirit",
+    "flow": "Transformation",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_84fcc7da020a038cc157": {
+   "name": "c_84fcc7da020a038cc157",
+   "label": "ATF / Transformation",
+   "dims": {
+    "fuel": "ATF",
+    "flow": "Transformation",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_295a01b7b4bfa9a96800": {
+   "name": "c_295a01b7b4bfa9a96800",
+   "label": "Petroleum Coke / Transformation",
+   "dims": {
+    "fuel": "Petroleum Coke",
+    "flow": "Transformation",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_7603b70b4a9adbf10f46": {
+   "name": "c_7603b70b4a9adbf10f46",
+   "label": "Other Petroleum Products* / Transformation",
+   "dims": {
+    "fuel": "Other Petroleum Products*",
+    "flow": "Transformation",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_792e59db353c58b469e9": {
+   "name": "c_792e59db353c58b469e9",
+   "label": "Coal / Electricity plants",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Electricity plants",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    925065.180471,
+    964537.5182634383
+   ],
+   "sourceCells": 2
+  },
+  "c_3e650c2de18a0bcf228b": {
+   "name": "c_3e650c2de18a0bcf228b",
+   "label": "Lignite / Electricity plants",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Electricity plants",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    35695,
+    35624.73900000001
+   ],
+   "sourceCells": 2
+  },
+  "c_3fec150a733d79b6053e": {
+   "name": "c_3fec150a733d79b6053e",
+   "label": "LPG / Electricity plants",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Electricity plants",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0.287928,
+    0.017299
+   ],
+   "sourceCells": 2
+  },
+  "c_61e07c3ccc6ee4c12adc": {
+   "name": "c_61e07c3ccc6ee4c12adc",
+   "label": "Naphtha / Electricity plants",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Electricity plants",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0.037770000000000005
+   ],
+   "sourceCells": 2
+  },
+  "c_a108f872219cf143c39b": {
+   "name": "c_a108f872219cf143c39b",
+   "label": "Kerosene / Electricity plants",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Electricity plants",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_f1335686e0435209fb47": {
+   "name": "c_f1335686e0435209fb47",
+   "label": "Diesel (HSD+ LDO) / Electricity plants",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Electricity plants",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    1758.5616,
+    1818.3387593466805
+   ],
+   "sourceCells": 2
+  },
+  "c_dfbcb89374ff356e1279": {
+   "name": "c_dfbcb89374ff356e1279",
+   "label": "Fuel Oil / Electricity plants",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Electricity plants",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    207.60881561588647,
+    327.106786997314
+   ],
+   "sourceCells": 2
+  },
+  "c_4a420651a3965a12740f": {
+   "name": "c_4a420651a3965a12740f",
+   "label": "Coal / Energy industry own use",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Energy industry own use",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0.161,
+    0.148387169
+   ],
+   "sourceCells": 2
+  },
+  "c_aab1f4bff37e00b89411": {
+   "name": "c_aab1f4bff37e00b89411",
+   "label": "Lignite / Energy industry own use",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Energy industry own use",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_fb44372071ae14c6e326": {
+   "name": "c_fb44372071ae14c6e326",
+   "label": "LPG / Energy industry own use",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Energy industry own use",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_2a1fffb84621c0a24bb0": {
+   "name": "c_2a1fffb84621c0a24bb0",
+   "label": "Naphtha / Energy industry own use",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Energy industry own use",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_1dfe93279115f997d7a4": {
+   "name": "c_1dfe93279115f997d7a4",
+   "label": "Kerosene / Energy industry own use",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Energy industry own use",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_3a1d9a716f13cb7f9337": {
+   "name": "c_3a1d9a716f13cb7f9337",
+   "label": "Diesel (HSD+ LDO) / Energy industry own use",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Energy industry own use",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_1f02943b70af398f34a8": {
+   "name": "c_1f02943b70af398f34a8",
+   "label": "Fuel Oil / Energy industry own use",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Energy industry own use",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_0fa79563ad78e135c114": {
+   "name": "c_0fa79563ad78e135c114",
+   "label": "Lubricants / Energy industry own use",
+   "dims": {
+    "fuel": "Lubricants",
+    "flow": "Energy industry own use",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_a3f070715bd55416f089": {
+   "name": "c_a3f070715bd55416f089",
+   "label": "Bitumin / Energy industry own use",
+   "dims": {
+    "fuel": "Bitumin",
+    "flow": "Energy industry own use",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_ec94c54015b81eb9063f": {
+   "name": "c_ec94c54015b81eb9063f",
+   "label": "Petrol/Motor Spirit / Energy industry own use",
+   "dims": {
+    "fuel": "Petrol/Motor Spirit",
+    "flow": "Energy industry own use",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_e7cce2bb7e179887fd3c": {
+   "name": "c_e7cce2bb7e179887fd3c",
+   "label": "ATF / Energy industry own use",
+   "dims": {
+    "fuel": "ATF",
+    "flow": "Energy industry own use",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_4e023e45b616913f207b": {
+   "name": "c_4e023e45b616913f207b",
+   "label": "Petroleum Coke / Energy industry own use",
+   "dims": {
+    "fuel": "Petroleum Coke",
+    "flow": "Energy industry own use",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_201027c55ef8ebab6765": {
+   "name": "c_201027c55ef8ebab6765",
+   "label": "Other Petroleum Products* / Energy industry own use",
+   "dims": {
+    "fuel": "Other Petroleum Products*",
+    "flow": "Energy industry own use",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_c94b82d2bf6fd29d54c8": {
+   "name": "c_c94b82d2bf6fd29d54c8",
+   "label": "Coal / Own use in electricity, CHP and heat plants",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Own use in electricity, CHP and heat plants",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0.161,
+    0.148387169
+   ],
+   "sourceCells": 2
+  },
+  "c_d8098dd477db7d667475": {
+   "name": "c_d8098dd477db7d667475",
+   "label": "Lignite / Own use in electricity, CHP and heat plants",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Own use in electricity, CHP and heat plants",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    null
+   ],
+   "sourceCells": 2
+  },
+  "c_a4bc90731f28f59127cd": {
+   "name": "c_a4bc90731f28f59127cd",
+   "label": "Coal / Final Consumption",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Final Consumption",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    312633.8195290001,
+    304566.10906000005
+   ],
+   "sourceCells": 2
+  },
+  "c_f284f38a8697a8aed390": {
+   "name": "c_f284f38a8697a8aed390",
+   "label": "Lignite / Final Consumption",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Final Consumption",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    6950.999999999999,
+    8952.3
+   ],
+   "sourceCells": 2
+  },
+  "c_4e268c99c6879ec3ab98": {
+   "name": "c_4e268c99c6879ec3ab98",
+   "label": "LPG / Final Consumption",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Final Consumption",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    29663.328467443593,
+    31327.893142611538
+   ],
+   "sourceCells": 2
+  },
+  "c_94013a89a04a3dbb778b": {
+   "name": "c_94013a89a04a3dbb778b",
+   "label": "Naphtha / Final Consumption",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Final Consumption",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    13812.064074939999,
+    13028.403060999997
+   ],
+   "sourceCells": 2
+  },
+  "c_2589d8f10d8f2429f4f4": {
+   "name": "c_2589d8f10d8f2429f4f4",
+   "label": "Kerosene / Final Consumption",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Final Consumption",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    479.07528757198475,
+    408
+   ],
+   "sourceCells": 2
+  },
+  "c_05d99961419cee286863": {
+   "name": "c_05d99961419cee286863",
+   "label": "Diesel (HSD+ LDO) / Final Consumption",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Final Consumption",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    88649.4384,
+    90426.93438474642
+   ],
+   "sourceCells": 2
+  },
+  "c_966d013cd129df2f1cee": {
+   "name": "c_966d013cd129df2f1cee",
+   "label": "Fuel Oil / Final Consumption",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Final Consumption",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    6312.711156493589,
+    6183.348657643794
+   ],
+   "sourceCells": 2
+  },
+  "c_64ee2a7b1d0a3d66ce18": {
+   "name": "c_64ee2a7b1d0a3d66ce18",
+   "label": "Lubricants / Final Consumption",
+   "dims": {
+    "fuel": "Lubricants",
+    "flow": "Final Consumption",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    4087.204650457666,
+    4580.737611797974
+   ],
+   "sourceCells": 2
+  },
+  "c_c8a7c6da9a4f269fbcd0": {
+   "name": "c_c8a7c6da9a4f269fbcd0",
+   "label": "Bitumin / Final Consumption",
+   "dims": {
+    "fuel": "Bitumin",
+    "flow": "Final Consumption",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    8807.247857000022,
+    8581.5429005
+   ],
+   "sourceCells": 2
+  },
+  "c_a1184d5d8a72ac4dcc5d": {
+   "name": "c_a1184d5d8a72ac4dcc5d",
+   "label": "Petrol/Motor Spirit / Final Consumption",
+   "dims": {
+    "fuel": "Petrol/Motor Spirit",
+    "flow": "Final Consumption",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    37219.362412168455,
+    40004.53712693927
+   ],
+   "sourceCells": 2
+  },
+  "c_b42c798997ea31e07195": {
+   "name": "c_b42c798997ea31e07195",
+   "label": "ATF / Final Consumption",
+   "dims": {
+    "fuel": "ATF",
+    "flow": "Final Consumption",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    8247.037915764973,
+    8984.689458340956
+   ],
+   "sourceCells": 2
+  },
+  "c_343f925a9bea900d4bbe": {
+   "name": "c_343f925a9bea900d4bbe",
+   "label": "Petroleum Coke / Final Consumption",
+   "dims": {
+    "fuel": "Petroleum Coke",
+    "flow": "Final Consumption",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    20318.538322999982,
+    22002.273545
+   ],
+   "sourceCells": 2
+  },
+  "c_37cf1537243905b0b2ef": {
+   "name": "c_37cf1537243905b0b2ef",
+   "label": "Other Petroleum Products* / Final Consumption",
+   "dims": {
+    "fuel": "Other Petroleum Products*",
+    "flow": "Final Consumption",
+    "sector": ""
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    14696.073433371395,
+    11560.52121257717
+   ],
+   "sourceCells": 2
+  },
+  "c_8f9ce87f5a8129908ca6": {
+   "name": "c_8f9ce87f5a8129908ca6",
+   "label": "Coal / Industry Sector / Industry Sector",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Industry Sector",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    312628.75933736924,
+    304556.957308089
+   ],
+   "sourceCells": 2
+  },
+  "c_d88a6c62e8633a96d922": {
+   "name": "c_d88a6c62e8633a96d922",
+   "label": "Lignite / Industry Sector / Industry Sector",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Industry Sector",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    6950.999999999999,
+    8952.3
+   ],
+   "sourceCells": 2
+  },
+  "c_30a3775ebd48c05660f1": {
+   "name": "c_30a3775ebd48c05660f1",
+   "label": "LPG / Industry Sector / Industry Sector",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Industry Sector",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    3139.8748956791505,
+    3058.411067431171
+   ],
+   "sourceCells": 2
+  },
+  "c_385c63e6408973434673": {
+   "name": "c_385c63e6408973434673",
+   "label": "Naphtha / Industry Sector / Industry Sector",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Industry Sector",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    13812.064074939999,
+    13028.403060999997
+   ],
+   "sourceCells": 2
+  },
+  "c_badbd76a88158e30ed92": {
+   "name": "c_badbd76a88158e30ed92",
+   "label": "Kerosene / Industry Sector / Industry Sector",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Industry Sector",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_8c3c20a62263f41d4600": {
+   "name": "c_8c3c20a62263f41d4600",
+   "label": "Diesel (HSD+ LDO) / Industry Sector / Industry Sector",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Industry Sector",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    7791.211300000001,
+    8332.62548761812
+   ],
+   "sourceCells": 2
+  },
+  "c_038101a750cf74dd0cfa": {
+   "name": "c_038101a750cf74dd0cfa",
+   "label": "Fuel Oil / Industry Sector / Industry Sector",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Industry Sector",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    1566.1605738618673,
+    1868.4886338344202
+   ],
+   "sourceCells": 2
+  },
+  "c_770c3dab2a2f2e4c81ce": {
+   "name": "c_770c3dab2a2f2e4c81ce",
+   "label": "Lubricants / Industry Sector / Industry Sector",
+   "dims": {
+    "fuel": "Lubricants",
+    "flow": "Industry Sector",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_f3c220f2aea9d67c2338": {
+   "name": "c_f3c220f2aea9d67c2338",
+   "label": "Bitumin / Industry Sector / Industry Sector",
+   "dims": {
+    "fuel": "Bitumin",
+    "flow": "Industry Sector",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_1a0fbc26cda26df56cb3": {
+   "name": "c_1a0fbc26cda26df56cb3",
+   "label": "Petrol/Motor Spirit / Industry Sector / Industry Sector",
+   "dims": {
+    "fuel": "Petrol/Motor Spirit",
+    "flow": "Industry Sector",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_d86e153129426de8347f": {
+   "name": "c_d86e153129426de8347f",
+   "label": "ATF / Industry Sector / Industry Sector",
+   "dims": {
+    "fuel": "ATF",
+    "flow": "Industry Sector",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_b14f7fcc09c27214271c": {
+   "name": "c_b14f7fcc09c27214271c",
+   "label": "Petroleum Coke / Industry Sector / Industry Sector",
+   "dims": {
+    "fuel": "Petroleum Coke",
+    "flow": "Industry Sector",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    20318.538322999982,
+    22002.273545
+   ],
+   "sourceCells": 2
+  },
+  "c_6151e850d3c2c0991a2e": {
+   "name": "c_6151e850d3c2c0991a2e",
+   "label": "Other Petroleum Products* / Industry Sector / Industry Sector",
+   "dims": {
+    "fuel": "Other Petroleum Products*",
+    "flow": "Industry Sector",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    14696.073433371395,
+    11560.52121257717
+   ],
+   "sourceCells": 2
+  },
+  "c_a1dc2b666debf1a0266f": {
+   "name": "c_a1dc2b666debf1a0266f",
+   "label": "Coal / Iron and steel / Industry Sector",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Iron and steel",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    79009.4056355242,
+    85128.61263263876
+   ],
+   "sourceCells": 2
+  },
+  "c_56f21e7740ad29e1b3dc": {
+   "name": "c_56f21e7740ad29e1b3dc",
+   "label": "Lignite / Iron and steel / Industry Sector",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Iron and steel",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    86,
+    31
+   ],
+   "sourceCells": 2
+  },
+  "c_33e9424f2974952d19d5": {
+   "name": "c_33e9424f2974952d19d5",
+   "label": "LPG / Iron and steel / Industry Sector",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Iron and steel",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_aec1095028c4d472141e": {
+   "name": "c_aec1095028c4d472141e",
+   "label": "Naphtha / Iron and steel / Industry Sector",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Iron and steel",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_15fce57738a42e7d5ee6": {
+   "name": "c_15fce57738a42e7d5ee6",
+   "label": "Kerosene / Iron and steel / Industry Sector",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Iron and steel",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_9d2f81d416474230258f": {
+   "name": "c_9d2f81d416474230258f",
+   "label": "Diesel (HSD+ LDO) / Iron and steel / Industry Sector",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Iron and steel",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    179.8,
+    161.38619349451494
+   ],
+   "sourceCells": 2
+  },
+  "c_30c972b6aaa14da1e87f": {
+   "name": "c_30c972b6aaa14da1e87f",
+   "label": "Fuel Oil / Iron and steel / Industry Sector",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Iron and steel",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    557.1420018852649,
+    517.7402310579432
+   ],
+   "sourceCells": 2
+  },
+  "c_1a1cc163fc83df7c0278": {
+   "name": "c_1a1cc163fc83df7c0278",
+   "label": "Coal / Chemical and petrochemical / Industry Sector",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Chemical and petrochemical",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    33089.356551686695,
+    null
+   ],
+   "sourceCells": 1
+  },
+  "c_4b9772a0757ae118e64e": {
+   "name": "c_4b9772a0757ae118e64e",
+   "label": "Lignite / Chemical and petrochemical / Industry Sector",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Chemical and petrochemical",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    140,
+    null
+   ],
+   "sourceCells": 1
+  },
+  "c_7499e483a5dd21dea91f": {
+   "name": "c_7499e483a5dd21dea91f",
+   "label": "LPG / Chemical and petrochemical / Industry Sector",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Chemical and petrochemical",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    170.08278899999976,
+    null
+   ],
+   "sourceCells": 1
+  },
+  "c_83d88eb166bbc473f5cf": {
+   "name": "c_83d88eb166bbc473f5cf",
+   "label": "Naphtha / Chemical and petrochemical / Industry Sector",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Chemical and petrochemical",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    10424.31116994,
+    null
+   ],
+   "sourceCells": 1
+  },
+  "c_82cddf320c440879fdff": {
+   "name": "c_82cddf320c440879fdff",
+   "label": "Kerosene / Chemical and petrochemical / Industry Sector",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Chemical and petrochemical",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    null
+   ],
+   "sourceCells": 1
+  },
+  "c_c5ab4835a7393df03ee9": {
+   "name": "c_c5ab4835a7393df03ee9",
+   "label": "Diesel (HSD+ LDO) / Chemical and petrochemical / Industry Sector",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Chemical and petrochemical",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    100.9,
+    null
+   ],
+   "sourceCells": 1
+  },
+  "c_0401aaefb12c85379373": {
+   "name": "c_0401aaefb12c85379373",
+   "label": "Fuel Oil / Chemical and petrochemical / Industry Sector",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Chemical and petrochemical",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    408.07819395049876,
+    null
+   ],
+   "sourceCells": 1
+  },
+  "c_8fa49f1e823482b1dadb": {
+   "name": "c_8fa49f1e823482b1dadb",
+   "label": "Coal / Non-ferrous metals / Industry Sector",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Non-ferrous metals",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    77879.22696252028,
+    74298.24790804177
+   ],
+   "sourceCells": 2
+  },
+  "c_20ce55a7279dee18ef7a": {
+   "name": "c_20ce55a7279dee18ef7a",
+   "label": "Lignite / Non-ferrous metals / Industry Sector",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Non-ferrous metals",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_3dc7bddb9ffa89163d07": {
+   "name": "c_3dc7bddb9ffa89163d07",
+   "label": "LPG / Non-ferrous metals / Industry Sector",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Non-ferrous metals",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    66.68727600000001,
+    100.24058400000004
+   ],
+   "sourceCells": 2
+  },
+  "c_95b8a3e512f2e1c9bf24": {
+   "name": "c_95b8a3e512f2e1c9bf24",
+   "label": "Naphtha / Non-ferrous metals / Industry Sector",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Non-ferrous metals",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_485939e9f58926d522cd": {
+   "name": "c_485939e9f58926d522cd",
+   "label": "Kerosene / Non-ferrous metals / Industry Sector",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Non-ferrous metals",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_463b5adbc3c03faccab9": {
+   "name": "c_463b5adbc3c03faccab9",
+   "label": "Diesel (HSD+ LDO) / Non-ferrous metals / Industry Sector",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Non-ferrous metals",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    19.5,
+    15.076440398852002
+   ],
+   "sourceCells": 2
+  },
+  "c_9f132e47298eac751b94": {
+   "name": "c_9f132e47298eac751b94",
+   "label": "Fuel Oil / Non-ferrous metals / Industry Sector",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Non-ferrous metals",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    233.22487897448207,
+    379.02660421335383
+   ],
+   "sourceCells": 2
+  },
+  "c_d8e71f662138fb07f336": {
+   "name": "c_d8e71f662138fb07f336",
+   "label": "Coal / Non-metallic minerals / Industry Sector",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Non-metallic minerals",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    71628.8405004884,
+    65394.86512852703
+   ],
+   "sourceCells": 2
+  },
+  "c_dce2b6ff295a26ff3ca0": {
+   "name": "c_dce2b6ff295a26ff3ca0",
+   "label": "Lignite / Non-metallic minerals / Industry Sector",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Non-metallic minerals",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    569,
+    538
+   ],
+   "sourceCells": 2
+  },
+  "c_d6f5bb40d2ed1676cf3d": {
+   "name": "c_d6f5bb40d2ed1676cf3d",
+   "label": "LPG / Non-metallic minerals / Industry Sector",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Non-metallic minerals",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_fb466aa4967e65695981": {
+   "name": "c_fb466aa4967e65695981",
+   "label": "Naphtha / Non-metallic minerals / Industry Sector",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Non-metallic minerals",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_c712723b0a4ab657c64b": {
+   "name": "c_c712723b0a4ab657c64b",
+   "label": "Kerosene / Non-metallic minerals / Industry Sector",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Non-metallic minerals",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_fc2c4bfce5fce84c6583": {
+   "name": "c_fc2c4bfce5fce84c6583",
+   "label": "Diesel (HSD+ LDO) / Non-metallic minerals / Industry Sector",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Non-metallic minerals",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    540.1,
+    483.75538159634914
+   ],
+   "sourceCells": 2
+  },
+  "c_8a194df6210c9a1f5387": {
+   "name": "c_8a194df6210c9a1f5387",
+   "label": "Fuel Oil / Non-metallic minerals / Industry Sector",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Non-metallic minerals",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    91.19882189082887,
+    93.23324509593245
+   ],
+   "sourceCells": 2
+  },
+  "c_a9cec4f48d5a373f9c3b": {
+   "name": "c_a9cec4f48d5a373f9c3b",
+   "label": "Coal / Transport equipment / Transport equipment",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Transport equipment",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    81.66290096416779,
+    61.98076176574926
+   ],
+   "sourceCells": 2
+  },
+  "c_cd19e9adfe235796657a": {
+   "name": "c_cd19e9adfe235796657a",
+   "label": "Lignite / Transport equipment / Transport equipment",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Transport equipment",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_6c6454aa885fcef30c50": {
+   "name": "c_6c6454aa885fcef30c50",
+   "label": "Coal / Machinery / Transport equipment",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Machinery",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    668.2807192212065,
+    541.6557737000768
+   ],
+   "sourceCells": 2
+  },
+  "c_3516252366127e4efa43": {
+   "name": "c_3516252366127e4efa43",
+   "label": "Lignite / Machinery / Transport equipment",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Machinery",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_b7832bfcb4b298b7accc": {
+   "name": "c_b7832bfcb4b298b7accc",
+   "label": "LPG / Machinery / Transport equipment",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Machinery",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    15.765121999999998,
+    13.730604999999999
+   ],
+   "sourceCells": 2
+  },
+  "c_4a6ccf96c5b17e154133": {
+   "name": "c_4a6ccf96c5b17e154133",
+   "label": "Naphtha / Machinery / Transport equipment",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Machinery",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_86601bde37b15cf20a56": {
+   "name": "c_86601bde37b15cf20a56",
+   "label": "Kerosene / Machinery / Transport equipment",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Machinery",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_d651e891425e8d9df6a8": {
+   "name": "c_d651e891425e8d9df6a8",
+   "label": "Diesel (HSD+ LDO) / Machinery / Transport equipment",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Machinery",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    96.3,
+    111.27287183310453
+   ],
+   "sourceCells": 2
+  },
+  "c_dc335a21ff8a03111e5f": {
+   "name": "c_dc335a21ff8a03111e5f",
+   "label": "Fuel Oil / Machinery / Transport equipment",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Machinery",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    14.612022951841904,
+    13.61359203184958
+   ],
+   "sourceCells": 2
+  },
+  "c_38869ab529924f03d036": {
+   "name": "c_38869ab529924f03d036",
+   "label": "Coal / Mining & Quarrying / Transport equipment",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Mining & Quarrying",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    94.07526134418002,
+    78.58350565319017
+   ],
+   "sourceCells": 2
+  },
+  "c_964bd16882daae206baf": {
+   "name": "c_964bd16882daae206baf",
+   "label": "Lignite / Mining & Quarrying / Transport equipment",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Mining & Quarrying",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_9e20d4d9c09180699080": {
+   "name": "c_9e20d4d9c09180699080",
+   "label": "LPG / Mining & Quarrying / Transport equipment",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Mining & Quarrying",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    4.88158,
+    9.005005
+   ],
+   "sourceCells": 2
+  },
+  "c_46a184f3207a43bea958": {
+   "name": "c_46a184f3207a43bea958",
+   "label": "Naphtha / Mining & Quarrying / Transport equipment",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Mining & Quarrying",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_31b576589cbbb74a9031": {
+   "name": "c_31b576589cbbb74a9031",
+   "label": "Kerosene / Mining & Quarrying / Transport equipment",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Mining & Quarrying",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_2666bc2413dff57fe965": {
+   "name": "c_2666bc2413dff57fe965",
+   "label": "Diesel (HSD+ LDO) / Mining & Quarrying / Transport equipment",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Mining & Quarrying",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    1338.8,
+    1565.1380214273759
+   ],
+   "sourceCells": 2
+  },
+  "c_e6f3958627c8b42a3a57": {
+   "name": "c_e6f3958627c8b42a3a57",
+   "label": "Fuel Oil / Mining & Quarrying / Transport equipment",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Mining & Quarrying",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    114.94386171335377,
+    92.6404594838833
+   ],
+   "sourceCells": 2
+  },
+  "c_fc4f4b6bd44c7e5a98e5": {
+   "name": "c_fc4f4b6bd44c7e5a98e5",
+   "label": "Coal / Food, beverages and tobacco / Transport equipment",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Food, beverages and tobacco",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    10702.469110056847,
+    10384.040183945952
+   ],
+   "sourceCells": 2
+  },
+  "c_3b108b7d0a8a1c2652b0": {
+   "name": "c_3b108b7d0a8a1c2652b0",
+   "label": "Lignite / Food, beverages and tobacco / Transport equipment",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Food, beverages and tobacco",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_e0b0c605f3401cfe2e60": {
+   "name": "c_e0b0c605f3401cfe2e60",
+   "label": "Coal / Paper, pulp and print / Transport equipment",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Paper, pulp and print",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    14619.86601391525,
+    13979.404941573332
+   ],
+   "sourceCells": 2
+  },
+  "c_5a07bddf872e42182a99": {
+   "name": "c_5a07bddf872e42182a99",
+   "label": "Lignite / Paper, pulp and print / Transport equipment",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Paper, pulp and print",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    1039,
+    533
+   ],
+   "sourceCells": 2
+  },
+  "c_3ff2cac58b51eb25ae6a": {
+   "name": "c_3ff2cac58b51eb25ae6a",
+   "label": "LPG / Paper, pulp and print / Transport equipment",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Paper, pulp and print",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_04b3fed886475498691b": {
+   "name": "c_04b3fed886475498691b",
+   "label": "Naphtha / Paper, pulp and print / Transport equipment",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Paper, pulp and print",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_3eea9424ca2c6b7e923a": {
+   "name": "c_3eea9424ca2c6b7e923a",
+   "label": "Kerosene / Paper, pulp and print / Transport equipment",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Paper, pulp and print",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_31bea4674bcfc557a8da": {
+   "name": "c_31bea4674bcfc557a8da",
+   "label": "Diesel (HSD+ LDO) / Paper, pulp and print / Transport equipment",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Paper, pulp and print",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_3219078c05e778604048": {
+   "name": "c_3219078c05e778604048",
+   "label": "Fuel Oil / Paper, pulp and print / Transport equipment",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Paper, pulp and print",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    13.61359203184958
+   ],
+   "sourceCells": 2
+  },
+  "c_0c61f2e3e93cf2b0d8a8": {
+   "name": "c_0c61f2e3e93cf2b0d8a8",
+   "label": "Coal / Wood and wood products / Transport equipment",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Wood and wood products",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    184.0436266830525,
+    183.88641011154414
+   ],
+   "sourceCells": 2
+  },
+  "c_77b9343069f288d50046": {
+   "name": "c_77b9343069f288d50046",
+   "label": "Lignite / Wood and wood products / Transport equipment",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Wood and wood products",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_0022b7e9520f3d07daa0": {
+   "name": "c_0022b7e9520f3d07daa0",
+   "label": "Coal / Construction / Transport equipment",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Construction",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_60fe0f40ecee84161cee": {
+   "name": "c_60fe0f40ecee84161cee",
+   "label": "Lignite / Construction / Transport equipment",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Construction",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_269e2c11bc0c49390631": {
+   "name": "c_269e2c11bc0c49390631",
+   "label": "LPG / Construction / Transport equipment",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Construction",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_6c3eba8affa36e42d23e": {
+   "name": "c_6c3eba8affa36e42d23e",
+   "label": "Naphtha / Construction / Transport equipment",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Construction",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_866eef007d1af77b523f": {
+   "name": "c_866eef007d1af77b523f",
+   "label": "Kerosene / Construction / Transport equipment",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Construction",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_cdc0ffd4180c2ead6052": {
+   "name": "c_cdc0ffd4180c2ead6052",
+   "label": "Diesel (HSD+ LDO) / Construction / Transport equipment",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Construction",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    412.70000000000005,
+    478.9547284967743
+   ],
+   "sourceCells": 2
+  },
+  "c_36aaa530105cb476bf96": {
+   "name": "c_36aaa530105cb476bf96",
+   "label": "Fuel Oil / Construction / Transport equipment",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Construction",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    22.34436942192081,
+    35.14664029086717
+   ],
+   "sourceCells": 2
+  },
+  "c_f0d0c4a666a6973d1bb7": {
+   "name": "c_f0d0c4a666a6973d1bb7",
+   "label": "Coal / Textile and leather / Transport equipment",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Textile and leather",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    19102.71811571547,
+    17536.564012509807
+   ],
+   "sourceCells": 2
+  },
+  "c_b0a46860465162dfa4de": {
+   "name": "c_b0a46860465162dfa4de",
+   "label": "Lignite / Textile and leather / Transport equipment",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Textile and leather",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    994,
+    2650
+   ],
+   "sourceCells": 2
+  },
+  "c_a6af87469d682510b073": {
+   "name": "c_a6af87469d682510b073",
+   "label": "LPG / Textile and leather / Transport equipment",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Textile and leather",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    1.570159,
+    0.6223279999999998
+   ],
+   "sourceCells": 2
+  },
+  "c_af241b8a4243896d4e79": {
+   "name": "c_af241b8a4243896d4e79",
+   "label": "Naphtha / Textile and leather / Transport equipment",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Textile and leather",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_8750a696078b3d175624": {
+   "name": "c_8750a696078b3d175624",
+   "label": "Kerosene / Textile and leather / Transport equipment",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Textile and leather",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_f11b79cd07d22f87d713": {
+   "name": "c_f11b79cd07d22f87d713",
+   "label": "Diesel (HSD+ LDO) / Textile and leather / Transport equipment",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Textile and leather",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    7,
+    6.41423567641665
+   ],
+   "sourceCells": 2
+  },
+  "c_d788a1d01d87d8144611": {
+   "name": "c_d788a1d01d87d8144611",
+   "label": "Fuel Oil / Textile and leather / Transport equipment",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Textile and leather",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    18.711755452801228,
+    20.136678417114346
+   ],
+   "sourceCells": 2
+  },
+  "c_05b0a5b310d85fa17a07": {
+   "name": "c_05b0a5b310d85fa17a07",
+   "label": "Coal / Non-specified / Transport equipment",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Non-specified",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    5568.813939249389,
+    5372.822226079468
+   ],
+   "sourceCells": 2
+  },
+  "c_17987783e3595268e6cd": {
+   "name": "c_17987783e3595268e6cd",
+   "label": "Lignite / Non-specified / Transport equipment",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Non-specified",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    4122.999999999999,
+    4573.299999999999
+   ],
+   "sourceCells": 2
+  },
+  "c_75ff608e916fd6c28665": {
+   "name": "c_75ff608e916fd6c28665",
+   "label": "LPG / Non-specified / Transport equipment",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Non-specified",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    2880.887969679151,
+    2769.622453431171
+   ],
+   "sourceCells": 2
+  },
+  "c_501e8163fe3f6708b916": {
+   "name": "c_501e8163fe3f6708b916",
+   "label": "Naphtha / Non-specified / Transport equipment",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Non-specified",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    3387.752905,
+    1571.7196909999998
+   ],
+   "sourceCells": 2
+  },
+  "c_8f97e60067aafb6782f1": {
+   "name": "c_8f97e60067aafb6782f1",
+   "label": "Kerosene / Non-specified / Transport equipment",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Non-specified",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_4876a7dd8eed7bb48564": {
+   "name": "c_4876a7dd8eed7bb48564",
+   "label": "Diesel (HSD+ LDO) / Non-specified / Transport equipment",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Non-specified",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    5096.1113000000005,
+    5402.6740078483135
+   ],
+   "sourceCells": 2
+  },
+  "c_6af46864f909aba4b344": {
+   "name": "c_6af46864f909aba4b344",
+   "label": "Fuel Oil / Non-specified / Transport equipment",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Non-specified",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    105.90466762087485,
+    169.92520960092088
+   ],
+   "sourceCells": 2
+  },
+  "c_0d20936531eb10fb77f4": {
+   "name": "c_0d20936531eb10fb77f4",
+   "label": "Petroleum Coke / Non-specified / Transport equipment",
+   "dims": {
+    "fuel": "Petroleum Coke",
+    "flow": "Non-specified",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    20318.538322999982,
+    22002.273545
+   ],
+   "sourceCells": 2
+  },
+  "c_aabf6691cd2ecaa3ada8": {
+   "name": "c_aabf6691cd2ecaa3ada8",
+   "label": "Other Petroleum Products* / Non-specified / Transport equipment",
+   "dims": {
+    "fuel": "Other Petroleum Products*",
+    "flow": "Non-specified",
+    "sector": "Transport equipment"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    14696.073433371395,
+    11560.52121257717
+   ],
+   "sourceCells": 2
+  },
+  "c_e6ec0073df69dfa74537": {
+   "name": "c_e6ec0073df69dfa74537",
+   "label": "Coal / Transport Sector / Transport Sector",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Transport Sector",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_212775ba219210fef561": {
+   "name": "c_212775ba219210fef561",
+   "label": "Lignite / Transport Sector / Transport Sector",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Transport Sector",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_3643efe69d6be97996d3": {
+   "name": "c_3643efe69d6be97996d3",
+   "label": "LPG / Transport Sector / Transport Sector",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Transport Sector",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    89.45169756900003,
+    75.60076322200004
+   ],
+   "sourceCells": 2
+  },
+  "c_5a00cfb0f3c3ee63103a": {
+   "name": "c_5a00cfb0f3c3ee63103a",
+   "label": "Naphtha / Transport Sector / Transport Sector",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Transport Sector",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_688394b4035514e785c5": {
+   "name": "c_688394b4035514e785c5",
+   "label": "Kerosene / Transport Sector / Transport Sector",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Transport Sector",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_1efaf2b37211a3a8a8dc": {
+   "name": "c_1efaf2b37211a3a8a8dc",
+   "label": "Diesel (HSD+ LDO) / Transport Sector / Transport Sector",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Transport Sector",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    68377.8257,
+    68899.66034874611
+   ],
+   "sourceCells": 2
+  },
+  "c_80429b81f4e80cfc566d": {
+   "name": "c_80429b81f4e80cfc566d",
+   "label": "Fuel Oil / Transport Sector / Transport Sector",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Transport Sector",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    1484.2240972457605,
+    1681.2701737156374
+   ],
+   "sourceCells": 2
+  },
+  "c_a3cc229deb19069d8aca": {
+   "name": "c_a3cc229deb19069d8aca",
+   "label": "Lubricants / Transport Sector / Transport Sector",
+   "dims": {
+    "fuel": "Lubricants",
+    "flow": "Transport Sector",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_6407c6c6b645384a88e7": {
+   "name": "c_6407c6c6b645384a88e7",
+   "label": "Bitumin / Transport Sector / Transport Sector",
+   "dims": {
+    "fuel": "Bitumin",
+    "flow": "Transport Sector",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_14883c471093790a1a43": {
+   "name": "c_14883c471093790a1a43",
+   "label": "Petrol/Motor Spirit / Transport Sector / Transport Sector",
+   "dims": {
+    "fuel": "Petrol/Motor Spirit",
+    "flow": "Transport Sector",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    37219.362412168455,
+    40004.53712693927
+   ],
+   "sourceCells": 2
+  },
+  "c_a3b770da20b9c6cde32b": {
+   "name": "c_a3b770da20b9c6cde32b",
+   "label": "ATF / Transport Sector / Transport Sector",
+   "dims": {
+    "fuel": "ATF",
+    "flow": "Transport Sector",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    8247.037915764973,
+    8984.689458340956
+   ],
+   "sourceCells": 2
+  },
+  "c_04b2ccca425863525880": {
+   "name": "c_04b2ccca425863525880",
+   "label": "Petroleum Coke / Transport Sector / Transport Sector",
+   "dims": {
+    "fuel": "Petroleum Coke",
+    "flow": "Transport Sector",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_f7eadc6632eb846bb5b0": {
+   "name": "c_f7eadc6632eb846bb5b0",
+   "label": "Other Petroleum Products* / Transport Sector / Transport Sector",
+   "dims": {
+    "fuel": "Other Petroleum Products*",
+    "flow": "Transport Sector",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_b8c8bf9fa3b1a1d4b453": {
+   "name": "c_b8c8bf9fa3b1a1d4b453",
+   "label": "Coal / Road / Transport Sector",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Road",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_29634c82d3a2bef94ede": {
+   "name": "c_29634c82d3a2bef94ede",
+   "label": "Lignite / Road / Transport Sector",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Road",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_a6bf7da7e0fc24001a4b": {
+   "name": "c_a6bf7da7e0fc24001a4b",
+   "label": "LPG / Road / Transport Sector",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Road",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    88.26900756900004,
+    73.17517422200004
+   ],
+   "sourceCells": 2
+  },
+  "c_c9c605b02b4838e3aff1": {
+   "name": "c_c9c605b02b4838e3aff1",
+   "label": "Naphtha / Road / Transport Sector",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Road",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_53b84e25b1073d0e5f3d": {
+   "name": "c_53b84e25b1073d0e5f3d",
+   "label": "Kerosene / Road / Transport Sector",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Road",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_5a0b734975c915f0da98": {
+   "name": "c_5a0b734975c915f0da98",
+   "label": "Diesel (HSD+ LDO) / Road / Transport Sector",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Road",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    63850.607800000005,
+    64586.394645230524
+   ],
+   "sourceCells": 2
+  },
+  "c_bd8b4485f54b1a2782eb": {
+   "name": "c_bd8b4485f54b1a2782eb",
+   "label": "Fuel Oil / Road / Transport Sector",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Road",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    173.74473275230235,
+    177.3323735130469
+   ],
+   "sourceCells": 2
+  },
+  "c_71b941f435eada7c6dbe": {
+   "name": "c_71b941f435eada7c6dbe",
+   "label": "Petrol/Motor Spirit / Road / Transport Sector",
+   "dims": {
+    "fuel": "Petrol/Motor Spirit",
+    "flow": "Road",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    37219.362412168455,
+    40004.53712693927
+   ],
+   "sourceCells": 2
+  },
+  "c_71ee640f5792a2b814c2": {
+   "name": "c_71ee640f5792a2b814c2",
+   "label": "Coal / Domestic Aviation / Transport Sector",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Domestic Aviation",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_c9fed0d3fc05122ff943": {
+   "name": "c_c9fed0d3fc05122ff943",
+   "label": "Lignite / Domestic Aviation / Transport Sector",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Domestic Aviation",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_ecc26b28c93a22fa1616": {
+   "name": "c_ecc26b28c93a22fa1616",
+   "label": "LPG / Domestic Aviation / Transport Sector",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Domestic Aviation",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_8b5a723acc509896e2f0": {
+   "name": "c_8b5a723acc509896e2f0",
+   "label": "Naphtha / Domestic Aviation / Transport Sector",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Domestic Aviation",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_8e1573ea60b5b6e25254": {
+   "name": "c_8e1573ea60b5b6e25254",
+   "label": "Kerosene / Domestic Aviation / Transport Sector",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Domestic Aviation",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_f040699451ac7feed8b3": {
+   "name": "c_f040699451ac7feed8b3",
+   "label": "Diesel (HSD+ LDO) / Domestic Aviation / Transport Sector",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Domestic Aviation",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    1.2,
+    0.8297520661157022
+   ],
+   "sourceCells": 2
+  },
+  "c_c75e4b6cc5268cdb4d46": {
+   "name": "c_c75e4b6cc5268cdb4d46",
+   "label": "Fuel Oil / Domestic Aviation / Transport Sector",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Domestic Aviation",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_08a198031b7a441c278e": {
+   "name": "c_08a198031b7a441c278e",
+   "label": "Coal / Rail / Transport Sector",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Rail",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_3fc01557bdfbaac9862b": {
+   "name": "c_3fc01557bdfbaac9862b",
+   "label": "Lignite / Rail / Transport Sector",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Rail",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_0289998b16bb43719bac": {
+   "name": "c_0289998b16bb43719bac",
+   "label": "LPG / Rail / Transport Sector",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Rail",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    1.18269,
+    2.4255890000000004
+   ],
+   "sourceCells": 2
+  },
+  "c_fe2f74224128d4929c7a": {
+   "name": "c_fe2f74224128d4929c7a",
+   "label": "Naphtha / Rail / Transport Sector",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Rail",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_8c3bfd826375b9e73284": {
+   "name": "c_8c3bfd826375b9e73284",
+   "label": "Kerosene / Rail / Transport Sector",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Rail",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_45b9de399a0d2d8127cd": {
+   "name": "c_45b9de399a0d2d8127cd",
+   "label": "Diesel (HSD+ LDO) / Rail / Transport Sector",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Rail",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    3119.8371,
+    2892.275741086569
+   ],
+   "sourceCells": 2
+  },
+  "c_ad4fb4393c24a23842a3": {
+   "name": "c_ad4fb4393c24a23842a3",
+   "label": "Fuel Oil / Rail / Transport Sector",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Rail",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0.08779649558710666,
+    0.1074443591711435
+   ],
+   "sourceCells": 2
+  },
+  "c_d6e33167ba4759fbde82": {
+   "name": "c_d6e33167ba4759fbde82",
+   "label": "Coal / Pipeline transport / Transport Sector",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Pipeline transport",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_e7b700e66809411b1b51": {
+   "name": "c_e7b700e66809411b1b51",
+   "label": "Lignite / Pipeline transport / Transport Sector",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Pipeline transport",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_aadd6f79bb749b30aed6": {
+   "name": "c_aadd6f79bb749b30aed6",
+   "label": "LPG / Pipeline transport / Transport Sector",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Pipeline transport",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_5719d978b123436e0623": {
+   "name": "c_5719d978b123436e0623",
+   "label": "Naphtha / Pipeline transport / Transport Sector",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Pipeline transport",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_54163f337409ac3c84ab": {
+   "name": "c_54163f337409ac3c84ab",
+   "label": "Kerosene / Pipeline transport / Transport Sector",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Pipeline transport",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_18b395ca8de9ebc6962a": {
+   "name": "c_18b395ca8de9ebc6962a",
+   "label": "Diesel (HSD+ LDO) / Pipeline transport / Transport Sector",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Pipeline transport",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_9f44d09230dd9a08199b": {
+   "name": "c_9f44d09230dd9a08199b",
+   "label": "Fuel Oil / Pipeline transport / Transport Sector",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Pipeline transport",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_3a940571c5c11c87cdee": {
+   "name": "c_3a940571c5c11c87cdee",
+   "label": "Coal / Domestic navigation / Transport Sector",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Domestic navigation",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_975f3feeb6819da6c9d1": {
+   "name": "c_975f3feeb6819da6c9d1",
+   "label": "Lignite / Domestic navigation / Transport Sector",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Domestic navigation",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_45831820d1812d0cef5e": {
+   "name": "c_45831820d1812d0cef5e",
+   "label": "LPG / Domestic navigation / Transport Sector",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Domestic navigation",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_efa17ef9bcf47566e202": {
+   "name": "c_efa17ef9bcf47566e202",
+   "label": "Naphtha / Domestic navigation / Transport Sector",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Domestic navigation",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_98544de15dcbbe7ad209": {
+   "name": "c_98544de15dcbbe7ad209",
+   "label": "Kerosene / Domestic navigation / Transport Sector",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Domestic navigation",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_f839b1ca2e0e5ac015e8": {
+   "name": "c_f839b1ca2e0e5ac015e8",
+   "label": "Diesel (HSD+ LDO) / Domestic navigation / Transport Sector",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Domestic navigation",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    1406.1808,
+    1420.1602103628913
+   ],
+   "sourceCells": 2
+  },
+  "c_1ffd1adac9ff14cb433b": {
+   "name": "c_1ffd1adac9ff14cb433b",
+   "label": "Fuel Oil / Domestic navigation / Transport Sector",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Domestic navigation",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    1310.391567997871,
+    1503.8303558434193
+   ],
+   "sourceCells": 2
+  },
+  "c_99a2f7ab885b81891d48": {
+   "name": "c_99a2f7ab885b81891d48",
+   "label": "ATF / Domestic navigation / Transport Sector",
+   "dims": {
+    "fuel": "ATF",
+    "flow": "Domestic navigation",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    8247.037915764973,
+    8984.689458340956
+   ],
+   "sourceCells": 2
+  },
+  "c_5dcfa9fae087f910db78": {
+   "name": "c_5dcfa9fae087f910db78",
+   "label": "Coal / Non-specified / Transport Sector",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Non-specified",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_41763179ae9b43fdfb0d": {
+   "name": "c_41763179ae9b43fdfb0d",
+   "label": "Lignite / Non-specified / Transport Sector",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Non-specified",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_38826fcec19ff7eb5300": {
+   "name": "c_38826fcec19ff7eb5300",
+   "label": "LPG / Non-specified / Transport Sector",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Non-specified",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_9404c9cae2b02c1c2d93": {
+   "name": "c_9404c9cae2b02c1c2d93",
+   "label": "Naphtha / Non-specified / Transport Sector",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Non-specified",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_d335aa5d0568c1cae4a6": {
+   "name": "c_d335aa5d0568c1cae4a6",
+   "label": "Kerosene / Non-specified / Transport Sector",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Non-specified",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_c70d7c322148ad91f18a": {
+   "name": "c_c70d7c322148ad91f18a",
+   "label": "Diesel (HSD+ LDO) / Non-specified / Transport Sector",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Non-specified",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_8dbf9b06f276eb23fef0": {
+   "name": "c_8dbf9b06f276eb23fef0",
+   "label": "Fuel Oil / Non-specified / Transport Sector",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Non-specified",
+    "sector": "Transport Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_0b282779271d550186b8": {
+   "name": "c_0b282779271d550186b8",
+   "label": "Coal / Other Sectors / Other Sectors",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Other Sectors",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    5.060191630853147,
+    9.15175191103485
+   ],
+   "sourceCells": 2
+  },
+  "c_fdb710342f8d11d2be4e": {
+   "name": "c_fdb710342f8d11d2be4e",
+   "label": "Lignite / Other Sectors / Other Sectors",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Other Sectors",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_33ca0ec5488fe71cc798": {
+   "name": "c_33ca0ec5488fe71cc798",
+   "label": "LPG / Other Sectors / Other Sectors",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Other Sectors",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    26434.00187419544,
+    28193.88131195837
+   ],
+   "sourceCells": 2
+  },
+  "c_ded773063b70981dc0f3": {
+   "name": "c_ded773063b70981dc0f3",
+   "label": "Naphtha / Other Sectors / Other Sectors",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Other Sectors",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_378aa16dbad7f7f13244": {
+   "name": "c_378aa16dbad7f7f13244",
+   "label": "Kerosene / Other Sectors / Other Sectors",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Other Sectors",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    479.07528757198475,
+    408
+   ],
+   "sourceCells": 2
+  },
+  "c_71f792686ce126f00041": {
+   "name": "c_71f792686ce126f00041",
+   "label": "Diesel (HSD+ LDO) / Other Sectors / Other Sectors",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Other Sectors",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    12480.4014,
+    13194.648548382196
+   ],
+   "sourceCells": 2
+  },
+  "c_d23d6a2ce71f7ea99f8d": {
+   "name": "c_d23d6a2ce71f7ea99f8d",
+   "label": "Fuel Oil / Other Sectors / Other Sectors",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Other Sectors",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    3262.326485385962,
+    2633.5898500937365
+   ],
+   "sourceCells": 2
+  },
+  "c_b2f0b6c885bf7bf51400": {
+   "name": "c_b2f0b6c885bf7bf51400",
+   "label": "Lubricants / Other Sectors / Other Sectors",
+   "dims": {
+    "fuel": "Lubricants",
+    "flow": "Other Sectors",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    4087.204650457666,
+    4580.737611797974
+   ],
+   "sourceCells": 2
+  },
+  "c_2f2536c7f85bdee085af": {
+   "name": "c_2f2536c7f85bdee085af",
+   "label": "Bitumin / Other Sectors / Other Sectors",
+   "dims": {
+    "fuel": "Bitumin",
+    "flow": "Other Sectors",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    8807.247857000022,
+    8581.5429005
+   ],
+   "sourceCells": 2
+  },
+  "c_f32589fc2a5a1b6f7472": {
+   "name": "c_f32589fc2a5a1b6f7472",
+   "label": "Petrol/Motor Spirit / Other Sectors / Other Sectors",
+   "dims": {
+    "fuel": "Petrol/Motor Spirit",
+    "flow": "Other Sectors",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_1de37b20605757c81895": {
+   "name": "c_1de37b20605757c81895",
+   "label": "ATF / Other Sectors / Other Sectors",
+   "dims": {
+    "fuel": "ATF",
+    "flow": "Other Sectors",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_42a1c02946feac7e4d58": {
+   "name": "c_42a1c02946feac7e4d58",
+   "label": "Petroleum Coke / Other Sectors / Other Sectors",
+   "dims": {
+    "fuel": "Petroleum Coke",
+    "flow": "Other Sectors",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_3157af5df3a8f383bb78": {
+   "name": "c_3157af5df3a8f383bb78",
+   "label": "Other Petroleum Products* / Other Sectors / Other Sectors",
+   "dims": {
+    "fuel": "Other Petroleum Products*",
+    "flow": "Other Sectors",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_b9d75373f952c509ad8d": {
+   "name": "c_b9d75373f952c509ad8d",
+   "label": "Coal / Residential / Other Sectors",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Residential",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_e9c1205f587c08a24133": {
+   "name": "c_e9c1205f587c08a24133",
+   "label": "Lignite / Residential / Other Sectors",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Residential",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_749c19a800689807aeaa": {
+   "name": "c_749c19a800689807aeaa",
+   "label": "LPG / Residential / Other Sectors",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Residential",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    26207.423904155443,
+    27653.52197695837
+   ],
+   "sourceCells": 2
+  },
+  "c_77b0faac28dfb73e90ae": {
+   "name": "c_77b0faac28dfb73e90ae",
+   "label": "Naphtha / Residential / Other Sectors",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Residential",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_9034e92a17f299c67e99": {
+   "name": "c_9034e92a17f299c67e99",
+   "label": "Kerosene / Residential / Other Sectors",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Residential",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    298.42725554319134,
+    230
+   ],
+   "sourceCells": 2
+  },
+  "c_64f6dc52f9994eae7881": {
+   "name": "c_64f6dc52f9994eae7881",
+   "label": "Diesel (HSD+ LDO) / Residential / Other Sectors",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Residential",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_379a3dcb525a8608a36d": {
+   "name": "c_379a3dcb525a8608a36d",
+   "label": "Fuel Oil / Residential / Other Sectors",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Residential",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_017ba8c1975ba1612e48": {
+   "name": "c_017ba8c1975ba1612e48",
+   "label": "Coal / Comm. And public services / Other Sectors",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Comm. And public services",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_c378e04603d20d2f52a5": {
+   "name": "c_c378e04603d20d2f52a5",
+   "label": "Lignite / Comm. And public services / Other Sectors",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Comm. And public services",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_557979689f62bdf981b3": {
+   "name": "c_557979689f62bdf981b3",
+   "label": "LPG / Comm. And public services / Other Sectors",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Comm. And public services",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_e799422f01186ba9d8a5": {
+   "name": "c_e799422f01186ba9d8a5",
+   "label": "Naphtha / Comm. And public services / Other Sectors",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Comm. And public services",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_9ccd97e97fd99f5f3f3e": {
+   "name": "c_9ccd97e97fd99f5f3f3e",
+   "label": "Kerosene / Comm. And public services / Other Sectors",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Comm. And public services",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    62.24197152295712,
+    63
+   ],
+   "sourceCells": 2
+  },
+  "c_fb8ee6db3970b2fdc009": {
+   "name": "c_fb8ee6db3970b2fdc009",
+   "label": "Diesel (HSD+ LDO) / Comm. And public services / Other Sectors",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Comm. And public services",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_3ea8e5c3ddcaadcf2cf6": {
+   "name": "c_3ea8e5c3ddcaadcf2cf6",
+   "label": "Fuel Oil / Comm. And public services / Other Sectors",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Comm. And public services",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_f7d65b58be63020af938": {
+   "name": "c_f7d65b58be63020af938",
+   "label": "Coal / Agriculture/forestry / Other Sectors",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Agriculture/forestry",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    5.060191630853147,
+    9.15175191103485
+   ],
+   "sourceCells": 2
+  },
+  "c_3bd4b9a357cb24f36e9e": {
+   "name": "c_3bd4b9a357cb24f36e9e",
+   "label": "Lignite / Agriculture/forestry / Other Sectors",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Agriculture/forestry",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_2b9e1e048dc70ff5dfd9": {
+   "name": "c_2b9e1e048dc70ff5dfd9",
+   "label": "LPG / Agriculture/forestry / Other Sectors",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Agriculture/forestry",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    26.499567,
+    24.72976000000001
+   ],
+   "sourceCells": 2
+  },
+  "c_f4c8faa4f38d5c35152b": {
+   "name": "c_f4c8faa4f38d5c35152b",
+   "label": "Naphtha / Agriculture/forestry / Other Sectors",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Agriculture/forestry",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_4de9e0e5d5751ff75968": {
+   "name": "c_4de9e0e5d5751ff75968",
+   "label": "Kerosene / Agriculture/forestry / Other Sectors",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Agriculture/forestry",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_69f0f3c04101af5e0a24": {
+   "name": "c_69f0f3c04101af5e0a24",
+   "label": "Diesel (HSD+ LDO) / Agriculture/forestry / Other Sectors",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Agriculture/forestry",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    4222.8848,
+    4317.505406109236
+   ],
+   "sourceCells": 2
+  },
+  "c_fe3433116e9eef5dad54": {
+   "name": "c_fe3433116e9eef5dad54",
+   "label": "Fuel Oil / Agriculture/forestry / Other Sectors",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Agriculture/forestry",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    34.5912519042594,
+    42.76284953184959
+   ],
+   "sourceCells": 2
+  },
+  "c_beda5a1b5c0eacff8abc": {
+   "name": "c_beda5a1b5c0eacff8abc",
+   "label": "Coal / Non-specified / Other Sectors",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Non-specified",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_4387bff98160fee30019": {
+   "name": "c_4387bff98160fee30019",
+   "label": "Lignite / Non-specified / Other Sectors",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Non-specified",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_9f63dadbd47d4d540473": {
+   "name": "c_9f63dadbd47d4d540473",
+   "label": "LPG / Non-specified / Other Sectors",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Non-specified",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    200.07840304,
+    515.6295749999998
+   ],
+   "sourceCells": 2
+  },
+  "c_0a4c2bd5f14f00d279ee": {
+   "name": "c_0a4c2bd5f14f00d279ee",
+   "label": "Naphtha / Non-specified / Other Sectors",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Non-specified",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_9410b33508075579d4f3": {
+   "name": "c_9410b33508075579d4f3",
+   "label": "Kerosene / Non-specified / Other Sectors",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Non-specified",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    118.40606050583634,
+    115
+   ],
+   "sourceCells": 2
+  },
+  "c_b200f20ecc5cd9501323": {
+   "name": "c_b200f20ecc5cd9501323",
+   "label": "Diesel (HSD+ LDO) / Non-specified / Other Sectors",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Non-specified",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    8257.5166,
+    8877.14314227296
+   ],
+   "sourceCells": 2
+  },
+  "c_bc1fa59255c33b2ba371": {
+   "name": "c_bc1fa59255c33b2ba371",
+   "label": "Fuel Oil / Non-specified / Other Sectors",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Non-specified",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    3227.7352334817024,
+    2590.827000561887
+   ],
+   "sourceCells": 2
+  },
+  "c_e8220016c9f10e9562a5": {
+   "name": "c_e8220016c9f10e9562a5",
+   "label": "Lubricants / Non-specified / Other Sectors",
+   "dims": {
+    "fuel": "Lubricants",
+    "flow": "Non-specified",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    4087.204650457666,
+    4580.737611797974
+   ],
+   "sourceCells": 2
+  },
+  "c_a878aace215f81e65d57": {
+   "name": "c_a878aace215f81e65d57",
+   "label": "Bitumin / Non-specified / Other Sectors",
+   "dims": {
+    "fuel": "Bitumin",
+    "flow": "Non-specified",
+    "sector": "Other Sectors"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    8807.247857000022,
+    8581.5429005
+   ],
+   "sourceCells": 2
+  },
+  "c_b9fbbcf0aa3b5c8139ea": {
+   "name": "c_b9fbbcf0aa3b5c8139ea",
+   "label": "Coal / Chemical and petroleum / Industry Sector",
+   "dims": {
+    "fuel": "Coal",
+    "flow": "Chemical and petroleum",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    null,
+    31596.293823542306
+   ],
+   "sourceCells": 1
+  },
+  "c_040eb33fd4379ebb8ce9": {
+   "name": "c_040eb33fd4379ebb8ce9",
+   "label": "Lignite / Chemical and petroleum / Industry Sector",
+   "dims": {
+    "fuel": "Lignite",
+    "flow": "Chemical and petroleum",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    null,
+    627
+   ],
+   "sourceCells": 1
+  },
+  "c_903b9f7f1e88f15c1e3d": {
+   "name": "c_903b9f7f1e88f15c1e3d",
+   "label": "LPG / Chemical and petroleum / Industry Sector",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Chemical and petroleum",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    null,
+    165.19009199999996
+   ],
+   "sourceCells": 1
+  },
+  "c_0f6b1ec6d8ec95ea91c6": {
+   "name": "c_0f6b1ec6d8ec95ea91c6",
+   "label": "Naphtha / Chemical and petroleum / Industry Sector",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Chemical and petroleum",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    null,
+    11456.683369999997
+   ],
+   "sourceCells": 1
+  },
+  "c_f4d2487ab6f7e587ee8c": {
+   "name": "c_f4d2487ab6f7e587ee8c",
+   "label": "Kerosene / Chemical and petroleum / Industry Sector",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Chemical and petroleum",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    null,
+    0
+   ],
+   "sourceCells": 1
+  },
+  "c_f47f05833d927ee2f0a0": {
+   "name": "c_f47f05833d927ee2f0a0",
+   "label": "Diesel (HSD+ LDO) / Chemical and petroleum / Industry Sector",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Chemical and petroleum",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    null,
+    107.9536068464179
+   ],
+   "sourceCells": 1
+  },
+  "c_49b36817865dc73c1830": {
+   "name": "c_49b36817865dc73c1830",
+   "label": "Fuel Oil / Chemical and petroleum / Industry Sector",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Chemical and petroleum",
+    "sector": "Industry Sector"
+   },
+   "unit": "thousand_tonnes",
+   "color": "#2E4BD8",
+   "data": [
+    null,
+    533.4123816107058
+   ],
+   "sourceCells": 1
+  }
+ }
+}

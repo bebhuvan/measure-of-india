@@ -7,12 +7,16 @@ import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 import { period } from "../../dossiers/periods.js";
 import fs from "node:fs";
+import {guideBundles} from "../../dossiers/everycut.js";
+import {vintageSummary} from "../../../scripts/lib/vintage.mjs";
+import { marketsRbiSlices } from '../../dossiers/markets-rbi.model.js';
 const D = bySlug["markets"];
 // Every period, count and title figure named in this page's copy is read from the bundles at
 // build time. Heavy bundles (fortnightly CP and CD, the 51 fund houses, 45 listed industries, the
 // forecasters' rounds) are sliced here and handed to the page as baked JSON: the page makes no
 // data requests (CONTRACT-render), and the client carries only what it draws.
 const B = (s) => JSON.parse(fs.readFileSync(`data/series/${s}.json`, "utf8"));
+const guideRevisionSummary=vintageSummary(guideBundles(D).map(s=>B(s).meta));
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const M3 = MONTHS.map((m) => m.slice(0, 3));
 const fyOf = (iso) => { const y = +iso.slice(0, 4); return `${y}-${String((y + 1) % 100).padStart(2, "0")}`; };
@@ -34,6 +38,7 @@ const PLQ = period("markets-listed-q"), PCO = period("markets-co-public-growth")
 const qLabel = (P, b) => qOf(b.dates.at(-1));
 const fyA = fyOf(flowsA.dates.at(-1)), fyL = fyOf(longB.dates.at(-1)), fyIA = fyOf(issuesA.dates.at(-1)), fyCO = fyOf(pubG.dates.at(-1)), fyH = fyOf(houses.dates.at(-1)), fySP = fyOf(sponsor.dates.at(-1));
 const qSpan = (b) => `${qOf(b.dates[0])} to ${qOf(b.dates.at(-1))}`;
+const rbiViews = marketsRbiSlices(B);
 const lqLast = qOf(lq.dates.at(-1)), flowsLast = qOf(flows.dates.at(-1)), stocksLast = qOf(stocks.dates.at(-1));
 
 // titles that carry a figure are computed from the bundles
@@ -58,7 +63,11 @@ const debtTitle = `Under the Ind AS studies, public limited companies' debt fell
 const ser = (b, k, from) => { const i0 = from ? b.dates.findIndex((d) => d >= from) : 0; return b.dates.slice(i0).map((d, i) => [d, b.series[k].data[i0 + i]]); };
 const latestBy = (b, suffix, filt = () => true) => { const i = b.dates.length - 1; return Object.entries(b.series).filter(([k, s]) => k.endsWith(suffix) && filt(k, s)).map(([k, s]) => ({ k, label: s.label, group: s.group ?? null, v: s.data[i], y: s.data[i - 4] ?? null })).filter((x) => x.v != null); };
 const spfTargets = (b, re) => Object.entries(b.series).filter(([k]) => re.test(k) && k.endsWith("__median")).map(([k, s]) => ({ k, target: s.target, data: b.dates.map((d, i) => [d, s.data[i]]).filter((p) => p[1] != null) }));
+const listedSlice = b => ({meta:{frequency:b.meta.frequency},dates:b.dates,series:Object.fromEntries(Object.entries(b.series).map(([k,v])=>[k,{label:v.label,data:v.data}]))});
 const baked = {
+  guideRevisionSummary,
+  listed:{lq:listedSlice(lq),lqs:listedSlice(lqs),lqr:listedSlice(lr)},
+  rbiViews,
   cp: ser(cp, "outstanding", "1993-01-01"), cd: ser(cd, "outstanding", "1991-01-01"),
   houses: (() => { const i = houses.dates.length - 1; return Object.entries(houses.series).filter(([k]) => k !== "total").map(([k, s]) => ({ label: s.label, v: s.data[i] })).filter((x) => x.v != null).sort((a, b) => b.v - a.v); })(),
   housesDate: houses.dates.at(-1),
@@ -553,20 +562,16 @@ const baked = {
       <figure id="cb-listed" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>Listed companies' sales grew {lqS.v.toFixed(1)}% in {lqLast}, and their operating profit kept pace</h3>
+            <h3>Listed companies' sales grew {lqS.v.toFixed(1)}% in {lqLast}</h3>
             <div class="sub">Listed private non-financial companies: growth in sales and operating profit on the same quarter a year earlier, the same companies in both, per cent, {qSpan(lq)}.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-listed">–</div><div class="c">sales growth, {lqLast}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Sales</button>
-            <button class="chip"><i style="background:#C47A16"></i>Operating profit</button>
-          </div>
           <div class="plotzone"><div id="plot-listed" style="position:relative"><div class="cb-tip"></div></div></div>
           <div class="plotfoot">
-            <span class="src">Source: RBI, performance of listed non-government non-financial companies (SDMX dataset PRF_LNGNFC_QTR_RN), via the RBI Innovation Hub's data service.</span>
-            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+            <span class="src">Source: RBI, performance of listed non-government non-financial companies (SDMX dataset PRF_LNGNFC_QTR_RN), from official CAS and prompted report exports held in the local Data Bank.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in/DBIE/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
@@ -591,15 +596,10 @@ const baked = {
           <div class="plate-val"><div class="v acc" id="pv-sectors">–</div><div class="c">manufacturing, {lqLast}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Manufacturing</button>
-            <button class="chip"><i style="background:#C47A16"></i>IT</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Services other than IT</button>
-          </div>
           <div class="plotzone"><div id="plot-sectors" style="position:relative"><div class="cb-tip"></div></div></div>
           <div class="plotfoot">
-            <span class="src">Source: RBI, listed companies by sector (SDMX dataset PRF_LNGNFC_QTR_IND_RN), via the RBI Innovation Hub's data service.</span>
-            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+            <span class="src">Source: RBI, listed companies by sector (SDMX dataset PRF_LNGNFC_QTR_IND_RN), from official CAS and prompted report exports held in the local Data Bank.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in/DBIE/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
@@ -619,25 +619,21 @@ const baked = {
         <div class="plate-head">
           <div class="t">
             <h3>{coverTitle}</h3>
-            <div class="sub">Interest coverage (earnings before interest and tax divided by interest, times) and net profit as a share of sales (per cent), listed private non-financial companies, {qSpan(lq)}.</div>
+            <div class="sub">Interest coverage (earnings before interest and tax divided by interest, times), listed private non-financial companies, {qSpan(lq)}.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-coverage">–</div><div class="c">interest coverage, {lqLast}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Interest coverage, times</button>
-            <button class="chip"><i style="background:#C47A16"></i>Net profit to sales, per cent</button>
-          </div>
           <div class="plotzone"><div id="plot-coverage" style="position:relative"><div class="cb-tip"></div></div></div>
           <div class="plotfoot">
-            <span class="src">Source: RBI, ratios of listed non-government non-financial companies (SDMX dataset RATIO_LNGNFC_QTR_RN), via the RBI Innovation Hub's data service.</span>
-            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+            <span class="src">Source: RBI, ratios of listed non-government non-financial companies (SDMX dataset RATIO_LNGNFC_QTR_RN), from official CAS and prompted report exports held in the local Data Bank.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in/DBIE/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Interest coverage is how many times over a company's operating earnings could pay its interest bill. Below about 1.5 a company is in trouble if business slows; above 5 it has room. The two lines share one scale but different units: times for coverage, per cent for the profit margin.</p>
+            <p>Interest coverage divides earnings before interest and tax by interest expense. A higher ratio provides a larger earnings cushion against the interest bill. The sector and size panels below show how this aggregate differs across companies.</p>
           </div>
           <div class="now">
             <span class="mk">As of {lqLast}</span>
@@ -651,15 +647,15 @@ const baked = {
         <div class="plate-head">
           <div class="t">
             <h3>Industry by industry, sales growth ranged widely in {qOf(baked.industriesDate)}</h3>
-            <div class="sub">Sales growth of listed private companies on the same quarter a year earlier, per cent, by industry, {qOf(baked.industriesDate)}. Bar: the quarter; tick: the same quarter a year before.</div>
+            <div class="sub">Sales growth of listed private companies on the same quarter a year earlier, per cent, by industry, {qOf(baked.industriesDate)}. Dot: the quarter; each row keeps its full industry name and value.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-industries">–</div><div class="c">industries growing faster than 10%</div></div>
         </div>
         <div class="frame">
           <div class="plotzone"><div id="plot-industries" style="position:relative"></div></div>
           <div class="plotfoot">
-            <span class="src">Source: RBI, industry-wise growth rates of listed companies (SDMX dataset PRF_LNGNFC_IND_QTR_RN), via the RBI Innovation Hub's data service. Every industry and indicator is in the data download.</span>
-            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+            <span class="src">Source: RBI, industry-wise growth rates of listed companies (SDMX dataset PRF_LNGNFC_IND_QTR_RN), from official CAS and prompted report exports held in the local Data Bank. Every industry and indicator is in the data download.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in/DBIE/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
@@ -674,6 +670,15 @@ const baked = {
         </div>
       </figure>
     </div>
+    <p>These tables cover listed non-government, non-financial companies. The quarterly and annual studies use different reporting windows. Growth compares companies present in both comparison periods; levels, margins and study counts can use changing samples. None of these counts measures employment.</p>
+    <p>Source omissions remain visible. Data Query leaves out some not-meaningful rates and contains zero-filled amount vectors. The newest statistical reports supply additional cells; their not-meaningful sentinels remain missing. <a href="/data/markets-rbi-source-quality.json">Download source defects, overlap differences and lineage</a>.</p>
+    {rbiViews.map(view => <div class="break rbi-plate" style="margin-top:104px">
+      <figure id={`cb-${view.id}`} style="margin:0" data-compact>
+        <div class="plate-head"><div class="t"><h3>{view.title}</h3><div class="sub">{view.f === 'a' ? 'Annual study' : 'Quarterly study'}, {view.f === 'a' ? fyOf(view.date) : qOf(view.date)}. {view.unit === 'inr_crore' ? '₹ crore; this period’s companies' : view.unit === 'times' ? 'Times' : view.unit === 'count' ? 'Reporting companies' : 'Per cent'}. {view.history ? 'Full comparable history.' : 'Every published group, including labelled parent groups.'}</div></div><div class="plate-val"><div class="v" id={`pv-${view.id}`}>–</div><div class="c">{view.history ? 'periods with published values' : 'groups with published values'}</div></div></div>
+        <div class="frame"><div class="plotzone"><div id={`plot-${view.id}`}></div></div><div class="plotfoot"><span class="src">Source: Reserve Bank of India, DBIE, official CAS and prompted statistical reports. Canonical bundle: {view.bundle}.</span><span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={` /data/${view.bundle}.json`.trim()}>All measures</a></span></div></div>
+        <div class="explain"><div class="ev"><span class="mk">How to read this</span><p>{view.explain}</p></div><div class="now"><span class="mk">As of {view.f === 'a' ? fyOf(view.date) : qOf(view.date)}</span><p><b id={`ex-${view.id}`}>–</b> {view.history ? 'periods have a published value.' : 'groups have a published value.'} An em dash means no meaningful value is available for that group in this period. Every published measure and its history are in Every Cut and downloads.</p></div></div>
+      </figure>
+    </div>)}
   </section>
 
   <!-- § 12 the RBI's company studies. Inputs: markets-co-{public,private,fdi}-growth and -2011 (net sales), markets-co-{public,private}-ratios and -2011 (debt to equity); every other study bundle in the every-cut table. -->
@@ -813,13 +818,15 @@ const baked = {
 
   <GuideData slug="markets" />
 
+  <p class="guide-link"><a href="/guides/investor-participation/">Mutual funds and investor participation</a> keeps the reviewed fund totals, source records and interpretation status together.</p>
+
   <footer class="provenance">
     <h2 class="prov-h">Sources, method and revisions</h2>
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Reserve Bank of India. Household financial flows and stocks, new capital issues, mutual funds, gold and silver prices, market capitalisation, turnover and derivatives, and the company finance studies are read from India Atlas's archived copy of the RBI's DBIE database. The Survey of Professional Forecasters and the listed company tables, which DBIE gates behind an input form, are read from the RBI Innovation Hub's copy of DBIE. Data vintage <b id="prov-vintage">–</b>.</p>
-        <p>Checked against the RBI's own publications: household flows in the Bulletin (October to December 2025), the public limited company study of 2024-25 (release of 30 March 2026), the listed company release for October to December 2025, the 101st round of the forecasters' survey, the Handbook's gold table, and the Bulletin's new issues table.</p>
+        <p>Reserve Bank of India. Household financial flows and stocks, new capital issues, mutual funds, gold and silver prices, market capitalisation, turnover and derivatives, and the company finance studies are read from India Atlas's archived copy of the RBI's DBIE database. The Survey of Professional Forecasters is read from the RBI Innovation Hub's copy of DBIE. Listed-company tables use archived official DBIE CAS observations and prompted statistical reports; eight historical industry-margin cells retain an explicitly flagged ambiguous mirror selection. Data vintage <b id="prov-vintage">{guideRevisionSummary}</b>.</p>
+        <p>Checked against the RBI's own publications: household flows in the Bulletin (October to December 2025), the public limited company study of 2024-25 (release of 30 March 2026), the listed-company CAS/report overlap and all thirty annual and quarterly prompted exports through April to June 2026, the 101st round of the forecasters' survey, the Handbook's gold table, and the Bulletin's new issues table.</p>
       </div>
       <div>
         <h6>Method</h6>
@@ -836,7 +843,7 @@ const baked = {
     </div>
     <div class="fine">
       <span>India Atlas, savings, markets and companies</span>
-      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Vintage <span id="prov-vintage2">{guideRevisionSummary}</span></span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
@@ -848,3 +855,8 @@ const baked = {
   import "../../dossiers/markets.client.js";
 </script>
 </Base>
+
+<style>
+.rbi-plate .plotzone, #cb-industries .plotzone, #cb-listed .plotzone, #cb-sectors .plotzone, #cb-coverage .plotzone {overflow:visible;min-width:0;}
+.rbi-plate .plotzone :global(svg), #cb-industries .plotzone :global(svg), #cb-listed .plotzone :global(svg), #cb-sectors .plotzone :global(svg), #cb-coverage .plotzone :global(svg) {max-width:100%;min-width:0;height:auto;}
+</style>

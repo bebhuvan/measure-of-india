@@ -1,3 +1,4 @@
+import {declaredUnpublishedSnapshot} from '../../scripts/lib/source-unpublished-snapshot.mjs';
 // src/dossiers/everycut.js: the rows of the "Every cut" table (src/components/EveryCut.astro),
 // built at render time from the baked bundles. Pure node: no DOM, no client fetch.
 //
@@ -17,6 +18,9 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { unitOf } from "./units.js";
+import { getSourceQuality, sourceQualityRegistry } from "../explore/source-quality.js";
+import { DOSSIERS } from "./registry.js";
+import { expectedAsOf } from "../explore/model.js";
 
 const ROOT = process.cwd();   // builds run from the repository root (see periods.js)
 const MINUS = "−\u2060";   // U+2212 then a word joiner: the sign never wraps away from ₹ or $ after it
@@ -40,8 +44,32 @@ const big = (v, unit) => {   // levels in a base unit, shown at a readable scale
 // so a small line never reads "$0.0 bn"
 const usdFromMn = (v) => { const a = Math.abs(v); const s = a >= 1000 ? grp(a / 1e3, 1) + " bn" : grp(a, a >= 10 ? 0 : 1) + " mn"; return (v < 0 ? MINUS : "") + "$" + s; };
 export const UNITS = {
+  lakh: {kind:"diff",fmt:v=>grp(v,2)+" lakh"},
+  million: {kind:"diff",fmt:v=>grp(v,2)+" million"},
+  // farm-households: source-specific units and denominators
+  kg: {kind:"pct",fmt:v=>grp(v,3)+" kg"},
+  ha: {kind:"pct",fmt:v=>grp(v,3)+" ha"},
+  thousand_ha: {kind:"pct",fmt:v=>grp(v,3)+" thousand ha"},
+  kg_per_ha: {kind:"pct",fmt:v=>grp(v,3)+" kg/ha"},
+  count_per_ha: {kind:"diff",fmt:v=>grp(v,3)+" / ha"},
+  count_per_holding: {kind:"diff",fmt:v=>grp(v,3)+" / holding"},
+  count_per_household: {kind:"diff",fmt:v=>grp(v,3)+" / household"},
+  source_sale_rate: {kind:"diff",fmt:v=>grp(v,3)+" (source sale-rate unit)"},
+  // end farm-households
+  // ---- energy expansion ----
+  source_scaled_gwh: {kind:"diff",fmt:v=>grp(v,2)+" [scaled GWh; audit only]"},
+  thousand_tonnes: {kind:"pct",fmt:v=>grp(v,2)+" thousand tonnes"},
+  mmscm: {kind:"pct",fmt:v=>grp(v,2)+" million m³"},
+  ktoe: {kind:"pct", fmt:v=>grp(v,2)+" KToE"},
+  pj: {kind:"pct", fmt:v=>grp(v,2)+" PJ"},
+  gwh: {kind:"pct", fmt:v=>grp(v,2)+" GWh"},
+  kt_co2e: {kind:"pct", fmt:v=>grp(v,2)+" kt CO₂e", note:"CO₂-equivalent"},
+  mwh_per_person: {kind:"diff", fmt:v=>grp(v,2)+" MWh/person"},
+  // ---- end energy expansion ----
+  count_per_school: { kind: "diff", fmt: (v) => grp(v, 1), note: "per school" },
   pct_yoy: { kind: "pt", fmt: (v) => v.toFixed(1) + "%", note: "year-on-year" },
   pct: { kind: "pt", fmt: (v) => v.toFixed(1) + "%" },
+  pct_rse: { kind: "pt", fmt: v => v.toFixed(2) + "%", note: "relative standard error of the estimate; sampling uncertainty, not population coverage" },
   percent: { kind: "pt", fmt: (v) => v.toFixed(1) + "%" },
   pct_gdp: { kind: "pt", fmt: (v) => v.toFixed(1) + "%", note: "of GDP" },
   pct_of_gdp: { kind: "pt", fmt: (v) => v.toFixed(1) + "%", note: "of GDP" },
@@ -594,10 +622,19 @@ export const CUT_RULES = [
   // --- states: every other states-* bundle (MoSPI levels, all RBI Handbook tables) is by state
   [/^states-/, "State"],
 ];
-export function cutOf(slug) {
+// Bundle metadata is cached by loadBundle; infer its fallback descriptor once.
+const dimensionCutMemo = new WeakMap();
+export function cutOf(slug, meta = {}) {
   if (CUT_BY_BUNDLE[slug]) return CUT_BY_BUNDLE[slug];
   for (const [re, c] of CUT_RULES) if (re.test(slug)) return c;
-  return "All India";
+  if (typeof meta.cut === "string" && meta.cut.trim()) return meta.cut.trim();
+  if (!dimensionCutMemo.has(meta)) {
+    const dims = new Set(Array.isArray(meta.dimensions) ? meta.dimensions : []);
+    const label = dims.has("state") && dims.has("sector") ? "State and sector"
+      : dims.has("state") ? "State" : dims.has("sector") ? "Sector" : "All India";
+    dimensionCutMemo.set(meta, label);
+  }
+  return dimensionCutMemo.get(meta);
 }
 // the parent within a long cut, when the bundle carries one (CPI items' division, a WPI
 // item's lineage below the major group, an explicit series.group)
@@ -630,6 +667,18 @@ export const PERIOD_LABELS = {
   "ilo-nss-": { "1994-01-01": "NSS 1993-94", "2000-01-01": "NSS 1999-2000", "2005-01-01": "NSS 2004-05", "2010-01-01": "NSS 2009-10", "2012-01-01": "NSS 2011-12" },
 };
 export function periodLabel(slug, bundle, iso) {
+  const mode = bundle.meta?.periodLabelMode;
+  if (mode !== undefined && mode !== "source-date") throw new Error(`Unknown periodLabelMode: ${mode}`);
+  if (bundle.meta?.observationKind === "expected-schedule") {
+    const label = bundle.meta.periodLabels?.[iso];
+    if (typeof label !== "string" || !label.trim()) throw new Error(`Expected source period label missing: ${slug}:${iso}`);
+    return label;
+  }
+  if (mode === "source-date") {
+    const date = new Date(iso + "T00:00:00Z");
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(iso) || !Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== iso) throw new Error(`Invalid source date: ${iso}`);
+    return `${+iso.slice(8, 10)} ${M3[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}`;
+  }
   for (const [pre, map] of Object.entries(PERIOD_LABELS)) if (slug.startsWith(pre) && map[iso]) return map[iso];
   const f = bundle.meta?.frequency, y = +iso.slice(0, 4), m = +iso.slice(5, 7);
   if (f === "monthly") return `${M3[m - 1]} ${y}`;
@@ -705,14 +754,40 @@ export function rowAnchor(bundle, key) {
   const h = crypto.createHash("sha1").update(bundle + "\0" + key).digest();
   return "s" + (h.readUInt32BE(0) * 256 + h[4]).toString(36).padStart(7, "0").slice(-7);
 }
+function validateSourceQualityMode(mode) {
+  if (mode !== undefined && mode !== "required") throw new Error("Unknown EveryCut source-quality mode");
+}
+function validateEveryCutChangeMode(mode) {
+  if (mode !== undefined && mode !== "none") throw new Error("Unknown EveryCut change mode");
+}
+function changeModeByOwner(slug) {
+  let mode;
+  for (const d of DOSSIERS) {
+    validateEveryCutChangeMode(d.everyCutChangeMode);
+    if (d.everyCutChangeMode === "none" && (d.currentBundle === slug || d.bundles?.includes(slug) || d.everyCutFamilies?.some(f => familyMatch(f)(slug)))) mode="none";
+  }
+  return mode;
+}
+export function requiredByOwner(slug) {
+  for (const d of DOSSIERS) {
+    validateSourceQualityMode(d.sourceQualityMode);
+    if (d.sourceQualityMode === "required" && (d.currentBundle === slug || d.bundles?.includes(slug) || d.everyCutFamilies?.some(f => familyMatch(f)(slug)))) return true;
+  }
+  return false;
+}
 export function rowsOf(slug, opts = {}) {
-  const mk = slug + "|" + (opts.cut ?? "");
+  validateSourceQualityMode(opts.sourceQualityMode);
+  validateEveryCutChangeMode(opts.everyCutChangeMode);
+  const ownerChangeMode=changeModeByOwner(slug);
+  if(ownerChangeMode)opts={...opts,everyCutChangeMode:ownerChangeMode};
+  if (requiredByOwner(slug)) opts = {...opts, sourceQualityMode: "required"};
+  const mk = slug + "|" + (opts.cut ?? "") + "|" + (opts.sourceQualityMode ?? "") + "|" + (opts.everyCutChangeMode ?? "");
   if (!rowsMemo.has(mk)) rowsMemo.set(mk, rowsOfUncached(slug, opts));
   return rowsMemo.get(mk);
 }
 function rowsOfUncached(slug, opts = {}) {
   const b = loadBundle(slug);
-  const cut = opts.cut ?? cutOf(slug);
+  const cut = opts.cut ?? cutOf(slug, b.meta);
   const rows = [];
   for (const [key, s] of Object.entries(b.series)) {
     const u = unitOf(b, s);
@@ -720,21 +795,31 @@ function rowsOfUncached(slug, opts = {}) {
     if (!U) throw new Error(`everycut: ${slug}.${key} has unit "${u}", which src/dossiers/everycut.js UNITS cannot show; add it there or set series.unit`);
     let li = -1;
     for (let i = s.data.length - 1; i >= 0; i--) if (s.data[i] != null) { li = i; break; }
+    const fullCutNames = b.meta?.everyCutLabelMode === "series-name";
+    const sourceFacet = fullCutNames ? [s.dims?.state, s.dims?.sector].filter(v => v != null && String(v).trim()).join(" · ") : "";
     const row = {
-      bundle: slug, key, id: rowAnchor(slug, key), label: tidy(s.label || key), cut, group: groupOf(s), unit: u, unitNote: U.note || "", base: bundleBase(slug, b),
+      bundle: slug, key, id: rowAnchor(slug, key), label: tidy((fullCutNames ? s.name : s.label) || s.label || key), cut, group: groupOf(s) || sourceFacet, unit: u, unitNote: U.note || "", base: bundleBase(slug, b),
       latest: null, latestText: "—", period: "", change: null, changeText: "—", spark: sparkPath(s.data),
       estimated: false, changeEstimated: false, estimatedNote: s.estimatedNote || "",
+      ...(b.meta?.observationKind === "expected-schedule" ? {expected: true, expectedNote: s.expectedNote || "", expectedAsOf: expectedAsOf(b.meta), expectedWindowNote: b.meta.forecastWindowNote || "", expectedMethod: b.meta.note || ""} : {}),
     };
+    // Render guard only: publication still requires independent raw proof in validation.
+    if (li < 0 && declaredUnpublishedSnapshot(b, s)) {
+      row.period = periodLabel(slug, b, b.dates[0]);
+      row.unavailableReason = b.meta.unpublishedSnapshotSource.reason;
+      row.sourceValue = s.sourceValue;
+    }
     // CONTRACT-series 2b: a value listed in series.estimated is never shown as if measured
     const est = new Set(s.estimated ?? []);
     if (li >= 0) {
       const v = s.data[li], iso = b.dates[li];
       row.latest = v; row.latestText = minus(U.fmt(v)); row.period = periodLabel(slug, b, iso);
+      if (row.expected) row.period = b.meta.periodLabels?.[iso] || row.period;
       row.estimated = est.has(iso);
       // health-gender: an estimated latest value marks its change as estimated too, even where the
       // frequency gives no change to show (census-year projections)
       row.changeEstimated = row.estimated;
-      if (TIMED.has(b.meta?.frequency)) {
+      if (!row.expected && TIMED.has(b.meta?.frequency)) {
         const j = b.dates.indexOf(yearEarlier(iso));
         const p = j >= 0 ? s.data[j] : null;
         if (p != null) {
@@ -744,6 +829,22 @@ function rowsOfUncached(slug, opts = {}) {
           else if (p > 0 && v >= 0) { row.change = (v / p - 1) * 100; row.changeText = signed(row.change, (x) => x.toFixed(1) + "%"); }
         }
       }
+    }
+    if (opts.sourceQualityMode === "required") {
+      const quality = getSourceQuality(slug, b, {...s, key});
+      if (quality.id === sourceQualityRegistry.default.id) throw new Error(`Source-quality opt-in has no named record/pending policy: ${slug}:${key}`);
+      row.sourceQuality = quality;
+      row.sourceDefinition = quality.definition || quality.reason;
+      row.referenceBasis = quality.referencePeriod || quality.referenceBasis || "";
+      if (!quality.canInterpret) {
+        row.latest = null; row.latestText = "Review pending";
+        row.change = null; row.changeText = "—"; row.spark = null;
+        row.estimated = false; row.changeEstimated = false; if (row.expected) row.expected = false;
+        row.unitNote = ""; row.base = "";
+      }
+    }
+    if (opts.everyCutChangeMode === "none") {
+      row.change=null;row.changeText="—";row.changeEstimated=false;row.changeMode="none";
     }
     rows.push(row);
   }
@@ -780,7 +881,20 @@ export function guideBundles(d) {
 /** Where every series of a guide appears, exactly once: inline on the guide page, or in one
  *  long-tail view. Views: a bundle over LONG_TAIL series ("bundle"), a registry family of small
  *  bundles ("family"), and the bundles past the inline cap ("more"). */
+// A build reuses each plan on every paginated route and on state/download indexes.
+// The underlying bundles/rows are already immutable process caches; cache the
+// partition too, so a large survey does not repartition its full cube per page.
+const planMemo = new WeakMap();
 export function everyCutPlan(d, { cuts = {} } = {}) {
+  validateSourceQualityMode(d.sourceQualityMode);
+  validateEveryCutChangeMode(d.everyCutChangeMode);
+  const key=JSON.stringify({cuts:Object.entries(cuts).sort(([a],[b])=>a.localeCompare(b)),sourceQualityMode:d.sourceQualityMode,everyCutChangeMode:d.everyCutChangeMode});
+  let memo=planMemo.get(d);if(!memo){memo=new Map();planMemo.set(d,memo);}
+  if(!memo.has(key))memo.set(key,everyCutPlanUncached(d,{cuts}));
+  return memo.get(key);
+}
+function everyCutPlanUncached(d, { cuts = {} } = {}) {
+  if (d.sourceQualityMode !== undefined && d.sourceQualityMode !== "required") throw new Error("Unknown guide sourceQualityMode");
   const names = guideBundles(d);
   const fams = (d.everyCutFamilies ?? []).map((f) => ({ ...f, m: familyMatch(f), bundles: [] }));
   const ids = new Set(names);
@@ -798,17 +912,17 @@ export function everyCutPlan(d, { cuts = {} } = {}) {
   let used = 0;
   const over = [];
   for (const b of free) {
-    const rows = rowsOf(b, { cut: cuts[b] });
+    const rows = rowsOf(b, { cut: cuts[b], sourceQualityMode: d.sourceQualityMode, everyCutChangeMode:d.everyCutChangeMode });
     if (rows.length > LONG_TAIL) tails.push({ kind: "bundle", id: b, label: bundleTitle(b), bundles: [b] });
     else if (used + rows.length <= cap && !over.length) { inline.push(b); used += rows.length; }
     else over.push(b);
   }
   if (over.length) tails.push({ kind: "more", id: "more", label: over.length === 1 ? bundleTitle(over[0]) : "The remaining files", bundles: over });
   for (const t of tails) {
-    t.rows = t.bundles.flatMap((b) => rowsOf(b, { cut: cuts[b] }));
+    t.rows = t.bundles.flatMap((b) => rowsOf(b, { cut: cuts[b], sourceQualityMode: d.sourceQualityMode, everyCutChangeMode:d.everyCutChangeMode }));
     t.pages = t.kind === "bundle" ? paginate(t.rows) : paginateBy(t.rows, (r) => r.bundle);
   }
-  return { inline, inlineRows: inline.flatMap((b) => rowsOf(b, { cut: cuts[b] })), tails };
+  return { inline, inlineRows: inline.flatMap((b) => rowsOf(b, { cut: cuts[b], sourceQualityMode: d.sourceQualityMode, everyCutChangeMode:d.everyCutChangeMode })), tails };
 }
 
 /** Split rows into pages of at most `size`, keeping each key's rows together where they fit. */

@@ -1,0 +1,109 @@
+{
+  "version": 1,
+  "family": "pensions",
+  "kind": "expected-schedule",
+  "bundle": "pensions-a23",
+  "sourceTable": "A23",
+  "rawFile": "data/raw/pensions/source-documents/4d30c026c9e3d368d6ff09986c94fcda62fbe2951fcbf4061428e80b743fb3e0.xlsx",
+  "rawSha256": "4d30c026c9e3d368d6ff09986c94fcda62fbe2951fcbf4061428e80b743fb3e0",
+  "sourceUrl": "https://www.pfrda.org.in/documents/33652/202494/A23_sector_wise_exit_superannuation.xlsx?v=1.106",
+  "sheet": "Formatted Report",
+  "title": {
+    "cell": "A1",
+    "text": "Table A23: Sector-wise Exit/Superannuation under NPS in next 5 years"
+  },
+  "method": {
+    "cell": "A11",
+    "text": "Note:\n1. Criteria considered for deciding retirement age is as follows:\n   a) Government Sector – Based on \"Date of Retirement of Subscriber\" in CRA System.\n   b) All Citizen – Based on Date of Birth + 60 years.\n   c) Corporate – Based on \"Date of retirement\", or if unavailable, DOB + 60 years.\n   d) NPS Lite – GDS: DOB + 65 years; Non-GDS: DOB + 60 years."
+  },
+  "headerRow": 2,
+  "sourceDateColumn": "A",
+  "ruler": {
+    "base": "as published",
+    "frequency": "annual",
+    "geo": "IND"
+  },
+  "unit": "count",
+  "sourceCountMeaning": "Expected NPS subscriber retirement/exit schedule under the exact published CRA retirement-date or DOB criteria; no realized exits.",
+  "forecastAsOfDate": null,
+  "forecastAsOfStatus": "unknown",
+  "editionCaveat": "Recovered2025 handbook says its A23 CRA snapshot is31March2024. Current workbook does not attest a forecast snapshot date; the edition date is not transferred to it.",
+  "windowCaveat": "Workbook heading says next five years; seven fiscal-year rows are retained exactly without reclassification as realised observations.",
+  "records": [
+    {
+      "key": "all_citizen_944977cf",
+      "sourceLabel": "ALL CITIZEN",
+      "sourceColumn": "C",
+      "sourceCells": [
+        "C3",
+        "C4",
+        "C5",
+        "C6",
+        "C7",
+        "C8",
+        "C9"
+      ],
+      "canonicalFingerprint": "e01a8a01477dae94cb0e01025797adc5e507eebf86c5427cf5989f83a5c9d3a2"
+    },
+    {
+      "key": "cg_2a8efef8",
+      "sourceLabel": "CG",
+      "sourceColumn": "D",
+      "sourceCells": [
+        "D3",
+        "D4",
+        "D5",
+        "D6",
+        "D7",
+        "D8",
+        "D9"
+      ],
+      "canonicalFingerprint": "b4a51cbd5f674e2988e58639961fbc5cb2c39aedb0e7b03e371da0c00dc213bf"
+    },
+    {
+      "key": "corporate_658f4b39",
+      "sourceLabel": "CORPORATE",
+      "sourceColumn": "E",
+      "sourceCells": [
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "E7",
+        "E8",
+        "E9"
+      ],
+      "canonicalFingerprint": "e7170ed2e1dccb9f0cd90e692132fb9cd601e82b4a421bba1c31da1054a1a6cf"
+    },
+    {
+      "key": "nps_lite_31697574",
+      "sourceLabel": "NPS LITE",
+      "sourceColumn": "F",
+      "sourceCells": [
+        "F3",
+        "F4",
+        "F5",
+        "F6",
+        "F7",
+        "F8",
+        "F9"
+      ],
+      "canonicalFingerprint": "57bbb583845cfef80ee96b5d4fbf1f55f748943d98187e2845893786afa84818"
+    },
+    {
+      "key": "sg_aa04ed62",
+      "sourceLabel": "SG",
+      "sourceColumn": "G",
+      "sourceCells": [
+        "G3",
+        "G4",
+        "G5",
+        "G6",
+        "G7",
+        "G8",
+        "G9"
+      ],
+      "canonicalFingerprint": "67375e775d60a939be50a31a72230b4cd6a612e56507d1e9e3f7c9b8c9394808"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+---
+import Explorer from '../../explore/Explorer.astro';
+export function getStaticPaths(){return [
+{slug:'retail-inflation',bundle:'cpi-2024',key:'headline',title:'Retail inflation, base 2024'},
+{slug:'food-inflation',bundle:'cpi-2024',key:'food_and_beverages',title:'Food and beverages inflation, base 2024'},
+{slug:'household-land-snapshot',bundle:'households-aidis-10',key:'c_6b2551effa4210c0a6a1c410',title:'Households reporting land: published AIDIS cut'},
+{slug:'retail-inflation-2012',bundle:'cpi',key:'headline',title:'Retail inflation, base 2012'}
+].map(initial=>({params:{slug:initial.slug},props:{initial}}));}
+const {initial}=Astro.props;
+---
+<Explorer initial={initial}/>

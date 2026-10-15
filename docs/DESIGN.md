@@ -1,17 +1,171 @@
-# DESIGN — the India Atlas design system (v2, 2026-10)
+# DESIGN — the India Atlas design system (v3, 2026-10)
 
-The normative reference for every visual decision on the site. v2 replaced the
-warm "monograph" system (vermilion, Archivo/Newsreader/Plex Mono, tracked
-capitals) in October 2026; v1 is archived in
-`design-backups/2026-10-09-pre-redesign/` and on the git branch
-`design-v1-backup`. The chart language was developed in `design-mocks/fresh/site/`
-(kit v1 to v3; `compare.html` shows the first and current kits side by side).
-Machine-checkable parts are enforced by `scripts/qc.mjs` and
-`scripts/lint-charts.mjs`; the rest is review discipline.
+v3 (10 October 2026) is the whole-site design pass on the v2 lineage: one left axis, one type
+scale, AA greys, the chart card with a fixed anatomy, an action row in place of the Share
+menu, set tables, and a new front page. Its rules are in **§0**; where §0 and an older line
+below disagree, §0 wins. The critique that led to it is `docs/design/critique.md`.
 
-The temperament: NYT, Reuters and Bloomberg graphics, set as a reference work.
-White ground, one accent, quiet greys, sentence case, numbers that carry the
-weight. **Refine, don't decorate**: every change removes noise or adds meaning.
+## 0. The v3 system (normative)
+
+### 0.1 The ledger margin
+
+The one structural idea of v3, and the thing the site is recognised by. Every page is a sheet
+of two columns on one left axis:
+
+```
+ axis
+ |<-- margin 220 -->|<- 56 ->|<------------------ main field ------------------>|
+ |  02              |        |  The new base: a continuous headline            |  section
+ |  y/y %, base 2024|        |  prose, at its measure (64ch)                   |
+ |                  |        |                                                 |
+ |  4.8%            |        |  One continuous headline on the new ruler       |  plate
+ |  Aug 2026, y/y   |        |  subtitle; key                                  |
+ |  [ the plot runs across the whole sheet, 1184 px ...........................] |
+ |  Download Image  |        |  Source: ...                                    |
+ |  SVG Data ...    |        |  How to read this      |  As of September 2026  |
+```
+
+- The **margin** (220 px, `--rail`) carries the figures and the furniture: section numerals
+  (light serif, the size of the heading), each chart's readout, the key figures of a guide's
+  title block, the date on the front page, kickers, margin notes, the numerals of
+  misreadings and standing rules, a chart's actions, the labels of the end-matter rows.
+  Read down the margin and you have the numbers.
+- The **main field** (starts at `--main`, 276 px from the axis) carries the account:
+  titles, headings, findings, subtitles, keys, prose, notes, sources.
+- **Charts, tables and ledgers span both.** A plot is drawn 1184 px wide and starts on the
+  axis; its title starts on the main line above it.
+- Built in CSS on the existing markup (`atlas.css`, "THE LEDGER MARGIN"): `.page > section`
+  is the two-column grid, `.sec-head` and `.plate-head` are `display:contents` so their
+  parts land in the margin or the main field. No guide page needed new markup.
+- Below 860 px the margin folds: everything stacks in one column in reading order, the
+  numerals and readouts set inline above what they belong to.
+- `--wrap` is 1184 px of content with 32 px gutters (20 px on a phone). The masthead, crumb
+  and footer share the axis. Vertical rhythm: 4, 8, 12, 16, 24, 32, 48, 64, 96, 128 px;
+  sections 112 px apart (72 on a phone); a plate in a run 96 px from the one before, with a
+  hairline.
+
+### 0.2 Type scale
+
+| Role | Face, weight | Size / leading (desktop; phone) |
+|---|---|---|
+| Guide title (h1) | Serif 500, opsz 60, -0.022em | 4rem / 1.02; 2.5rem |
+| Page title (h1) | Serif 500 | 3.25rem / 1.05; 2.375rem |
+| Section head (h2) | Serif 500, opsz 48 | 2.125rem / 1.12; 1.75rem |
+| Chart title, the finding (h3) | Serif 500, opsz 32 | 1.625rem / 1.22; 1.375rem |
+| Lede | Serif 400, ink-soft | 1.375rem / 1.45; 1.1875rem |
+| Body | Serif 400 | 1.1875rem / 1.62; 1.0625rem / 1.6 |
+| Notes under a chart | Serif 400 | 1.0625rem / 1.6 |
+| Big figure | Serif 300, lining | 2.75rem (titleblock), 2.25rem (chart readout), 6rem (the reading) |
+| UI and labels | Golos 400/500 | .9375rem (subtitles, nav), .875rem (labels, meta), .8125rem (source lines, captions; the floor) |
+| Chart text | Golos 400 | 12px; axis and notes in `--axis`, labels in ink |
+
+Nothing a reader is meant to read is smaller than .8125rem (13px) on the page or 12px in a
+chart. Weight carries emphasis (500 in sans, 600 in serif), never colour.
+
+### 0.3 Colour (AA)
+
+- `--muted` is #6B7180 (4.9:1 on white): every caption, label, axis and source line.
+  `--faint` (#B5BAC4) and `--grey2/3` are for rules and marks only, never for text.
+- Chart text in a light grey (#878D99, #A3A9B4, #B5BAC4, set by client code) is lifted to
+  `--axis` (#6B7180) by `atlas.css`, and the export inlines it, so downloads match the page.
+
+### 0.4 The chart card
+
+Every plate has the same anatomy (on the ledger margin, §0.1):
+
+1. **Readout** in the margin, level with the finding: the one figure the finding is about,
+   light serif 2.75rem, a one-line caption under it. A long figure ("₹158.1 lakh crore") is
+   set at 2rem and a name ("Personal care, incl. gold") as a 1.375rem serif line;
+   `guide.client.js` decides by length once the client has filled it.
+2. **Finding** (h3) in the main field: the claim the chart proves, in a sentence.
+3. **Subtitle**: what is measured, the unit, the period. Golos, ink-soft, at most 72ch.
+4. **Key** (`.legend`), on the main line: short lines for line series, squares for areas and
+   bars; only when there are two or more series.
+5. **Plot** across the sheet; gridlines `#E8EBEF`, zero rule `#C9CED6`, axis text `--axis`.
+   No filled areas under lines (DESIGN §7.12): a line is a line.
+6. **Footer** under a hairline: the actions in the margin, the source in the main field.
+7. **Notes** in the main field: *How to read this* (evergreen) and the dated *As of* note
+   on a square, barely-there wash (#F7F8FA) with its label in ink.
+
+The downloaded image (`composeCardSVG`) is the same card for a feed: the finding with the
+readout on the right, the subtitle, the key drawn as short lines, the chart with the page's
+lifted colours and halos inlined, a hairline, the source, and the site's name.
+
+### 0.4a Categorical plates on a phone
+
+Below 700 px of viewport, a plate whose y axis is names (bars, dot strips, dumbbells) is drawn
+again at the width it has, the pattern the state profiles introduced: each name on its own line
+above its row, the marks across the full width beneath it, values labelled at the mark, the
+x-axis label on its own line under the ticks. No sideways scroll, no "more to the right" cue.
+Faceted plates follow: panels side by side are stacked one above the other with the panel's name
+above it; groups down the page get their name on a line above the group. A few named columns
+(months, fractile classes) are redrawn to fit. Done once, in `src/charts/plot.js`, which every
+`import * as Plot from "@observablehq/plot"` resolves to (alias in `astro.config.mjs`), so no
+client file needs to implement this shared layout. Continuous-x lines, scatters and time
+plots are also redrawn at phone width, retaining their observations and full domains with
+fewer axis ticks. Year columns and year facets, unsupported state × measure matrices,
+and hand-assembled multi-panel SVGs retain their authored layouts. Charts already authored
+below 600 px and charts with `narrow: false` bypass the wrapper.
+
+Complete category names wrap onto additional visible lines; they must not be shortened
+or depend on hover text. Once drawn narrow, labels are measured with the lint's geometry,
+margins are widened for bleeds and collisions are settled within a bounded distance.
+Long annotation text wraps at its authored font size. Labels near either edge use an
+anchor that keeps their words inside the SVG. Rendered review must verify that each
+value remains clearly associated with its mark.
+Chart lint runs at desktop width and again at 390 (`--width 390`); actual browser checks
+at 320, 390 and 545 px remain necessary. The revised wrapper's focused tests preserve
+full names, signed domains and all time-series observations. Combined rendered QA is
+pending at this checkpoint.
+
+Canvas fitting and subsequent annotation placement must both reserve the full font line box at the chart boundary. Ink-only bounds remain appropriate for annotation/stroke collisions, but must not permit the font ascent or descent to leave the canvas.
+
+### 0.5 Actions, not a menu
+
+The v2 Share menu is retired: it hid four actions behind one word and opened over the chart
+it shared. Each chart's footer carries its actions in the open, in the margin, as quiet text
+buttons (`.acts`), built by `guide.client.js` from the plate's own download buttons (so
+plumbing's handlers stand): `Download` (a label, muted) then *Image*, *SVG*, *Data*; then
+*Copy link*, *Source* (and *Whole file* where a plate links its bundle). Buttons are
+ink-soft, underline on hover, a 2px ultramarine focus ring. A status ("Link copied") is
+announced in a polite live region and fades, never replacing a label or moving the row.
+
+### 0.6 Tables
+
+- Header: Golos .8125rem muted, bottom rule `--rule-2`; rows: a hairline `--rule`, 12 px
+  vertical padding (10 on dense tables). Numbers right-aligned, tabular figures, the column
+  header right-aligned over them. Names serif when they are the subject of the row.
+- No "№" anywhere: a rank reads "349 of 358".
+- Row hover is a wash (#F8F9FB), never a colour. A table wider than the phone scrolls inside
+  its own box with the first column readable.
+
+### 0.7 Controls
+
+Buttons on the site are text with a hairline underline, or, where a control needs a box
+(search, filters in the every-cut table), a 1px `--rule-2` box, square corners, 40 px tall,
+Golos .9375rem. Focus is always the ultramarine ring. Selected tabs and filters are ink with a
+2px ink underline; others ink-soft. No pills, no rounded chips, no icons without words.
+
+### 0.8 The front page
+
+On the ledger margin, in order:
+
+1. **The promise**: the date in the margin; in the main field the h1 ("The Indian economy,
+   from its official figures"), one sentence that counts the guides, the states and union
+   territories and the series, and the search box.
+2. **The latest figures**: four plates, the figure in the margin at display size, the
+   sentence computed from the bundles in the main field with its chart. Prices lead, across
+   the full main field (the five-year window, the RBI band and target); growth, factories and
+   jobs follow, sentence left and chart right. Each window is the last five years, or the
+   whole current base where it is younger (never a spliced older base).
+3. **Every guide**: a ledger, the subject in the margin (italic serif), the guides in two
+   columns: title, what the figure is and its period, the figure.
+4. **States and union territories**: a set list in four columns.
+5. **The ideas behind the numbers**: Learn notes, the family in the margin.
+6. The footer.
+
+Charts on the front page are drawn at the width they are shown (`briefSVG`), with a desktop
+and a phone drawing, so their 12px text is 12px.
 
 ## 1. Tokens
 
@@ -19,7 +173,8 @@ Single source: `src/styles/atlas.css` `:root`. Never restyle per page.
 
 ```css
 --bg:#FFFFFF;   --ink:#161A22;   --ink-soft:#4A5160;
---muted:#878D99; --faint:#B5BAC4; --rule:#ECEEF2; --rule-2:#DFE2E8;
+--muted:#6B7180; --faint:#B5BAC4; --rule:#ECEEF2; --rule-2:#DFE2E8;   /* v3: muted lifted to AA */
+--axis:#6B7180;  --wash:#F7F8FA;
 --accent:#2E4BD8;  /* ultramarine: the series a chart is about */
 --accent-soft:#B9C3F3;
 --gold:#C47A16;    /* marigold: a comparison series, never decoration */
@@ -108,6 +263,8 @@ the rupee sign is in latin-ext):
   plate opens at its latest end with a quiet "← Earlier years" cue (`guide.client.js`);
   any other scrolling plate (dot strips, bars) keeps its left edge with a "More of the chart
   to the right →" cue, since its names fill the first screen.
+  Category comparisons marked `data-compact` use a phone layout with wrapped labels above each
+  measurement and a separate value column; these plates fit without horizontal scrolling.
 
 ## 4. Dossier anatomy
 
@@ -227,6 +384,10 @@ facts sheet names the ruler of every number (`ruler` in `pipeline/facts.mjs`).
 12. **Terrain tints** (one hypsometric key for every percentage change) —
     lemon-green and cartoonish; filled areas made charts loud.
 13. **Colour per topic** — turns a reference work into a dashboard.
+14. **The Share menu** (v2) — four actions hidden behind one word, opening over the chart
+    it shared. Replaced by the action row (§0.5).
+15. **Sparklines in the title block** — 100 px lines that said nothing a figure and its
+    change did not; hidden in v3.
 
 ## 8. Exploration archive
 
@@ -238,3 +399,24 @@ shirorekha, baseline, matrix, plates). Mine them for isolated ideas; do not
 import their aesthetics wholesale. `site/` holds the design-phase reference
 implementation in plain HTML — the visual specification the Astro pages were
 matched against.
+
+Long numeric headlines may opt into `.numbers[data-long-values]`; below 860px,
+auto-fit columns retain a 200px minimum where space permits and stack on phones.
+This preserves full rupee values without overflowing the page.
+
+### Small-multiple panel sizing (12 October 2026)
+
+Small multiples draw at the available CSS grid track width when it is smaller
+than their authored width; they retain the authored width when layout is not
+available. The shared `panelPlotWidth` helper handles this without dropping
+observations or shrinking text. Compact category panels can explicitly opt
+into the shared phone layout with `narrow:true`; family-authored compact
+geometry keeps its default exemption. Small time plots reserve space on both
+sides for full year labels. Payments and trade apply these rules.
+
+A controlled browser fixture passes at 320, 390, 545 and 1440 pixels, retaining
+every observation in each 76-point history with no text below ten pixels or
+clipped axis labels. Final actual-guide and combined static verification remain
+required. Evidence: `docs/status/expansion-verification/panel-fixture-browser.json`.
+
+Phone chart fitting must measure CSS font sizes as well as SVG presentation attributes, and multiline labels as rendered lines. A compact layout that still has text/stroke or text/text collisions is rejected; the original readable canvas remains horizontally scrollable, with a `data-layout-diagnostic` explaining the fallback. Source observations, scale domains and complete text are retained. Category rows reserve space for both names and annotations. Facet remapping clones marks so rejecting a phone layout cannot mutate the authored options. Export cards below 640px intrinsic width stack their readout beneath title/subtitle and their brand beneath the full source note.

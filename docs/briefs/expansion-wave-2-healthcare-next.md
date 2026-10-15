@@ -1,0 +1,27 @@
+# Healthcare costs and access — next-family execution brief
+
+Prepared13October2026 by wave-2 coordinator. Queued after source/writer/storage readiness; no execution slot or main-source mutation granted by this file. Read the full coordinator brief, AGENTS.md and comprehensive family skill. Preserve dirty integrated source, no commit/push/deploy, Data Bank read-only. Actual named child chat and exact ownership/staging registry must be assigned before implementation.
+
+## Verified current release discovery
+
+Official PIB release20April2026 confirms NSS80 Household Social Consumption: Health survey January–December2025: https://www.pib.gov.in/PressReleasePage.aspx?PRID=2253752&lang=1&reg=3 . MoSPI current-surveys lists report596; the catalogue/API availability of health must be canaried rather than inferred from CMST survey_code1 or CMSE survey_code2. Those are different modules with different periods. Find report596 through current official catalogue and verify download/hash/full tables. No current-health packet may describe NSS75 2017–18 as latest.
+
+NHSRC official catalogue https://nhsrcindia.org/national-health-accounts-records lists NHA2022-23 at16,655KB and nine earlier editions. PIB release27May2026 https://www.pib.gov.in/newsite/erelcontent.aspx?lang=2&reg=48&relid=289295 links that catalogue and identifies separate GDP-base percentages. Keep GDP denominator bases explicit and separate, not two supposedly contradictory values or a silently revised continuous series. Report acquisition/full table extraction is pending; earlier2021-22 report55,520KB cannot be copied into tight staging or committed raw without deep-archive contract.
+
+## Local overlap and defects to audit
+
+Read-only local healthcare baseline in docs/status/wave-2-healthcare-local-audit.json includes every NSS75 survey1 bundle hash/meta/example, not a completeness verdict. Several indicators have just one or two baked cells despite labels naming social-group/quintile/institution cuts; audit raw catalogue and expected row counts before treating these as complete. Existing NFHS guides describe outcomes and access, Gender compendium uses agency-specific health tables, and WDI adds harmonized measures. Do not copy these and count them as new family coverage. NSS75 costs/care and NSS80 costs/care answer a distinct question; NHA economy-wide financing is a linked separate instrument, not an interchangeable household expense estimate.
+
+## Required reader questions and whole-family accounting
+
+Account for every released report table and appendix, including sample bases/RSE and geography/sector/gender/age/social-group/quintile/institution/ailment/insurance-financing cuts where actually served. Major sections should explain morbidity and reporting, inpatient versus outpatient use and cost, public/private/charitable treatment, mean versus median, reimbursement and financing, childbirth expenditure and older people's access/mobility. Hospitalization excludes childbirth in the general rate. Reference periods differ (365-day admissions versus15-day illness/outpatient episodes); denominators may be persons, cases, spells or births. Sector is domicile, not hospital location. Empanelled private hospitals remain private institutions, not public because scheme-funded. Lower self-reported morbidity is not automatically better health.
+
+NSS80, NSS75 and NHA each retain their own rulers, definitions and vintage/capture/release distinctions. Source errors/quarantines stay explicit. No hand-typed raw, headline-only ingestion, invented cross-tab cube or medical advice. Source catalogue/archive/canonical/reader/plate/explanation counts must remain distinct. Every numerical claim traces through facts and source rows; reader prose uses the repository editorial skills.
+
+## Safe execution and evidence
+
+Respect100MB total wave-2 staging allowance until cleanup increases capacity; request a measured packet allocation before acquisitions. MoSPI turn belongs to digital first, amenities second; health canary follows explicit release. Use shared net/atomic/raw machinery with isolated staging/cache, no writes through main symlinks. Stage only own family files and shared-wiring proposals. Main integration is sequential after explicit final corrected artifact QA/freeze release and owner handoff. Must finish full adapter/provenance/canonical validation/identities/ledger/census/explained guide/EveryCut/explorer/downloads/facts/prose/as-of and source-cell checks. Final one-slot build/gates/strictcoverage/tests/prose:dry, all expected charts at desktop/phone and real exports, source payload/chart timing and actual<=16k assets required. Catalogue success alone is unfinished.
+
+## Actual current publication canary
+
+Official new-site POST `https://www.mospi.gov.in/api/nss-survey/get-web-nss-survey-rounds-data`, body `{lang: en, page_no:1, page_size:20, search_term:596}`, returned one report: record814, round80, report596, updated20April2026. The observed PDF is8,900,926bytes at `https://www.mospi.gov.in/uploads/nss-reports/nss_reports_1776676529420_a0f459b2-83bc-496b-a24d-a91a6bb5f896_Final_Report_no_596_Health_(2).pdf`. Metadata file_two/file_three are null; that does not prove absence of workbook attachments inside PDF launch actions. Source receipt is protected readiness-canaries/data/raw/health-nss80-publication-metadata.json.gz. PDF content/acquisition and statistical API catalogue remain pending. No healthcare heavyweight writer yet.

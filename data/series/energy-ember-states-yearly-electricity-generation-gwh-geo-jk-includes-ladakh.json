@@ -1,0 +1,326 @@
+{
+ "meta": {
+  "dossier": "energy",
+  "geo": "IND",
+  "base": "Ember India subnational electricity release, jk-includes-ladakh",
+  "revisionPolicy": "Agency revisions retained as new raw vintages before rebaking.",
+  "source": "Ember, India subnational electricity data",
+  "sourceUrl": "https://files.ember-energy.org/public-downloads/india_yearly_full_release_long_format.csv",
+  "product": "ember-india-states",
+  "frequency": "annual",
+  "calendar": "calendar",
+  "unit": "gwh",
+  "rawFile": "data/raw/energy-ember-states-yearly.json",
+  "unitDefinitionEvidence": {
+   "rawFile": "data/raw/energy-ember-methodology-subnational.json",
+   "sha256": "0d5c13d7c9a8656af7c97b40770ea5a8ade904a990f138aa89825d10322b324d",
+   "sourceUrl": "https://files.ember-energy.org/public-downloads/ember_subnational_data_methodology.pdf"
+  },
+  "note": "Emissions and intensity are estimated lifecycle greenhouse gases expressed as CO2-equivalent. The state release excludes captive generation that national estimates include. Historical renewable capacity can contain upstream imputation; cell-level imputation flags are unavailable. Earlier Ladakh and Jammu-and-Kashmir reporting combines jurisdictions. Complete original release, including India Total and Others. Generation is at plant location, not electricity consumed by residents. Capacity is installed MW, generation is GWh. Emissions/intensity are source estimates. Clean includes nuclear; Renewable excludes nuclear. Aggregate fuel rows overlap individual fuels; do not add both. Source blanks remain null; all-empty series stay in raw and the catalogue with a reason. Geographic instrument: jk-includes-ladakh. July 2021 is the first separate Ladakh monthly observation; annual 2021 is isolated as a mixed reporting-scope transition. No canonical history crosses this boundary.",
+  "geographicInstrument": "jk-includes-ladakh",
+  "vintage": null,
+  "vintageStatus": "unknown",
+  "apiRevisionDate": null,
+  "sourceRevisionDate": null,
+  "vintageNote": "The original Ember record does not publish a data release or revision date. Archive capture and response timestamps are separate provenance and cannot establish that date.",
+  "archiveCapturedDate": "2026-06-13",
+  "archiveCapturedAt": "2026-06-13T11:05:01.339Z",
+  "archiveCaptureNote": "Original parsed yearly CSV envelope fetchedAt, linked by rawSnapshot CSV SHA256; derived manifest timestamps are excluded.",
+  "archiveSourceSha256": "747c3c05d76a45b6a95877e0484cbf214f302f18f996bc199fe2815db410d8ed",
+  "latestPeriod": "2020"
+ },
+ "dates": [
+  "2019-01-01",
+  "2020-01-01"
+ ],
+ "series": {
+  "c_93f694638f3583466518": {
+   "name": "c_93f694638f3583466518",
+   "label": "Jammu and Kashmir including Ladakh / JK / Electricity generation / Aggregate fuel / Clean",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Electricity generation",
+    "subcategory": "Aggregate fuel",
+    "variable": "Clean"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    18508.58,
+    18511.26
+   ],
+   "sourceCells": 2
+  },
+  "c_037bc8aba3bb46a2b756": {
+   "name": "c_037bc8aba3bb46a2b756",
+   "label": "Jammu and Kashmir including Ladakh / JK / Electricity generation / Aggregate fuel / Fossil",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Electricity generation",
+    "subcategory": "Aggregate fuel",
+    "variable": "Fossil"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_b8902420aca37bcf5e93": {
+   "name": "c_b8902420aca37bcf5e93",
+   "label": "Jammu and Kashmir including Ladakh / JK / Electricity generation / Aggregate fuel / Gas and Other Fossil",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Electricity generation",
+    "subcategory": "Aggregate fuel",
+    "variable": "Gas and Other Fossil"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_d14dd51db54d6b040ccd": {
+   "name": "c_d14dd51db54d6b040ccd",
+   "label": "Jammu and Kashmir including Ladakh / JK / Electricity generation / Aggregate fuel / Hydro, Bioenergy and Other Renewables",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Electricity generation",
+    "subcategory": "Aggregate fuel",
+    "variable": "Hydro, Bioenergy and Other Renewables"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    18508.58,
+    18505.9
+   ],
+   "sourceCells": 2
+  },
+  "c_14b74d5be62797911136": {
+   "name": "c_14b74d5be62797911136",
+   "label": "Jammu and Kashmir including Ladakh / JK / Electricity generation / Aggregate fuel / Renewables",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Electricity generation",
+    "subcategory": "Aggregate fuel",
+    "variable": "Renewables"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    18508.58,
+    18511.26
+   ],
+   "sourceCells": 2
+  },
+  "c_73343273903fdf1fd685": {
+   "name": "c_73343273903fdf1fd685",
+   "label": "Jammu and Kashmir including Ladakh / JK / Electricity generation / Aggregate fuel / Wind and Solar",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Electricity generation",
+    "subcategory": "Aggregate fuel",
+    "variable": "Wind and Solar"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    5.36
+   ],
+   "sourceCells": 2
+  },
+  "c_071b918d19544d21720f": {
+   "name": "c_071b918d19544d21720f",
+   "label": "Jammu and Kashmir including Ladakh / JK / Electricity generation / Fuel / Bioenergy",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Electricity generation",
+    "subcategory": "Fuel",
+    "variable": "Bioenergy"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_327d68ad4d4d9c768b23": {
+   "name": "c_327d68ad4d4d9c768b23",
+   "label": "Jammu and Kashmir including Ladakh / JK / Electricity generation / Fuel / Coal",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Electricity generation",
+    "subcategory": "Fuel",
+    "variable": "Coal"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_ce580d75cdbf13a0fb80": {
+   "name": "c_ce580d75cdbf13a0fb80",
+   "label": "Jammu and Kashmir including Ladakh / JK / Electricity generation / Fuel / Gas",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Electricity generation",
+    "subcategory": "Fuel",
+    "variable": "Gas"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_15af976b611ff5fa699c": {
+   "name": "c_15af976b611ff5fa699c",
+   "label": "Jammu and Kashmir including Ladakh / JK / Electricity generation / Fuel / Hydro",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Electricity generation",
+    "subcategory": "Fuel",
+    "variable": "Hydro"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    18508.58,
+    18505.9
+   ],
+   "sourceCells": 2
+  },
+  "c_e2412f21e5d2cb27c050": {
+   "name": "c_e2412f21e5d2cb27c050",
+   "label": "Jammu and Kashmir including Ladakh / JK / Electricity generation / Fuel / Nuclear",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Electricity generation",
+    "subcategory": "Fuel",
+    "variable": "Nuclear"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_899fcaee572767682399": {
+   "name": "c_899fcaee572767682399",
+   "label": "Jammu and Kashmir including Ladakh / JK / Electricity generation / Fuel / Other Fossil",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Electricity generation",
+    "subcategory": "Fuel",
+    "variable": "Other Fossil"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_cb0713feff49e8af68eb": {
+   "name": "c_cb0713feff49e8af68eb",
+   "label": "Jammu and Kashmir including Ladakh / JK / Electricity generation / Fuel / Other Renewables",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Electricity generation",
+    "subcategory": "Fuel",
+    "variable": "Other Renewables"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_27ca6155d9b55b86b448": {
+   "name": "c_27ca6155d9b55b86b448",
+   "label": "Jammu and Kashmir including Ladakh / JK / Electricity generation / Fuel / Solar",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Electricity generation",
+    "subcategory": "Fuel",
+    "variable": "Solar"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    5.36
+   ],
+   "sourceCells": 2
+  },
+  "c_6adebe5eca7538b66a98": {
+   "name": "c_6adebe5eca7538b66a98",
+   "label": "Jammu and Kashmir including Ladakh / JK / Electricity generation / Fuel / Wind",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Electricity generation",
+    "subcategory": "Fuel",
+    "variable": "Wind"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_95b3388fa26876d3d311": {
+   "name": "c_95b3388fa26876d3d311",
+   "label": "Jammu and Kashmir including Ladakh / JK / Electricity generation / Total / Total Generation",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Electricity generation",
+    "subcategory": "Total",
+    "variable": "Total Generation"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    18508.58,
+    18511.26
+   ],
+   "sourceCells": 2
+  }
+ }
+}

@@ -14,7 +14,7 @@ export function getStaticPaths() {
 const { state } = Astro.params;
 const P = page(state);
 const { u, N, p } = P;
-const F = (f) => figHTML(f.text, f.fmt, f.src);
+const F = (f) => figHTML(f.text, f.fmt, f.src)+(f.sourceQuality?.canInterpret===false?'<small class="source-review-status">Source mapping under review</small>':'');
 const I = (f) => (f.india ? figHTML(f.india.text, f.fmt, f.india.src) + (f.india.same ? "" : ` <small>${f.india.period}</small>`) : "<span class=\"na\">no figure</span>");
 const rk = (f) => (f.rank ? rankPhrase(f.rank) : "<span class=\"na\">not ranked</span>");
 const nb = (s) => P.nameOf(s);
@@ -113,6 +113,7 @@ const kindNote = u.kind === "ut" ? "A union territory without a legislature: the
       <div class="prose pf-lead">
         <p>{s.intro}</p>
         {s.none && <p class="pf-none">{s.none}</p>}
+        {s.sourceReviewPending.length>0&&<p class="pf-note" role="note"><strong>Source mappings under review:</strong> {s.sourceReviewPending.map(f=>f.label).join('; ')}. Their source definitions, units or population coverage still need checking. The individual explorer withholds interpreted charts and selected exports for these records; their original source mappings remain accessible.</p>}
         {s.sentences.map((t) => <p set:html={t} />)}
         {s.former.map((t) => <p class="pf-note" set:html={t} />)}
       </div>
@@ -292,7 +293,7 @@ const kindNote = u.kind === "ut" ? "A union territory without a legislature: the
       </div>
       <div>
         <h6>This profile</h6>
-        <p>Rebuilt whenever any of its tables is refreshed. Data vintages from {vintages[0]} to {latestVintage}.</p>
+        <p>Rebuilt whenever any of its tables is refreshed. {vintages.length?`Known data vintages from ${vintages[0]} to ${latestVintage}.`:'Source revision dates are not published.'} {P.sources.some(s=>s.revisionUnknown)&&'Some source revision dates are unknown; archive capture dates are recorded separately and do not establish freshness.'}</p>
       </div>
     </div>
     <div class="fine">

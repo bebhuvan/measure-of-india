@@ -1,0 +1,12 @@
+// Derived coverage decisions preserve the interpretation boundary: pending source
+// meanings are blocked from numeric use, while their archival access remains live.
+import fs from 'node:fs';import {pensionsModel} from '../src/dossiers/pensions.model.js';
+const model=pensionsModel(),byIdentity=new Map(model.plates.map(p=>[p.bundle+':'+p.lines[0].key,p])),items=[],rules=[];
+for(const p of model.plates){const key=p.lines[0].key,id=p.bundle+':'+key;items.push({id,bundle:p.bundle,key,label:p.title,observationKind:p.sourceQuality.observationKind,reviewStatus:'reviewed',sourceWorkbook:p.sourceUrl});rules.push({match:[id],status:'shown',bundle:p.bundle,series:[key],plate:'/guides/pensions/#cb-'+p.id});}
+for(const p of model.pending){const id=p.bundle+':'+p.key;items.push({...p,id,reviewStatus:'pending'});rules.push({match:[id],status:'blocked',reason:p.reason||'Numeric interpretation is blocked until the exact source definition, unit and reference basis are reviewed.'});}
+for(const p of model.heldLedger.records){const id=p.bundle+':'+p.key;items.push({...p,id,reviewStatus:'source-only'});rules.push({match:[id],status:'blocked',reason:p.reason||'This source record is retained only in the original workbook while territorial scope or unit and contribution basis remain unresolved.'});}
+for(const p of model.manifest.originals.filter(p=>p.role!=='source-statistical-table')){const id='metadata:'+p.id;items.push({...p,id,reviewStatus:'original-only'});rules.push({match:[id],status:'blocked',reason:'Administrative metadata remains available as an original workbook. Its fee or service rows have not received interpretation review.'});}
+if(model.plates.length!==278||model.pending.length!==2072||model.heldLedger.records.length!==314||new Set(items.map(p=>p.id)).size!==items.length)throw Error('Coverage source decisions differ from the admitted corpus');
+fs.writeFileSync('data/coverage/pensions.catalogue.json',JSON.stringify({generator:'scripts/pensions-coverage.mjs',family:'pensions',statisticalRecords:2664,metadataWorkbooks:items.length-2664,items},null,1)+'\n');
+fs.writeFileSync('data/coverage/pensions.yml',JSON.stringify({family:'pensions',guides:['pensions'],catalogue:'data/coverage/pensions.catalogue.json',note:'Blocked means numeric interpretation is withheld; source review remains pending. It does not certify completion of those source meanings.',rules},null,1)+'\n');
+console.log(JSON.stringify({reviewed:278,interpretationBlocked:2072,sourceOnly:314,metadataOriginals:items.length-2664}));

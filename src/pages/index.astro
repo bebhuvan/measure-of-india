@@ -8,6 +8,8 @@ import { headlineOf } from "../dossiers/headline.js";
 import { briefSVG } from "../charts/static.js";
 import { STATES } from "../dossiers/states-key.js";   // profiles (lb/profiles)
 import { MONTHS_FULL as MF } from "../../pipeline/lib/periods.mjs";
+import { EXPLAINERS } from "../learn/registry.js";
+import { qualityRegistryVersion } from '../explore/source-quality.js';
 const MONTHS_FULL = MF.map((m) => m[0].toUpperCase() + m.slice(1));
 
 // The front page is a briefing: what the latest data says, in sentences computed from the
@@ -43,26 +45,37 @@ const iip = series("iip-2022", "general"), iL = iip.at(-1), iP = iip.at(-2);
 // 4. jobs: monthly unemployment, current weekly status
 const ur = series("plfs-monthly", "ur"), uL = ur.at(-1), uP = ur.at(-2);
 
+// each chart shows the last five years, or the whole current base where it is younger (never a
+// spliced older base: AGENTS.md rule 1)
+const W5 = (P, n) => P.slice(-n);
+const drawn = (P, n, o) => ({
+  d: briefSVG({ dates: W5(P, n).map((p) => p.d), values: W5(P, n).map((p) => p.v) }, { ...o, ...(o.lead ? { w: 904, h: 300, lines: 5 } : { w: 500, h: 150 }) }),
+  m: briefSVG({ dates: W5(P, n).map((p) => p.d), values: W5(P, n).map((p) => p.v) }, { ...o, w: 350, h: o.lead ? 190 : 130 }),
+});
 const LEAD = [
-  { slug: "cpi", topic: "Prices", value: p1(cL.v),
+  { slug: "cpi", topic: "Prices", period: monthL(cL.d), value: p1(cL.v),
     sentence: `Consumer prices were <b>${p1(cL.v)}</b> higher in ${MONTHS_FULL[+cL.d.slice(5, 7) - 1]} than a year earlier, ${cS.n === 0 ? "the same rate as the month before" : `${cS.up ? "up" : "down"} for the ${cS.n > 1 ? `${ordinal(cS.n)} month in a row` : "first time"}`}, and ${cpiNews}.`,
-    chart: briefSVG({ dates: cpi.map((p) => p.d).slice(-60), values: cpi.map((p) => p.v).slice(-60) }, { ref: band.target, refLabel: `Target ${band.target}%`, label: "Consumer price inflation, last five years", period: monthS, dp: 1 }) },
-  { slug: "gdp", topic: "Growth", value: p1(gL.v),
+    chart: drawn(cpi, 60, { lead: true, ref: band.target, refLabel: `RBI target, ${band.target}%`, band: [band.floor, band.ceiling], label: `Consumer price inflation, year on year, ${monthS(cpi.at(-60).d)} to ${monthS(cL.d)}, against the RBI's target of ${band.target}% and its band of ${band.floor} to ${band.ceiling}%`, dp: 1 }) },
+  { slug: "gdp", topic: "Growth", period: qtrL(gL.d), value: p1(gL.v),
     sentence: `The economy grew <b>${p1(gL.v)}</b> in ${qtrL(gL.d)}, ${r1(gL.v) < r1(gP.v) ? (r1(gP.v) - r1(gL.v) <= 1 ? "a little slower than" : "slower than") : r1(gL.v) > r1(gP.v) ? "faster than" : "the same as"} the ${p1(gP.v)} of the quarter before.`,
-    chart: briefSVG({ dates: gdp.map((p) => p.d), values: gdp.map((p) => p.v) }, { label: "Real GDP growth by quarter", period: qtrS, dp: 1 }) },
-  { slug: "iip", topic: "Factories", value: p1(iL.v),
+    chart: drawn(gdp, 20, { label: `Real GDP growth by quarter, year on year, ${qtrS(gdp.at(-20)?.d ?? gdp[0].d)} to ${qtrS(gL.d)}`, dp: 1 }) },
+  { slug: "iip", topic: "Factories", period: monthL(iL.d), value: p1(iL.v),
     sentence: `Industrial output ${iL.v < 0 ? "shrank" : "grew"} <b>${p1(Math.abs(iL.v))}</b> in ${MONTHS_FULL[+iL.d.slice(5, 7) - 1]}, ${r1(iL.v) === r1(iP.v) ? "the same as" : r1(iL.v) > r1(iP.v) ? "up from" : "down from"} ${p1(iP.v)} the month before.`,
-    chart: briefSVG({ dates: iip.map((p) => p.d), values: iip.map((p) => p.v) }, { ref: 0, label: "Industrial output growth by month", period: monthS, dp: 1 }) },
-  { slug: "jobs", topic: "Jobs", value: `${uL.v.toFixed(1)}%`,
+    chart: drawn(iip, 60, { ref: 0, label: `Industrial output growth by month, year on year, to ${monthS(iL.d)}`, dp: 1 }) },
+  { slug: "jobs", topic: "Jobs", period: monthL(uL.d), value: `${uL.v.toFixed(1)}%`,
     sentence: r1(uL.v) === r1(uP.v) ? `Unemployment held at <b>${uL.v.toFixed(1)}%</b> in ${MONTHS_FULL[+uL.d.slice(5, 7) - 1]}, the same as the month before.`
       : `Unemployment ${r1(uL.v) > r1(uP.v) ? "rose" : "fell"} to <b>${uL.v.toFixed(1)}%</b> in ${MONTHS_FULL[+uL.d.slice(5, 7) - 1]}, from ${uP.v.toFixed(1)}% the month before.`,
-    chart: briefSVG({ dates: ur.map((p) => p.d), values: ur.map((p) => p.v) }, { label: "Unemployment rate by month", period: monthS, dp: 1 }) },
+    chart: drawn(ur, 60, { label: `Unemployment rate by month, age 15 and over, to ${monthS(uL.d)}`, dp: 1 }) },
 ];
 const leadSlugs = new Set(LEAD.map((l) => l.slug));
 const cpiMeta = read("cpi-2024").meta;
 const rel = cpiMeta.releaseDate ?? cpiMeta.vintage;
 const STAMP = `${MONTHS_FULL[+rel.slice(5, 7) - 1]} ${rel.slice(0, 4)}`;
 const SECTIONS = [...new Set(DOSSIERS.map((d) => d.section))];
+const UNITS = [...STATES].sort((a, b) => a.name.localeCompare(b.name, "en-IN"));
+const nStates = UNITS.filter((u) => u.kind === "state").length, nUTs = UNITS.length - nStates;
+const LEARN = EXPLAINERS.filter((e) => e.live);
+const LEARN_FAMILIES = [...new Set(LEARN.map((e) => e.family))];
 ---
 <Base
   title="India Atlas: the Indian economy, explained"
@@ -73,53 +86,42 @@ const SECTIONS = [...new Set(DOSSIERS.map((d) => d.section))];
 >
 <div class="page home spage">
 
-  <header class="brief-h">
-    <h1>The economy, as the figures stand</h1>
-    <p>From the latest official releases, to {monthL(cL.d)}. Each line opens a guide that explains it.</p>
+  <header class="hm-head hm-row">
+    <div class="hm-m"><span class="hm-date">{STAMP}</span><span class="hm-note">Revised as each figure is released</span></div>
+    <div class="hm-b">
+      <h1>The Indian economy, from its official figures</h1>
+      <p class="hm-dek">{DOSSIERS.length} guides that explain India's statistics in plain words, and a profile of each of the {UNITS.length} states and union territories. Search {N} source records and see where they come from. Records awaiting checks are clearly marked.</p>
+      <div class="find" id="find" role="search" data-quality-version={qualityRegistryVersion}>
+        <label id="find-l" for="q">Search {N} series</label>
+        <div class="qwrap">
+          <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Inflation in Kerala, the rupee, wheat"
+            role="combobox" aria-expanded="false" aria-controls="results" aria-autocomplete="list" aria-labelledby="find-l">
+          <ul id="results" role="listbox" hidden></ul>
+        </div>
+      </div>
+    </div>
   </header>
 
-  <section class="brief" aria-label="The latest figures">
+  <section class="hm-sec brief" aria-labelledby="br-h">
+    <div class="hm-sh hm-row"><span class="hm-m">To {monthL(cL.d)}</span><h2 id="br-h">The latest figures</h2></div>
     {LEAD.map((l, i) => (
-      <article class={`bi bi-${i}`}>
+      <article class={`bi hm-row${i === 0 ? " lead" : ""}`}>
+        <div class="hm-m bi-r"><span class="bi-v">{l.value}</span><span class="bi-k">{l.topic}, {l.period}</span></div>
         <a class="bi-link" href={`/guides/${l.slug}/`}>
-          <span class="bi-k">{l.topic}</span>
           <p class="bi-s" set:html={l.sentence} />
-          <div class="bi-c nspark" set:html={l.chart} />
+          <div class="bi-c nspark"><div class="bc-d" set:html={l.chart.d} /><div class="bc-m" set:html={l.chart.m} /></div>
           <span class="bi-go">Read the guide</span>
         </a>
       </article>
     ))}
   </section>
 
-  <section class="find" id="find" aria-labelledby="find-l">
-    <label id="find-l" for="q">Search {N} series</label>
-    <div class="qwrap">
-      <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Inflation in Kerala, capital goods, the rupee"
-        role="combobox" aria-expanded="false" aria-controls="results" aria-autocomplete="list">
-      <ul id="results" role="listbox" hidden></ul>
-    </div>
-  </section>
-
-  <!-- profiles (lb/profiles): an entry point to the state profiles -->
-  <section class="index st-entry" aria-labelledby="st-h">
-    <div class="ix-head"><h2 id="st-h">Your state</h2><a href="/states/">All states and union territories</a></div>
-    <p class="st-lede">One page for each state and union territory: how it earns, spends, works, borrows and falls ill, against India and its neighbours.</p>
-    <ul class="st-links">{[...STATES].sort((a, b) => a.name.localeCompare(b.name, "en-IN")).map((u) => <li><a href={`/states/${u.slug}/`}>{u.name}</a></li>)}</ul>
-  </section>
-  <style>
-    .st-entry .st-lede{font-family:var(--sans);font-size:.95rem;color:var(--ink-soft);margin:6px 0 14px;max-width:62ch}
-    .st-entry .st-links{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 22px;font-family:var(--sans);font-size:.92rem}
-    .st-entry .st-links a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule-2)}
-    .st-entry .st-links a:hover{border-bottom-color:var(--ink)}
-  </style>
-  <!-- end profiles -->
-
-  <section class="index" aria-labelledby="ix-h">
-    <div class="ix-head"><h2 id="ix-h">Every guide</h2><a href="/guides/">Browse the guides</a></div>
-    <div class="ix-cols dossiers">
+  <section class="hm-sec index" aria-labelledby="ix-h">
+    <div class="hm-sh hm-row"><span class="hm-m"><a href="/guides/">The guides, with their charts</a></span><h2 id="ix-h">Every guide</h2></div>
+    <div class="dossiers">
       {SECTIONS.map((sec) => (
-        <div class="ix-grp">
-          <h3>{sec}</h3>
+        <div class="ix-grp hm-row">
+          <h3 class="hm-m">{sec}</h3>
           <ul>
             {DOSSIERS.filter((d) => d.section === sec).map((d) => { const h = headlineOf(d); return (
               <li data-slug={d.slug}><a href={`/guides/${d.slug}/`}>
@@ -133,6 +135,26 @@ const SECTIONS = [...new Set(DOSSIERS.map((d) => d.section))];
         </div>
       ))}
     </div>
+  </section>
+
+  <!-- profiles (lb/profiles): an entry point to the state profiles -->
+  <section class="hm-sec st-entry" aria-labelledby="st-h">
+    <div class="hm-sh hm-row"><span class="hm-m"><a href="/states/">All {UNITS.length}, compared</a></span><h2 id="st-h">States and union territories</h2></div>
+    <div class="hm-row">
+      <p class="hm-m hm-lede">A page for each of the {nStates} states and {nUTs} union territories: how it earns, spends, works, borrows and falls ill, against India and its neighbours.</p>
+      <ul class="st-links">{UNITS.map((u) => <li><a href={`/states/${u.slug}/`}>{u.name}</a></li>)}</ul>
+    </div>
+  </section>
+  <!-- end profiles -->
+
+  <section class="hm-sec learn" aria-labelledby="ln-h">
+    <div class="hm-sh hm-row"><span class="hm-m"><a href="/learn/">All {LEARN.length} notes</a></span><h2 id="ln-h">The ideas behind the numbers</h2></div>
+    {LEARN_FAMILIES.map((f) => (
+      <div class="ln-grp hm-row">
+        <h3 class="hm-m">{f}</h3>
+        <ul>{LEARN.filter((e) => e.family === f).map((e) => <li><a href={`/learn/${e.slug}/`}>{e.title}</a></li>)}</ul>
+      </div>
+    ))}
   </section>
 
   <footer class="provenance">

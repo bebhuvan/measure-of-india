@@ -1,22 +1,22 @@
 {
  "meta": {
   "dossier": "markets-listed",
-  "source": "Reserve Bank of India, DBIE, via the Reserve Bank Innovation Hub's data service",
-  "vintage": "2026-10-10",
-  "mock": false,
+  "source": "Reserve Bank of India, DBIE (official CAS and prompted statistical reports), via the local Data Bank",
+  "vintage": null,
+  "vintageStatus": "unknown",
+  "vintageNote": "The archived RBI CAS and prompted report exports do not publish a source revision timestamp. Archive capture is recorded separately and does not establish when estimates were revised.",
+  "archiveCapturedDate": "2026-10-10",
   "geo": "IND",
+  "mock": false,
+  "base": "as published",
   "releaseDate": null,
   "revisionPolicy": "Each quarter's figures come from the companies that reported in that quarter; growth rates compare the same companies a year apart and are final as printed.",
-  "base": "as published",
   "frequency": "annual",
-  "product": "SDMX dataset RATIO_LNGNFC_ANN_RN (Ratios of Listed Non-Government Non-Financial Companies Annually)",
-  "dsd": "RATIO_LNGNFC_ANN_RN",
-  "loadedAt": "2026-09-18T15:12:08.532155Z",
-  "cut": null,
   "unit": "pct",
-  "coverage": "Listed private non-financial companies, ratios, annual",
-  "note": "Per cent, except interest coverage and cash coverage, which are times. Each period's ratios are for the companies that reported that period.",
-  "latestPeriod": "2024-04"
+  "product": "Listed non-government non-financial companies",
+  "coverage": "Annual results of listed non-government non-financial companies: profit margins, interest coverage and other financial ratios and reporting-company counts.",
+  "note": "Direct RBI DBIE: CAS full history, newest prompted report restatements preferred. Growth compares common companies; period totals and ratios use changing samples. Amounts are not a comparable time series. CAS omits some zero or |rate| ≥150 cells; reports preserve meaningful numeric cells and quarantine the exact 999999999 sentinel. Zero-filled CAS amount vectors and rupee-valued growth are missing, never true zero. Historical duplicate-key ratios retain the inherited mirror selection with an ambiguity flag until official reports resolve them. See sourceByDate for each cell; full source defects and overlap in markets-rbi.source-quality.json.",
+  "latestPeriod": "2025-04"
  },
  "dates": [
   "2015-04-01",
@@ -28,60 +28,382 @@
   "2021-04-01",
   "2022-04-01",
   "2023-04-01",
-  "2024-04-01"
+  "2024-04-01",
+  "2025-04-01"
  ],
  "series": {
   "corm_to_sal": {
    "label": "Cost of Raw Materials to Sales",
    "unit": "pct",
+   "measure": "ratio",
+   "itemCode": "CORM_TO_SAL",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 398,
+     "companies": 2217
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 442,
+     "companies": 2526
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1178,
+     "companies": 2797
+    }
+   },
    "data": [
-    48.9741,
-    49.7332,
-    50.0742,
-    51.6247,
-    50.0596,
-    48.209,
-    53.1706,
-    53.4714,
-    51.1043,
-    52.1255
+    48.974121593404,
+    49.733192965557,
+    50.074232413263,
+    51.624677672557,
+    50.059600394732,
+    48.209020600175,
+    53.170594652402,
+    53.47137882661,
+    51.104274214526,
+    52.125473331166,
+    54.08813441946
    ]
   },
   "csh_cvg_ratio": {
    "label": "Cash Coverage Ratio(times)",
    "unit": "times",
+   "measure": "ratio",
+   "itemCode": "CSH_CVG_RATIO",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 538,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 388,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 864,
+     "companies": 4278
+    }
+   },
    "data": [
-    4.1697,
-    4.1753,
-    5.1544,
-    5.9594,
-    4.6132,
-    5.0185,
-    6.6982,
-    6.3742,
-    6.7227,
-    7.026
+    4.169730554861,
+    4.175300709665,
+    5.154411681714,
+    5.959442364993,
+    4.613189837113,
+    5.018508568782,
+    6.698174441162,
+    6.37421621469,
+    6.722683656831,
+    7.025953374731,
+    7.929909655461
    ]
   },
   "ebitda_to_sal": {
    "label": "EBITDA to Sales",
    "unit": "pct",
+   "measure": "ratio",
+   "itemCode": "EBITDA_TO_SAL",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 516,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 672,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1344,
+     "companies": 4278
+    }
+   },
    "data": [
-    18.2724,
-    18.9425,
-    18.55,
-    18.2466,
-    18.6377,
-    21.4718,
-    19.9243,
-    17.515,
-    18.9679,
-    19.417
+    18.272415445184,
+    18.942498662756,
+    18.55003784405,
+    18.246610251963,
+    18.637728108375,
+    21.471813575452,
+    19.924290087705,
+    17.514985626989,
+    18.967908245646,
+    19.416950504362,
+    18.787869195936
    ]
   },
   "companies": {
    "label": "number of companies in the period",
    "unit": "count",
+   "measure": "count",
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 516,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 672,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1344,
+     "companies": 4278
+    }
+   },
    "data": [
     2932,
     3007,
@@ -92,151 +414,881 @@
     3166,
     3115,
     3281,
-    3902
+    3902,
+    4278
    ]
   },
   "ebit_to_sal": {
    "label": "EBIT to Sales",
    "unit": "pct",
+   "measure": "ratio",
+   "itemCode": "EBIT_TO_SAL",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 532,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 586,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1184,
+     "companies": 4278
+    }
+   },
    "data": [
-    14.1734,
-    14.5516,
-    14.5016,
-    14.6248,
-    13.4979,
-    16.0239,
-    15.6449,
-    13.7075,
-    14.9678,
-    15.4389
+    14.173443663991,
+    14.551626418516,
+    14.501614885319,
+    14.62475252075,
+    13.497850892635,
+    16.023942941025,
+    15.644861800871,
+    13.707506362515,
+    14.967789715875,
+    15.438919285628,
+    14.854531854304
    ]
   },
   "int_burden": {
    "label": "Interest Burden",
    "unit": "pct",
+   "measure": "ratio",
+   "itemCode": "INT_BURDEN",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 414,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 122,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 720,
+     "companies": 4278
+    }
+   },
    "data": [
-    30.9181,
-    31.1773,
-    24.817,
-    20.9357,
-    29.9314,
-    26.7008,
-    19.0132,
-    20.0459,
-    18.8503,
-    17.9002
+    30.918085012242,
+    31.177261764779,
+    24.817002807322,
+    20.935726971689,
+    29.931399181051,
+    26.700824238933,
+    19.013176130251,
+    20.045852866775,
+    18.850335816717,
+    17.900240392395,
+    15.949619212601
    ]
   },
   "int_cvg": {
    "label": "Interest Coverage(times)",
    "unit": "times",
+   "measure": "ratio",
+   "itemCode": "INT_CVG",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 608,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 404,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 880,
+     "companies": 4278
+    }
+   },
    "data": [
-    3.2344,
-    3.2075,
-    4.0295,
-    4.7765,
-    3.341,
-    3.7452,
-    5.2595,
-    4.9886,
-    5.3049,
-    5.5865
+    3.234352967217,
+    3.207465772795,
+    4.029495454241,
+    4.776523888338,
+    3.340973116396,
+    3.745202736258,
+    5.259510526539,
+    4.988563004258,
+    5.304945279082,
+    5.586517153283,
+    6.269742159173
    ]
   },
   "int_to_sal": {
-   "label": "Interest to Sales",
+   "label": "Interest  to Sales",
    "unit": "pct",
+   "measure": "ratio",
+   "itemCode": "INT_TO_SAL",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 494,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 656,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1328,
+     "companies": 4278
+    }
+   },
    "data": [
-    4.3822,
-    4.5368,
-    3.5989,
-    3.0618,
-    4.0401,
-    4.2785,
-    2.9746,
-    2.7478,
-    2.8215,
-    2.7636
+    4.382157361195,
+    4.536798659534,
+    3.598866173197,
+    3.061798258029,
+    4.040095631538,
+    4.27852484083,
+    2.974585129534,
+    2.747786557134,
+    2.821478625783,
+    2.763603666115,
+    2.369241266576
    ]
   },
   "net_pft_to_sal": {
-   "label": "Net Profit to Sales",
+   "label": "Net Profit  to Sales",
    "unit": "pct",
+   "measure": "ratio",
+   "itemCode": "NET_PFT_TO_SAL",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 446,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 580,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1172,
+     "companies": 4278
+    }
+   },
    "data": [
-    6.5759,
-    6.5412,
-    6.7422,
-    7.3131,
-    3.0753,
-    7.1674,
-    9.5081,
-    8.1072,
-    8.9922,
-    10.2638
+    6.575896557001,
+    6.541151797071,
+    6.742165265537,
+    7.313110835715,
+    3.075339275291,
+    7.167369406053,
+    9.508068089769,
+    8.107197968161,
+    8.992176409543,
+    10.263766810093,
+    11.737941963764
    ]
   },
   "opr_pfts_to_sal": {
    "label": "Operating Profits to Sales",
    "unit": "pct",
+   "measure": "ratio",
+   "itemCode": "OPR_PFTS_TO_SAL",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 500,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 176,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 848,
+     "companies": 4278
+    }
+   },
    "data": [
-    15.2024,
-    15.6338,
-    15.3205,
-    14.8797,
-    15.2547,
-    17.5775,
-    17.0017,
-    14.7254,
-    16.0402,
-    16.257
+    15.202394952678,
+    15.633775332644,
+    15.320529176082,
+    14.879675740848,
+    15.254723165421,
+    17.577458045477,
+    17.001724011886,
+    14.72542702667,
+    16.040178132897,
+    16.257013706614,
+    15.625752746877
    ]
   },
   "oth_inc_net_pft": {
    "label": "Other Income to Net Profit",
    "unit": "pct",
+   "measure": "ratio",
+   "itemCode": "OTH_INC_NET_PFT",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 672,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 372,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 896,
+     "companies": 4278
+    }
+   },
    "data": [
-    46.686,
-    50.5832,
-    47.9002,
-    46.0397,
-    110.0043,
-    54.3345,
-    30.7377,
-    34.4084,
-    32.5586,
-    30.7873
+    46.685960855593,
+    50.583191351603,
+    47.900170654015,
+    46.039703031326,
+    110.004283759344,
+    54.334516743141,
+    30.737748701694,
+    34.408418435992,
+    32.55863741332,
+    30.787301155754,
+    26.939274864548
    ]
   },
   "sc_to_sal": {
    "label": "Staff Cost to Sales",
    "unit": "pct",
+   "measure": "ratio",
+   "itemCode": "SC_TO_SAL",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 430,
+     "companies": 3260
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 170,
+     "companies": 3845
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 842,
+     "companies": 4243
+    }
+   },
    "data": [
-    9.7215,
-    10.5609,
-    10.4788,
-    10.0004,
-    11.3565,
-    12.112,
-    10.3961,
-    10.1164,
-    10.558,
-    10.4414
+    9.721457446555,
+    10.56091246606,
+    10.478817582703,
+    10.000424073546,
+    11.356465593421,
+    12.111951215059,
+    10.396148914834,
+    10.116351854123,
+    10.55796828063,
+    10.441370939914,
+    10.308705376468
    ]
   },
   "tax_prov_to_ebt": {
    "label": "Tax Provisions to EBT",
    "unit": "pct",
+   "measure": "ratio",
+   "itemCode": "TAX_PROV_TO_EBT",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "11b26e80e08724e953bbaa0599b608703d36f217e82fdfe9201c97d02f715a5c",
+     "dsd": "RATIO_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 656,
+     "companies": 2474
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 564,
+     "companies": 3048
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1156,
+     "companies": 3390
+    }
+   },
    "data": [
-    23.1535,
-    22.7376,
-    24.2233,
-    24.9142,
-    21.0378,
-    20.3872,
-    20.6124,
-    21.4899,
-    21.0414,
-    20.3583
+    23.153547508021,
+    22.737626922776,
+    24.22325359032,
+    24.914174042016,
+    21.037786034083,
+    20.387172149511,
+    20.612360083724,
+    21.489863883326,
+    21.041409904475,
+    20.35829497646,
+    20.556410221609
    ]
   }
  }

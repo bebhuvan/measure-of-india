@@ -1,7 +1,8 @@
 // Site RSS feed — one item per dossier, stamped with the data vintage of the
 // bundle each dossier's title block actually leads with (the CURRENT ruler —
 // see docs/CONTRACT-series.md; never a retired base). pubDate prefers the
-// source's releaseDate and falls back to the bundle vintage.
+// source's releaseDate, then a documented report edition or dated vintage.
+// Sources with no known publication date omit pubDate; capture dates never substitute.
 // Dossier metadata comes from src/dossiers/registry.js; only the headline
 // stat renderers live here (they are functions, the registry is pure data).
 import rss from "@astrojs/rss";
@@ -20,12 +21,12 @@ export function GET(context) {
   const items = DOSSIERS.map((d) => {
     const h = headlineOf(d);
     const b = read(d.currentBundle);
-    const stamp = b.meta.releaseDate ?? b.meta.vintage;
+    const stamp = b.meta.releaseDate ?? b.meta.reportEditionDate ?? b.meta.vintage;
     return {
       title: `${d.kickerTitle}: ${h.value}, ${h.what} (${h.period})`,
       link: `/guides/${d.slug}/`,
       description: d.rssDescription,
-      pubDate: new Date(stamp + "T00:00:00Z"),
+      ...(stamp ? {pubDate: new Date(stamp + "T00:00:00Z")} : {}),
     };
   });
   return rss({

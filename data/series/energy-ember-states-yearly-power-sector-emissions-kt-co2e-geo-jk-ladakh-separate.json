@@ -1,0 +1,647 @@
+{
+ "meta": {
+  "dossier": "energy",
+  "geo": "IND",
+  "base": "Ember India subnational electricity release, jk-ladakh-separate",
+  "revisionPolicy": "Agency revisions retained as new raw vintages before rebaking.",
+  "source": "Ember, India subnational electricity data",
+  "sourceUrl": "https://files.ember-energy.org/public-downloads/india_yearly_full_release_long_format.csv",
+  "product": "ember-india-states",
+  "frequency": "annual",
+  "calendar": "calendar",
+  "unit": "kt_co2e",
+  "rawFile": "data/raw/energy-ember-states-yearly.json",
+  "unitDefinitionEvidence": {
+   "rawFile": "data/raw/energy-ember-methodology-subnational.json",
+   "sha256": "0d5c13d7c9a8656af7c97b40770ea5a8ade904a990f138aa89825d10322b324d",
+   "sourceUrl": "https://files.ember-energy.org/public-downloads/ember_subnational_data_methodology.pdf"
+  },
+  "note": "Emissions and intensity are estimated lifecycle greenhouse gases expressed as CO2-equivalent. The state release excludes captive generation that national estimates include. Historical renewable capacity can contain upstream imputation; cell-level imputation flags are unavailable. Earlier Ladakh and Jammu-and-Kashmir reporting combines jurisdictions. Complete original release, including India Total and Others. Generation is at plant location, not electricity consumed by residents. Capacity is installed MW, generation is GWh. Emissions/intensity are source estimates. Clean includes nuclear; Renewable excludes nuclear. Aggregate fuel rows overlap individual fuels; do not add both. Source blanks remain null; all-empty series stay in raw and the catalogue with a reason. Geographic instrument: jk-ladakh-separate. July 2021 is the first separate Ladakh monthly observation; annual 2021 is isolated as a mixed reporting-scope transition. No canonical history crosses this boundary.",
+  "geographicInstrument": "jk-ladakh-separate",
+  "vintage": null,
+  "vintageStatus": "unknown",
+  "apiRevisionDate": null,
+  "sourceRevisionDate": null,
+  "vintageNote": "The original Ember record does not publish a data release or revision date. Archive capture and response timestamps are separate provenance and cannot establish that date.",
+  "archiveCapturedDate": "2026-06-13",
+  "archiveCapturedAt": "2026-06-13T11:05:01.339Z",
+  "archiveCaptureNote": "Original parsed yearly CSV envelope fetchedAt, linked by rawSnapshot CSV SHA256; derived manifest timestamps are excluded.",
+  "archiveSourceSha256": "747c3c05d76a45b6a95877e0484cbf214f302f18f996bc199fe2815db410d8ed",
+  "latestPeriod": "2024"
+ },
+ "dates": [
+  "2022-01-01",
+  "2023-01-01",
+  "2024-01-01"
+ ],
+ "series": {
+  "c_5a07bb57f80afe04477e": {
+   "name": "c_5a07bb57f80afe04477e",
+   "label": "Jammu and Kashmir / JK / Power sector emissions / Aggregate fuel / Clean",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Power sector emissions",
+    "subcategory": "Aggregate fuel",
+    "variable": "Clean"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    417.46,
+    400.43,
+    382.58
+   ],
+   "sourceCells": 3
+  },
+  "c_e5355404991a8921fb34": {
+   "name": "c_e5355404991a8921fb34",
+   "label": "Jammu and Kashmir / JK / Power sector emissions / Aggregate fuel / Fossil",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Power sector emissions",
+    "subcategory": "Aggregate fuel",
+    "variable": "Fossil"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_5af69806d891b2e6086f": {
+   "name": "c_5af69806d891b2e6086f",
+   "label": "Jammu and Kashmir / JK / Power sector emissions / Aggregate fuel / Gas and Other Fossil",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Power sector emissions",
+    "subcategory": "Aggregate fuel",
+    "variable": "Gas and Other Fossil"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_c60b9f6f15ee4d461dd5": {
+   "name": "c_c60b9f6f15ee4d461dd5",
+   "label": "Jammu and Kashmir / JK / Power sector emissions / Aggregate fuel / Hydro, Bioenergy and Other Renewables",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Power sector emissions",
+    "subcategory": "Aggregate fuel",
+    "variable": "Hydro, Bioenergy and Other Renewables"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    417.46,
+    400.43,
+    382.58
+   ],
+   "sourceCells": 3
+  },
+  "c_c8fd6c0a9fd91e700204": {
+   "name": "c_c8fd6c0a9fd91e700204",
+   "label": "Jammu and Kashmir / JK / Power sector emissions / Aggregate fuel / Renewables",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Power sector emissions",
+    "subcategory": "Aggregate fuel",
+    "variable": "Renewables"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    417.46,
+    400.43,
+    382.58
+   ],
+   "sourceCells": 3
+  },
+  "c_0b967014070761a838a5": {
+   "name": "c_0b967014070761a838a5",
+   "label": "Jammu and Kashmir / JK / Power sector emissions / Aggregate fuel / Wind and Solar",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Power sector emissions",
+    "subcategory": "Aggregate fuel",
+    "variable": "Wind and Solar"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_d60e34c4c6a935a9ca25": {
+   "name": "c_d60e34c4c6a935a9ca25",
+   "label": "Jammu and Kashmir / JK / Power sector emissions / Fuel / Bioenergy",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Power sector emissions",
+    "subcategory": "Fuel",
+    "variable": "Bioenergy"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_1b50c4abd64d8df8c7fa": {
+   "name": "c_1b50c4abd64d8df8c7fa",
+   "label": "Jammu and Kashmir / JK / Power sector emissions / Fuel / Coal",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Power sector emissions",
+    "subcategory": "Fuel",
+    "variable": "Coal"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_0534cdcaf80a67569e50": {
+   "name": "c_0534cdcaf80a67569e50",
+   "label": "Jammu and Kashmir / JK / Power sector emissions / Fuel / Gas",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Power sector emissions",
+    "subcategory": "Fuel",
+    "variable": "Gas"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_a49f8f158a0dddcce68c": {
+   "name": "c_a49f8f158a0dddcce68c",
+   "label": "Jammu and Kashmir / JK / Power sector emissions / Fuel / Hydro",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Power sector emissions",
+    "subcategory": "Fuel",
+    "variable": "Hydro"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    417.46,
+    400.43,
+    382.58
+   ],
+   "sourceCells": 3
+  },
+  "c_21bd5c3421967c02fde5": {
+   "name": "c_21bd5c3421967c02fde5",
+   "label": "Jammu and Kashmir / JK / Power sector emissions / Fuel / Nuclear",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Power sector emissions",
+    "subcategory": "Fuel",
+    "variable": "Nuclear"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_c97f80cddd331dbad0f4": {
+   "name": "c_c97f80cddd331dbad0f4",
+   "label": "Jammu and Kashmir / JK / Power sector emissions / Fuel / Other Fossil",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Power sector emissions",
+    "subcategory": "Fuel",
+    "variable": "Other Fossil"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_86f896f1eebdd38c7646": {
+   "name": "c_86f896f1eebdd38c7646",
+   "label": "Jammu and Kashmir / JK / Power sector emissions / Fuel / Other Renewables",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Power sector emissions",
+    "subcategory": "Fuel",
+    "variable": "Other Renewables"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_36cd0789c415bf0da131": {
+   "name": "c_36cd0789c415bf0da131",
+   "label": "Jammu and Kashmir / JK / Power sector emissions / Fuel / Solar",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Power sector emissions",
+    "subcategory": "Fuel",
+    "variable": "Solar"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_b926a80288d3781e3683": {
+   "name": "c_b926a80288d3781e3683",
+   "label": "Jammu and Kashmir / JK / Power sector emissions / Fuel / Wind",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Power sector emissions",
+    "subcategory": "Fuel",
+    "variable": "Wind"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_1b18d3c1c04c8ce2162b": {
+   "name": "c_1b18d3c1c04c8ce2162b",
+   "label": "Jammu and Kashmir / JK / Power sector emissions / Total / Total emissions",
+   "dims": {
+    "state": "Jammu and Kashmir",
+    "state_code": "JK",
+    "category": "Power sector emissions",
+    "subcategory": "Total",
+    "variable": "Total emissions"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    417.46,
+    400.43,
+    382.58
+   ],
+   "sourceCells": 3
+  },
+  "c_8922c39ea4c2809df774": {
+   "name": "c_8922c39ea4c2809df774",
+   "label": "Ladakh / LA / Power sector emissions / Aggregate fuel / Clean",
+   "dims": {
+    "state": "Ladakh",
+    "state_code": "LA",
+    "category": "Power sector emissions",
+    "subcategory": "Aggregate fuel",
+    "variable": "Clean"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    9.7,
+    9.37,
+    9.95
+   ],
+   "sourceCells": 3
+  },
+  "c_902dcec058a61ca40e40": {
+   "name": "c_902dcec058a61ca40e40",
+   "label": "Ladakh / LA / Power sector emissions / Aggregate fuel / Fossil",
+   "dims": {
+    "state": "Ladakh",
+    "state_code": "LA",
+    "category": "Power sector emissions",
+    "subcategory": "Aggregate fuel",
+    "variable": "Fossil"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_febb1dce923f8800af70": {
+   "name": "c_febb1dce923f8800af70",
+   "label": "Ladakh / LA / Power sector emissions / Aggregate fuel / Gas and Other Fossil",
+   "dims": {
+    "state": "Ladakh",
+    "state_code": "LA",
+    "category": "Power sector emissions",
+    "subcategory": "Aggregate fuel",
+    "variable": "Gas and Other Fossil"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_bab83fee5a6558e61ab9": {
+   "name": "c_bab83fee5a6558e61ab9",
+   "label": "Ladakh / LA / Power sector emissions / Aggregate fuel / Hydro, Bioenergy and Other Renewables",
+   "dims": {
+    "state": "Ladakh",
+    "state_code": "LA",
+    "category": "Power sector emissions",
+    "subcategory": "Aggregate fuel",
+    "variable": "Hydro, Bioenergy and Other Renewables"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    9.7,
+    9.37,
+    9.95
+   ],
+   "sourceCells": 3
+  },
+  "c_370bde3afc024386695d": {
+   "name": "c_370bde3afc024386695d",
+   "label": "Ladakh / LA / Power sector emissions / Aggregate fuel / Renewables",
+   "dims": {
+    "state": "Ladakh",
+    "state_code": "LA",
+    "category": "Power sector emissions",
+    "subcategory": "Aggregate fuel",
+    "variable": "Renewables"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    9.7,
+    9.37,
+    9.95
+   ],
+   "sourceCells": 3
+  },
+  "c_c308d924366ff7a8a913": {
+   "name": "c_c308d924366ff7a8a913",
+   "label": "Ladakh / LA / Power sector emissions / Aggregate fuel / Wind and Solar",
+   "dims": {
+    "state": "Ladakh",
+    "state_code": "LA",
+    "category": "Power sector emissions",
+    "subcategory": "Aggregate fuel",
+    "variable": "Wind and Solar"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_886d4ddaeeee6bf62b36": {
+   "name": "c_886d4ddaeeee6bf62b36",
+   "label": "Ladakh / LA / Power sector emissions / Fuel / Bioenergy",
+   "dims": {
+    "state": "Ladakh",
+    "state_code": "LA",
+    "category": "Power sector emissions",
+    "subcategory": "Fuel",
+    "variable": "Bioenergy"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_52223eed481976a11588": {
+   "name": "c_52223eed481976a11588",
+   "label": "Ladakh / LA / Power sector emissions / Fuel / Coal",
+   "dims": {
+    "state": "Ladakh",
+    "state_code": "LA",
+    "category": "Power sector emissions",
+    "subcategory": "Fuel",
+    "variable": "Coal"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_1ab21db53ca88b1ffdd1": {
+   "name": "c_1ab21db53ca88b1ffdd1",
+   "label": "Ladakh / LA / Power sector emissions / Fuel / Gas",
+   "dims": {
+    "state": "Ladakh",
+    "state_code": "LA",
+    "category": "Power sector emissions",
+    "subcategory": "Fuel",
+    "variable": "Gas"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_1465c3f3b51b5cf8e899": {
+   "name": "c_1465c3f3b51b5cf8e899",
+   "label": "Ladakh / LA / Power sector emissions / Fuel / Hydro",
+   "dims": {
+    "state": "Ladakh",
+    "state_code": "LA",
+    "category": "Power sector emissions",
+    "subcategory": "Fuel",
+    "variable": "Hydro"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    9.7,
+    9.37,
+    9.95
+   ],
+   "sourceCells": 3
+  },
+  "c_a5792ff2b23a6611dc7f": {
+   "name": "c_a5792ff2b23a6611dc7f",
+   "label": "Ladakh / LA / Power sector emissions / Fuel / Nuclear",
+   "dims": {
+    "state": "Ladakh",
+    "state_code": "LA",
+    "category": "Power sector emissions",
+    "subcategory": "Fuel",
+    "variable": "Nuclear"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_40805325a20a18598dd5": {
+   "name": "c_40805325a20a18598dd5",
+   "label": "Ladakh / LA / Power sector emissions / Fuel / Other Fossil",
+   "dims": {
+    "state": "Ladakh",
+    "state_code": "LA",
+    "category": "Power sector emissions",
+    "subcategory": "Fuel",
+    "variable": "Other Fossil"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_e4240c692ef7793722b5": {
+   "name": "c_e4240c692ef7793722b5",
+   "label": "Ladakh / LA / Power sector emissions / Fuel / Other Renewables",
+   "dims": {
+    "state": "Ladakh",
+    "state_code": "LA",
+    "category": "Power sector emissions",
+    "subcategory": "Fuel",
+    "variable": "Other Renewables"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_dc7da540935f143c1d9a": {
+   "name": "c_dc7da540935f143c1d9a",
+   "label": "Ladakh / LA / Power sector emissions / Fuel / Solar",
+   "dims": {
+    "state": "Ladakh",
+    "state_code": "LA",
+    "category": "Power sector emissions",
+    "subcategory": "Fuel",
+    "variable": "Solar"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_cd36626626a6fa2e2186": {
+   "name": "c_cd36626626a6fa2e2186",
+   "label": "Ladakh / LA / Power sector emissions / Fuel / Wind",
+   "dims": {
+    "state": "Ladakh",
+    "state_code": "LA",
+    "category": "Power sector emissions",
+    "subcategory": "Fuel",
+    "variable": "Wind"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_8f7235ad88a46a9eba99": {
+   "name": "c_8f7235ad88a46a9eba99",
+   "label": "Ladakh / LA / Power sector emissions / Total / Total emissions",
+   "dims": {
+    "state": "Ladakh",
+    "state_code": "LA",
+    "category": "Power sector emissions",
+    "subcategory": "Total",
+    "variable": "Total emissions"
+   },
+   "unit": "kt_co2e",
+   "color": "#2E4BD8",
+   "data": [
+    9.7,
+    9.37,
+    9.95
+   ],
+   "sourceCells": 3
+  }
+ }
+}

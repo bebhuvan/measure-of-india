@@ -67,11 +67,15 @@ test("hand-typed display dates never contradict the current bundle", () => {
   const dateShort = (iso) => `${Number(iso.slice(8, 10))} ${MS[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}`;
   for (const d of DOSSIERS) {
     const b = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", d.currentBundle + ".json"), "utf8"));
-    const fact = dateShort(b.meta.releaseDate ?? b.meta.vintage);
+    const iso = b.meta.releaseDate ?? b.meta.vintage;
     for (const [field, text] of [["stamp.vintageText", d.stamp?.vintageText], ["register.unit", d.register?.unit]]) {
       if (!text) continue;
       const m = text.match(/(\d{1,2} [A-Z][a-z]{2} \d{4})/);
-      if (m) assert.equal(m[1], fact, `${d.slug}: ${field} hand-types "${m[1]}" but the current bundle serves ${fact} — derive it`);
+      if (m) {
+        assert.ok(typeof iso === "string", `${d.slug}: hand-typed date with unpublished source revision date`);
+        const fact = dateShort(iso);
+        assert.equal(m[1], fact, `${d.slug}: ${field} hand-types "${m[1]}" but the current bundle serves ${fact} — derive it`);
+      }
     }
   }
 });

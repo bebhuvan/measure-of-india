@@ -29,9 +29,7 @@ build.
 3. **Every plate that shows data offers SVG / PNG / CSV download** via
    `wireTools()`. A download is a published artifact: title, source, brand
    are composed in by `composeCardSVG()` — never ship a bare plot.
-4. **Charts are Observable Plot, drawn once at module load.** No re-render
-   loops, no resize listeners, no IntersectionObserver (yet) — render cost is
-   bounded by plate count per page.
+4. **Charts are Observable Plot, each authored chart drawn once.** Heavy guides may cooperatively complete the full authored list in approximately 45 ms task batches through `queueCharts()`. Every registered job records its promise, total/completed count and errors in the per-document `__atlasChartJobs` list. Gates await all jobs with a bounded 120-second timeout and reject errors or incomplete work; browser QA waits for every expected chart. `beforeprint` drains pending work synchronously and idempotently. This scheduling never omits offscreen charts, fetches new data or uses IntersectionObserver. No redraw loops or resize listeners are introduced; rendering cost remains bounded by the authored plate list.
 
 ## Robustness floor (plumbing.js is normative)
 
@@ -90,3 +88,145 @@ build.
 
 `src/charts/plumbing.js` changes affect every page. After any change:
 `npx astro build && npm run qc` — both must pass before the change is real.
+
+## Indicator explorer exception (owner-authorized, 13 October 2026)
+
+Static guides and EveryCut tables retain their existing publication contract.
+The supplemental `/explore/` view may lazily fetch **first-party published static
+series shards**. It never requests an agency API. This narrowly overrides the
+no-runtime-published-series rule for the explorer alone. No database, paid data
+service or per-record server rendering is introduced.
+
+Identity v1 is `<canonical bundle>:<stable EveryCut row anchor>`. Bundle identity
+includes the instrument/base/methodology; canonical series keys encode declared
+cuts. A new ruler needs a new bundle. Values, title and row order are not identity
+inputs. The packer fails on anchor collisions; retired/unavailable series are
+reported rather than silently replaced. Search offsets remain release-local.
+
+Bundle manifests are packed into deterministic SHA-256-prefix buckets (256 possible files), revalidated once and pinned for the page session. Each manifest names SHA-256-content-addressed chunks. Tiny chunks (at most 64 KiB) may share a bounded container, with records isolated by canonical instrument.
+Each exact selected-series read transfers one manifest bucket (maximum 1 MiB) and one
+chunk (maximum 256 KiB). The browser verifies the chunk hash/schema/bundle and
+axis length before displaying it. Missing files, mixed versions and invalid IDs
+fail with a readable retry/refresh message. Abort navigation and epoch checks
+prevent stale results from replacing a newer selection. Immutable shard cache
+holds at most eight chunks; manifest cache holds at most eight buckets; manifests must not resolve a shard from another
+release. Manifests and HTML revalidate; hashed chunks may cache immutably.
+
+The view may redraw on explicit selection/date changes. It preserves every
+published observation and null, with a paginated underlying table and exact
+selected-range CSV/JSON. One-period estimates render as snapshots. Up to four
+compatible series share one unit axis, differentiated by line style and labelled
+legend. Comparisons use a sorted union of published date keys with explicit nulls;
+there is no interpolation, frequency aggregation, unit conversion, base-year
+splicing or synthesized cross-tab. Same unit alone is insufficient: an audited
+comparison signature must match (same-instrument CPI inflation components, or
+explicit observed state/sector cuts with every other dimension fixed).
+
+The shared addressable route serves the complete eligible catalogue without
+millions of HTML files. A few reviewed static landing pages carry crawlable values
+and a no-JS table; long-tail query addresses require JavaScript and point back to
+static guide/EveryCut context. Their canonical is the common explorer entrance.
+`test/explore-model.test.mjs`, `scripts/explore-audit.mjs`,
+`scripts/explore-verify.mjs` and the integrated gates enforce this exception.
+
+The final integrated artifact must contain at most 16,000 files (20% headroom against a conservative 20,000-file hosting cap). Full post-build verification checks every series value/field, date axis, instrument metadata, identity and chunk hash against canonical source files; it fails on omissions, duplicates or budgets. Related cuts are fetched only on request, keeping initial exact-series lookup to two data requests.
+
+Search index files use content-hashed SHA-256 token/row filenames, `filesT`/`filesR`
+maps and a lexicon in the revalidated core. Hashed files cache immutably; numeric
+posting offsets are release-local. Identity interface v1 exposes both
+`explorerHref` and `guideHref` derived from bundle/anchor. Token/row caches are
+bounded to 24/48 files. Independent reads overlap, failed promises are evicted,
+and cancellation is checked before fetching rows and during large scans. Existing
+500 KiB gzipped core and 1 MiB shard budgets remain. Typo suggestions require one
+unambiguous edit and do not silently alter valid cuts. Guide charts all complete through the shared explicit readiness lifecycle; scheduling is cooperative rather than viewport-dependent.
+
+
+### Source quality and publication eligibility
+
+All canonical identities and original fields remain represented, including records
+whose interpretation is withheld. Numerical parity is not a semantic certificate.
+`data/source-quality.json` and `src/explore/source-quality.js` are the authoritative,
+version-hashed review policy shared by explorer and search. Specific archived
+mislabel/unit evidence, unreviewed generic-mapper provenance and missing/mixed or
+unestablished units/scales can withhold numeric interpretation. A percentage above
+100 is not itself a reason to quarantine a growth rate or development ratio.
+
+Pending records get a neutral review title, precise reason, stable shareable address,
+official source access and explicitly unvalidated canonical-record inspection.
+Numeric charts, latest-value readouts, comparisons and interpreted CSV/JSON/image
+exports are disabled. Search indexes original source labels for discovery while
+showing neutral review labels and suppressing numbers/sparklines. Optional search
+v1 fields include core `quality` definitions, per-bundle policies and run-encoded
+sparse row overrides; blocked quick-file results open a source-record review view.
+
+Reviewed opt-ins must be scoped to named records or genuinely homogeneous audited
+bundles, with source/report references, source/evidence versions, reviewer rationale,
+unit/population/reference-period evidence and raw/canonical drift bindings. An
+unexpected measure, unit, label, geography, data, axis or instrument/schema change
+invalidates the review. Timestamp provenance annotations do not constitute a new
+measurement. Source API revision dates remain unknown when unpublished; archive
+capture and report edition stay separate. Public interpreted JSON preserves raw
+`canonicalMeta` separately from corrected public `meta` and `sourceQuality`.
+
+New explorer/home pages carry the compiled quality-policy version. Manifest/core
+version or missing-policy mismatches fail closed with a refresh message; they may
+never default to an interpretable numeric view. Post-build verification checks every
+record's policy and ensures pending records cannot advertise comparison links.
+
+Numeric axis abbreviations are presentation only: k, m, bn and tn mean thousand,
+million, billion and trillion source units; very small/large ticks may use scientific
+notation. Coordinate values, units, nulls and downloads are unchanged. Numeric
+geometry fixtures sample the full catalogue's unit/magnitude/sign/zero extremes.
+Survey axis dates remain anchors with explicit reference-period labels; matched
+single-observation comparisons require the same reference period.
+
+
+## Governed source-quality presentation
+
+A guide may opt into `sourceQualityMode: "required"` in the registry. The only
+supported supplied value is `required`; omission retains existing reader behavior.
+EveryCut resolves the authoritative source-quality policy for every exact record.
+An uncovered default policy is a build error for an opted-in guide, preventing new
+records from inheriting global numeric eligibility. Pending or stale bindings retain
+source identities, labels, reference periods and source access, with no numeric
+latest/change, sorting values or spark. Reviewed rows display their primary definition
+and reference basis. This flag supplies no interpretation grant and changes no
+canonical dates, numbers, identities or raw files. Guide charts, client payloads,
+facts and headline consumers must independently resolve the same policy; a row/table
+review cannot authorize an unreviewed plate or cross-record comparison. Fully expected
+schedules need the separately reviewed expected-schedule class and reader labels;
+this source-quality patch alone cannot authorize them.
+
+Required-governance bundle downloads carry explicit scope. Reviewed-column CSVs
+include only eligible exact source columns, with source period, policy version,
+reviewed/pending/source-only counts, a complete policy-manifest link and the original
+workbook link. The date column is the canonical date key; reference_period and
+record policy preserve the source label and statistical endpoint. A joint
+source-column table grants no comparison capability. Selected
+multi-record CSV/JSON remains subject to the existing comparison restriction.
+A fully pending bundle returns a named, metadata-only review-status CSV enumerating
+every record and its source access; it contains no observation date, value or unit
+columns. This response is labelled Review status CSV in every download view.
+
+The direct JSON route is labelled ARCHIVAL, with a versioned whole/record policy
+overlay. Its original meta, series, dates and other canonical fields remain exact;
+unreviewed values and units are explicitly unvalidated. Selected interpreted JSON
+continues to reject pending records. Every pending and held source record has exact
+original-workbook access. The full source ledger reconciles interpreted, pending
+and source-only records and includes metadata source workbooks. QC verifies actual
+CSV/JSON/native-download bytes and reader labels, not link presence alone.
+
+Pension interpretation additionally requires the pinned supporting-source contract
+in `data/coverage/pensions-source-policy-evidence-contract.json`. The production
+validator and source-quality resolver enforce the exact approved rule definitions,
+record scope, final pending catchall, original workbook hashes, catalogue archive and
+body hashes, explicit catalogue unit contexts, and edition-specific handbook hash.
+Missing or changed evidence fails before packaging or rendering. Registered or
+canonical pension data cannot bypass the gate by removing its policies. Expected
+schedule proof remains separate; handbook edition dates never supply current
+workbook association or forecast dates. The guard itself participates in the
+quality version, invalidating older explorer/search certificates when it changes.
+
+### Literal-source EveryCut changes
+
+A guide may set `everyCutChangeMode: "none"` when its admission covers source observations without derived changes. The only explicit mode is `none`; omission preserves legacy computation. Unknown values fail before row or plan caches are consulted. The owning registry applies the mode to direct row consumers, including profiles, search and downloads. Cache keys include the resolved mode. Suppression retains approved source endpoints, units, periods and single-record histories, while every computed change is null, its readout is an em dash and its estimate flag is false. Required source-quality, expected and pending rules remain independent. The reader states “Derived changes are not supplied.” This does not alter the separate cross-record `canCompare` policy.

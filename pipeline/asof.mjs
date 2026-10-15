@@ -21,6 +21,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { marketsRbiSlices } from '../src/dossiers/markets-rbi.model.js';
+import { householdModel } from "../src/dossiers/households.model.js";
+import { schoolModel } from "../src/dossiers/schools.model.js";
 import { DOSSIERS } from "../src/dossiers/registry.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -31,6 +34,10 @@ const refreshIds = argv.includes("--refresh") ? argv.slice(argv.indexOf("--refre
 const SCAFFOLD = argv.includes("--scaffold");
 
 // every .now block, parsed from source: { id: "slug#figure", stamp, bundleSlug }
+// ---- energy expansion ----
+import {energyModel} from "../src/dossiers/energy.model.js";
+// ---- end energy expansion ----
+import {farmModel} from "../src/dossiers/farm-households.model.js"; // farm-households
 function scanBlocks() {
   const blocks = [];
   for (const d of DOSSIERS) {
@@ -44,6 +51,15 @@ function scanBlocks() {
       if (now) blocks.push({ id: d.slug + "#" + m[1], stamp: now[1].trim(), dossier: d.slug });
     }
   }
+  // markets-rbi: full-name listed-company plates use the same freshness contract.
+  for (const p of marketsRbiSlices(slug => JSON.parse(fs.readFileSync(path.join(ROOT,'data/series',slug+'.json'),'utf8')))) blocks.push({id:`markets#cb-${p.id}`,stamp:"{view.f === 'a' ? fyOf(view.date) : qOf(view.date)}",dossier:'markets'});
+  // Programmatic plates declare the same freshness contract as literal figures.
+  for (const p of schoolModel().plates) blocks.push({id:`schools#cb-${p.id}`, stamp:"{p.period}", dossier:"schools"});
+  for (const p of householdModel().plates) blocks.push({id:`households#cb-${p.id}`,stamp:"{p.period}",dossier:"households"});
+// ---- energy expansion ----
+  for(const p of energyModel().plates)blocks.push({id:`energy#cb-${p.id}`,stamp:"{p.period}",dossier:"energy"});
+  // ---- end energy expansion ----
+  for(const p of farmModel().plates)blocks.push({id:`farm-households#cb-${p.id}`,stamp:"{p.period}",dossier:"farm-households"}); // farm-households
   return blocks;
 }
 

@@ -3,6 +3,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import { selectedCSV, selectedJSON } from "../src/explore/model.js";
 import { rowsOf, unitOf, UNITS, sparkPath, paginate, periodLabel } from "../src/dossiers/everycut.js";
 
 const slugs = fs.readdirSync("data/series").filter((f) => f.endsWith(".json")).map((f) => f.slice(0, -5));
@@ -79,4 +80,23 @@ test("every guide's every-cut plan places each bundle exactly once, inline withi
 
 test("UNITS holds only units (every entry formats a value)", () => {
   for (const [k, u] of Object.entries(UNITS)) assert.equal(typeof u?.fmt, "function", `UNITS.${k} is not a unit (a cut label in the wrong map?)`);
+});
+
+test("exact source-date opt-in preserves January and valuation days before calendar fallbacks", () => {
+  const exact = {meta: {frequency: "irregular", periodLabelMode: "source-date", latestPeriod: "Oct 2026"}, dates: ["2026-10-08"]};
+  assert.equal(periodLabel("x", exact, "2026-10-08"), "8 Oct 2026");
+  assert.equal(periodLabel("x", exact, "2026-01-02"), "2 Jan 2026");
+  assert.equal(periodLabel("x", exact, "2024-02-29"), "29 Feb 2024");
+  for (const iso of ["2026-02-29", "2026-13-01", "2026-1-02", "invalid"]) assert.throws(() => periodLabel("x", exact, iso), /Invalid source date/);
+  for (const mode of [null, false, "unknown"]) assert.throws(() => periodLabel("x", {...exact, meta: {...exact.meta, periodLabelMode: mode}}, "2026-10-08"), /Unknown periodLabelMode/);
+  assert.equal(periodLabel("x", {meta: {frequency: "annual"}, dates: ["a", "b"]}, "2026-01-02"), "2026");
+});
+
+test("exact reference dates survive selected CSV and JSON while their labels retain the day", () => {
+  const meta = {frequency: "irregular", periodLabelMode: "source-date"};
+  const dates = ["2026-01-02", "2026-10-08"];
+  const b = {meta, dates};
+  const record = {id: "date-fixture", bundle: "fixture", key: "value", unit: "inr_per_unit", meta, dates, periods: dates.map(d => periodLabel("fixture", b, d)), series: {data: [10, null]}, quality: {canInterpret: true, canCompare: false, comparisonReason: "Exact single-series reference date test; comparison eligibility is not granted."}};
+  assert.equal(selectedCSV([record]), "date,date-fixture,reference_period,date-fixture_estimated\r\n2026-01-02,10,2 Jan 2026,false\r\n2026-10-08,,8 Oct 2026,false\r\n");
+  assert.deepEqual(selectedJSON([record]).series[0].observations, [{date: dates[0], period: "2 Jan 2026", value: 10, estimated: false}, {date: dates[1], period: "8 Oct 2026", value: null, estimated: false}]);
 });

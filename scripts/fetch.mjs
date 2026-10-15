@@ -61,13 +61,25 @@ import { buildPip } from "./lib/products/pip.mjs";
 import { buildWpp } from "./lib/products/wpp.mjs";
 
 import { buildCore, buildIip1980 } from "./lib/products/industry-dbie.mjs";   // industry (lb/industry)
+import { buildHouseholds } from "./lib/products/households.mjs";
+import { buildSchools } from "./lib/products/schools.mjs";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
 const ONLY = args.includes("only") ? args.slice(args.indexOf("only") + 1) : null;
 const cfg = YAML.parse(fs.readFileSync(path.join(ROOT, "data/sources.yml"), "utf8"));
 const VINTAGE = new Date().toISOString().slice(0, 10);
 
-const REGISTRY = { cpi: buildCpi, nas: buildNas, wpi: buildWpi, cpialrl: buildCpialrl, plfs: buildPlfs, rbi: buildRbi, isp: buildIsp, iip: buildIip, hces: buildHces, asi: buildAsi, asuse: buildAsuse, aishe: buildAishe, gender: buildGender, mnre: buildMnre, nfhs: buildNfhs, "worldbank-wdi": buildWorldbankWdi, bsr2: buildBsr2, "owid-climate": buildOwidClimate, cckp: buildCckp, ilostat: buildIlostat, rbirates: buildRbiRates };
+// ---- energy expansion ----
+import { buildEnergy } from "./lib/products/energy.mjs";
+import { buildDigitalAccessProduct } from "./lib/products/digital-access.mjs";
+// ---- end energy expansion ----
+// farm-households expansion registration
+import {buildFarmHouseholds} from "./lib/products/farm-households.mjs";
+const REGISTRY = { households: buildHouseholds, schools: buildSchools, cpi: buildCpi, nas: buildNas, wpi: buildWpi, cpialrl: buildCpialrl, plfs: buildPlfs, rbi: buildRbi, isp: buildIsp, iip: buildIip, hces: buildHces, asi: buildAsi, asuse: buildAsuse, aishe: buildAishe, gender: buildGender, mnre: buildMnre, nfhs: buildNfhs, "worldbank-wdi": buildWorldbankWdi, bsr2: buildBsr2, "owid-climate": buildOwidClimate, cckp: buildCckp, ilostat: buildIlostat, rbirates: buildRbiRates };
+Object.assign(REGISTRY, {"farm-households": buildFarmHouseholds});
+Object.assign(REGISTRY, {energy: buildEnergy});
+// Verified launch archive replay; live source-refresh contract is not yet wired.
+Object.assign(REGISTRY, {"digital-access": buildDigitalAccessProduct});
 Object.assign(REGISTRY, { bis: buildBis, rbihpi: buildRbihpi, residex: buildResidex });   // bis family session
 // services guide
 Object.assign(REGISTRY, { "services-isp": buildServicesIsp, "services-nas": buildServicesNas, "services-trade": buildServicesTrade, "services-jobs": buildServicesJobs, "services-asuse": buildServicesAsuse });
@@ -96,8 +108,15 @@ import { buildMarkets, buildMarketsIssues } from "./lib/products/markets.mjs";  
 Object.assign(REGISTRY, { markets: buildMarkets, "markets-issues": buildMarketsIssues });   // markets (lb/markets)
 import { buildMarketsCompanies } from "./lib/products/markets-companies.mjs";   // markets (lb/markets)
 Object.assign(REGISTRY, { "markets-companies": buildMarketsCompanies });   // markets (lb/markets)
+// markets-rbi: read-only published local RBI corporate holdings.
+import { buildMarketsRbi } from "./lib/products/markets-rbi.mjs";
+Object.assign(REGISTRY, { "markets-rbi": buildMarketsRbi });
 import { buildMarketsHubOnce } from "./lib/products/markets-hub.mjs";   // markets (lb/markets)
 Object.assign(REGISTRY, { "markets-hub": buildMarketsHubOnce });   // markets (lb/markets)
+
+import {buildPensionsProduct} from './lib/products/pensions.mjs';
+Object.assign(REGISTRY, {pensions:buildPensionsProduct});
+// investor-participation is parked (parked/investor-participation/README.md); re-add its product here on revival.
 
 // One product's failure must not starve the rest: collect, continue, and
 // exit non-zero at the end so CI still fails on the summary.

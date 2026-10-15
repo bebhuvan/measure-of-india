@@ -27,3 +27,14 @@ misread:
     correction: >
       Deposits are still the first destination of household saving. The market's share has grown,
       and the value of shares already held has risen with prices.
+
+# Listed-company interpretation for the direct RBI extension.
+listed-companies:
+  source: Official RBI DBIE CAS history and prompted reports; the RBIhub mirror corroborates history.
+  universe: Listed non-government non-financial companies that report results; excludes unlisted firms and financial companies.
+  growth: RBI compares companies common to both periods; nominal growth includes prices and volumes.
+  levels: Each period has a different reporting sample. Never infer growth from study totals.
+  counts: Company counts describe the reporting sample, never workers or employment.
+  sizes: Paid-up capital is nominal share capital, distinct from market value. Sales sizes use turnover. Size-class boundaries are in rupee crore.
+  hierarchy: Industry parent groups include their subindustries and must not be summed with their parts.
+  defects: Whole zero-filled amount vectors, rupees under growth units and exact report sentinels are missing. Historical duplicate-key ratios carry explicit ambiguity; do not add ratios.

@@ -1,0 +1,937 @@
+{
+ "meta": {
+  "dossier": "energy",
+  "geo": "IND",
+  "base": "MoSPI API 2025 balance, coal-lignite-separate",
+  "revisionPolicy": "Agency revisions retained as new raw vintages before rebaking.",
+  "source": "MoSPI, Energy Statistics India",
+  "sourceUrl": "https://www.mospi.gov.in/themes/product/60-energy-statistics",
+  "product": "energy-balance",
+  "frequency": "annual",
+  "calendar": "fiscal-apr",
+  "unit": "ktoe",
+  "rawFile": "data/raw/energy-records-1-1.json",
+  "balanceUse": "supply",
+  "fuelInstrument": "coal-lignite-separate",
+  "note": "Signed exports and stock changes are retained. Total supply = production + imports + signed exports + signed stock changes. Totals and petroleum subproducts overlap. API does not publish transformation/loss rows. Latest API year provisional. Coal and lignite are separately published; never join this coal series to the older combined-fuel definition.",
+  "vintage": null,
+  "vintageStatus": "unknown",
+  "apiRevisionDate": null,
+  "sourceRevisionDate": null,
+  "vintageNote": "These archived API rows and envelopes contain no publisher revision timestamp. Compatibility with a report edition does not establish the API revision date.",
+  "archiveCapturedDate": null,
+  "archiveCapturedAt": null,
+  "archiveCaptureNote": "Capture time was not recorded in the archived API envelope.",
+  "reportEditionYear": 2025,
+  "documentForewordDate": "2025-03-25",
+  "documentForewordURL": "https://www.mospi.gov.in/sites/default/files/publication_reports/Energy_Statistics_2025/Foreword_27032025.pdf",
+  "latestPeriod": "2023–24"
+ },
+ "dates": [
+  "2021-04-01",
+  "2022-04-01",
+  "2023-04-01"
+ ],
+ "series": {
+  "c_b0f716da99e3de7da86b": {
+   "name": "c_b0f716da99e3de7da86b",
+   "label": "Coal / Exports",
+   "dims": {
+    "fuel": "Coal",
+    "subproduct": "",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    -886.27,
+    -785.37,
+    -1040.87
+   ],
+   "sourceCells": 3
+  },
+  "c_d855ddd7612e41dce2ef": {
+   "name": "c_d855ddd7612e41dce2ef",
+   "label": "Coal / Imports",
+   "dims": {
+    "fuel": "Coal",
+    "subproduct": "",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    115989.25,
+    126342.73,
+    141638.82
+   ],
+   "sourceCells": 3
+  },
+  "c_a4b47cc99281b1e16db7": {
+   "name": "c_a4b47cc99281b1e16db7",
+   "label": "Coal / Production",
+   "dims": {
+    "fuel": "Coal",
+    "subproduct": "",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    312680.97,
+    359797.83,
+    403799.46
+   ],
+   "sourceCells": 3
+  },
+  "c_e5cf7db3ffd29ab94dd9": {
+   "name": "c_e5cf7db3ffd29ab94dd9",
+   "label": "Coal / Stock changes",
+   "dims": {
+    "fuel": "Coal",
+    "subproduct": "",
+    "flow": "Stock changes",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    16917.11,
+    -6501.77,
+    -10299.09
+   ],
+   "sourceCells": 3
+  },
+  "c_3085bc9703503955f6ca": {
+   "name": "c_3085bc9703503955f6ca",
+   "label": "Coal / Total primary energy supply",
+   "dims": {
+    "fuel": "Coal",
+    "subproduct": "",
+    "flow": "Total primary energy supply",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    444701.06,
+    478853.43,
+    534098.32
+   ],
+   "sourceCells": 3
+  },
+  "c_d8a91c7fb84299e0b44d": {
+   "name": "c_d8a91c7fb84299e0b44d",
+   "label": "Crude Oil / Exports",
+   "dims": {
+    "fuel": "Crude Oil",
+    "subproduct": "",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_40868c9749d4706fd9b0": {
+   "name": "c_40868c9749d4706fd9b0",
+   "label": "Crude Oil / Imports",
+   "dims": {
+    "fuel": "Crude Oil",
+    "subproduct": "",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    217053.53,
+    237819.29,
+    239414.8
+   ],
+   "sourceCells": 3
+  },
+  "c_e5708ab814ed0f9eaeb0": {
+   "name": "c_e5708ab814ed0f9eaeb0",
+   "label": "Crude Oil / Production",
+   "dims": {
+    "fuel": "Crude Oil",
+    "subproduct": "",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    30343.85,
+    29820.95,
+    30002.27
+   ],
+   "sourceCells": 3
+  },
+  "c_f999dbc9c310a226f15c": {
+   "name": "c_f999dbc9c310a226f15c",
+   "label": "Crude Oil / Stock changes",
+   "dims": {
+    "fuel": "Crude Oil",
+    "subproduct": "",
+    "flow": "Stock changes",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_c1211a40ef2dce10932e": {
+   "name": "c_c1211a40ef2dce10932e",
+   "label": "Crude Oil / Total primary energy supply",
+   "dims": {
+    "fuel": "Crude Oil",
+    "subproduct": "",
+    "flow": "Total primary energy supply",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    247397.38,
+    267640.24,
+    269417.07
+   ],
+   "sourceCells": 3
+  },
+  "c_7564ede488144b472dad": {
+   "name": "c_7564ede488144b472dad",
+   "label": "Electricity / Exports",
+   "dims": {
+    "fuel": "Electricity",
+    "subproduct": "",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    -795.45,
+    -1186.11,
+    -977.13
+   ],
+   "sourceCells": 3
+  },
+  "c_282803c1c84e1fad6d29": {
+   "name": "c_282803c1c84e1fad6d29",
+   "label": "Electricity / Imports",
+   "dims": {
+    "fuel": "Electricity",
+    "subproduct": "",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    685.76,
+    657.02,
+    571.79
+   ],
+   "sourceCells": 3
+  },
+  "c_78ec205746ed0ebd2966": {
+   "name": "c_78ec205746ed0ebd2966",
+   "label": "Electricity / Production",
+   "dims": {
+    "fuel": "Electricity",
+    "subproduct": "",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_c3694186e3d99ed6ec73": {
+   "name": "c_c3694186e3d99ed6ec73",
+   "label": "Electricity / Stock changes",
+   "dims": {
+    "fuel": "Electricity",
+    "subproduct": "",
+    "flow": "Stock changes",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_38c79461a1c882d2db22": {
+   "name": "c_38c79461a1c882d2db22",
+   "label": "Electricity / Total primary energy supply",
+   "dims": {
+    "fuel": "Electricity",
+    "subproduct": "",
+    "flow": "Total primary energy supply",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    -109.68,
+    -529.09,
+    -405.34
+   ],
+   "sourceCells": 3
+  },
+  "c_0c4efbb85df9c18032ca": {
+   "name": "c_0c4efbb85df9c18032ca",
+   "label": "Hydro / Exports",
+   "dims": {
+    "fuel": "Hydro",
+    "subproduct": "",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_36f53b9f3f7320de4f3b": {
+   "name": "c_36f53b9f3f7320de4f3b",
+   "label": "Hydro / Imports",
+   "dims": {
+    "fuel": "Hydro",
+    "subproduct": "",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_53a4a86db605ce9663b6": {
+   "name": "c_53a4a86db605ce9663b6",
+   "label": "Hydro / Production",
+   "dims": {
+    "fuel": "Hydro",
+    "subproduct": "",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    13070.62,
+    13965.49,
+    11558.82
+   ],
+   "sourceCells": 3
+  },
+  "c_a8345e8de51eadd645fd": {
+   "name": "c_a8345e8de51eadd645fd",
+   "label": "Hydro / Stock changes",
+   "dims": {
+    "fuel": "Hydro",
+    "subproduct": "",
+    "flow": "Stock changes",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_82be558c2db9fb780e81": {
+   "name": "c_82be558c2db9fb780e81",
+   "label": "Hydro / Total primary energy supply",
+   "dims": {
+    "fuel": "Hydro",
+    "subproduct": "",
+    "flow": "Total primary energy supply",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    13070.62,
+    13965.49,
+    11558.82
+   ],
+   "sourceCells": 3
+  },
+  "c_b2c26791c190736cb9ff": {
+   "name": "c_b2c26791c190736cb9ff",
+   "label": "Lignite / Exports",
+   "dims": {
+    "fuel": "Lignite",
+    "subproduct": "",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    -3.88,
+    -75.96,
+    -0.37
+   ],
+   "sourceCells": 3
+  },
+  "c_e69640a6482036d3d96d": {
+   "name": "c_e69640a6482036d3d96d",
+   "label": "Lignite / Imports",
+   "dims": {
+    "fuel": "Lignite",
+    "subproduct": "",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    2.57,
+    5.22,
+    11.88
+   ],
+   "sourceCells": 3
+  },
+  "c_055308631614a33c8c73": {
+   "name": "c_055308631614a33c8c73",
+   "label": "Lignite / Production",
+   "dims": {
+    "fuel": "Lignite",
+    "subproduct": "",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    10828.28,
+    10038.71,
+    9786.09
+   ],
+   "sourceCells": 3
+  },
+  "c_0b94c2b9e6d8fe372498": {
+   "name": "c_0b94c2b9e6d8fe372498",
+   "label": "Lignite / Stock changes",
+   "dims": {
+    "fuel": "Lignite",
+    "subproduct": "",
+    "flow": "Stock changes",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    362.99,
+    417.93,
+    -74.56
+   ],
+   "sourceCells": 3
+  },
+  "c_fb0432fec6226e03ab40": {
+   "name": "c_fb0432fec6226e03ab40",
+   "label": "Lignite / Total primary energy supply",
+   "dims": {
+    "fuel": "Lignite",
+    "subproduct": "",
+    "flow": "Total primary energy supply",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    11189.97,
+    10385.9,
+    9723.04
+   ],
+   "sourceCells": 3
+  },
+  "c_fbf16fa4ea0192522fc1": {
+   "name": "c_fbf16fa4ea0192522fc1",
+   "label": "Natural Gas / Exports",
+   "dims": {
+    "fuel": "Natural Gas",
+    "subproduct": "",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_9f4b05fbba1613c20a74": {
+   "name": "c_9f4b05fbba1613c20a74",
+   "label": "Natural Gas / Imports",
+   "dims": {
+    "fuel": "Natural Gas",
+    "subproduct": "",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    28700.65,
+    24331.37,
+    29410.3
+   ],
+   "sourceCells": 3
+  },
+  "c_b6ddf25f247335fad775": {
+   "name": "c_b6ddf25f247335fad775",
+   "label": "Natural Gas / Production",
+   "dims": {
+    "fuel": "Natural Gas",
+    "subproduct": "",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    31471.48,
+    31866.22,
+    33704.73
+   ],
+   "sourceCells": 3
+  },
+  "c_8f02b5c7e500cfc65ee6": {
+   "name": "c_8f02b5c7e500cfc65ee6",
+   "label": "Natural Gas / Stock changes",
+   "dims": {
+    "fuel": "Natural Gas",
+    "subproduct": "",
+    "flow": "Stock changes",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_52584dc31073f4afbd4c": {
+   "name": "c_52584dc31073f4afbd4c",
+   "label": "Natural Gas / Total primary energy supply",
+   "dims": {
+    "fuel": "Natural Gas",
+    "subproduct": "",
+    "flow": "Total primary energy supply",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    60172.12,
+    56197.59,
+    63115.03
+   ],
+   "sourceCells": 3
+  },
+  "c_17722b0da2b3ea8ea928": {
+   "name": "c_17722b0da2b3ea8ea928",
+   "label": "Nuclear / Exports",
+   "dims": {
+    "fuel": "Nuclear",
+    "subproduct": "",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_52a17a0eaf3554e20e15": {
+   "name": "c_52a17a0eaf3554e20e15",
+   "label": "Nuclear / Imports",
+   "dims": {
+    "fuel": "Nuclear",
+    "subproduct": "",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_ff350a53c58acb5fb796": {
+   "name": "c_ff350a53c58acb5fb796",
+   "label": "Nuclear / Production",
+   "dims": {
+    "fuel": "Nuclear",
+    "subproduct": "",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    12277.69,
+    11951.68,
+    12492.78
+   ],
+   "sourceCells": 3
+  },
+  "c_51542f3012c4e6636860": {
+   "name": "c_51542f3012c4e6636860",
+   "label": "Nuclear / Stock changes",
+   "dims": {
+    "fuel": "Nuclear",
+    "subproduct": "",
+    "flow": "Stock changes",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_f2bdc63f13fff7cd658e": {
+   "name": "c_f2bdc63f13fff7cd658e",
+   "label": "Nuclear / Total primary energy supply",
+   "dims": {
+    "fuel": "Nuclear",
+    "subproduct": "",
+    "flow": "Total primary energy supply",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    12277.69,
+    11951.68,
+    12492.78
+   ],
+   "sourceCells": 3
+  },
+  "c_9b5fefdf0816af87236d": {
+   "name": "c_9b5fefdf0816af87236d",
+   "label": "Oil Products / Exports",
+   "dims": {
+    "fuel": "Oil Products",
+    "subproduct": "",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    -65588.2,
+    -63660.08,
+    -65333.32
+   ],
+   "sourceCells": 3
+  },
+  "c_e516ac4408745e292a1b": {
+   "name": "c_e516ac4408745e292a1b",
+   "label": "Oil Products / Imports",
+   "dims": {
+    "fuel": "Oil Products",
+    "subproduct": "",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    39911.65,
+    44702.72,
+    48202.82
+   ],
+   "sourceCells": 3
+  },
+  "c_d52ca5f73a9d9afe48a8": {
+   "name": "c_d52ca5f73a9d9afe48a8",
+   "label": "Oil Products / Production",
+   "dims": {
+    "fuel": "Oil Products",
+    "subproduct": "",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_34353dcbd342913df510": {
+   "name": "c_34353dcbd342913df510",
+   "label": "Oil Products / Stock changes",
+   "dims": {
+    "fuel": "Oil Products",
+    "subproduct": "",
+    "flow": "Stock changes",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_413c7cbbcc9b34bfabe8": {
+   "name": "c_413c7cbbcc9b34bfabe8",
+   "label": "Oil Products / Total primary energy supply",
+   "dims": {
+    "fuel": "Oil Products",
+    "subproduct": "",
+    "flow": "Total primary energy supply",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    -25676.55,
+    -18957.36,
+    -17130.51
+   ],
+   "sourceCells": 3
+  },
+  "c_439d09ed31b1ef168fe8": {
+   "name": "c_439d09ed31b1ef168fe8",
+   "label": "Solar, Wind, Others / Exports",
+   "dims": {
+    "fuel": "Solar, Wind, Others",
+    "subproduct": "",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_7d74505347a618a3fb13": {
+   "name": "c_7d74505347a618a3fb13",
+   "label": "Solar, Wind, Others / Imports",
+   "dims": {
+    "fuel": "Solar, Wind, Others",
+    "subproduct": "",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_b4a1f74504bd138c7587": {
+   "name": "c_b4a1f74504bd138c7587",
+   "label": "Solar, Wind, Others / Production",
+   "dims": {
+    "fuel": "Solar, Wind, Others",
+    "subproduct": "",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    15284.37,
+    18252.85,
+    20288.67
+   ],
+   "sourceCells": 3
+  },
+  "c_43b3ad5faa57bf073edf": {
+   "name": "c_43b3ad5faa57bf073edf",
+   "label": "Solar, Wind, Others / Stock changes",
+   "dims": {
+    "fuel": "Solar, Wind, Others",
+    "subproduct": "",
+    "flow": "Stock changes",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0,
+    0
+   ],
+   "sourceCells": 3
+  },
+  "c_0e6f607e8663196ace14": {
+   "name": "c_0e6f607e8663196ace14",
+   "label": "Solar, Wind, Others / Total primary energy supply",
+   "dims": {
+    "fuel": "Solar, Wind, Others",
+    "subproduct": "",
+    "flow": "Total primary energy supply",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    15284.37,
+    18252.85,
+    20288.67
+   ],
+   "sourceCells": 3
+  },
+  "c_568355364965efea6847": {
+   "name": "c_568355364965efea6847",
+   "label": "Total / Exports",
+   "dims": {
+    "fuel": "Total",
+    "subproduct": "",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    -67273.79,
+    -65707.51,
+    -67351.7
+   ],
+   "sourceCells": 3
+  },
+  "c_4105f89b7c906a992f6b": {
+   "name": "c_4105f89b7c906a992f6b",
+   "label": "Total / Imports",
+   "dims": {
+    "fuel": "Total",
+    "subproduct": "",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    402343.42,
+    433858.34,
+    459250.41
+   ],
+   "sourceCells": 3
+  },
+  "c_de7ffa460bbe98b994a7": {
+   "name": "c_de7ffa460bbe98b994a7",
+   "label": "Total / Production",
+   "dims": {
+    "fuel": "Total",
+    "subproduct": "",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    425957.27,
+    475693.74,
+    521632.82
+   ],
+   "sourceCells": 3
+  },
+  "c_ad37c40bca234aa72a97": {
+   "name": "c_ad37c40bca234aa72a97",
+   "label": "Total / Stock changes",
+   "dims": {
+    "fuel": "Total",
+    "subproduct": "",
+    "flow": "Stock changes",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    17280.1,
+    -6083.84,
+    -10373.65
+   ],
+   "sourceCells": 3
+  },
+  "c_397a3c5eaa70d33eb3f2": {
+   "name": "c_397a3c5eaa70d33eb3f2",
+   "label": "Total / Total primary energy supply",
+   "dims": {
+    "fuel": "Total",
+    "subproduct": "",
+    "flow": "Total primary energy supply",
+    "sector": ""
+   },
+   "unit": "ktoe",
+   "color": "#2E4BD8",
+   "data": [
+    778306.99,
+    837760.74,
+    903157.89
+   ],
+   "sourceCells": 3
+  }
+ }
+}

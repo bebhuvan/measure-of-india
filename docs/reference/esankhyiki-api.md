@@ -11,9 +11,11 @@ Source: [esankhyiki.mospi.gov.in](https://esankhyiki.mospi.gov.in/) (MoSPI data 
   `GET /esankhyiki/cms/getMetaDataByProduct?product_id=`
 - OpenAPI/swagger: [https://esankhyiki.mospi.gov.in/EC/swagger-ui/index.html](https://esankhyiki.mospi.gov.in/EC/swagger-ui/index.html)
 
+Current MCP/direct-route corrections and canaries: [MoSPI API discovery](mospi-api-discovery.md).
+
 Notes:
-- All requests are `GET`, JSON responses (except `cpi/getInflation` and the
-  `cms/golden-sheet/*` endpoints, which the SPA calls via POST).
+- Most macro requests are `GET`, JSON responses. Economic Census uses a separate form-POST API (see discovery note). Other exceptions include `cpi/getInflation` and the
+  `cms/golden-sheet/*` endpoints, which the SPA calls via POST.
 - Required parameters are shown for each endpoint. `indicator_code` values come from the
   `...IndicatorList` responses (metadata) listed below.
 
@@ -52,12 +54,13 @@ an API endpoint — each product has real API paths listed here.
 | nss-78 | `getIndicatorList`, `getFilterByIndicatorId`, `getNss78Records`, `getDownloadRecords` |
 | nss-79 | `getNSS79SurveyList`, `getnss79IndicatorList`/`getNSS79IndicatorList`, `getNSS79FilterByIndicatorId`, `getNSS79Records` |
 | nss-80 | `getSurvey`, `getIndicatorList`, `getFilterBySurveryAndIndicator` (sic), `getSubIndicatorByIndicatorIdAndSurvey`, `getNss80Records` |
-| ec4/5/6 | `macroindicators?product=ec4|ec5|ec6` (no record API; note dashboard maps 5th EC→ec6, 6th EC→ec5) |
+| ec4/5/6 | Separate host `esankhyiki.mospi.gov.in`: POST `/EC/filterDistrict4|5|6`; detail `/dashboard/EC/submitForm4|5|6`. Official client routes, EC6 ranking live-probed via MCP. |
 | esankhyiki/cms | `getDashBoardData` ✓, `getMetaData`, `getMetaDataByProduct`, `getInfographicsForDashboard`, `golden-sheet/list`, `golden-sheet/products`, `golden-sheet/distinct-products`, `golden-sheet/mappings` (POST) |
 | users | `getTotalVisits` |
 
-Every product also has a `getDownload*` bulk-records endpoint — likely the
-fastest way to archive full raw dumps for `data/raw/` (unprobed).
+Some products expose `getDownload*` routes in the historical SPA. They remain
+unprobed; do not assume every product supports bulk export or that pagination
+checks can be bypassed. Use the validated paged client until tested.
 
 
 ## Prices Statistics
@@ -166,7 +169,8 @@ fastest way to archive full raw dumps for `data/raw/` (unprobed).
 
 ### 4th / 5th / 6th Economic Census
 
-- `macroindicators?product=ec4|ec5|ec6` — E-Census data (params: none)
+See [current discovery](mospi-api-discovery.md): form-POST ranking and detail
+routes exist, separate from the macro GET API. State codes differ by census.
 
 
 ## National Sample Surveys
@@ -623,6 +627,17 @@ returns HTTP 400 for every param combination tried (indicator_code alone,
 +use_of_energy_balance, +year), and `getEnergyRecords` returns HTTP 500.
 The product is **not buildable** via the standard pattern — skip unless the
 endpoints are repaired upstream.
+
+**Update, live-probed 2026-10-10:** this blocker is no longer current. The Atlas's
+`mospi()` client and MCP both return energy records. Use
+`indicator_code: 1` and `use_of_energy_balance_code: 1` (Supply) or `2`
+(Consumption). The consumption filter also answers with those two keys.
+2023–24 canaries report 50 supply rows and 600 consumption rows; these are
+first-page probes, not a full ingestion. Metadata serves 2012–13 to 2023–24.
+The consumption response includes `Elect. Output in GWh` under the KToE
+indicator, so units must be checked branch by branch before baking. Reproduction
+and values: `docs/reference/expansion-readiness.md`; work packet:
+`docs/PLAN-coverage-expansion.md` §6.
 
 **Indicators (2):**
   - `1` — Energy Balance ( in KToE )

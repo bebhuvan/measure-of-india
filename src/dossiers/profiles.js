@@ -1,3 +1,4 @@
+import {getSourceQuality} from '../explore/source-quality.js';
 // src/dossiers/profiles.js: the state profiles (/states/<state>/), built at build time from
 // the baked bundles. One template (src/pages/states/[state].astro) renders what this returns;
 // nothing here is typed per state. The state key (states-key.js) places every label.
@@ -14,26 +15,24 @@ import fs from "node:fs";
 import path from "node:path";
 import { STATES, BY_SLUG, FORMER_BY_SLUG, placeAll, placeFirst, normalise, sameTerritory, successorOf } from "./states-key.js";
 import * as F from "../charts/format.js";
-import { periodLabel, rowAnchor, everyCutPlan, rowsOf } from "./everycut.js";
+import { periodLabel, rowAnchor, everyCutPlan, rowsOf, loadBundle } from "./everycut.js";
 import { DOSSIERS } from "./registry.js";
 
 const ROOT = process.cwd();
 const MINUS = "−";
-const bcache = new Map();
+// Profile indexing and Every Cut share the same immutable canonical bundle objects.
+// A second full cache doubles corpus memory without changing a single source cell.
 export function load(slug) {
-  if (!bcache.has(slug)) {
-    const f = path.join(ROOT, "data/series", slug + ".json");
-    if (!fs.existsSync(f)) throw new Error(`profiles: bundle ${slug} is not baked`);
-    bcache.set(slug, JSON.parse(fs.readFileSync(f, "utf8")));
-  }
-  return bcache.get(slug);
+  const f = path.join(ROOT, "data/series", slug + ".json");
+  if (!fs.existsSync(f)) throw new Error(`profiles: bundle ${slug} is not baked`);
+  return loadBundle(slug);
 }
 
 import { FMT } from "./profiles.fmt.js";
 export { FMT };
 
 /* ---------- reading bundles through the key ---------- */
-const textOf = (k, s) => s.state ?? s.geo ?? s.label ?? k;
+const textOf = (k, s) => s.state ?? s.geo ?? s.dims?.state ?? s.label ?? k;
 const isIndia = (k, s) => /^all_india|^all india/i.test(k) || /^all india\b/i.test(String(textOf(k, s)));
 
 // every series of a bundle a measure picks, placed: Map(state slug -> key), plus the former
@@ -458,6 +457,12 @@ export function figure(m, slug, { at = m.at } = {}) {
   if (value == null) return null;
   const f = { id: m.id, label: m.label, what: m.what, value, text: FMT[m.fmt](value), fmt: m.fmt, iso, period: periodOf(m, iso), bundle: m.bundle, key: cells(m).cur.get(slug),
     src: srcOf(m, slug, iso), rank: measureRank(m, slug, iso), guide: m.guide };
+  // Status applies to the actual selected source cells, including both operands of a
+  // derived measure. Existing profile use is not an attestation of a generic mapping.
+  const qualities=f.src.args.filter(a=>Array.isArray(a)&&typeof a[0]==='string'&&typeof a[1]==='string').map(([bundle,key])=>{
+    const B=load(bundle);return getSourceQuality(bundle,B,{...B.series[key],key});
+  });
+  f.sourceQuality=qualities.find(q=>!q.canInterpret)??qualities[0]??null;
   if (iso !== last) {
     const nv = measureAt(m, slug, last);
     f.newer = { value: nv, text: FMT[m.fmt](nv), iso: last, period: periodOf(m, last), n: measureAll(m, last).length, src: srcOf(m, slug, last) };
@@ -691,7 +696,8 @@ export function page(slug) {
     });
     const none = !s.figures.length ? (WHY_NONE[s.id] && u.kind !== "state" ? WHY_NONE[s.id] : "The sources behind this section publish no figure for " + N + ".") : null;
     const missing = s.figures.length && s.missing.length ? `No figure for ${N}: ${s.missing.map((m) => lowerFirst(m.label)).join("; ")}. The source does not publish ${s.missing.length === 1 ? "it" : "them"} for this unit.` : null;
-    return { ...s, no: String(i + 2).padStart(2, "0"), intro: SECTION_TEXT[s.id], sentences, rest, former, none, missing };
+    return { ...s, no: String(i + 2).padStart(2, "0"), intro: SECTION_TEXT[s.id], sentences, rest, former, none, missing,
+      sourceReviewPending:s.figures.filter(f=>f.sourceQuality?.canInterpret===false) };
   });
   // neighbours and peers: the glance measures, each with its own period
   const compare = [slug, ...p.neighbours, ...p.peers.filter((x) => !p.neighbours.includes(x))].map((s) => ({ ...compareRow(s), self: s === slug, peer: p.peers.includes(s) }));
@@ -700,7 +706,7 @@ export function page(slug) {
   const byGuide = new Map();
   for (const r of rows) { if (!byGuide.has(r.guide)) byGuide.set(r.guide, 0); byGuide.set(r.guide, byGuide.get(r.guide) + 1); }
   const deeper = DOSSIERS.filter((d) => byGuide.has(d.slug)).map((d) => ({ slug: d.slug, title: d.title, n: byGuide.get(d.slug) })).sort((a, b) => b.n - a.n);
-  const sources = [...new Set(MEASURES.map((m) => m.bundle))].filter((b) => p.sections.some((s) => s.figures.some((f) => f.bundle === b))).map((b) => ({ bundle: b, source: load(b).meta?.source ?? "", vintage: load(b).meta?.vintage ?? "" }));
+  const sources = [...new Set(MEASURES.map((m) => m.bundle))].filter((b) => p.sections.some((s) => s.figures.some((f) => f.bundle === b))).map((b) => ({ bundle: b, source: load(b).meta?.source ?? "", vintage: load(b).meta?.vintage ?? "", revisionUnknown:load(b).meta?.vintage===null,archiveCapturedDate:load(b).meta?.archiveCapturedDate??null }));
   const nFigs = p.sections.reduce((a, s) => a + s.figures.length, 0);
   const lede = p.figs.pc
     ? `How ${N} earns, spends, works, borrows, learns, falls ill and warms, set against India and its neighbours, in ${nFigs} figures from ${sources.length} official tables. Each figure carries its own year: states publish on different timetables.`

@@ -1,0 +1,2445 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-13",
+  "default": {
+    "id": "canonical",
+    "status": "canonical-values-checked",
+    "canInterpret": true,
+    "reason": "Canonical shape, values and provenance are mechanically checked. This is not a claim that every source label has received an independent semantic audit."
+  },
+  "rules": [
+    {
+      "id": "reviewed-broadband",
+      "selector": {
+        "bundle": "profiles-mospi-nss78-0-7",
+        "seriesKeys": [
+          "bihar__broadband",
+          "chhattisgarh__broadband",
+          "delhi__broadband",
+          "goa__broadband",
+          "gujarat__broadband",
+          "haryana__broadband",
+          "himachal_pradesh__broadband",
+          "jharkhand__broadband",
+          "karnataka__broadband",
+          "kerala__broadband",
+          "madhya_pradesh__broadband",
+          "maharashtra__broadband",
+          "manipur__broadband",
+          "meghalaya__broadband",
+          "mizoram__broadband",
+          "nagaland__broadband",
+          "odisha__broadband",
+          "punjab__broadband",
+          "rajasthan__broadband",
+          "sikkim__broadband",
+          "tamil_nadu__broadband",
+          "telangana__broadband",
+          "tripura__broadband",
+          "uttarakhand__broadband",
+          "uttar_pradesh__broadband",
+          "west_bengal__broadband",
+          "andaman_nicobar__broadband",
+          "chandigarh__broadband",
+          "dnh_dd__broadband",
+          "jammu_kashmir__broadband",
+          "ladakh__broadband",
+          "lakshadweep__broadband",
+          "puducherry__broadband",
+          "all_india__broadband",
+          "andhra_pradesh__broadband",
+          "arunachal_pradesh__broadband",
+          "assam__broadband"
+        ]
+      },
+      "status": "source-mapping-reviewed",
+      "canInterpret": true,
+      "publicTitle": "Household broadband access within premises",
+      "definition": "Percentage of all households reporting broadband access within their premises, rural and urban combined.",
+      "reason": "The named records were checked against archived source cells and the report’s measure, unit, population and reference period. This review applies to those records only. It does not certify source completeness or the source API’s revision date.",
+      "evidence": [
+        "docs/status/source-quality/digital-profile-attestation-2026-10-13.json"
+      ],
+      "review": {
+        "reviewedAt": "2026-10-13",
+        "sourceVersion": "b02efde5ac14c38d0ded9b5665754a63b881a98b9b46a697607c4dd42ff26eb8",
+        "reviewer": "Atlas source audit and coordinator independent raw replay",
+        "rationale": "Exact 37 named canonical/raw rows with explicit percent unit and denominator/reference-period definition, source-table references and published report spot checks. Numeric conversion: none. Remaining rows are not certified.",
+        "evidenceVersion": "c937f3321ac7e77a3e80664a8747db011ad3f0eca7635a0cf73c5562fb14d49e"
+      },
+      "binding": {
+        "rawFile": "data/raw/profiles-mospi/nss78-0-7.json.gz",
+        "rawSha256": "b02efde5ac14c38d0ded9b5665754a63b881a98b9b46a697607c4dd42ff26eb8",
+        "records": {
+          "bihar__broadband": "242379d894e60d96a5812b4bf199c836c095e673aa98192bf8542ffea2f3a101",
+          "chhattisgarh__broadband": "9c8287eca5561e4ed88683a798161534837db549165ee0f0c0b563e2660a34b3",
+          "delhi__broadband": "84e4e096e92a827fd0749f1821f47d8428bb214de073259dc50697f0ee2d71e6",
+          "goa__broadband": "14fbadf46bbd4d0aa5e06d973cfcef8bba31138bf2509062d269f6bb7a7be16f",
+          "gujarat__broadband": "a72d0985e29ed3da819ee4ccc75601e859cd8622e043bd25dcb016509052d5b3",
+          "haryana__broadband": "b1d69f6565ed15e2be78649f351c7d3abc90e77479951fe7941a98277ffe63f6",
+          "himachal_pradesh__broadband": "c2edc1776497b9f5e1f01ada8c8fb58147489e1ae428036b17e89aaa51a3c764",
+          "jharkhand__broadband": "a85c04d7985c477d3d9f0b599f9986ebb59118ffdb8f86fec9392093733a1009",
+          "karnataka__broadband": "0c1d7393777ec7eafbd8788b7389939b91f1f1561baca656d192bab115fb0468",
+          "kerala__broadband": "14e32550f0564676a8cc833184712c4ab851a224cc4864446250ea666941f631",
+          "madhya_pradesh__broadband": "f2f7ef55a4306e3b6353196a5c18f0ba4c20ac9c3be98e78af20c65f456d94bc",
+          "maharashtra__broadband": "0c3063a4d4dd4de331055a2b014e4ce5d697b7189f24c5520b697286bdb0bf66",
+          "manipur__broadband": "1fb6132b68975037cb916fa65f684834d3d3f7f6d31955b94b65e65b80defa8a",
+          "meghalaya__broadband": "45717892246146c15e8801dec2eac1969f41abc76ac72d7443be9741a054e67c",
+          "mizoram__broadband": "fbc56dfbd05866ae640edca3d083b13900afe4c8663cf2cded5c0887cc3858be",
+          "nagaland__broadband": "522d565e6b9212423da458d3d193f517e6eb2c297d0efa6d92a7bfbac5f3d5ac",
+          "odisha__broadband": "7db18d76133416782752352d160d671547b75ccf78d22fb3a34db5634ff1c3bf",
+          "punjab__broadband": "a2c8438468bd2d648d92b3ea9184fe380fcef95404ced1a8c7b851881b1aeafa",
+          "rajasthan__broadband": "bee21c9aab9128fb8da26a00e63324773f8cacea8f4d6360364357e78fcee182",
+          "sikkim__broadband": "b2a5c7ad8ba4cfd8819bd3ff62d7238477a01074d1709f94b92d77fd5dd4154f",
+          "tamil_nadu__broadband": "60445c038f10aaf1aa2058ade03ca1f4d0d471b8181baba25748d725a023fc39",
+          "telangana__broadband": "fed17a6ff30853cece9277aff2acb97ae1a85ffa341666fadb7a3f6072d8bbd5",
+          "tripura__broadband": "40e0d9d521f319a6b6adf43aa6437415e86bddb58a45b553ac6323bd1bfdb3b8",
+          "uttarakhand__broadband": "15fbd43a8a9ebfd3e9d3f1c7f930c9b0b7e0892d5d4145819f9868ee206f28ba",
+          "uttar_pradesh__broadband": "63540cefedfacfffaec2e5bdb404339c0cd718ba84a2c293483937b52294e38d",
+          "west_bengal__broadband": "a84f2eed7c4f6745949e983918a520d22d8e54b906509bd0d05abe7db52c3b27",
+          "andaman_nicobar__broadband": "6db5fc60079dc23c988c11cd93bee4b157d92745800f7be0588527da43e84231",
+          "chandigarh__broadband": "9bd324af0887eaec14a24d7e076a896a9c7d23b56cdbca978d42f392d65d52b3",
+          "dnh_dd__broadband": "94ec81a4c8e04835ae9421dfb0ed7e1aba704d917269d75e6a8efa411ca46988",
+          "jammu_kashmir__broadband": "b36dbd93a9dbe09574ab88eeec8a59277e1dd4e78fdb731066ff91a4dbac36a3",
+          "ladakh__broadband": "553d630657a0ce66c3aefef0c5efeda5a610286dfa8e7194e6367409ab592f5f",
+          "lakshadweep__broadband": "96fdc218cea2ebed2e265de22818fcb5894b3193d7edcc5850192aa61e695cf7",
+          "puducherry__broadband": "2f36a922482b8793e8ed295b8a3578226200465fb1a63d67d56ad86bb49815c6",
+          "all_india__broadband": "fda5d4bc0a271c54e320a6bcb2022b5628ddba107d288d83fc37e0ba110f89bf",
+          "andhra_pradesh__broadband": "5638b17ef3de5efc9e9e02068d09b52a4c72317522d34e9ab08e54dbed343d4c",
+          "arunachal_pradesh__broadband": "5ff6108e99c14c0a0148bec68458418377aa74d9bba9d54be6eef6c5cf7676f8",
+          "assam__broadband": "697075f79da5fb6954656cc9ec0735d0b81e86e7f52033e7e2a4d8fec6d9699d"
+        }
+      },
+      "referencePeriod": "Multiple Indicator Survey 2020–21; fieldwork extended through 15 August 2021 (survey anchor on the date axis)",
+      "sourceRevisionStatus": "unknown",
+      "archiveCapturedDate": "2026-10-10",
+      "sourceLinks": [
+        {
+          "title": "Official source report",
+          "url": "https://www.mospi.gov.in/sites/default/files/publication_reports/MultipleIndicatorSurveyinIndiaf.pdf"
+        },
+        {
+          "title": "Official supporting release/table plan",
+          "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=1904907"
+        }
+      ]
+    },
+    {
+      "id": "reviewed-internetYouth",
+      "selector": {
+        "bundle": "profiles-mospi-nss79-1-18",
+        "seriesKeys": [
+          "andhra_pradesh__15_29_years",
+          "arunachal_pradesh__15_29_years",
+          "assam__15_29_years",
+          "bihar__15_29_years",
+          "chhattisgarh__15_29_years",
+          "delhi__15_29_years",
+          "goa__15_29_years",
+          "gujarat__15_29_years",
+          "haryana__15_29_years",
+          "himachal_pradesh__15_29_years",
+          "jharkhand__15_29_years",
+          "karnataka__15_29_years",
+          "kerala__15_29_years",
+          "madhya_pradesh__15_29_years",
+          "maharashtra__15_29_years",
+          "manipur__15_29_years",
+          "meghalaya__15_29_years",
+          "mizoram__15_29_years",
+          "nagaland__15_29_years",
+          "odisha__15_29_years",
+          "punjab__15_29_years",
+          "rajasthan__15_29_years",
+          "sikkim__15_29_years",
+          "tamil_nadu__15_29_years",
+          "telangana__15_29_years",
+          "tripura__15_29_years",
+          "uttar_pradesh__15_29_years",
+          "uttarakhand__15_29_years",
+          "west_bengal__15_29_years",
+          "andaman_nicobar__15_29_years",
+          "chandigarh__15_29_years",
+          "dnh_dd__15_29_years",
+          "jammu_kashmir__15_29_years",
+          "ladakh__15_29_years",
+          "lakshadweep__15_29_years",
+          "puducherry__15_29_years",
+          "all_india__15_29_years"
+        ]
+      },
+      "status": "source-mapping-reviewed",
+      "canInterpret": true,
+      "publicTitle": "Reported internet-use ability, ages 15 to 29",
+      "definition": "Percentage of persons aged 15 to 29 reporting the ability to use the internet, rural and urban combined and all genders. Ability does not measure recent internet use.",
+      "reason": "The named records were checked against archived source cells and the report’s measure, unit, population and reference period. This review applies to those records only. It does not certify source completeness or the source API’s revision date.",
+      "evidence": [
+        "docs/status/source-quality/digital-profile-attestation-2026-10-13.json"
+      ],
+      "review": {
+        "reviewedAt": "2026-10-13",
+        "sourceVersion": "7b52cf4f281edc8296681cc29ccc8260638119c688c301f9bc3ef789c013c6bf",
+        "reviewer": "Atlas source audit and coordinator independent raw replay",
+        "rationale": "Exact 37 named canonical/raw rows with explicit percent unit and denominator/reference-period definition, source-table references and published report spot checks. Numeric conversion: none. Remaining rows are not certified.",
+        "evidenceVersion": "c937f3321ac7e77a3e80664a8747db011ad3f0eca7635a0cf73c5562fb14d49e"
+      },
+      "binding": {
+        "rawFile": "data/raw/profiles-mospi/nss79-1-18.json.gz",
+        "rawSha256": "7b52cf4f281edc8296681cc29ccc8260638119c688c301f9bc3ef789c013c6bf",
+        "records": {
+          "andhra_pradesh__15_29_years": "eae9e8192c003a1eb0d048049a58c13b176c72ab18c99173bfcf6f25495297d3",
+          "arunachal_pradesh__15_29_years": "3d9d14738b215c63a7140d988fce2715aeb20f45b7a3d871f7e8dbc265a185fa",
+          "assam__15_29_years": "54a343e0461e0088ec729bf68f7edd1eae068d19a7072086f94f63674de184bc",
+          "bihar__15_29_years": "5c680d79c1b418996c19b9aa17f0a38008e42ee32f11fdb13946b1addae8c217",
+          "chhattisgarh__15_29_years": "61fc5c7eb19a2e5edc7750404ad972d974e4425e3de554bcf39db394692bbdb7",
+          "delhi__15_29_years": "810db9cb37c8d79198d7653670ffb7db9388d2acac990b2aa8eddc4c9364d1cd",
+          "goa__15_29_years": "a2bd6787aaf008fe1851a70ca038c07699dcb5da38b57f8cebad3360a3444ae5",
+          "gujarat__15_29_years": "2cd0c5feac91c2d0ce74925039ff3c4228b791c560444cd9281c5c71276abae4",
+          "haryana__15_29_years": "ab792003ca3ee8edabfe309cbd835189509681b25b91bea0eba891976741e40e",
+          "himachal_pradesh__15_29_years": "27321dcbd6899de02929ceb1a32db1ca9c43ec5253cb6db4fd905dad0a72e97f",
+          "jharkhand__15_29_years": "55259172e3507c2f4c0659a79aef5019bf9679b2d4f986e4e72e3a48e1d9a7ce",
+          "karnataka__15_29_years": "0af99610d56c5c272c80d5b3ae8891d6ae29307fbb931bbee407e086f5420ca0",
+          "kerala__15_29_years": "8ebec075ec5b727d9409f5be066ca7f566af163ab0b071c331c3755d9bf86b5e",
+          "madhya_pradesh__15_29_years": "2c14339425dc3d70032c1c1fab25c06eee99ba2041b384ccefd0c799980169b0",
+          "maharashtra__15_29_years": "ed00e0e1f3644debb9267dac0b3b0bc64dbc6fb89ce7999950f01398ba6a9199",
+          "manipur__15_29_years": "057c33b92fb894155c5760972e5931901e967894912801602431ee65917b3087",
+          "meghalaya__15_29_years": "6e3617b739e38c0ec8af2f7965e2f3894e14c3cea0e3b30fef2ba1a997894f44",
+          "mizoram__15_29_years": "d0bd1d03e2d213d624b3d3536934458514ad6b6378cb5dde84957a2b0f587e1a",
+          "nagaland__15_29_years": "ae093a37687c5bf3b4b05922f3800ecd606d13a484e66ac583e4eaa21e5e1482",
+          "odisha__15_29_years": "9a42a1f0e1a3af889215685403fb9a8092c1cd6c2c4068dfe4b04a6669fc4b99",
+          "punjab__15_29_years": "daddfb2eb5e4b90b6cb4e31cf5ce309a472e8b4fb04f805958209e0969029887",
+          "rajasthan__15_29_years": "fbe234c0a2efe068d22f4355e54aaca78d241b8134308aa4e7f325aaee51427f",
+          "sikkim__15_29_years": "4ad0653f005b1501932450bf3db226e2158130c346b15941b3e94608017d3faa",
+          "tamil_nadu__15_29_years": "d2984e8cedac963367f7ff022a7f6ebb832ac3179c92cb57fb7e6ec68a8e39b0",
+          "telangana__15_29_years": "7378a0fe58ec8e1f0b50b4696f23d238669e590eb3726a519af64ba13a5f0e4d",
+          "tripura__15_29_years": "a1e17fe7174418e3c932df63c19db8cb5717366e66f3ccafe4cdf7e25fd75aca",
+          "uttar_pradesh__15_29_years": "32ffde708e1714438839461816b5ef155faa6f75c2f2575b676a542c26880e88",
+          "uttarakhand__15_29_years": "5e1c8d3742b4480040f6b62f94e2d9fba6aa955360d5a244a7a3534b6a512770",
+          "west_bengal__15_29_years": "d11592a0c64eb142527c579fdf23a7b27f95229847cccd0cfb910064de4fc0d5",
+          "andaman_nicobar__15_29_years": "527339b5fc64293acce3ff600b65de65de09f85891cfe0afb97fef6d90da3d48",
+          "chandigarh__15_29_years": "1a22f8c92b69123462e0d575a9475cd7fabd20962b8295231a0fcf95e68bdfaa",
+          "dnh_dd__15_29_years": "dc61fe9b9cd5c5335c9e7bbed3e16e704e874dc7b82630dee52c1095be63ab36",
+          "jammu_kashmir__15_29_years": "cd114135e5daa87161fe8180db6419768ed01fcb9f70b4784f18f8ea8e629f7d",
+          "ladakh__15_29_years": "3f27f3e7668a0a2ac2e241ac4576e0559fa0e0d682c91da10102f41d212637c3",
+          "lakshadweep__15_29_years": "41b16d251a231e7d22519ebb201dda8e3614b57e5b0028e5d0a6de3bb7a09e6a",
+          "puducherry__15_29_years": "99ffc17508d9c60a0b2d570c01ac368f3e934313a0a44080ef527076c4bef0ff",
+          "all_india__15_29_years": "f28117092462d291c61f3d576da1a842ed2f5ece8595f1b8fa05e9b728ef8669"
+        }
+      },
+      "referencePeriod": "CAMS July 2022 to June 2023; ability reported at interview (survey anchor on the date axis)",
+      "sourceRevisionStatus": "unknown",
+      "archiveCapturedDate": "2026-10-10",
+      "sourceLinks": [
+        {
+          "title": "Official source report",
+          "url": "https://mospi.gov.in/sites/default/files/publication_reports/CAMS%20Report_October_N.pdf"
+        },
+        {
+          "title": "Official supporting release/table plan",
+          "url": "https://mospi.gov.in/sites/default/files/announcements/NSS%2079th%20Round%20Tabulation%20Workshop%20ManualR.pdf?download=1"
+        }
+      ]
+    },
+    {
+      "id": "nss76-structure-label",
+      "selector": {
+        "bundle": "profiles-mospi-nss76-2-23"
+      },
+      "status": "quarantined-semantic-mislabel",
+      "canInterpret": false,
+      "publicTitle": "Housing structure source mapping under review",
+      "reason": "The API headline and canonical labels say floor area, while archived rows describe housing-structure shares. The value must not be interpreted as floor area. Numeric views and interpreted exports are withheld until the measure mapping is corrected against the source report.",
+      "evidence": [
+        "docs/status/source-quality/amenities-impact-2026-10-13.json"
+      ],
+      "sourceLinks": [
+        {
+          "title": "MoSPI eSankhyiki source portal",
+          "url": "https://esankhyiki.mospi.gov.in/"
+        }
+      ]
+    },
+    {
+      "id": "sewage-unit-review",
+      "selector": {
+        "bundle": "profiles-mospi-env-0-77"
+      },
+      "status": "source-unit-review-pending",
+      "canInterpret": false,
+      "publicTitle": "Sewage management source units under review",
+      "reason": "This source table mixes capacities and counts without a reliable per-measure unit mapping. Retained numeric values are not declared corrupt; their interpretation and units require source-report review. Malformed source strings were not parsed as numeric prefixes.",
+      "evidence": [
+        "docs/status/source-quality/amenities-impact-2026-10-13.json"
+      ],
+      "sourceLinks": [
+        {
+          "title": "MoSPI eSankhyiki source portal",
+          "url": "https://esankhyiki.mospi.gov.in/"
+        }
+      ]
+    },
+    {
+      "id": "slum-unit-and-cut-mapping",
+      "selector": {
+        "bundle": "profiles-mospi-env-0-103"
+      },
+      "status": "quarantined-unit-and-dimension-mapping",
+      "canInterpret": false,
+      "publicTitle": "Slum population source mapping under review",
+      "reason": "Counts, percentages and town measures share a source table. A table-wide percentage label and a dimension filter mis-map the retained count sub-measure and omit other measures. The source measure and dimensional mapping must be corrected; no unit is guessed from magnitude.",
+      "evidence": [
+        "docs/status/source-quality/env103-impact-2026-10-13.json"
+      ],
+      "sourceLinks": [
+        {
+          "title": "MoSPI eSankhyiki source portal",
+          "url": "https://esankhyiki.mospi.gov.in/"
+        }
+      ]
+    },
+    {
+      "id": "unit-not-stated",
+      "selector": {
+        "units": [
+          null,
+          "unstated",
+          "unknown",
+          "see each series",
+          "none",
+          "qty_none",
+          "level",
+          "rate",
+          "source_sale_rate",
+          "source_scaled_gwh"
+        ]
+      },
+      "status": "source-unit-not-established",
+      "canInterpret": false,
+      "publicTitle": "Source unit not established",
+      "reason": "The canonical source record does not establish a usable measurement unit or source scale. Missing, mixed or generic placeholder units cannot be treated as counts or physical quantities. Numeric interpretation and selected observation exports are withheld; the archived mapping remains inspectable.",
+      "evidence": [
+        "src/dossiers/units.js",
+        "src/dossiers/everycut.js"
+      ]
+    },
+    {
+      "id": "generic-profile-review",
+      "selector": {
+        "dossier": "profiles-mospi",
+        "unreviewedMapping": true
+      },
+      "status": "generic-source-mapping-review-pending",
+      "canInterpret": false,
+      "publicTitle": "Source measure and unit mapping under review",
+      "reason": "This generic source adapter infers units from indicator labels and chooses headline cuts. A mixed-measure heading cannot establish each sub-measure's unit or meaning. These mappings need an evidence-backed source-report review before new numeric publication; exact source-value parity alone is insufficient.",
+      "evidence": [
+        "scripts/lib/products/profiles-mospi.mjs",
+        "docs/status/source-quality/amenities-impact-2026-10-13.json",
+        "docs/status/source-quality/env103-impact-2026-10-13.json",
+        "docs/status/source-quality/env-unit-source-followup-2026-10-13.json"
+      ],
+      "sourceLinks": [
+        {
+          "title": "MoSPI eSankhyiki source portal",
+          "url": "https://esankhyiki.mospi.gov.in/"
+        }
+      ]
+    },
+    {
+      "id": "pensions-a3-literal-count-draft",
+      "selector": {
+        "bundle": "pensions-a3",
+        "seriesKeys": [
+          "apy_ca7e68f6",
+          "all_citizen_944977cf",
+          "cg_2a8efef8",
+          "corporate_658f4b39",
+          "nps_lite_31697574",
+          "sg_aa04ed62"
+        ]
+      },
+      "status": "source-literal-count-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "reason": "Number of subscribers in each source sector on the last business day of the financial year. FY-end subscriber stock; source sector membership only; Vatsalya remains pending.",
+      "comparisonReason": "Only the exact single-series count is proposed for interpretation. Comparable populations, category exclusivity and association bases across records have not been independently established.",
+      "evidence": [
+        "docs/status/wave-2-pensions-preflight/literal-count-primary-attestation-draft.json",
+        "docs/status/wave-2-pensions-preflight/source-cell-independent-review.json",
+        "docs/status/wave-2-pensions-preflight/literal-count-root-review-receipt.json"
+      ],
+      "review": {
+        "sourceVersion": "raw-sha256:896771e362794e184371ef4bf9719f74e585414b1a198e8ddab78d7831783a0a;attestation-sha256:de56ca06662b3b553af21a167440cc7bbcbb1462995ba0e3a84be248dfa012ff;root-review-sha256:96206299d835b685b08cbad7af0fae951fda6ae9c7d42e5d03177e2c7cdb270c",
+        "reviewer": "ROOT coordinating chat; wave-2 coordinator independent primary-cell replay",
+        "rationale": "Number of subscribers in each source sector on the last business day of the financial year. FY-end subscriber stock; source sector membership only; Vatsalya remains pending. Single-series count and exact export only. No current state-profile claim or derived participation rate."
+      },
+      "binding": {
+        "rawFile": "data/raw/pensions/source-documents/896771e362794e184371ef4bf9719f74e585414b1a198e8ddab78d7831783a0a.xlsx",
+        "rawSha256": "896771e362794e184371ef4bf9719f74e585414b1a198e8ddab78d7831783a0a",
+        "records": {
+          "apy_ca7e68f6": "15d78f497ff646a09676737d59527c400d1104f190bc986ebc3aa38b50261dbc",
+          "all_citizen_944977cf": "5c420159395ddbc5d0a850eec9c7186ddd975b3e97ce299644da298f6fa7e9a5",
+          "cg_2a8efef8": "39a2e08855ff63f922c75945f51cc77e050ea2184a5d2c0bbd7329f42236ecb8",
+          "corporate_658f4b39": "7c4ed0e0d17b022bc0c825563ef62148ab850b7d847d2922acfd6a8a299a30bb",
+          "nps_lite_31697574": "ac52011a984817de32ec64a653d33118cb88494e8b7d4d5cf844c6a4cb36e5bd",
+          "sg_aa04ed62": "6f2dc2aeb13fa348ff569e25934baf241dc2df4a645a2170cf5730c118a458e8"
+        }
+      },
+      "definition": "Number of subscribers in each source sector on the last business day of the financial year.",
+      "referencePeriod": "FY-end subscriber stock; source sector membership only; Vatsalya remains pending.",
+      "observationKind": "observed-stock"
+    },
+    {
+      "id": "pensions-a14-literal-count-draft",
+      "selector": {
+        "bundle": "pensions-a14",
+        "seriesKeys": [
+          "no_of_partial_withdrawal_requests_received_b0029869",
+          "no_of_partial_withdrawal_requests_processed_5590c9cf"
+        ]
+      },
+      "status": "source-literal-count-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "reason": "Counts of partial-withdrawal requests received and requests processed in each source financial year. Two administrative activity counts; processed requests may have been received in another year.",
+      "comparisonReason": "Only the exact single-series count is proposed for interpretation. Comparable populations, category exclusivity and association bases across records have not been independently established.",
+      "evidence": [
+        "docs/status/wave-2-pensions-preflight/literal-count-primary-attestation-draft.json",
+        "docs/status/wave-2-pensions-preflight/source-cell-independent-review.json",
+        "docs/status/wave-2-pensions-preflight/literal-count-root-review-receipt.json"
+      ],
+      "review": {
+        "sourceVersion": "raw-sha256:8e27e7c0b771a71e8c22ab8a1559202c33df23a4523792f3e0f6b34c4e6f702c;attestation-sha256:de56ca06662b3b553af21a167440cc7bbcbb1462995ba0e3a84be248dfa012ff;root-review-sha256:96206299d835b685b08cbad7af0fae951fda6ae9c7d42e5d03177e2c7cdb270c",
+        "reviewer": "ROOT coordinating chat; wave-2 coordinator independent primary-cell replay",
+        "rationale": "Counts of partial-withdrawal requests received and requests processed in each source financial year. Two administrative activity counts; processed requests may have been received in another year. Single-series count and exact export only. No current state-profile claim or derived participation rate."
+      },
+      "binding": {
+        "rawFile": "data/raw/pensions/source-documents/8e27e7c0b771a71e8c22ab8a1559202c33df23a4523792f3e0f6b34c4e6f702c.xlsx",
+        "rawSha256": "8e27e7c0b771a71e8c22ab8a1559202c33df23a4523792f3e0f6b34c4e6f702c",
+        "records": {
+          "no_of_partial_withdrawal_requests_received_b0029869": "95b9f206e59b21c4e89a65f6afe60d1af30342396a5ab228271118cb2c535e41",
+          "no_of_partial_withdrawal_requests_processed_5590c9cf": "06f977c391d799bddaa08186bef6057607750a17fe2e745c0f8dc3e4fc46bafa"
+        }
+      },
+      "definition": "Counts of partial-withdrawal requests received and requests processed in each source financial year.",
+      "referencePeriod": "Two administrative activity counts; processed requests may have been received in another year.",
+      "observationKind": "observed-activity"
+    },
+    {
+      "id": "pensions-a15-literal-count-draft",
+      "selector": {
+        "bundle": "pensions-a15",
+        "seriesKeys": [
+          "establishment_of_own_venture_or_any_start_up_e169e830",
+          "higher_education_of_children_including_a_legally_adopted_child_df09d38c",
+          "marriage_of_children_including_a_legally_adopted_child_328f523a",
+          "purchase_or_construction_of_a_residential_house_05a974da",
+          "skill_development_re_skilling_or_any_other_self_development_activities_77b6212f",
+          "to_meet_medical_incidental_expenses_due_to_disability_incapacitation_3bda5f80",
+          "treatment_of_specified_illness_5003551e"
+        ]
+      },
+      "status": "source-literal-count-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "reason": "Counts of settled partial withdrawals grouped by the published reason and financial-year association, settled through 31 March 2025. Source settlement cutoff and FY association; category counts do not establish unique subscriber populations.",
+      "comparisonReason": "Only the exact single-series count is proposed for interpretation. Comparable populations, category exclusivity and association bases across records have not been independently established.",
+      "evidence": [
+        "docs/status/wave-2-pensions-preflight/literal-count-primary-attestation-draft.json",
+        "docs/status/wave-2-pensions-preflight/source-cell-independent-review.json",
+        "docs/status/wave-2-pensions-preflight/literal-count-root-review-receipt.json"
+      ],
+      "review": {
+        "sourceVersion": "raw-sha256:99b9ac0c76d886c39440fb6717d20992b0f13fe1a1d1fd7db4822bd60db09487;attestation-sha256:de56ca06662b3b553af21a167440cc7bbcbb1462995ba0e3a84be248dfa012ff;root-review-sha256:96206299d835b685b08cbad7af0fae951fda6ae9c7d42e5d03177e2c7cdb270c",
+        "reviewer": "ROOT coordinating chat; wave-2 coordinator independent primary-cell replay",
+        "rationale": "Counts of settled partial withdrawals grouped by the published reason and financial-year association, settled through 31 March 2025. Source settlement cutoff and FY association; category counts do not establish unique subscriber populations. Single-series count and exact export only. No current state-profile claim or derived participation rate."
+      },
+      "binding": {
+        "rawFile": "data/raw/pensions/source-documents/99b9ac0c76d886c39440fb6717d20992b0f13fe1a1d1fd7db4822bd60db09487.xlsx",
+        "rawSha256": "99b9ac0c76d886c39440fb6717d20992b0f13fe1a1d1fd7db4822bd60db09487",
+        "records": {
+          "establishment_of_own_venture_or_any_start_up_e169e830": "877d0e2c19614424f45ee2048afb46ef680f08c1f71c96f151f0e7351f4b92b8",
+          "higher_education_of_children_including_a_legally_adopted_child_df09d38c": "0f7b4fe91c59dd751453eeacb52b5488e5199826ac23c89c1176f1df5b9a7adf",
+          "marriage_of_children_including_a_legally_adopted_child_328f523a": "23e50288129c2269d45b6181559371215c4cc71f1af42a9059d6d4a19252f7e9",
+          "purchase_or_construction_of_a_residential_house_05a974da": "29ff18f857f07c1a1f7d822910d359bcf07133216686aea901219ded8452d674",
+          "skill_development_re_skilling_or_any_other_self_development_activities_77b6212f": "3b32811b3231113c27885b89d2f0b10323011ab3c84f560feda635a791ccf2a4",
+          "to_meet_medical_incidental_expenses_due_to_disability_incapacitation_3bda5f80": "ee093549ae8cc2a367ce79a328043edb5fd8c3e721c505b9b34b85702d6b156f",
+          "treatment_of_specified_illness_5003551e": "f7d7072f53aa09187ed0765a5f25c34a328817b1fc5fe212c8b431bc24673168"
+        }
+      },
+      "definition": "Counts of settled partial withdrawals grouped by the published reason and financial-year association, settled through 31 March 2025.",
+      "referencePeriod": "Source settlement cutoff and FY association; category counts do not establish unique subscriber populations.",
+      "observationKind": "observed-activity"
+    },
+    {
+      "id": "pensions-a16-literal-count-draft",
+      "selector": {
+        "bundle": "pensions-a16",
+        "seriesKeys": [
+          "account_unfreeze_related_651f2e94",
+          "against_nps_trust_0304d4d7",
+          "contribution_amount_not_reflected_in_account_408c98d6",
+          "death_withdrawal_not_initiated_not_authorised_amount_not_received_cb7f03c1",
+          "delays_in_issuance_of_pran_cards_a492602c",
+          "delays_in_uploading_of_contribution_amounts_0624f45c",
+          "email_sms_alerts_not_received_d08b0001",
+          "exit_not_initiated_not_authorised_amount_not_received_f3b63f0c",
+          "general_query_enquiry_881a1156",
+          "grievance_of_bank_against_pao_pop_sp_cra_0e441063",
+          "i_pin_t_pin_related_a6003a47",
+          "incorrect_contribution_amount_reflected_979dae16",
+          "incorrect_processing_of_subscriber_details_94c9afc2",
+          "not_processed_delay_in_processing_subscriber_changes_request_ca2ee676",
+          "other_grievances_579a43fa",
+          "pran_card_related_9bb36c02",
+          "partial_withdrawal_not_initiated_not_authorised_amount_not_received_45ff2736",
+          "pre_mature_withdrawal_not_initiated_not_authorised_amount_not_received_c7afe3ce",
+          "sot_related_e8e54fd6",
+          "service_not_received_38c55b32",
+          "tier_ii_related_e4d903ac",
+          "withdrawal_related_8094aa7e"
+        ]
+      },
+      "status": "source-literal-count-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "reason": "Counts of queries or grievances received under each exact published category and financial-year column. Workbook columns run FY 2009-10 to 2024-25; catalogue period starts later and does not replace the workbook axis.",
+      "comparisonReason": "Only the exact single-series count is proposed for interpretation. Comparable populations, category exclusivity and association bases across records have not been independently established.",
+      "evidence": [
+        "docs/status/wave-2-pensions-preflight/literal-count-primary-attestation-draft.json",
+        "docs/status/wave-2-pensions-preflight/source-cell-independent-review.json",
+        "docs/status/wave-2-pensions-preflight/literal-count-root-review-receipt.json"
+      ],
+      "review": {
+        "sourceVersion": "raw-sha256:2d152a8a1462dcf6455a326536536a59976c5db77eea1fa0242deb3b8b2b25d8;attestation-sha256:de56ca06662b3b553af21a167440cc7bbcbb1462995ba0e3a84be248dfa012ff;root-review-sha256:96206299d835b685b08cbad7af0fae951fda6ae9c7d42e5d03177e2c7cdb270c",
+        "reviewer": "ROOT coordinating chat; wave-2 coordinator independent primary-cell replay",
+        "rationale": "Counts of queries or grievances received under each exact published category and financial-year column. Workbook columns run FY 2009-10 to 2024-25; catalogue period starts later and does not replace the workbook axis. Single-series count and exact export only. No current state-profile claim or derived participation rate."
+      },
+      "binding": {
+        "rawFile": "data/raw/pensions/source-documents/2d152a8a1462dcf6455a326536536a59976c5db77eea1fa0242deb3b8b2b25d8.xlsx",
+        "rawSha256": "2d152a8a1462dcf6455a326536536a59976c5db77eea1fa0242deb3b8b2b25d8",
+        "records": {
+          "account_unfreeze_related_651f2e94": "856721dde6de64d0bd6a9a4d4919dfd95abad1cf93e21fb46b63a74a0d295137",
+          "against_nps_trust_0304d4d7": "07b4f912266f435be96812a72a21303bc84182f6da5d8d56ea04096b9417f1ee",
+          "contribution_amount_not_reflected_in_account_408c98d6": "67ec4ca5ecdcf59c44411a64b67904723342935e1fffd88e2ed9d38fbe0a418c",
+          "death_withdrawal_not_initiated_not_authorised_amount_not_received_cb7f03c1": "98b96fb75ce39694c1fc9936148a280a63d9c8bf9a94ac857435a0554849f76e",
+          "delays_in_issuance_of_pran_cards_a492602c": "9bdd6c31f5c134434484221c5e42183d65a1f27ae293ccd3cf5925138190fefd",
+          "delays_in_uploading_of_contribution_amounts_0624f45c": "2b2f44ffc42e1bf8045454356d1b6a9116bdf04447a2dab33e9cc28728c449bc",
+          "email_sms_alerts_not_received_d08b0001": "57004fa11beee1b2d980d72c12f5776b280a1317fbbf539d23ed735df316b879",
+          "exit_not_initiated_not_authorised_amount_not_received_f3b63f0c": "ffe274b2338ffd5bf4dd03605f9d9013cb8b05d55471e1a0335256ad68c54d4e",
+          "general_query_enquiry_881a1156": "72a9336d2ab32003e2bad927f40b100d5bc95eaf2e696614b29217f7230d2aae",
+          "grievance_of_bank_against_pao_pop_sp_cra_0e441063": "911559e16aa622b2747e25fe372bcac6d3f96d90e71f4361254fc0228336a7d3",
+          "i_pin_t_pin_related_a6003a47": "e2a82acaccd37e67604f52b1e804681f2383635dc932f0263244fb732d086b05",
+          "incorrect_contribution_amount_reflected_979dae16": "6900b4cda25470450c02d118a9b059a2f779ae07d254e54e8aaa653396663156",
+          "incorrect_processing_of_subscriber_details_94c9afc2": "8e3d20d852aba8576d3df35f4bc2c907fdc5f97eb50aaebe2c64f7e654f2f459",
+          "not_processed_delay_in_processing_subscriber_changes_request_ca2ee676": "df5e084f1236744defcd8e93be3ffaf9d54da3046cbb2ff030f2d3e20c8739f0",
+          "other_grievances_579a43fa": "c55743d05dc4f72a47751a9a66d933218cfe680f1d1f8af3b736a96a1b1d4ac8",
+          "pran_card_related_9bb36c02": "f01c8aa097a271c79eb4ce0d5558899ff706a6d82fa7ecac3dd392c0b284e88a",
+          "partial_withdrawal_not_initiated_not_authorised_amount_not_received_45ff2736": "a83a6e7c58d806fce21b8dcafd780d3dfcc6ec737a823b971077460f93d318ea",
+          "pre_mature_withdrawal_not_initiated_not_authorised_amount_not_received_c7afe3ce": "6cb3d8ae9cf57c977d98fd740515398553b2fffe84929873e6b45e9fa39ac5d3",
+          "sot_related_e8e54fd6": "77aacfa51f8c6ac93195c82600e72f26f9378a66c9b842db5c34cabbb9201204",
+          "service_not_received_38c55b32": "5fe2ed6e8958a9d2e6889a0b78577c1d5a0384548fcb51b47df96251a20afbb1",
+          "tier_ii_related_e4d903ac": "18fc27c93bb1e388c4cc4c568807d81ee47a801df3045299699cad41a08d4ab2",
+          "withdrawal_related_8094aa7e": "09809b0108061e1fb04783f3271306ac36f2cabee7b2a439e3eb5fe1ec832583"
+        }
+      },
+      "definition": "Counts of queries or grievances received under each exact published category and financial-year column.",
+      "referencePeriod": "Workbook columns run FY 2009-10 to 2024-25; catalogue period starts later and does not replace the workbook axis.",
+      "observationKind": "observed-activity"
+    },
+    {
+      "id": "pensions-a17-literal-count-draft",
+      "selector": {
+        "bundle": "pensions-a17",
+        "seriesKeys": [
+          "number_of_registerd_prao_dta_76a76ae4",
+          "number_of_registered_paos_dtos_ec200530",
+          "number_of_registered_ddos_b578b389"
+        ]
+      },
+      "status": "source-literal-count-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "reason": "Counts of source office types registered during each year, including offices deactivated by 31 March 2025. Annual registrations; these are not counts of currently operational offices.",
+      "comparisonReason": "Only the exact single-series count is proposed for interpretation. Comparable populations, category exclusivity and association bases across records have not been independently established.",
+      "evidence": [
+        "docs/status/wave-2-pensions-preflight/literal-count-primary-attestation-draft.json",
+        "docs/status/wave-2-pensions-preflight/source-cell-independent-review.json",
+        "docs/status/wave-2-pensions-preflight/literal-count-root-review-receipt.json"
+      ],
+      "review": {
+        "sourceVersion": "raw-sha256:b7eac478584d702649f65497928f00650635968dfe60d9ac20c982e00858c88b;attestation-sha256:de56ca06662b3b553af21a167440cc7bbcbb1462995ba0e3a84be248dfa012ff;root-review-sha256:96206299d835b685b08cbad7af0fae951fda6ae9c7d42e5d03177e2c7cdb270c",
+        "reviewer": "ROOT coordinating chat; wave-2 coordinator independent primary-cell replay",
+        "rationale": "Counts of source office types registered during each year, including offices deactivated by 31 March 2025. Annual registrations; these are not counts of currently operational offices. Single-series count and exact export only. No current state-profile claim or derived participation rate."
+      },
+      "binding": {
+        "rawFile": "data/raw/pensions/source-documents/b7eac478584d702649f65497928f00650635968dfe60d9ac20c982e00858c88b.xlsx",
+        "rawSha256": "b7eac478584d702649f65497928f00650635968dfe60d9ac20c982e00858c88b",
+        "records": {
+          "number_of_registerd_prao_dta_76a76ae4": "7768fa9a44ed94fb501a3f0d61f2eea5c5500ca99e8afd34bf4ea6648161bb3d",
+          "number_of_registered_paos_dtos_ec200530": "9a6bab8d494d628dc4f1782b76c4b509d282ce20f5a916cb59e21c4135824771",
+          "number_of_registered_ddos_b578b389": "b55c5e9153cf81494cf3ebc756b0a3c003fcd5268c3dbcf61648f00f8a83e5b4"
+        }
+      },
+      "definition": "Counts of source office types registered during each year, including offices deactivated by 31 March 2025.",
+      "referencePeriod": "Annual registrations; these are not counts of currently operational offices.",
+      "observationKind": "observed-activity"
+    },
+    {
+      "id": "pensions-a18-literal-count-draft",
+      "selector": {
+        "bundle": "pensions-a18",
+        "seriesKeys": [
+          "number_of_cabs_registered_a9b1116e",
+          "number_of_sabs_registered_d34f2a44"
+        ]
+      },
+      "status": "source-literal-count-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "reason": "Counts of CAB and SAB nodal offices registered during each financial year, including offices deactivated by 31 March 2025. Annual registrations; these are not counts of currently operational offices.",
+      "comparisonReason": "Only the exact single-series count is proposed for interpretation. Comparable populations, category exclusivity and association bases across records have not been independently established.",
+      "evidence": [
+        "docs/status/wave-2-pensions-preflight/literal-count-primary-attestation-draft.json",
+        "docs/status/wave-2-pensions-preflight/source-cell-independent-review.json",
+        "docs/status/wave-2-pensions-preflight/literal-count-root-review-receipt.json"
+      ],
+      "review": {
+        "sourceVersion": "raw-sha256:b3af360eb1b89cff15dfe552219f0c0eaa34a750ede4443921dccd14e4e9f29e;attestation-sha256:de56ca06662b3b553af21a167440cc7bbcbb1462995ba0e3a84be248dfa012ff;root-review-sha256:96206299d835b685b08cbad7af0fae951fda6ae9c7d42e5d03177e2c7cdb270c",
+        "reviewer": "ROOT coordinating chat; wave-2 coordinator independent primary-cell replay",
+        "rationale": "Counts of CAB and SAB nodal offices registered during each financial year, including offices deactivated by 31 March 2025. Annual registrations; these are not counts of currently operational offices. Single-series count and exact export only. No current state-profile claim or derived participation rate."
+      },
+      "binding": {
+        "rawFile": "data/raw/pensions/source-documents/b3af360eb1b89cff15dfe552219f0c0eaa34a750ede4443921dccd14e4e9f29e.xlsx",
+        "rawSha256": "b3af360eb1b89cff15dfe552219f0c0eaa34a750ede4443921dccd14e4e9f29e",
+        "records": {
+          "number_of_cabs_registered_a9b1116e": "ea368e7913fb6e2edeb0c4cd3814b6abc900341c06301ea33140aa2db57726ef",
+          "number_of_sabs_registered_d34f2a44": "6ff5f725d425e96bc30dba2923a031f6d2e90509a8d8a33e9c2e311c7c48d6f1"
+        }
+      },
+      "definition": "Counts of CAB and SAB nodal offices registered during each financial year, including offices deactivated by 31 March 2025.",
+      "referencePeriod": "Annual registrations; these are not counts of currently operational offices.",
+      "observationKind": "observed-activity"
+    },
+    {
+      "id": "pensions-a19-literal-count-draft",
+      "selector": {
+        "bundle": "pensions-a19",
+        "seriesKeys": [
+          "total_number_of_corporates_registered_in_nps_as_on_the_end_of_year_58713aea",
+          "number_of_corporate_subscribers_as_on_the_end_of_year_61a637f9"
+        ]
+      },
+      "status": "source-literal-count-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "reason": "Cumulative active corporates and subscribers associated with corporates at the end of each financial year. Two different year-end populations; corporate entities and subscriber accounts must not be summed or treated as a rate.",
+      "comparisonReason": "Only the exact single-series count is proposed for interpretation. Comparable populations, category exclusivity and association bases across records have not been independently established.",
+      "evidence": [
+        "docs/status/wave-2-pensions-preflight/literal-count-primary-attestation-draft.json",
+        "docs/status/wave-2-pensions-preflight/source-cell-independent-review.json",
+        "docs/status/wave-2-pensions-preflight/literal-count-root-review-receipt.json"
+      ],
+      "review": {
+        "sourceVersion": "raw-sha256:ec8752234f1d00f87364674be4553d3b8f3bce8dc7cc5b0b25759675676e29cf;attestation-sha256:de56ca06662b3b553af21a167440cc7bbcbb1462995ba0e3a84be248dfa012ff;root-review-sha256:96206299d835b685b08cbad7af0fae951fda6ae9c7d42e5d03177e2c7cdb270c",
+        "reviewer": "ROOT coordinating chat; wave-2 coordinator independent primary-cell replay",
+        "rationale": "Cumulative active corporates and subscribers associated with corporates at the end of each financial year. Two different year-end populations; corporate entities and subscriber accounts must not be summed or treated as a rate. Single-series count and exact export only. No current state-profile claim or derived participation rate."
+      },
+      "binding": {
+        "rawFile": "data/raw/pensions/source-documents/ec8752234f1d00f87364674be4553d3b8f3bce8dc7cc5b0b25759675676e29cf.xlsx",
+        "rawSha256": "ec8752234f1d00f87364674be4553d3b8f3bce8dc7cc5b0b25759675676e29cf",
+        "records": {
+          "total_number_of_corporates_registered_in_nps_as_on_the_end_of_year_58713aea": "6dc069b56fb9539ca8aeb1fdde01a0ddd36daec924cd6590b31613dc7395581e",
+          "number_of_corporate_subscribers_as_on_the_end_of_year_61a637f9": "8d6c0cb307bb2ba3cd238057da07fe1a6f078e402003a3f0753dbea8dc98438a"
+        }
+      },
+      "definition": "Cumulative active corporates and subscribers associated with corporates at the end of each financial year.",
+      "referencePeriod": "Two different year-end populations; corporate entities and subscriber accounts must not be summed or treated as a rate.",
+      "observationKind": "observed-stock"
+    },
+    {
+      "id": "pensions-a20-literal-count-draft",
+      "selector": {
+        "bundle": "pensions-a20",
+        "seriesKeys": [
+          "all_citizen_lc25_conservative_life_cycle_fund_e496cbd8",
+          "all_citizen_lc50_moderate_life_cycle_fund_2449e2b4",
+          "all_citizen_lc75_aggressive_life_cycle_fund_c4524c5c",
+          "cg_lc25_conservative_life_cycle_fund_ecff9dce",
+          "cg_lc50_moderate_life_cycle_fund_aecdf4b4",
+          "corporate_lc25_conservative_life_cycle_fund_9dfab8c8",
+          "corporate_lc50_moderate_life_cycle_fund_7333d518",
+          "corporate_lc75_aggressive_life_cycle_fund_1ae8ceef",
+          "sg_lc25_conservative_life_cycle_fund_895b2fdc",
+          "sg_lc50_moderate_life_cycle_fund_60b30fbc"
+        ]
+      },
+      "status": "source-literal-count-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "reason": "Counts of subscribers associated with each source sector and life-cycle fund at financial-year end. FY-end source association; no participation denominator or cross-fund exclusivity is established.",
+      "comparisonReason": "Only the exact single-series count is proposed for interpretation. Comparable populations, category exclusivity and association bases across records have not been independently established.",
+      "evidence": [
+        "docs/status/wave-2-pensions-preflight/literal-count-primary-attestation-draft.json",
+        "docs/status/wave-2-pensions-preflight/source-cell-independent-review.json",
+        "docs/status/wave-2-pensions-preflight/literal-count-root-review-receipt.json"
+      ],
+      "review": {
+        "sourceVersion": "raw-sha256:e3ca97a37eca33b7db160246065994a89292df60b2fdf9d2c9596cd454e3a80c;attestation-sha256:de56ca06662b3b553af21a167440cc7bbcbb1462995ba0e3a84be248dfa012ff;root-review-sha256:96206299d835b685b08cbad7af0fae951fda6ae9c7d42e5d03177e2c7cdb270c",
+        "reviewer": "ROOT coordinating chat; wave-2 coordinator independent primary-cell replay",
+        "rationale": "Counts of subscribers associated with each source sector and life-cycle fund at financial-year end. FY-end source association; no participation denominator or cross-fund exclusivity is established. Single-series count and exact export only. No current state-profile claim or derived participation rate."
+      },
+      "binding": {
+        "rawFile": "data/raw/pensions/source-documents/e3ca97a37eca33b7db160246065994a89292df60b2fdf9d2c9596cd454e3a80c.xlsx",
+        "rawSha256": "e3ca97a37eca33b7db160246065994a89292df60b2fdf9d2c9596cd454e3a80c",
+        "records": {
+          "all_citizen_lc25_conservative_life_cycle_fund_e496cbd8": "58e70181bb41df715d6f0dbde4c8e27f8f74cc6541504cad8be93a3cd0486878",
+          "all_citizen_lc50_moderate_life_cycle_fund_2449e2b4": "8bc23841cf8dd1caacb89de49c910e58b55bb6b9a3b03fc59c58069a0f4955c2",
+          "all_citizen_lc75_aggressive_life_cycle_fund_c4524c5c": "51a75add02bc1472ceb47ab89cf2e8916afed2d95ef4447692d31ba7d1a29c54",
+          "cg_lc25_conservative_life_cycle_fund_ecff9dce": "7053d862c8906bd709629ff5af6531af3a67cf7ef726f4bb0a27d5ea4d55bb6f",
+          "cg_lc50_moderate_life_cycle_fund_aecdf4b4": "37cf7eaa03006152e8690d90323791d075447e4ffb031bb6a46f64bf6c2cc3f2",
+          "corporate_lc25_conservative_life_cycle_fund_9dfab8c8": "50d345b3338548ba8c917f7c099151a1b6f9f0c9fabeff4da1c35a521d0c63c4",
+          "corporate_lc50_moderate_life_cycle_fund_7333d518": "4c9cfe3d973e2fefcde19550f8d21aed4c58f43c2528b2a06590c14b820361d7",
+          "corporate_lc75_aggressive_life_cycle_fund_1ae8ceef": "308227b7fb17ca68ffd96f8ca9021c83a111f355448100456559e36592309887",
+          "sg_lc25_conservative_life_cycle_fund_895b2fdc": "336e08c9b8eb717dc7aff47d808c084e79e2adf0bfd7de8414a11e72da4147fb",
+          "sg_lc50_moderate_life_cycle_fund_60b30fbc": "309bf5ec7402ad599d4b6547e4a8f6ac4728b807c5aaba74a059137aca2a7da4"
+        }
+      },
+      "definition": "Counts of subscribers associated with each source sector and life-cycle fund at financial-year end.",
+      "referencePeriod": "FY-end source association; no participation denominator or cross-fund exclusivity is established.",
+      "observationKind": "observed-stock"
+    },
+    {
+      "id": "pensions-a3-literal-vatsalya-stock",
+      "selector": {
+        "bundle": "pensions-a3",
+        "seriesKeys": [
+          "nps_vatsalya_0c14f787"
+        ]
+      },
+      "status": "source-literal-scheme-stock-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "observationKind": "observed-stock",
+      "definition": "Literal publisher-reported NPS VATSALYA source-scheme subscriber count at financial-year end.",
+      "referencePeriod": "Last business day of the source FY; no demographic applicability inferred.",
+      "reason": "Source title and FY endpoint header define an exact scheme-labelled count; this record supplies no information about minors, guardians, age, gender, active status, unique persons or participation.",
+      "comparisonReason": "No comparison across scheme eligibility, demographic populations or reference frames is certified.",
+      "evidence": [
+        "docs/status/wave-2-pensions-preflight/a3-literal-vatsalya-stock-proposal.json",
+        "docs/status/wave-2-pensions-preflight/source-cell-independent-review.json"
+      ],
+      "review": {
+        "sourceVersion": "sha256:896771e362794e184371ef4bf9719f74e585414b1a198e8ddab78d7831783a0a",
+        "reviewer": "ROOT coordinating chat; independent source cell/header replay",
+        "rationale": "Exact raw scheme G2 label, count title and last-business-day FY reference are bound to the original source and full record fingerprint; nothing is inferred about demographic scope."
+      },
+      "binding": {
+        "rawFile": "data/raw/pensions/source-documents/896771e362794e184371ef4bf9719f74e585414b1a198e8ddab78d7831783a0a.xlsx",
+        "rawSha256": "896771e362794e184371ef4bf9719f74e585414b1a198e8ddab78d7831783a0a",
+        "records": {
+          "nps_vatsalya_0c14f787": "6a1f408adb7373d44fae947519e4117a757d349e19634900ed3a126c02d149dc"
+        }
+      }
+    },
+    {
+      "id": "pensions-m3-subscriber-stock",
+      "selector": {
+        "bundle": "pensions-m3",
+        "seriesKeys": [
+          "apy_ca7e68f6",
+          "all_citizen_944977cf",
+          "cg_2a8efef8",
+          "corporate_658f4b39",
+          "nps_lite_31697574",
+          "sg_aa04ed62"
+        ]
+      },
+      "status": "source-month-end-stock-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "observationKind": "observed-stock",
+      "definition": "Publisher-reported subscriber count for this source sector at the last business day of each named month.",
+      "referencePeriod": "Month-end source subscriber stock; canonical ISO keys identify the month.",
+      "reason": "Exact original source title and reference header define a subscriber stock. The count is not new enrolment or monthly contributor activity; account status and cross-sector population comparisons are not inferred.",
+      "comparisonReason": "Single-sector reported counts only. Cross-sector eligibility/population comparability and participation denominators are not certified.",
+      "evidence": [
+        "docs/status/wave-2-pensions-preflight/m3-primary-stock-proposal.json",
+        "docs/status/wave-2-pensions-preflight/source-cell-independent-review.json"
+      ],
+      "review": {
+        "sourceVersion": "sha256:4088e6c414f39e06798fe113079577bf7a6eaff06ebb17284347a189ab534df3",
+        "reviewer": "ROOT coordinating chat; independent source-coordinate review",
+        "rationale": "Original workbook title, last-business-day header, exact sector labels and all physical numeric/null cells are independently bound; no household or contributor inference."
+      },
+      "binding": {
+        "rawFile": "data/raw/pensions/source-documents/4088e6c414f39e06798fe113079577bf7a6eaff06ebb17284347a189ab534df3.xlsx",
+        "rawSha256": "4088e6c414f39e06798fe113079577bf7a6eaff06ebb17284347a189ab534df3",
+        "records": {
+          "apy_ca7e68f6": "09ad5bdbbb9bebdd1c8930168c941798243e6bf9044c9fcf0909506292be1d12",
+          "all_citizen_944977cf": "546d3a0cc4a3bd8a5ce8e4b8294c1bdaf3de5f41498f3dfa4c69fa999dac9506",
+          "cg_2a8efef8": "a4261253af9caeb038bb33d72a77d57b804cb552929e3b7daf2052fbd2d287d4",
+          "corporate_658f4b39": "4ae5255912da4bff7a0dd2359b11e4bf9d7e0740c3b10900af2c0cca430cfa04",
+          "nps_lite_31697574": "41d5d91d437cdf701c0db2355ff9c6a9f45b0254a2779eabd9ed85959b50873f",
+          "sg_aa04ed62": "cb1ff97bfb688f5c3cedea111bf1f78999bfa90d06b61c43e459fbd291c7d86c"
+        }
+      }
+    },
+    {
+      "id": "pensions-m3-literal-vatslya-stock",
+      "selector": {
+        "bundle": "pensions-m3",
+        "seriesKeys": [
+          "nps_vatslya_5846bccc"
+        ]
+      },
+      "status": "source-month-end-stock-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "observationKind": "observed-stock",
+      "definition": "Publisher-reported subscriber count under its literal NPS VATSLYA source scheme label at the last business day of the named month.",
+      "referencePeriod": "Month-end source subscriber stock; canonical ISO keys identify the month.",
+      "reason": "The source number-of-subscribers title and month-end header define this literal scheme-labelled count. The count does not establish age, gender, minors, guardians, account-status scope or participation rates.",
+      "comparisonReason": "Literal scheme-labelled subscriber stock only; demographic applicability and cross-scheme comparisons are unreviewed.",
+      "evidence": [
+        "docs/status/wave-2-pensions-preflight/m3-primary-stock-proposal.json",
+        "docs/status/wave-2-pensions-preflight/source-cell-independent-review.json"
+      ],
+      "review": {
+        "sourceVersion": "sha256:4088e6c414f39e06798fe113079577bf7a6eaff06ebb17284347a189ab534df3",
+        "reviewer": "ROOT coordinating chat; independent source-header/cell review",
+        "rationale": "Original G2 source label and A2 month-end header identify the exact printed count; no demographic interpretation accompanies this record."
+      },
+      "binding": {
+        "rawFile": "data/raw/pensions/source-documents/4088e6c414f39e06798fe113079577bf7a6eaff06ebb17284347a189ab534df3.xlsx",
+        "rawSha256": "4088e6c414f39e06798fe113079577bf7a6eaff06ebb17284347a189ab534df3",
+        "records": {
+          "nps_vatslya_5846bccc": "59e58fede6f58d6674fdd67265e453a17ee1faf607616c183f296273f1c0f34b"
+        }
+      }
+    },
+    {
+      "id": "pensions-a1-literal-source-reviewed",
+      "selector": {
+        "bundle": "pensions-a1",
+        "seriesKeys": [
+          "sbi_pf_cg_11224214",
+          "sbi_pf_sg_d3125a84",
+          "sbi_pf_nps_lite_b17be3a0",
+          "sbi_pf_corp_cg_a9776555",
+          "sbi_pf_apy_0dd21556",
+          "sbi_pf_e_tier_i_e7993732",
+          "sbi_pf_c_tier_i_e048df49",
+          "sbi_pf_g_tier_i_cd350899",
+          "sbi_pf_e_tier_ii_c4511685",
+          "sbi_pf_c_tier_ii_8232750a",
+          "sbi_pf_g_tier_ii_c15bf01f",
+          "sbi_pf_a_tier_i_7367c0d8",
+          "sbi_pf_a_tier_ii_6f55842e",
+          "sbi_pf_tts_2_d3afe731",
+          "sbi_pf_nps_tier_ii_composite_3635b985",
+          "sbi_pf_total_f8d66c3c",
+          "lic_pf_cg_8df512f2",
+          "lic_pf_sg_02bd140c",
+          "lic_pf_nps_lite_599ccae3",
+          "lic_pf_corp_cg_135f9966",
+          "lic_pf_apy_f9c26b3a",
+          "lic_pf_e_tier_i_c8c0e4ee",
+          "lic_pf_c_tier_i_d027bd2c",
+          "lic_pf_g_tier_i_c8852242",
+          "lic_pf_e_tier_ii_300fee19",
+          "lic_pf_c_tier_ii_3b228bd9",
+          "lic_pf_g_tier_ii_8028748c",
+          "lic_pf_a_tier_i_40664f4c",
+          "lic_pf_a_tier_ii_c0ea6d90",
+          "lic_pf_tts_2_05656fea",
+          "lic_pf_nps_tier_ii_composite_bb4e1cc3",
+          "lic_pf_total_2c170762",
+          "uti_pf_cg_457b8a84",
+          "uti_pf_sg_74e3c039",
+          "uti_pf_nps_lite_4783c4f9",
+          "uti_pf_corp_cg_3744662d",
+          "uti_pf_apy_b8b24a57",
+          "uti_pf_e_tier_i_7d107423",
+          "uti_pf_c_tier_i_029ed0ab",
+          "uti_pf_g_tier_i_4a24974e",
+          "uti_pf_e_tier_ii_039d48c4",
+          "uti_pf_c_tier_ii_56c71b4a",
+          "uti_pf_g_tier_ii_f95281b0",
+          "uti_pf_a_tier_i_a8bfa864",
+          "uti_pf_tts_2_e6859430",
+          "uti_pf_nps_tier_ii_composite_2a945f8d",
+          "uti_pf_total_d85bfbdf",
+          "hdfc_pf_e_tier_i_16866e58",
+          "hdfc_pf_c_tier_i_041ec02a",
+          "hdfc_pf_g_tier_i_e75786ce",
+          "hdfc_pf_e_tier_ii_6b3bc6ec",
+          "hdfc_pf_c_tier_ii_1fd4fb35",
+          "hdfc_pf_g_tier_ii_9eef2f81",
+          "hdfc_pf_a_tier_i_e81810c8",
+          "hdfc_pf_a_tier_ii_5fa8a549",
+          "hdfc_pf_tts_2_a7efa145",
+          "hdfc_pf_total_46e3df1c",
+          "icici_pf_e_tier_i_76544b10",
+          "icici_pf_c_tier_i_0b13dc9c",
+          "icici_pf_g_tier_i_e376efae",
+          "icici_pf_e_tier_ii_74e5429c",
+          "icici_pf_c_tier_ii_f8310b2f",
+          "icici_pf_g_tier_ii_e3d2f663",
+          "icici_pf_a_tier_i_bad517fe",
+          "icici_pf_a_tier_ii_32b468ed",
+          "icici_pf_tts_2_1c779ded",
+          "icici_pf_total_b6736b1c",
+          "kotak_pf_nps_lite_4a1913a5",
+          "kotak_pf_e_tier_i_88efecef",
+          "kotak_pf_c_tier_i_efd34b5c",
+          "kotak_pf_g_tier_i_6fa0c144",
+          "kotak_pf_e_tier_ii_ebd45edb",
+          "kotak_pf_c_tier_ii_69e862b0",
+          "kotak_pf_g_tier_ii_e9fa3cea",
+          "kotak_pf_a_tier_i_6c47f561",
+          "kotak_pf_a_tier_ii_01a27db2",
+          "kotak_pf_tts_2_b599599a",
+          "kotak_pf_total_ee84b19d",
+          "aditya_birla_pf_e_tier_i_58425be2",
+          "aditya_birla_pf_c_tier_i_f28d5810",
+          "aditya_birla_pf_g_tier_i_0a2637f9",
+          "aditya_birla_pf_e_tier_ii_4f1d5287",
+          "aditya_birla_pf_c_tier_ii_3373f7ca",
+          "aditya_birla_pf_g_tier_ii_cf414c95",
+          "aditya_birla_pf_a_tier_i_ce08d7f8",
+          "aditya_birla_pf_tts_2_57b4965e",
+          "aditya_birla_pf_total_c7f0bc1d",
+          "tata_pf_e_tier_i_37be2ea8",
+          "tata_pf_c_tier_i_2ce35b26",
+          "tata_pf_g_tier_i_6a70ec17",
+          "tata_pf_e_tier_ii_1d97a1ae",
+          "tata_pf_c_tier_ii_b8e303b6",
+          "tata_pf_g_tier_ii_ddbd0813",
+          "tata_pf_a_tier_i_eb2815a8",
+          "tata_pf_tts_2_987522c6",
+          "tata_pf_total_2bb59d5f",
+          "max_pf_e_tier_i_aa8875a8",
+          "max_pf_c_tier_i_ed074e27",
+          "max_pf_g_tier_i_4a098d1a",
+          "max_pf_e_tier_ii_abedbb6f",
+          "max_pf_c_tier_ii_6aa756da",
+          "max_pf_g_tier_ii_e6ea8bd9",
+          "max_pf_a_tier_i_965aacef",
+          "max_pf_tts_2_9dbe6bea",
+          "max_pf_total_bfbb5a45",
+          "axis_pf_e_tier_i_82e98663",
+          "axis_pf_c_tier_i_ba91d3bc",
+          "axis_pf_g_tier_i_a0bbab54",
+          "axis_pf_e_tier_ii_2ff8f049",
+          "axis_pf_c_tier_ii_5cae357c",
+          "axis_pf_g_tier_ii_a7ac715e",
+          "axis_pf_a_tier_i_3ad754dc",
+          "axis_pf_tts_2_63d0af33",
+          "axis_pf_total_3c2a1cfa",
+          "reliance_pf_e_tier_i_2cbcac2c",
+          "reliance_pf_c_tier_i_926f3029",
+          "reliance_pf_g_tier_i_8b6bceb7",
+          "reliance_pf_e_tier_ii_465a3300",
+          "reliance_pf_c_tier_ii_a25b9097",
+          "reliance_pf_g_tier_ii_7c2dd010",
+          "reliance_pf_a_tier_i_488ba97f",
+          "reliance_pf_a_tier_ii_0e1f90fd",
+          "reliance_pf_total_7f7854f2",
+          "idfc_pf_nps_lite_9106ea46",
+          "idfc_pf_e_tier_i_18c5e4eb",
+          "idfc_pf_c_tier_i_4796fa27",
+          "idfc_pf_g_tier_i_46fe41cb",
+          "idfc_pf_e_tier_ii_56a25b52",
+          "idfc_pf_c_tier_ii_30f92a2f",
+          "idfc_pf_g_tier_ii_1f9242a3",
+          "idfc_pf_total_b30c659e",
+          "dsp_black_rock_pf_e_tier_i_6a041c65",
+          "dsp_black_rock_pf_c_tier_i_d11bc797",
+          "dsp_black_rock_pf_g_tier_i_e1fdb71c",
+          "dsp_black_rock_pf_e_tier_ii_5542d0d9",
+          "dsp_black_rock_pf_c_tier_ii_d1a99891",
+          "dsp_black_rock_pf_g_tier_ii_ffbaae0e",
+          "dsp_black_rock_pf_total_4bd9edcd",
+          "dsp_pf_e_tier_i_b505bbec",
+          "dsp_pf_c_tier_i_1b246989",
+          "dsp_pf_g_tier_i_3931fa83",
+          "dsp_pf_e_tier_ii_30b74f13",
+          "dsp_pf_c_tier_ii_c7275587",
+          "dsp_pf_g_tier_ii_9e38663b",
+          "dsp_pf_a_tier_i_7a34b6e3",
+          "dsp_pf_tts_2_55be26f4",
+          "dsp_pf_total_4de18e15"
+        ]
+      },
+      "status": "source-literal-amount-or-count-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "observationKind": "observed-stock",
+      "definition": "Publisher-reported assets under management for the named pension fund and source scheme, in rupees crore, at the source March/FY-labelled endpoint.",
+      "referencePeriod": "Retain the source March/FY label; no unprinted calendar day is invented. Current-fund portfolio and ceased-fund reconstructed histories keep their exact source series and last published endpoint.",
+      "sourceLimits": "Source disclaimer: registered funds as of 31 March 2025 and historical ceased-fund AUM collated from CRA data or NAV times outstanding units. No current operational status, fund return, performance ranking or assumed APY-fund coverage.",
+      "sourceCategoryRoles": {
+        "sbi_pf_cg_11224214": "exact-source-labelled-record",
+        "sbi_pf_sg_d3125a84": "exact-source-labelled-record",
+        "sbi_pf_nps_lite_b17be3a0": "exact-source-labelled-record",
+        "sbi_pf_corp_cg_a9776555": "exact-source-labelled-record",
+        "sbi_pf_apy_0dd21556": "exact-source-labelled-record",
+        "sbi_pf_e_tier_i_e7993732": "exact-source-labelled-record",
+        "sbi_pf_c_tier_i_e048df49": "exact-source-labelled-record",
+        "sbi_pf_g_tier_i_cd350899": "exact-source-labelled-record",
+        "sbi_pf_e_tier_ii_c4511685": "exact-source-labelled-record",
+        "sbi_pf_c_tier_ii_8232750a": "exact-source-labelled-record",
+        "sbi_pf_g_tier_ii_c15bf01f": "exact-source-labelled-record",
+        "sbi_pf_a_tier_i_7367c0d8": "exact-source-labelled-record",
+        "sbi_pf_a_tier_ii_6f55842e": "exact-source-labelled-record",
+        "sbi_pf_tts_2_d3afe731": "exact-source-labelled-record",
+        "sbi_pf_nps_tier_ii_composite_3635b985": "exact-source-labelled-record",
+        "sbi_pf_total_f8d66c3c": "overlapping-source-total",
+        "lic_pf_cg_8df512f2": "exact-source-labelled-record",
+        "lic_pf_sg_02bd140c": "exact-source-labelled-record",
+        "lic_pf_nps_lite_599ccae3": "exact-source-labelled-record",
+        "lic_pf_corp_cg_135f9966": "exact-source-labelled-record",
+        "lic_pf_apy_f9c26b3a": "exact-source-labelled-record",
+        "lic_pf_e_tier_i_c8c0e4ee": "exact-source-labelled-record",
+        "lic_pf_c_tier_i_d027bd2c": "exact-source-labelled-record",
+        "lic_pf_g_tier_i_c8852242": "exact-source-labelled-record",
+        "lic_pf_e_tier_ii_300fee19": "exact-source-labelled-record",
+        "lic_pf_c_tier_ii_3b228bd9": "exact-source-labelled-record",
+        "lic_pf_g_tier_ii_8028748c": "exact-source-labelled-record",
+        "lic_pf_a_tier_i_40664f4c": "exact-source-labelled-record",
+        "lic_pf_a_tier_ii_c0ea6d90": "exact-source-labelled-record",
+        "lic_pf_tts_2_05656fea": "exact-source-labelled-record",
+        "lic_pf_nps_tier_ii_composite_bb4e1cc3": "exact-source-labelled-record",
+        "lic_pf_total_2c170762": "overlapping-source-total",
+        "uti_pf_cg_457b8a84": "exact-source-labelled-record",
+        "uti_pf_sg_74e3c039": "exact-source-labelled-record",
+        "uti_pf_nps_lite_4783c4f9": "exact-source-labelled-record",
+        "uti_pf_corp_cg_3744662d": "exact-source-labelled-record",
+        "uti_pf_apy_b8b24a57": "exact-source-labelled-record",
+        "uti_pf_e_tier_i_7d107423": "exact-source-labelled-record",
+        "uti_pf_c_tier_i_029ed0ab": "exact-source-labelled-record",
+        "uti_pf_g_tier_i_4a24974e": "exact-source-labelled-record",
+        "uti_pf_e_tier_ii_039d48c4": "exact-source-labelled-record",
+        "uti_pf_c_tier_ii_56c71b4a": "exact-source-labelled-record",
+        "uti_pf_g_tier_ii_f95281b0": "exact-source-labelled-record",
+        "uti_pf_a_tier_i_a8bfa864": "exact-source-labelled-record",
+        "uti_pf_tts_2_e6859430": "exact-source-labelled-record",
+        "uti_pf_nps_tier_ii_composite_2a945f8d": "exact-source-labelled-record",
+        "uti_pf_total_d85bfbdf": "overlapping-source-total",
+        "hdfc_pf_e_tier_i_16866e58": "exact-source-labelled-record",
+        "hdfc_pf_c_tier_i_041ec02a": "exact-source-labelled-record",
+        "hdfc_pf_g_tier_i_e75786ce": "exact-source-labelled-record",
+        "hdfc_pf_e_tier_ii_6b3bc6ec": "exact-source-labelled-record",
+        "hdfc_pf_c_tier_ii_1fd4fb35": "exact-source-labelled-record",
+        "hdfc_pf_g_tier_ii_9eef2f81": "exact-source-labelled-record",
+        "hdfc_pf_a_tier_i_e81810c8": "exact-source-labelled-record",
+        "hdfc_pf_a_tier_ii_5fa8a549": "exact-source-labelled-record",
+        "hdfc_pf_tts_2_a7efa145": "exact-source-labelled-record",
+        "hdfc_pf_total_46e3df1c": "overlapping-source-total",
+        "icici_pf_e_tier_i_76544b10": "exact-source-labelled-record",
+        "icici_pf_c_tier_i_0b13dc9c": "exact-source-labelled-record",
+        "icici_pf_g_tier_i_e376efae": "exact-source-labelled-record",
+        "icici_pf_e_tier_ii_74e5429c": "exact-source-labelled-record",
+        "icici_pf_c_tier_ii_f8310b2f": "exact-source-labelled-record",
+        "icici_pf_g_tier_ii_e3d2f663": "exact-source-labelled-record",
+        "icici_pf_a_tier_i_bad517fe": "exact-source-labelled-record",
+        "icici_pf_a_tier_ii_32b468ed": "exact-source-labelled-record",
+        "icici_pf_tts_2_1c779ded": "exact-source-labelled-record",
+        "icici_pf_total_b6736b1c": "overlapping-source-total",
+        "kotak_pf_nps_lite_4a1913a5": "exact-source-labelled-record",
+        "kotak_pf_e_tier_i_88efecef": "exact-source-labelled-record",
+        "kotak_pf_c_tier_i_efd34b5c": "exact-source-labelled-record",
+        "kotak_pf_g_tier_i_6fa0c144": "exact-source-labelled-record",
+        "kotak_pf_e_tier_ii_ebd45edb": "exact-source-labelled-record",
+        "kotak_pf_c_tier_ii_69e862b0": "exact-source-labelled-record",
+        "kotak_pf_g_tier_ii_e9fa3cea": "exact-source-labelled-record",
+        "kotak_pf_a_tier_i_6c47f561": "exact-source-labelled-record",
+        "kotak_pf_a_tier_ii_01a27db2": "exact-source-labelled-record",
+        "kotak_pf_tts_2_b599599a": "exact-source-labelled-record",
+        "kotak_pf_total_ee84b19d": "overlapping-source-total",
+        "aditya_birla_pf_e_tier_i_58425be2": "exact-source-labelled-record",
+        "aditya_birla_pf_c_tier_i_f28d5810": "exact-source-labelled-record",
+        "aditya_birla_pf_g_tier_i_0a2637f9": "exact-source-labelled-record",
+        "aditya_birla_pf_e_tier_ii_4f1d5287": "exact-source-labelled-record",
+        "aditya_birla_pf_c_tier_ii_3373f7ca": "exact-source-labelled-record",
+        "aditya_birla_pf_g_tier_ii_cf414c95": "exact-source-labelled-record",
+        "aditya_birla_pf_a_tier_i_ce08d7f8": "exact-source-labelled-record",
+        "aditya_birla_pf_tts_2_57b4965e": "exact-source-labelled-record",
+        "aditya_birla_pf_total_c7f0bc1d": "overlapping-source-total",
+        "tata_pf_e_tier_i_37be2ea8": "exact-source-labelled-record",
+        "tata_pf_c_tier_i_2ce35b26": "exact-source-labelled-record",
+        "tata_pf_g_tier_i_6a70ec17": "exact-source-labelled-record",
+        "tata_pf_e_tier_ii_1d97a1ae": "exact-source-labelled-record",
+        "tata_pf_c_tier_ii_b8e303b6": "exact-source-labelled-record",
+        "tata_pf_g_tier_ii_ddbd0813": "exact-source-labelled-record",
+        "tata_pf_a_tier_i_eb2815a8": "exact-source-labelled-record",
+        "tata_pf_tts_2_987522c6": "exact-source-labelled-record",
+        "tata_pf_total_2bb59d5f": "overlapping-source-total",
+        "max_pf_e_tier_i_aa8875a8": "exact-source-labelled-record",
+        "max_pf_c_tier_i_ed074e27": "exact-source-labelled-record",
+        "max_pf_g_tier_i_4a098d1a": "exact-source-labelled-record",
+        "max_pf_e_tier_ii_abedbb6f": "exact-source-labelled-record",
+        "max_pf_c_tier_ii_6aa756da": "exact-source-labelled-record",
+        "max_pf_g_tier_ii_e6ea8bd9": "exact-source-labelled-record",
+        "max_pf_a_tier_i_965aacef": "exact-source-labelled-record",
+        "max_pf_tts_2_9dbe6bea": "exact-source-labelled-record",
+        "max_pf_total_bfbb5a45": "overlapping-source-total",
+        "axis_pf_e_tier_i_82e98663": "exact-source-labelled-record",
+        "axis_pf_c_tier_i_ba91d3bc": "exact-source-labelled-record",
+        "axis_pf_g_tier_i_a0bbab54": "exact-source-labelled-record",
+        "axis_pf_e_tier_ii_2ff8f049": "exact-source-labelled-record",
+        "axis_pf_c_tier_ii_5cae357c": "exact-source-labelled-record",
+        "axis_pf_g_tier_ii_a7ac715e": "exact-source-labelled-record",
+        "axis_pf_a_tier_i_3ad754dc": "exact-source-labelled-record",
+        "axis_pf_tts_2_63d0af33": "exact-source-labelled-record",
+        "axis_pf_total_3c2a1cfa": "overlapping-source-total",
+        "reliance_pf_e_tier_i_2cbcac2c": "exact-source-labelled-record",
+        "reliance_pf_c_tier_i_926f3029": "exact-source-labelled-record",
+        "reliance_pf_g_tier_i_8b6bceb7": "exact-source-labelled-record",
+        "reliance_pf_e_tier_ii_465a3300": "exact-source-labelled-record",
+        "reliance_pf_c_tier_ii_a25b9097": "exact-source-labelled-record",
+        "reliance_pf_g_tier_ii_7c2dd010": "exact-source-labelled-record",
+        "reliance_pf_a_tier_i_488ba97f": "exact-source-labelled-record",
+        "reliance_pf_a_tier_ii_0e1f90fd": "exact-source-labelled-record",
+        "reliance_pf_total_7f7854f2": "overlapping-source-total",
+        "idfc_pf_nps_lite_9106ea46": "exact-source-labelled-record",
+        "idfc_pf_e_tier_i_18c5e4eb": "exact-source-labelled-record",
+        "idfc_pf_c_tier_i_4796fa27": "exact-source-labelled-record",
+        "idfc_pf_g_tier_i_46fe41cb": "exact-source-labelled-record",
+        "idfc_pf_e_tier_ii_56a25b52": "exact-source-labelled-record",
+        "idfc_pf_c_tier_ii_30f92a2f": "exact-source-labelled-record",
+        "idfc_pf_g_tier_ii_1f9242a3": "exact-source-labelled-record",
+        "idfc_pf_total_b30c659e": "overlapping-source-total",
+        "dsp_black_rock_pf_e_tier_i_6a041c65": "exact-source-labelled-record",
+        "dsp_black_rock_pf_c_tier_i_d11bc797": "exact-source-labelled-record",
+        "dsp_black_rock_pf_g_tier_i_e1fdb71c": "exact-source-labelled-record",
+        "dsp_black_rock_pf_e_tier_ii_5542d0d9": "exact-source-labelled-record",
+        "dsp_black_rock_pf_c_tier_ii_d1a99891": "exact-source-labelled-record",
+        "dsp_black_rock_pf_g_tier_ii_ffbaae0e": "exact-source-labelled-record",
+        "dsp_black_rock_pf_total_4bd9edcd": "overlapping-source-total",
+        "dsp_pf_e_tier_i_b505bbec": "exact-source-labelled-record",
+        "dsp_pf_c_tier_i_1b246989": "exact-source-labelled-record",
+        "dsp_pf_g_tier_i_3931fa83": "exact-source-labelled-record",
+        "dsp_pf_e_tier_ii_30b74f13": "exact-source-labelled-record",
+        "dsp_pf_c_tier_ii_c7275587": "exact-source-labelled-record",
+        "dsp_pf_g_tier_ii_9e38663b": "exact-source-labelled-record",
+        "dsp_pf_a_tier_i_7a34b6e3": "exact-source-labelled-record",
+        "dsp_pf_tts_2_55be26f4": "exact-source-labelled-record",
+        "dsp_pf_total_4de18e15": "overlapping-source-total"
+      },
+      "reason": "Publisher-reported assets under management for the named pension fund and source scheme, in rupees crore, at the source March/FY-labelled endpoint. Retain the source March/FY label; no unprinted calendar day is invented. Current-fund portfolio and ceased-fund reconstructed histories keep their exact source series and last published endpoint. Source disclaimer: registered funds as of 31 March 2025 and historical ceased-fund AUM collated from CRA data or NAV times outstanding units. No current operational status, fund return, performance ranking or assumed APY-fund coverage.",
+      "comparisonReason": "Standalone exact source records only. Population, source-ruler and overlapping-total comparability are not independently certified.",
+      "evidence": [
+        "docs/status/wave-2-pensions-preflight/remaining-primary-table-batch.json.gz",
+        "docs/status/wave-2-pensions-preflight/source-cell-independent-review.json"
+      ],
+      "review": {
+        "sourceVersion": "raw-sha256:e6725d5217630637e5c8e7867f343cadc48cc604c9e43f168a4cbe3e8ebc31aa;source-catalogue:c1717e26af47eeb25a9c39657d95af4d9029bf9ee7b578e87a273078f478da04",
+        "reviewer": "ROOT scoped source-cue acceptance; coordinator exact-row binding; no activation",
+        "rationale": "Publisher-reported assets under management for the named pension fund and source scheme, in rupees crore, at the source March/FY-labelled endpoint. Source disclaimer: registered funds as of 31 March 2025 and historical ceased-fund AUM collated from CRA data or NAV times outstanding units. No current operational status, fund return, performance ranking or assumed APY-fund coverage."
+      },
+      "binding": {
+        "rawFile": "data/raw/pensions/source-documents/e6725d5217630637e5c8e7867f343cadc48cc604c9e43f168a4cbe3e8ebc31aa.xlsx",
+        "rawSha256": "e6725d5217630637e5c8e7867f343cadc48cc604c9e43f168a4cbe3e8ebc31aa",
+        "records": {
+          "sbi_pf_cg_11224214": "f913d7761a04f3b69e2d81b438bf62f5611faa086b78d9f609177bcfb3943360",
+          "sbi_pf_sg_d3125a84": "c09db44e41c97e6cec475bf279d38f3e82914075d87916a339d52e970698f0ad",
+          "sbi_pf_nps_lite_b17be3a0": "31733dd0dc6cfa85ce1558f066466985324734e1fdd39921c2496828ea79b3ec",
+          "sbi_pf_corp_cg_a9776555": "0563ee1de04cc8d3d3529cc028f2935daf6687ab78d081ded9cbcb834178b7c0",
+          "sbi_pf_apy_0dd21556": "10a2090673f298c733d194510f234496b9691f9f650bd54c5609ea7ac007d602",
+          "sbi_pf_e_tier_i_e7993732": "107ebbf6f3e4520aba6cb2846d68dcd37a8f04a07cb6037f66a74a5d7eacac44",
+          "sbi_pf_c_tier_i_e048df49": "44043793949895acedea8d9860ea6dd62e7a8b463d8b5791486b4caaa0712007",
+          "sbi_pf_g_tier_i_cd350899": "9ed4a5b615e431cf8e7c337bdc307b12196e086b8429ec7ea50e2dc2c9ac7c76",
+          "sbi_pf_e_tier_ii_c4511685": "8ffe5e7a972964e32da866dc62074bb3f0c2ddbde75a10c4acd156927988e8fe",
+          "sbi_pf_c_tier_ii_8232750a": "3aff0a6aac152e64588dfe72c8d0b586db0ac4bd0ab5e8045d52cb1c99b3a3ae",
+          "sbi_pf_g_tier_ii_c15bf01f": "0661047dc022db7c9bb23b659d18a7e04cb87eed0f85831d19bd6b6d7b537d8a",
+          "sbi_pf_a_tier_i_7367c0d8": "2afd4e18379cedc539da06861645c30f6de41bc6e792f2cb8416002bb92884ce",
+          "sbi_pf_a_tier_ii_6f55842e": "f9978c4e978082b58e197ae633fa311e2b02da6f33636c781ac34f06ba875e95",
+          "sbi_pf_tts_2_d3afe731": "9611999d298b666d5c4a527b204299c08eddd9b5275c46a65d98f4d4fbe58fcb",
+          "sbi_pf_nps_tier_ii_composite_3635b985": "cb14c1a294fe5367d2d90225df7777195125624520eabae0569606e48722321f",
+          "sbi_pf_total_f8d66c3c": "82a3d4a7cc20c3cd056a23777c7331d1ca33afc685d750fa87647a8f5fd3f235",
+          "lic_pf_cg_8df512f2": "a41e5a2444786505a6e384544213d7286f4608f61a0def23cb6daf0377a9ab4d",
+          "lic_pf_sg_02bd140c": "cd0309429e0fa669ac2db2b54a57e9f2e667492b799b45e2898b36ccf84b7eb2",
+          "lic_pf_nps_lite_599ccae3": "f14000d0dd76166a2b93346519554520bb364cf2003065022579b6f65b2ea662",
+          "lic_pf_corp_cg_135f9966": "9bcae2fe4f329370cc524b65d5c12afe18fd99d963910da9f9e2af025c94003b",
+          "lic_pf_apy_f9c26b3a": "c40336973cf2ccb6b3734ba6f5c158545c8d9aa07eba834da545415226bf4675",
+          "lic_pf_e_tier_i_c8c0e4ee": "a951281c956c63603c2625c9045526de9083cd056f17b697f2e41cee49aacedc",
+          "lic_pf_c_tier_i_d027bd2c": "0847d2e3764d5cec18a79c30dc22c34b2e933e3bbe2ece4d9c69c595234064ec",
+          "lic_pf_g_tier_i_c8852242": "17c504620d7c196a90af27a4a9de9607dbd2b2bd0ea9bf063a17a49a161bb133",
+          "lic_pf_e_tier_ii_300fee19": "47fbce7726b9b82a1acdfab2c3912218cddac5a180b7142a1635245facb69fdb",
+          "lic_pf_c_tier_ii_3b228bd9": "cdda736e6644a88030515fce34b5c7b068e85f200873304c3b25d10e29562e35",
+          "lic_pf_g_tier_ii_8028748c": "6ba3dc15a9a0297a3331db6345fa945b517d07d203b60968d04a7dd29654e10a",
+          "lic_pf_a_tier_i_40664f4c": "40102bea4046fcfd5b8c52bdde9b62b9e8b75c31d569e40dea425d7ea1ca90fa",
+          "lic_pf_a_tier_ii_c0ea6d90": "efc704e975aae4c506cba19465f98b1ad6b53e82e9f973c5f2d3e51d9e882341",
+          "lic_pf_tts_2_05656fea": "dbe917dbf304478035d27b5048e2cac3830d591b03a2bdffecd83b026ff9d0f5",
+          "lic_pf_nps_tier_ii_composite_bb4e1cc3": "acd004e5bea16503ae79c452349285e1867929044e28380142ed8ebcd0605c16",
+          "lic_pf_total_2c170762": "464d5c9d8bf1aeeb4b1c98f864275d0f79b82798cd39c661ec8c10f4fba67f48",
+          "uti_pf_cg_457b8a84": "56a165bc74ff77df42cae6d85e6c5b87cb3057038616f4375a681bb5e462596c",
+          "uti_pf_sg_74e3c039": "3894f25b4faaa5f68e59446737b32837b92c32547839f7f82ca5e258c4371994",
+          "uti_pf_nps_lite_4783c4f9": "d6307c7b9ce0d8ca79ba1e57e0f0185b65539fd912e888debbc244bccdb1cba5",
+          "uti_pf_corp_cg_3744662d": "c3b374ff6504870f0e5a93369ae0071eec7718806d65291b8673e2195d72b074",
+          "uti_pf_apy_b8b24a57": "41f5371c3c2326bf98d484f91c36e75dfc73a2497a9d642ecf277c8d06935a9e",
+          "uti_pf_e_tier_i_7d107423": "d40dcb83235cc13f5f8bf44f89b438a4a625fc1ca77d3bf423714da9756d1237",
+          "uti_pf_c_tier_i_029ed0ab": "1679c0b7a9ac768265352a84c5b3fbf2ba7ed51a7dd3496f818992afbcb24d74",
+          "uti_pf_g_tier_i_4a24974e": "20b58765ef6cd9dfbd78814ca4bb3cf65ddeae6d4c85b47c6ed9100821b396e0",
+          "uti_pf_e_tier_ii_039d48c4": "6ccd33dd988b929f7e5f916896d5eceb1ea86376e9db62915ae995ce0a13063e",
+          "uti_pf_c_tier_ii_56c71b4a": "21bf42529f43c076f0391ac8e68fe9f4d8a0d527205ab27a43f5883dd321f79a",
+          "uti_pf_g_tier_ii_f95281b0": "e3af0332b69010311bae829c970ac899a78d59c6feb4943fed15d54437355aff",
+          "uti_pf_a_tier_i_a8bfa864": "5504f3f1a211605a387179d921e4e63a9757fbfa008b2a3e1a98a997bfca095f",
+          "uti_pf_tts_2_e6859430": "3dd4ac626deabe0b4fde18eb94a5c7fcbb1729c4a6eb262dff66ac777907e363",
+          "uti_pf_nps_tier_ii_composite_2a945f8d": "aee828f340c0fb9fc347a18dfe19a5c871729dc527953af68478121f170c19d9",
+          "uti_pf_total_d85bfbdf": "bf5d909311a02bd0e6808f720592ae464022a8e721b868be2f83bb46bd91a6bc",
+          "hdfc_pf_e_tier_i_16866e58": "2ed2f0d446304f8c7d2782c7e752f87b55d6ce42609e85146ecfbbf6f9681edb",
+          "hdfc_pf_c_tier_i_041ec02a": "d9bb787ccdfbf49d9b04c786ca5309a03784acdaab29ce86e12ed932ecada27f",
+          "hdfc_pf_g_tier_i_e75786ce": "f9a74caf39c06b08430598e0cdf875fd20a10baa50f15b5f759d079a3c393de8",
+          "hdfc_pf_e_tier_ii_6b3bc6ec": "29e195b4c5e7839c3eb8b62f684605f3a7eeb6bd89e2890968c692e17a892c12",
+          "hdfc_pf_c_tier_ii_1fd4fb35": "4957e3341f0a4416dfa9d0b5d6225b28531a84f8065ac7242e35e51199645c39",
+          "hdfc_pf_g_tier_ii_9eef2f81": "eb8cf134d3361883a3954b90ac7fa46bb0d4ad67308823cd19d7144299cc1ed6",
+          "hdfc_pf_a_tier_i_e81810c8": "40fc76dc1c9e52c346bc5be2a1d2c978facdec238c28fa9f9956300d119af986",
+          "hdfc_pf_a_tier_ii_5fa8a549": "b19a802f2936637296accc16f1290ac9390a085775424712ebd8abe23d83156f",
+          "hdfc_pf_tts_2_a7efa145": "3866ccb111ef2237eda1c8d52c4da477e09c68e4ebaabe4abf7a9f4c74a3d5e8",
+          "hdfc_pf_total_46e3df1c": "8acf4e985911dee6aade0122a0280569051055c81c0bf8438d02d41c57e560ba",
+          "icici_pf_e_tier_i_76544b10": "f7585cfe1f42919a7f6567c0dda34a64040e82959c4dfcda2c624792af872394",
+          "icici_pf_c_tier_i_0b13dc9c": "c95748a5143995d9b92d6f42ff62ce017341860f555809ec726448c24baa543d",
+          "icici_pf_g_tier_i_e376efae": "a67e3b4a26470b4cdfcd1124eb1b51085eb2018056f1e426bd4b5e489a776028",
+          "icici_pf_e_tier_ii_74e5429c": "273285b9a334b1f88c701eca270f7c1084458e45c9acc1fdaef0cdfc5db4e76e",
+          "icici_pf_c_tier_ii_f8310b2f": "09589ad93397f7e4b843fc37704022e118347a52921b56ef8610654190805ca8",
+          "icici_pf_g_tier_ii_e3d2f663": "b86da71c33f5f5f983892a04b27327a8215e77f6448ab311c307ed2a74a7a097",
+          "icici_pf_a_tier_i_bad517fe": "063a8f445277d4d9c1062a810ae4708a95098895ce2bdfbc91ddf452a8518904",
+          "icici_pf_a_tier_ii_32b468ed": "c3a8e672c0b17ab406a6a2da2e3ca55db4219f98610f69ed473acbb228d38f93",
+          "icici_pf_tts_2_1c779ded": "93e90203a9489e22e0603b1dafe0624fd621efadfddd200a3c6535e21b8aadcf",
+          "icici_pf_total_b6736b1c": "98a4c416d75ef3bde43790f726f74b3aceb2dde27dea1d7e3a530fd350538346",
+          "kotak_pf_nps_lite_4a1913a5": "48e2faa66f93e6fb6cb56852e46d336e518db61c394c6973cf183e4b9f7067ee",
+          "kotak_pf_e_tier_i_88efecef": "3cfef90b5380b248ed758fb0f227f0c60957ef21ccb50f814547e7af2f3585d2",
+          "kotak_pf_c_tier_i_efd34b5c": "cb6e43fddfa7af34cd93a004daa8fcd5cfeab0bbb25ac2b6a2c5110972659f1d",
+          "kotak_pf_g_tier_i_6fa0c144": "73fcc6e9271d3aa0059bf5fdc194d04153a62e8e9ac43c7cb1294ba35bd0ad67",
+          "kotak_pf_e_tier_ii_ebd45edb": "40e71fa704ae6e87b5d14944b5f7f72149176187abb697aec1a81ca3ecc2feeb",
+          "kotak_pf_c_tier_ii_69e862b0": "e9dd495bdc4f1d730dbe898f1d693798a9458766680a63517df887886a785790",
+          "kotak_pf_g_tier_ii_e9fa3cea": "a59fb900610352fd3ad352db6e90afd6a275fbac9a8156269f5e30772eecd29c",
+          "kotak_pf_a_tier_i_6c47f561": "1b86e292b0817a293635704288add3f42719189f01926e40a4c05d3b12639091",
+          "kotak_pf_a_tier_ii_01a27db2": "3ed3d5408012dabd4151dbb4b996aedb77d21f05d0b149629cc709bd0a23bb95",
+          "kotak_pf_tts_2_b599599a": "1cd00e1fccea9532f46179ef01d765a2b896cde4fd74335c1ecea8feab6a82c1",
+          "kotak_pf_total_ee84b19d": "5407c83a4c53eeeda39469e07af9f9b079602be11c575c32d1ec5df12d7204cc",
+          "aditya_birla_pf_e_tier_i_58425be2": "133c1018f19abb76050d7aed54c2e8ced21b4d95d57dff646c63e9763dc96acf",
+          "aditya_birla_pf_c_tier_i_f28d5810": "52b3fcf83a3769f9f15ea58f144a0a93918c9abd1133696508b8675f7908e696",
+          "aditya_birla_pf_g_tier_i_0a2637f9": "e601ab1e0224d8bc4c8b5141ce188d90c258798a904d0f2813b77cc53e7b49f3",
+          "aditya_birla_pf_e_tier_ii_4f1d5287": "b1eec91a0a5201be2b52ee6a0550171347bbb760567ff0e737b6bb1695a4c9c8",
+          "aditya_birla_pf_c_tier_ii_3373f7ca": "73a409f252f25b57c465ed7565964562e7dfd387741310f2393ec7c90231fb5e",
+          "aditya_birla_pf_g_tier_ii_cf414c95": "45076e281f233f8d9d2ad2fd9bae28134117d51768783591bb361ac0f19f09c5",
+          "aditya_birla_pf_a_tier_i_ce08d7f8": "bf726f6df5c70a365f8f7f311cfd6f9c5e0610b44969e5ed65f29f34ffcbf15d",
+          "aditya_birla_pf_tts_2_57b4965e": "272fc419157acdaaaac644f9f98d9730c7184bd02cc3a100e7cf8dea31329a35",
+          "aditya_birla_pf_total_c7f0bc1d": "a9da545368811b23b604b25cf6588724ee7e4c67fb8e7da9c03def2b7975d3ff",
+          "tata_pf_e_tier_i_37be2ea8": "9b7167eee1a029671619c60eb6267f37fbf701fc5eaee77d268fba75d52707bc",
+          "tata_pf_c_tier_i_2ce35b26": "1bb05e9d556593a107bf6bd92c8c0874127c6d62c85a00e316ca73d4fb15d14a",
+          "tata_pf_g_tier_i_6a70ec17": "5eb161b253385455a20b840e32b574ffeab54a337410748cce4106e8383cc72b",
+          "tata_pf_e_tier_ii_1d97a1ae": "778dcfda991dd0a317d56a8411c4e1df5233f6120ae9ebe4283f6ec593bee04a",
+          "tata_pf_c_tier_ii_b8e303b6": "df15fced008811d6f806c089cba9ee2980eec2903f77f1d84e07cdfacd53a133",
+          "tata_pf_g_tier_ii_ddbd0813": "c35fe2416ceb798d728b24ec3d8c6580bc252e30188b41e421829760a62e4909",
+          "tata_pf_a_tier_i_eb2815a8": "f5e817756099da5ced164776c890820e0d26cd42317f791bf6720b985856baa9",
+          "tata_pf_tts_2_987522c6": "81b822f65f3d89841a9f5375f38ac62db934eb0d6d3bf09382056085f3c2fd49",
+          "tata_pf_total_2bb59d5f": "0613f4949d1ab7eeb33d00fd012e3037bc0882fea429f6182ea1df184d5425cd",
+          "max_pf_e_tier_i_aa8875a8": "f1e7008f9f4c06b1cbef6c76cdcbe2507e6c1830652655011d674ffc708fcb41",
+          "max_pf_c_tier_i_ed074e27": "437f8acba22763db94cabf308c1d6c85d6f4f092a0fe37e0d7f656ca8376b7ea",
+          "max_pf_g_tier_i_4a098d1a": "0a13e086b60509abfb4163f406b8a7e62bd6dbb98d30e96955826afbe1ba8971",
+          "max_pf_e_tier_ii_abedbb6f": "53074a0c1b85f64952e9037c35159f57834dd8474e1948826d651a5177284a57",
+          "max_pf_c_tier_ii_6aa756da": "0cc4b9e78dd55bbe98eed2dd58c94cafc03b96b0b504aff35051d9161beb525c",
+          "max_pf_g_tier_ii_e6ea8bd9": "1e9326c7e56ef3eaa7812bea85fdde72aed3685cbe4cd12af433c96fbf112a6b",
+          "max_pf_a_tier_i_965aacef": "a9f26c3862705672e4d548d60743dca0d36cc4b4284d91c34e9473c20683940d",
+          "max_pf_tts_2_9dbe6bea": "0237f74e2161b4fe8edc88fd8d22ebcdf76fdf94faab7aaa1b4294297e2e0edb",
+          "max_pf_total_bfbb5a45": "e315684aa510ff6eccad0f56c2e1f0d694fb3f7c9faeca5d42fca68c096d79f3",
+          "axis_pf_e_tier_i_82e98663": "03f7f47e1157d2ca65d6ad252ed04b4a678c85ea7e623c53ccef3d0f89ac342c",
+          "axis_pf_c_tier_i_ba91d3bc": "02da70411003581d70eae0b32048255fd1a35348b90fceceb0cc95d7e132b277",
+          "axis_pf_g_tier_i_a0bbab54": "cec3326f064aec4d8a6666d67193cc44831e1a1a8f4d2052b90c39e568bb804d",
+          "axis_pf_e_tier_ii_2ff8f049": "c3eac9f3ad4fcaa82e7d86f696a9f2cd920f36af489166b4500d32afcccffda0",
+          "axis_pf_c_tier_ii_5cae357c": "ce21294ba5868e9ae38c4ee17f3207b49e069c5db774b2a203f8888a06221a76",
+          "axis_pf_g_tier_ii_a7ac715e": "0f137a3f8219a068bb31bff57de1c89e30ed035b99f0952d195d8d31a1003721",
+          "axis_pf_a_tier_i_3ad754dc": "fcc02793d92683cd1e2ac7727b9cfd1ec82219b6f1b41e7c62e020bc09a4a808",
+          "axis_pf_tts_2_63d0af33": "e1ee6efd589f45159ec45ed097eb8d8421c208a52519d7d1c41447bcfd921aa8",
+          "axis_pf_total_3c2a1cfa": "2bcb0e764e71a2a2e825ce34256eb523865e1ccfbf30787ad4afc120429899b7",
+          "reliance_pf_e_tier_i_2cbcac2c": "06a002488dfb8c5f1de4b0104c920da52a17369521d9d38fec3d163c18223148",
+          "reliance_pf_c_tier_i_926f3029": "67ee354b249e43ba96c6eeb423b8adc56520896b06fefe5ba0f00196f6723720",
+          "reliance_pf_g_tier_i_8b6bceb7": "1aba7868edd74deb607d474c8aceac4d77077627aa5ec5dec08d6ade75355a91",
+          "reliance_pf_e_tier_ii_465a3300": "deee36e91ba4e8c3b9ba8fe136156cc356f70bac4e2de4cdcc33e81e47623cd8",
+          "reliance_pf_c_tier_ii_a25b9097": "51356d879b4b9fbc0e0d8fd31500dbcd971a0bcf0b1ea1d870cdb58357d076f5",
+          "reliance_pf_g_tier_ii_7c2dd010": "340392113f25e9dfd9e1fa68497b7c412db2d3bbf5d67fa6809a1900d255ed3b",
+          "reliance_pf_a_tier_i_488ba97f": "85a090fbe71933a3675fad9393387350bb4923666c6fc242de09181b6b414f4c",
+          "reliance_pf_a_tier_ii_0e1f90fd": "7a3a31979682e2a55548d28d30c81b7927c402af3f4661670d0746aa31989984",
+          "reliance_pf_total_7f7854f2": "a357d33e6a501498cd96c47f1449d21446d167d6f0e048ab8c4e420942ac1d2f",
+          "idfc_pf_nps_lite_9106ea46": "064dba621d181988668fe8b2c902137d65318fe7e32a5adabafdf77e558f80f7",
+          "idfc_pf_e_tier_i_18c5e4eb": "df1fce43c46abd79b6600fc829bae8c9b60628cc0e2a177c5f97d1b5a8ea91ab",
+          "idfc_pf_c_tier_i_4796fa27": "d6d0ba9c61244f880c9ad29b598571c3bd9212a8f37f5a5727fcc90b3097853b",
+          "idfc_pf_g_tier_i_46fe41cb": "45ce2964131617c3356a637312b85cd4ba8520da2989a5a48299287232bb525a",
+          "idfc_pf_e_tier_ii_56a25b52": "10aa7ac7e72b8de43c9ffcb9e83bbe1c5f06228b8505f35579f278975a32fb02",
+          "idfc_pf_c_tier_ii_30f92a2f": "a2b8494daeeb25edd4d06d5605cf6e08905c35a37f879edfe36ec4786a8512fb",
+          "idfc_pf_g_tier_ii_1f9242a3": "977e4eb1a93f6b56f5463e216f6543eb943d25923f5370ce09706ccd83fb79d7",
+          "idfc_pf_total_b30c659e": "725a5b1c27be03c65b445ff41062eac85119bd82bab733cefa8760066a56aafe",
+          "dsp_black_rock_pf_e_tier_i_6a041c65": "1a68660c4d29558320bb91ccf903961fdcd5de277eebb31bf009c0ea1abba20d",
+          "dsp_black_rock_pf_c_tier_i_d11bc797": "e67304409fdb5f61c91c1339c69e3d70666eb7b96985fac002170bf5006dc34d",
+          "dsp_black_rock_pf_g_tier_i_e1fdb71c": "df543353540e455f989616b62cf4562c178d0e514792f705b2916f804f8dc68c",
+          "dsp_black_rock_pf_e_tier_ii_5542d0d9": "03b7caa5c2d66f73d42b9f928440565ab5355ba262a00b91ce474e95e348b4ae",
+          "dsp_black_rock_pf_c_tier_ii_d1a99891": "d967ed457a2a3d8479d10b66f4b51b6c6230d0af0f0746487a6adcf243ddf4ab",
+          "dsp_black_rock_pf_g_tier_ii_ffbaae0e": "2b82abc88956d7286e4b2e40080049479eab1fe38bae7a8cac14269283ca8029",
+          "dsp_black_rock_pf_total_4bd9edcd": "b779fc60e57f0cbf14969878de0db53071707bef2170460a8a9ed74539026725",
+          "dsp_pf_e_tier_i_b505bbec": "f2575564c3624fe7fed0d021577965f9db2c198d033846299a767b0a1da005d2",
+          "dsp_pf_c_tier_i_1b246989": "231f6e1a54442cdf90036e5d1c44050645b4da50eed94a320f9d561f5bfff032",
+          "dsp_pf_g_tier_i_3931fa83": "19bded76894a12c7ec58138a3da30cd4c3ebe7c6aede500be32ea0d3d88eb3be",
+          "dsp_pf_e_tier_ii_30b74f13": "3c99c34533dc7d73247c22b8f67cb18f65390970a4acd3777b00a48ec5c860de",
+          "dsp_pf_c_tier_ii_c7275587": "d59b3cac993d5637fc7eb44dfd05a56b26c2076cf5a38bcb7dfe199b222e79e2",
+          "dsp_pf_g_tier_ii_9e38663b": "92e2ae381c0e289a6c4436fe6d938d73bfaa519a1acd65e52c2387c57870334c",
+          "dsp_pf_a_tier_i_7a34b6e3": "d7a66789c6f160572244c54ea3cd1a7cf765e34717ec2d6c9d4dde1249a8ff09",
+          "dsp_pf_tts_2_55be26f4": "b6f1f80637c48c6deb23061a5ad32683d9c88c32afd9f3fec778869e29ed74e2",
+          "dsp_pf_total_4de18e15": "e9f88c46d9a243027b11e61688f3cb619888fd4a74a423ca096f6e9422fc21a6"
+        }
+      }
+    },
+    {
+      "id": "pensions-a2-literal-source-reviewed",
+      "selector": {
+        "bundle": "pensions-a2",
+        "seriesKeys": [
+          "apy_ca7e68f6",
+          "all_citizen_944977cf",
+          "cg_2a8efef8",
+          "corporate_658f4b39",
+          "nps_lite_31697574",
+          "nps_vatsalya_0c14f787",
+          "sg_aa04ed62"
+        ]
+      },
+      "status": "source-literal-amount-or-count-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "observationKind": "observed-stock",
+      "definition": "Publisher-reported source-sector assets under management, in rupees crore, at the source financial-year endpoint.",
+      "referencePeriod": "Source last business day of the financial year.",
+      "sourceLimits": "Exact source sector labels only. Do not transfer the old handbook APY-fund exclusion to current APY-labelled data or sum overlapping scheme/sector coverage.",
+      "sourceCategoryRoles": {
+        "apy_ca7e68f6": "exact-source-labelled-record",
+        "all_citizen_944977cf": "exact-source-labelled-record",
+        "cg_2a8efef8": "exact-source-labelled-record",
+        "corporate_658f4b39": "exact-source-labelled-record",
+        "nps_lite_31697574": "exact-source-labelled-record",
+        "nps_vatsalya_0c14f787": "exact-source-labelled-record",
+        "sg_aa04ed62": "exact-source-labelled-record"
+      },
+      "reason": "Publisher-reported source-sector assets under management, in rupees crore, at the source financial-year endpoint. Source last business day of the financial year. Exact source sector labels only. Do not transfer the old handbook APY-fund exclusion to current APY-labelled data or sum overlapping scheme/sector coverage.",
+      "comparisonReason": "Standalone exact source records only. Population, source-ruler and overlapping-total comparability are not independently certified.",
+      "evidence": [
+        "docs/status/wave-2-pensions-preflight/remaining-primary-table-batch.json.gz",
+        "docs/status/wave-2-pensions-preflight/source-cell-independent-review.json"
+      ],
+      "review": {
+        "sourceVersion": "raw-sha256:8f9aadbf168112672d686b697661424c04e161f247b37dc609b2cb99d626e063;source-catalogue:c1717e26af47eeb25a9c39657d95af4d9029bf9ee7b578e87a273078f478da04",
+        "reviewer": "ROOT scoped source-cue acceptance; coordinator exact-row binding; no activation",
+        "rationale": "Publisher-reported source-sector assets under management, in rupees crore, at the source financial-year endpoint. Exact source sector labels only. Do not transfer the old handbook APY-fund exclusion to current APY-labelled data or sum overlapping scheme/sector coverage."
+      },
+      "binding": {
+        "rawFile": "data/raw/pensions/source-documents/8f9aadbf168112672d686b697661424c04e161f247b37dc609b2cb99d626e063.xlsx",
+        "rawSha256": "8f9aadbf168112672d686b697661424c04e161f247b37dc609b2cb99d626e063",
+        "records": {
+          "apy_ca7e68f6": "f0409368c360e70ca9a2de3679cf5e39de90494bf3e6970056dacc4356d7b924",
+          "all_citizen_944977cf": "9832ee7887ac8b10b7567f6ea71cfabe296136d4e77207f0ef40876f5d0df39c",
+          "cg_2a8efef8": "724b8034284dc9b2198627514a4a2f8962b95ccbdd44b4142d4ec1cf228fb0a6",
+          "corporate_658f4b39": "35ac086f81e84f4237c6ce83457c88a44cc39bf46ce0a60b974e8cf938623263",
+          "nps_lite_31697574": "91599764696d8bf9c76d528571b55d2f386bb398fdcf32fe9f7e2d093994b4b6",
+          "nps_vatsalya_0c14f787": "2486a8a6b2e07b277bcfc3bbc5466831b69e35b438731677837ab9c646122952",
+          "sg_aa04ed62": "550935fcf69953744a7736da1021521fe9dbdf5e94a5ff1a9e969a295b643f1f"
+        }
+      }
+    },
+    {
+      "id": "pensions-m2-literal-source-reviewed",
+      "selector": {
+        "bundle": "pensions-m2",
+        "seriesKeys": [
+          "apy_ca7e68f6",
+          "all_citizen_944977cf",
+          "cg_2a8efef8",
+          "corporate_658f4b39",
+          "msf_tier_i_92707523",
+          "nps_lite_31697574",
+          "nps_vatslya_5846bccc",
+          "sg_aa04ed62",
+          "tts_68071724",
+          "tier_ii_4c179e04"
+        ]
+      },
+      "status": "source-literal-amount-or-count-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "observationKind": "observed-stock",
+      "definition": "Publisher-reported assets under management in the named source sector or separate Tier-II/TTS column, in rupees crore.",
+      "referencePeriod": "Source last business day of the named month; each series retains its own last source endpoint.",
+      "sourceLimits": "Source columns are distinct reported scopes, not a deduplicated universe. No cohort/return/flow inference or summation of overlapping columns.",
+      "sourceCategoryRoles": {
+        "apy_ca7e68f6": "exact-source-labelled-record",
+        "all_citizen_944977cf": "exact-source-labelled-record",
+        "cg_2a8efef8": "exact-source-labelled-record",
+        "corporate_658f4b39": "exact-source-labelled-record",
+        "msf_tier_i_92707523": "exact-source-labelled-record",
+        "nps_lite_31697574": "exact-source-labelled-record",
+        "nps_vatslya_5846bccc": "exact-source-labelled-record",
+        "sg_aa04ed62": "exact-source-labelled-record",
+        "tts_68071724": "exact-source-labelled-record",
+        "tier_ii_4c179e04": "exact-source-labelled-record"
+      },
+      "reason": "Publisher-reported assets under management in the named source sector or separate Tier-II/TTS column, in rupees crore. Source last business day of the named month; each series retains its own last source endpoint. Source columns are distinct reported scopes, not a deduplicated universe. No cohort/return/flow inference or summation of overlapping columns.",
+      "comparisonReason": "Standalone exact source records only. Population, source-ruler and overlapping-total comparability are not independently certified.",
+      "evidence": [
+        "docs/status/wave-2-pensions-preflight/remaining-primary-table-batch.json.gz",
+        "docs/status/wave-2-pensions-preflight/source-cell-independent-review.json"
+      ],
+      "review": {
+        "sourceVersion": "raw-sha256:932befd88bd1d960a370198d1186896c6edb3156b1ce9cd76209999946417f57;source-catalogue:c1717e26af47eeb25a9c39657d95af4d9029bf9ee7b578e87a273078f478da04",
+        "reviewer": "ROOT scoped source-cue acceptance; coordinator exact-row binding; no activation",
+        "rationale": "Publisher-reported assets under management in the named source sector or separate Tier-II/TTS column, in rupees crore. Source columns are distinct reported scopes, not a deduplicated universe. No cohort/return/flow inference or summation of overlapping columns."
+      },
+      "binding": {
+        "rawFile": "data/raw/pensions/source-documents/932befd88bd1d960a370198d1186896c6edb3156b1ce9cd76209999946417f57.xlsx",
+        "rawSha256": "932befd88bd1d960a370198d1186896c6edb3156b1ce9cd76209999946417f57",
+        "records": {
+          "apy_ca7e68f6": "342f01f437ec4b05ad5f4b845f255b1345fe9638c158578acacf8e7ee4656e80",
+          "all_citizen_944977cf": "e75caef31b849b0ff37be2865a634f420c479bfe7e61c86a4544dcd5f01afb99",
+          "cg_2a8efef8": "04bc62ab35ef270c7c8d15ac25f929fc3d2cc43b1c3c14f9ba8eec439ac8341c",
+          "corporate_658f4b39": "c65a0b5f1ea2c42e13cdac66d71fd794f1492eb48d522aab4b31dc472c519638",
+          "msf_tier_i_92707523": "29e0c694fb6c59c3a9657eec53b38ed4315d3e4a9bee70593cfb2ff49fdc8e31",
+          "nps_lite_31697574": "33cc127ad6c58acac64df2c45ce6991ee59bf0aa09c84cbee779233d5b190211",
+          "nps_vatslya_5846bccc": "4af08ce9dee2d4215ad3b5d900d4eba177e0ecca280661ec8a944a3155a7b201",
+          "sg_aa04ed62": "25f28b763d4e1e757f5310f74c3372377f71c1d87a7a44f5f69b072986f97ec6",
+          "tts_68071724": "0abdf8718e982b8391f651b9db1d7b2fdeb48432981959f9c7e1dfa6645f91e2",
+          "tier_ii_4c179e04": "00a8dec957828c658b8a74c3eb6f9c54a444edd825d07b1e4ce07b98b5598427"
+        }
+      }
+    },
+    {
+      "id": "pensions-a11-literal-source-reviewed",
+      "selector": {
+        "bundle": "pensions-a11",
+        "seriesKeys": [
+          "18_20_female_50af2de1",
+          "18_20_male_d13d8dbe",
+          "18_20_transgender_adf42ded",
+          "20_25_female_6ecb2afd",
+          "20_25_male_152ec980",
+          "20_25_transgender_c46f368b",
+          "25_30_female_ce774a13",
+          "25_30_male_1194f4a2",
+          "25_30_transgender_941324dc",
+          "30_35_female_f846e1a0",
+          "30_35_male_2a2e589b",
+          "30_35_transgender_07f1832b",
+          "35_40_female_ca40f692",
+          "35_40_male_d9f28474",
+          "35_40_transgender_b3a5d9a5",
+          "40_45_female_525d4640",
+          "40_45_male_9e45a1ed",
+          "40_45_transgender_bf42b729",
+          "45_50_female_a0c18c3e",
+          "45_50_male_fca790d3",
+          "45_50_transgender_e367289b",
+          "50_55_female_0776ad38",
+          "50_55_male_5d716b84",
+          "50_55_transgender_911ca720",
+          "55_60_female_82e83fcc",
+          "55_60_male_4f1868d3",
+          "55_60_transgender_80ce9d82",
+          "60_65_female_b434af30",
+          "60_65_male_7d427927",
+          "60_65_transgender_45590534",
+          "65_70_female_3f49ccaf",
+          "65_70_male_01b167d5",
+          "65_70_transgender_b3425d9b",
+          "70_75_female_f208ea47",
+          "70_75_male_4e9ffd61",
+          "70_75_transgender_49303491",
+          "more_than_75_male_fcc63376"
+        ]
+      },
+      "status": "source-literal-amount-or-count-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "observationKind": "observed-activity",
+      "definition": "Publisher-reported NPS All Citizen registrations during the named financial year under the exact published age and gender labels.",
+      "referencePeriod": "Registrations during the source FY. Age/gender labels are retained as source categories; no undocumented current-age, account-status or participant-uniqueness claim.",
+      "sourceLimits": "No household/eligible-population denominator, age distribution reclassification, gender participation rate or cross-record comparison.",
+      "sourceCategoryRoles": {
+        "18_20_female_50af2de1": "exact-source-labelled-record",
+        "18_20_male_d13d8dbe": "exact-source-labelled-record",
+        "18_20_transgender_adf42ded": "exact-source-labelled-record",
+        "20_25_female_6ecb2afd": "exact-source-labelled-record",
+        "20_25_male_152ec980": "exact-source-labelled-record",
+        "20_25_transgender_c46f368b": "exact-source-labelled-record",
+        "25_30_female_ce774a13": "exact-source-labelled-record",
+        "25_30_male_1194f4a2": "exact-source-labelled-record",
+        "25_30_transgender_941324dc": "exact-source-labelled-record",
+        "30_35_female_f846e1a0": "exact-source-labelled-record",
+        "30_35_male_2a2e589b": "exact-source-labelled-record",
+        "30_35_transgender_07f1832b": "exact-source-labelled-record",
+        "35_40_female_ca40f692": "exact-source-labelled-record",
+        "35_40_male_d9f28474": "exact-source-labelled-record",
+        "35_40_transgender_b3a5d9a5": "exact-source-labelled-record",
+        "40_45_female_525d4640": "exact-source-labelled-record",
+        "40_45_male_9e45a1ed": "exact-source-labelled-record",
+        "40_45_transgender_bf42b729": "exact-source-labelled-record",
+        "45_50_female_a0c18c3e": "exact-source-labelled-record",
+        "45_50_male_fca790d3": "exact-source-labelled-record",
+        "45_50_transgender_e367289b": "exact-source-labelled-record",
+        "50_55_female_0776ad38": "exact-source-labelled-record",
+        "50_55_male_5d716b84": "exact-source-labelled-record",
+        "50_55_transgender_911ca720": "exact-source-labelled-record",
+        "55_60_female_82e83fcc": "exact-source-labelled-record",
+        "55_60_male_4f1868d3": "exact-source-labelled-record",
+        "55_60_transgender_80ce9d82": "exact-source-labelled-record",
+        "60_65_female_b434af30": "exact-source-labelled-record",
+        "60_65_male_7d427927": "exact-source-labelled-record",
+        "60_65_transgender_45590534": "exact-source-labelled-record",
+        "65_70_female_3f49ccaf": "exact-source-labelled-record",
+        "65_70_male_01b167d5": "exact-source-labelled-record",
+        "65_70_transgender_b3425d9b": "exact-source-labelled-record",
+        "70_75_female_f208ea47": "exact-source-labelled-record",
+        "70_75_male_4e9ffd61": "exact-source-labelled-record",
+        "70_75_transgender_49303491": "exact-source-labelled-record",
+        "more_than_75_male_fcc63376": "exact-source-labelled-record"
+      },
+      "reason": "Publisher-reported NPS All Citizen registrations during the named financial year under the exact published age and gender labels. Registrations during the source FY. Age/gender labels are retained as source categories; no undocumented current-age, account-status or participant-uniqueness claim. No household/eligible-population denominator, age distribution reclassification, gender participation rate or cross-record comparison.",
+      "comparisonReason": "Standalone exact source records only. Population, source-ruler and overlapping-total comparability are not independently certified.",
+      "evidence": [
+        "docs/status/wave-2-pensions-preflight/remaining-primary-table-batch.json.gz",
+        "docs/status/wave-2-pensions-preflight/source-cell-independent-review.json"
+      ],
+      "review": {
+        "sourceVersion": "raw-sha256:be3f610eb6a167ce214a638c191330c5ebe52ad62c72d6945854da379fce6332;source-catalogue:c1717e26af47eeb25a9c39657d95af4d9029bf9ee7b578e87a273078f478da04",
+        "reviewer": "ROOT scoped source-cue acceptance; coordinator exact-row binding; no activation",
+        "rationale": "Publisher-reported NPS All Citizen registrations during the named financial year under the exact published age and gender labels. No household/eligible-population denominator, age distribution reclassification, gender participation rate or cross-record comparison."
+      },
+      "binding": {
+        "rawFile": "data/raw/pensions/source-documents/be3f610eb6a167ce214a638c191330c5ebe52ad62c72d6945854da379fce6332.xlsx",
+        "rawSha256": "be3f610eb6a167ce214a638c191330c5ebe52ad62c72d6945854da379fce6332",
+        "records": {
+          "18_20_female_50af2de1": "ed74f0639c6062a10a440705fc5f743df35cade054e70ac0ab15533737fefee2",
+          "18_20_male_d13d8dbe": "a939a9b30b49cce670c0eb96ecd22d8019d20f481c81b837137995b82bca8239",
+          "18_20_transgender_adf42ded": "9efc542284358173ffaffe397b603c762cfdc94b58923c15cf5a90202fadce1e",
+          "20_25_female_6ecb2afd": "5dec738f4e8ccfcd8009db3475dbfa5199685d896598994bfefbccc4baec4cfd",
+          "20_25_male_152ec980": "7b4be21e4ef00f88318f7e24a250a77b66aafad90bd6a2a7fb0e53d2cf894015",
+          "20_25_transgender_c46f368b": "edb08fd8c233d5b7bc281b92c8be59245746e0fb219c3f74f3123d10dcb8db01",
+          "25_30_female_ce774a13": "0d9417a39f99bf45e1ee82f2ba194e15a9a57c5fae92738d6d0ed75098941ce7",
+          "25_30_male_1194f4a2": "59b6002f2078c4407b57e32b46036e19fc6e9fde5c33a2a7cb187544b3d5b9fd",
+          "25_30_transgender_941324dc": "9fc14ddcc3e930f20b206ac151611c08c13e5a928625f5733702167d5ac7ba83",
+          "30_35_female_f846e1a0": "abc7deaec301d077c1b72694e8009961659670d4ca91c4041348cde68feb837b",
+          "30_35_male_2a2e589b": "b0a9ce144139b4eeb47b318a8265486d04acea342311dbe85f071c6b6f9e9cdf",
+          "30_35_transgender_07f1832b": "f28a9fc2b0e882a629469cb1f2bada66647d78ab2ae60394f04bfd3cc9661209",
+          "35_40_female_ca40f692": "906d355ab44e1c63b7ea01f87fcd476173bc967c8a2811424a7d263f676ae7aa",
+          "35_40_male_d9f28474": "96ee100f52de8ad220e70d9ea600e0bc2fab81bfba579da38f76625bc7d00912",
+          "35_40_transgender_b3a5d9a5": "195a4b2d85bb4ec8e40e7a8f8a6352e017561f189ed3cc0b2ef7b583a756269f",
+          "40_45_female_525d4640": "7154bd0b86e1aaeb218729ed315e1b16bd4ce0bf9297720e61d37c64821058b6",
+          "40_45_male_9e45a1ed": "38617a89338296b017e4bb542cc29c0789f5ea141324cee08cd5d8f7a611fa40",
+          "40_45_transgender_bf42b729": "19906bc5ede28232092cfd3f80b86cdf5befdb753b41a0428fe8b23bc7b998fa",
+          "45_50_female_a0c18c3e": "62c993d71099f5ff93b7df67031ca25df00892802ed6d25f036803d499aea873",
+          "45_50_male_fca790d3": "6314c36dd86ecd0a30da62730beb6e7b5284a7862b8fedca1794cb47538ae7ea",
+          "45_50_transgender_e367289b": "99d62ee719888cbeb35b3a1fbfee9ef0442aa82ab496c10a2418e271d1ff2f15",
+          "50_55_female_0776ad38": "535907c1dbdfa7c2d82db61ecbee9d216e80a4d2b6bed4cd60627de574ac722e",
+          "50_55_male_5d716b84": "49bc6630c0c7ce44ec689f1a268a7c02bdfda3b4593fc28f4b1ae2131e9fe2e5",
+          "50_55_transgender_911ca720": "0b7da44e1d9f12c774fbf41ea5c4fa950a91ce74e70e3f1e2816d0e6eef02ed2",
+          "55_60_female_82e83fcc": "240eec41ff8a83e8ee7dd7b17dab038a13c89dc97c0763d824b863f5c877920f",
+          "55_60_male_4f1868d3": "0391fbaf4ff048e30e1c162773945dddaa9d83245df2d4279ebe27a44eea256c",
+          "55_60_transgender_80ce9d82": "5cbfe904b93c8624e69ded7a8af7645a6134cbd5ee21f37ac72d83178634e6fb",
+          "60_65_female_b434af30": "df58736071b16def3aaab47c6221b825d7152dfd5134420bb184602b647ae3b4",
+          "60_65_male_7d427927": "f7416f8a7586ab77bed54276bbc8ec78e65d0b84f48394297c8227c5fc079d90",
+          "60_65_transgender_45590534": "c20d919159e7eca25661400a8301efc891c4781e9c45a271bc75e82da24a45a5",
+          "65_70_female_3f49ccaf": "0a38818b60624338cef74184315c1d316eac26dc40d6690741f0befd32d3dab3",
+          "65_70_male_01b167d5": "93199c4ea6da574badeb6ac3470f0d6caa2839b058135093d743ba822c33d94d",
+          "65_70_transgender_b3425d9b": "2486b0f02d6cc9de7439d413487a03cb40d78d0c4af0681df22ab053dfa6dd8b",
+          "70_75_female_f208ea47": "6a17f9d0c086311881f1876e2b79d82080fce988ddaf663e2ed8b9131a14fa65",
+          "70_75_male_4e9ffd61": "34bc1ae59c86a597d06e0f86b8723e957df0e6c9272215404142719da5d6121c",
+          "70_75_transgender_49303491": "bee216d1d6831226b8bad577f355152702293cee66e10029c8f31389f14aa389",
+          "more_than_75_male_fcc63376": "b6b4299114dd472a1fa35e69958864f04088973e8382fba8ab586740b0b52a42"
+        }
+      }
+    },
+    {
+      "id": "pensions-a13-literal-source-reviewed",
+      "selector": {
+        "bundle": "pensions-a13",
+        "seriesKeys": [
+          "option_a_7ec3c771",
+          "option_b_aa30f0ff",
+          "option_c_b0ac7b32",
+          "option_d_e3417ce8",
+          "option_e_758122b7",
+          "option_f_1324c94d",
+          "option_g_80f04cc7",
+          "others_7b504b9b",
+          "total_8b1be9fc"
+        ]
+      },
+      "status": "source-literal-amount-or-count-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "observationKind": "observed-activity",
+      "definition": "Publisher-reported annuity cases processed and uploaded in CRA portals, classified by the exact source annuity option and financial-year column.",
+      "referencePeriod": "Source FY-labelled case counts; cases are not asserted to be unique people or household retirement income.",
+      "sourceLimits": "Options A–G meanings and Others definition remain with source note. Total is an overlapping aggregate; it is never summed with options or compared as an additional distinct population.",
+      "sourceCategoryRoles": {
+        "option_a_7ec3c771": "exact-source-labelled-record",
+        "option_b_aa30f0ff": "exact-source-labelled-record",
+        "option_c_b0ac7b32": "exact-source-labelled-record",
+        "option_d_e3417ce8": "exact-source-labelled-record",
+        "option_e_758122b7": "exact-source-labelled-record",
+        "option_f_1324c94d": "exact-source-labelled-record",
+        "option_g_80f04cc7": "exact-source-labelled-record",
+        "others_7b504b9b": "source-other-options",
+        "total_8b1be9fc": "overlapping-source-total"
+      },
+      "reason": "Publisher-reported annuity cases processed and uploaded in CRA portals, classified by the exact source annuity option and financial-year column. Source FY-labelled case counts; cases are not asserted to be unique people or household retirement income. Options A–G meanings and Others definition remain with source note. Total is an overlapping aggregate; it is never summed with options or compared as an additional distinct population.",
+      "comparisonReason": "Standalone exact source records only. Population, source-ruler and overlapping-total comparability are not independently certified.",
+      "evidence": [
+        "docs/status/wave-2-pensions-preflight/remaining-primary-table-batch.json.gz",
+        "docs/status/wave-2-pensions-preflight/source-cell-independent-review.json"
+      ],
+      "review": {
+        "sourceVersion": "raw-sha256:d546ee5f15d520c302dac76098f295590e3797588e38e08e0698f1f2422a5bb3;source-catalogue:c1717e26af47eeb25a9c39657d95af4d9029bf9ee7b578e87a273078f478da04",
+        "reviewer": "ROOT scoped source-cue acceptance; coordinator exact-row binding; no activation",
+        "rationale": "Publisher-reported annuity cases processed and uploaded in CRA portals, classified by the exact source annuity option and financial-year column. Options A–G meanings and Others definition remain with source note. Total is an overlapping aggregate; it is never summed with options or compared as an additional distinct population."
+      },
+      "binding": {
+        "rawFile": "data/raw/pensions/source-documents/d546ee5f15d520c302dac76098f295590e3797588e38e08e0698f1f2422a5bb3.xlsx",
+        "rawSha256": "d546ee5f15d520c302dac76098f295590e3797588e38e08e0698f1f2422a5bb3",
+        "records": {
+          "option_a_7ec3c771": "eab3f76ff1589889e9d0a1b92a623e769d145612d91f7a3ee3301e4d50cc2ec9",
+          "option_b_aa30f0ff": "f2baaa72b33338e4eef44516d547eacc662e6f0a49cb5eb8f7e26dc3bbfe5860",
+          "option_c_b0ac7b32": "445c2273e02fe657b75ff5b66ff7841528be7e1dda2c786deb90212d798caec8",
+          "option_d_e3417ce8": "07d425deeeb73866bbe7d28808856d837c77c9c4533357208e5a3f879019d93f",
+          "option_e_758122b7": "ef369841f31a7aab46a463fee9294cc070497e3cc7ef6384d4b09955017f7632",
+          "option_f_1324c94d": "68745a6b92a95539e49460c723d2d155729d715e79a61f0067992058f347d833",
+          "option_g_80f04cc7": "650e3059a10be3042c15a8b26d875e229927f253e5cd068be0704d3689fed806",
+          "others_7b504b9b": "6c7177a180e5878b1d2f20a28f7e1b7bf802b05d37d62ce5359621f5b42698fe",
+          "total_8b1be9fc": "41d6f19f21667c9f68f3a5ed26e12114399dee662696fbaac81e1e9f70ad348b"
+        }
+      }
+    },
+    {
+      "id": "pensions-a21-count-literal-source-reviewed",
+      "selector": {
+        "bundle": "pensions-a21-count",
+        "seriesKeys": [
+          "number_of_subscribers_tier1_as_end_of_march_of_the_particular_year_35a406a0"
+        ]
+      },
+      "status": "source-literal-amount-or-count-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "observationKind": "observed-stock",
+      "definition": "Publisher-reported eNPS Tier-I subscriber count at the end of March of the named source financial year.",
+      "referencePeriod": "Source March-end subscriber stock. Current workbook count note retained; no undocumented active/frozen status or book all-sector universe transferred.",
+      "sourceLimits": "The separate workbook contribution note specifies NPS All Citizen; it does not grammatically define the subscriber-count sector universe. No cross-sector count comparison or contribution meaning is inferred.",
+      "sourceCategoryRoles": {
+        "number_of_subscribers_tier1_as_end_of_march_of_the_particular_year_35a406a0": "exact-source-labelled-record"
+      },
+      "reason": "Publisher-reported eNPS Tier-I subscriber count at the end of March of the named source financial year. Source March-end subscriber stock. Current workbook count note retained; no undocumented active/frozen status or book all-sector universe transferred. The separate workbook contribution note specifies NPS All Citizen; it does not grammatically define the subscriber-count sector universe. No cross-sector count comparison or contribution meaning is inferred.",
+      "comparisonReason": "Standalone exact source records only. Population, source-ruler and overlapping-total comparability are not independently certified.",
+      "evidence": [
+        "docs/status/wave-2-pensions-preflight/remaining-primary-table-batch.json.gz",
+        "docs/status/wave-2-pensions-preflight/source-cell-independent-review.json"
+      ],
+      "review": {
+        "sourceVersion": "raw-sha256:fe0a9da97c68f28faf79b5d2000f9060c57e81c18e9050b1e94890b239786f4e;source-catalogue:c1717e26af47eeb25a9c39657d95af4d9029bf9ee7b578e87a273078f478da04",
+        "reviewer": "ROOT scoped source-cue acceptance; coordinator exact-row binding; no activation",
+        "rationale": "Publisher-reported eNPS Tier-I subscriber count at the end of March of the named source financial year. The separate workbook contribution note specifies NPS All Citizen; it does not grammatically define the subscriber-count sector universe. No cross-sector count comparison or contribution meaning is inferred."
+      },
+      "binding": {
+        "rawFile": "data/raw/pensions/source-documents/fe0a9da97c68f28faf79b5d2000f9060c57e81c18e9050b1e94890b239786f4e.xlsx",
+        "rawSha256": "fe0a9da97c68f28faf79b5d2000f9060c57e81c18e9050b1e94890b239786f4e",
+        "records": {
+          "number_of_subscribers_tier1_as_end_of_march_of_the_particular_year_35a406a0": "f42d5807cce1287169441445c69849afb1243ac437318566f63335733f256927"
+        }
+      }
+    },
+    {
+      "id": "pensions-a23-primary-expected-schedule",
+      "selector": {
+        "bundle": "pensions-a23",
+        "seriesKeys": [
+          "all_citizen_944977cf",
+          "cg_2a8efef8",
+          "corporate_658f4b39",
+          "nps_lite_31697574",
+          "sg_aa04ed62"
+        ]
+      },
+      "status": "primary-expected-schedule-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "observationKind": "expected-schedule",
+      "definition": "Publisher-reported expected NPS exit/superannuation schedule for the named source sector under the published CRA retirement-date or date-of-birth criteria. These counts are expected schedule entries, not realised exits.",
+      "referencePeriod": "Retain all seven source fiscal-year rows. The current workbook does not publish a forecast snapshot date.",
+      "sourceLimits": "Source heading says next five years; seven fiscal-year rows are retained. The source-specific method remains visible. No handbook snapshot date, realised exits, unique-person total or cross-sector comparison is inferred.",
+      "reason": "Exact original workbook counts, source fiscal-year rows, source method and unknown forecast snapshot are independently bound to each expected record. These are expected schedules rather than realised outcomes.",
+      "comparisonReason": "The named source-sector populations and eligibility rules are not certified for summation or cross-record comparison.",
+      "evidence": [
+        "data/coverage/pensions.expected-schedule-source-contract.json",
+        "docs/status/wave-2-pensions-preflight/expected-factory-relocation-tests.log",
+        "docs/status/wave-2-pensions-preflight/source-cell-independent-review.json"
+      ],
+      "review": {
+        "sourceVersion": "raw-sha256:4d30c026c9e3d368d6ff09986c94fcda62fbe2951fcbf4061428e80b743fb3e0;expected-descriptor:df90f07e566f217d4c8462e24bd238c580dc981e1a571c0397d1a33cfc29c7b0;dependencies:61341c0a4ca35e89731459205acb7a8e37795a4681dfb1830d53e88ca4f2b86f",
+        "reviewer": "ROOT-reviewed expected source meaning; independent original/factory/SSR replay; proposed policy not activated",
+        "rationale": "All35 source counts across five exact sectors and seven source fiscal years match the original workbook and pinned df90 descriptor, with literal method and unknown as-of; no source edition date is transferred."
+      },
+      "binding": {
+        "rawFile": "data/raw/pensions/source-documents/4d30c026c9e3d368d6ff09986c94fcda62fbe2951fcbf4061428e80b743fb3e0.xlsx",
+        "rawSha256": "4d30c026c9e3d368d6ff09986c94fcda62fbe2951fcbf4061428e80b743fb3e0",
+        "records": {
+          "all_citizen_944977cf": "e01a8a01477dae94cb0e01025797adc5e507eebf86c5427cf5989f83a5c9d3a2",
+          "cg_2a8efef8": "b4a51cbd5f674e2988e58639961fbc5cb2c39aedb0e7b03e371da0c00dc213bf",
+          "corporate_658f4b39": "e7170ed2e1dccb9f0cd90e692132fb9cd601e82b4a421bba1c31da1054a1a6cf",
+          "nps_lite_31697574": "57bbb583845cfef80ee96b5d4fbf1f55f748943d98187e2845893786afa84818",
+          "sg_aa04ed62": "67375e775d60a939be50a31a72230b4cd6a612e56507d1e9e3f7c9b8c9394808"
+        }
+      }
+    },
+    {
+      "id": "pensions-unreviewed-source-definition",
+      "selector": {
+        "dossier": "pensions"
+      },
+      "status": "source-definition-review-pending",
+      "canInterpret": false,
+      "canCompare": false,
+      "publicTitle": "Pension source record awaiting definition review",
+      "reason": "Exact archived pension records remain accessible. Unit, population, association, forecast and territorial definitions must receive source-bound review before numeric interpretation or comparison.",
+      "evidence": [
+        "docs/status/wave-2-pensions-preflight/admission-precheck.json"
+      ]
+    },
+    {
+      "id": "investor-reviewed-national-monthly-net-flow",
+      "selector": {
+        "bundle": "investor-monthly-categories-2026-inr-crore",
+        "seriesKeys": [
+          "8966f35dc7a8cfaa0125"
+        ]
+      },
+      "status": "source-column-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "comparisonReason": "Only the literal source column and its two monthly observations have been reviewed. Cross-series comparisons, ratios, rankings by change, growth and other derived rates are not approved.",
+      "publicTitle": "Conventional mutual-fund net inflow or outflow during the month",
+      "definition": "Grand Total net inflow (+ve) or outflow (-ve) for August and September 2026, in INR crore, as headed in the AMFI workbooks. Negative values remain source observations. This is a monthly net transaction measure, not the change in asset value or household saving.",
+      "observationKind": "observed-activity",
+      "referenceBasis": "The date axis is a first-of-month key for the named August or September 2026 reporting month. The official headers distinguish month-end stock, monthly average and monthly net transactions; the key is not a literal observation day.",
+      "reason": "Six exact cells and their original workbook headers, Grand Total label, INR crore unit and domestic FoF informational footnote were independently reread from two hash-verified official originals. This attests three literal source records only.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ],
+      "review": {
+        "reviewedAt": "2026-10-15",
+        "sourceVersion": "81ef11259b217008241009334a95f67abe23e650cd030b838f5815405a8273e2",
+        "reviewer": "Atlas local original-workbook source review; canonical admission pending",
+        "rationale": "Every observation of this two-month source record exactly matches its original Grand Total cell and explicit stock, average or transaction header. No extrapolation to categories, historic layouts, geography, people, other columns or derived measures.",
+        "evidenceVersion": "81ef11259b217008241009334a95f67abe23e650cd030b838f5815405a8273e2"
+      },
+      "binding": {
+        "rawFile": "data/raw/investor/source-documents/b1daaaf1a8c71260c10e9056272bebf7f3367559ac66d5ad5d6d0ec8a9f09967.xls",
+        "rawSha256": "b1daaaf1a8c71260c10e9056272bebf7f3367559ac66d5ad5d6d0ec8a9f09967",
+        "records": {
+          "8966f35dc7a8cfaa0125": "ad95e224c6b479b8153b191dbcdf30bf52d98da6b902ce8583804a895b032926"
+        }
+      },
+      "supportingOriginals": [
+        {
+          "sha256": "0cbf67cad1254c60748a635c31bc5e96cff46900b842e205d821b3834ee9c31e",
+          "url": "https://portal.amfiindia.com/spages/amaug2026repo.xls",
+          "bytes": 116736
+        },
+        {
+          "sha256": "b1daaaf1a8c71260c10e9056272bebf7f3367559ac66d5ad5d6d0ec8a9f09967",
+          "url": "https://portal.amfiindia.com/spages/amsep2026repo.xls",
+          "bytes": 110080
+        }
+      ]
+    },
+    {
+      "id": "investor-reviewed-national-monthly-average-aum",
+      "selector": {
+        "bundle": "investor-monthly-categories-2026-inr-crore",
+        "seriesKeys": [
+          "3e27339c52a83574d6e7"
+        ]
+      },
+      "status": "source-column-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "comparisonReason": "Only the literal source column and its two monthly observations have been reviewed. Cross-series comparisons, ratios, rankings by change, growth and other derived rates are not approved.",
+      "publicTitle": "Conventional mutual-fund average net assets during the month",
+      "definition": "Grand Total average net assets under management for August and September 2026, in INR crore, as explicitly headed in the AMFI monthly workbooks. The arithmetic averaging methodology is not established by this header review. This is the source monthly average asset measure, not month-end assets or money subscribed.",
+      "observationKind": "observed-period-average",
+      "referenceBasis": "The date axis is a first-of-month key for the named August or September 2026 reporting month. The official headers distinguish month-end stock, monthly average and monthly net transactions; the key is not a literal observation day.",
+      "reason": "Six exact cells and their original workbook headers, Grand Total label, INR crore unit and domestic FoF informational footnote were independently reread from two hash-verified official originals. This attests three literal source records only.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ],
+      "review": {
+        "reviewedAt": "2026-10-15",
+        "sourceVersion": "81ef11259b217008241009334a95f67abe23e650cd030b838f5815405a8273e2",
+        "reviewer": "Atlas local original-workbook source review; canonical admission pending",
+        "rationale": "Every observation of this two-month source record exactly matches its original Grand Total cell and explicit stock, average or transaction header. No extrapolation to categories, historic layouts, geography, people, other columns or derived measures.",
+        "evidenceVersion": "81ef11259b217008241009334a95f67abe23e650cd030b838f5815405a8273e2"
+      },
+      "binding": {
+        "rawFile": "data/raw/investor/source-documents/b1daaaf1a8c71260c10e9056272bebf7f3367559ac66d5ad5d6d0ec8a9f09967.xls",
+        "rawSha256": "b1daaaf1a8c71260c10e9056272bebf7f3367559ac66d5ad5d6d0ec8a9f09967",
+        "records": {
+          "3e27339c52a83574d6e7": "1f6e73b6d019652a6d0f9fe4a9a331266dec622bb7051bc3d9e0751613cb71fd"
+        }
+      },
+      "supportingOriginals": [
+        {
+          "sha256": "0cbf67cad1254c60748a635c31bc5e96cff46900b842e205d821b3834ee9c31e",
+          "url": "https://portal.amfiindia.com/spages/amaug2026repo.xls",
+          "bytes": 116736
+        },
+        {
+          "sha256": "b1daaaf1a8c71260c10e9056272bebf7f3367559ac66d5ad5d6d0ec8a9f09967",
+          "url": "https://portal.amfiindia.com/spages/amsep2026repo.xls",
+          "bytes": 110080
+        }
+      ]
+    },
+    {
+      "id": "investor-reviewed-national-month-end-aum",
+      "selector": {
+        "bundle": "investor-monthly-categories-2026-inr-crore",
+        "seriesKeys": [
+          "71c202ab560558e4e0f6"
+        ]
+      },
+      "status": "source-column-reviewed",
+      "canInterpret": true,
+      "canCompare": false,
+      "comparisonReason": "Only the literal source column and its two monthly observations have been reviewed. Cross-series comparisons, ratios, rankings by change, growth and other derived rates are not approved.",
+      "publicTitle": "Conventional mutual-fund net assets at month end",
+      "definition": "Grand Total net assets under management as on the final calendar day of August and September 2026, in INR crore. Domestic funds of funds appear as a separate informational memo, already included through underlying schemes. This is an asset valuation stock, not subscriptions, household saving or a count of investors.",
+      "observationKind": "observed-stock",
+      "referenceBasis": "The date axis is a first-of-month key for the named August or September 2026 reporting month. The official headers distinguish month-end stock, monthly average and monthly net transactions; the key is not a literal observation day.",
+      "reason": "Six exact cells and their original workbook headers, Grand Total label, INR crore unit and domestic FoF informational footnote were independently reread from two hash-verified official originals. This attests three literal source records only.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ],
+      "review": {
+        "reviewedAt": "2026-10-15",
+        "sourceVersion": "81ef11259b217008241009334a95f67abe23e650cd030b838f5815405a8273e2",
+        "reviewer": "Atlas local original-workbook source review; canonical admission pending",
+        "rationale": "Every observation of this two-month source record exactly matches its original Grand Total cell and explicit stock, average or transaction header. No extrapolation to categories, historic layouts, geography, people, other columns or derived measures.",
+        "evidenceVersion": "81ef11259b217008241009334a95f67abe23e650cd030b838f5815405a8273e2"
+      },
+      "binding": {
+        "rawFile": "data/raw/investor/source-documents/b1daaaf1a8c71260c10e9056272bebf7f3367559ac66d5ad5d6d0ec8a9f09967.xls",
+        "rawSha256": "b1daaaf1a8c71260c10e9056272bebf7f3367559ac66d5ad5d6d0ec8a9f09967",
+        "records": {
+          "71c202ab560558e4e0f6": "0b9dcb093cd39199c8ab1ae821dde3fd8a5692e60103e6b4a002c9159235f745"
+        }
+      },
+      "supportingOriginals": [
+        {
+          "sha256": "0cbf67cad1254c60748a635c31bc5e96cff46900b842e205d821b3834ee9c31e",
+          "url": "https://portal.amfiindia.com/spages/amaug2026repo.xls",
+          "bytes": 116736
+        },
+        {
+          "sha256": "b1daaaf1a8c71260c10e9056272bebf7f3367559ac66d5ad5d6d0ec8a9f09967",
+          "url": "https://portal.amfiindia.com/spages/amsep2026repo.xls",
+          "bytes": 110080
+        }
+      ]
+    },
+    {
+      "id": "investor-pending-investor-channels-native-inr-crore",
+      "selector": {
+        "bundle": "investor-channels-native-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "AMFI API T15/B15 city keys have not been reconciled with the later SEBI T30/B30 disclosure definition. Source values and literal keys remain archival; no geography or other channel interpretation is certified by this policy.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-combined-native-count",
+      "selector": {
+        "bundle": "investor-combined-native-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-combined-native-inr-crore",
+      "selector": {
+        "bundle": "investor-combined-native-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-direct-native-inr-crore",
+      "selector": {
+        "bundle": "investor-direct-native-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-holding-quarterly-inr-crore",
+      "selector": {
+        "bundle": "investor-holding-quarterly-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-holding-quarterly-pct",
+      "selector": {
+        "bundle": "investor-holding-quarterly-pct"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-holding-semiannual-inr-crore",
+      "selector": {
+        "bundle": "investor-holding-semiannual-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-holding-semiannual-pct",
+      "selector": {
+        "bundle": "investor-holding-semiannual-pct"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-investors-quarterly-count",
+      "selector": {
+        "bundle": "investor-investors-quarterly-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-investors-quarterly-inr-crore",
+      "selector": {
+        "bundle": "investor-investors-quarterly-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-investors-quarterly-pct",
+      "selector": {
+        "bundle": "investor-investors-quarterly-pct"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-investors-semiannual-count",
+      "selector": {
+        "bundle": "investor-investors-semiannual-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-investors-semiannual-inr-crore",
+      "selector": {
+        "bundle": "investor-investors-semiannual-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-investors-semiannual-pct",
+      "selector": {
+        "bundle": "investor-investors-semiannual-pct"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-monthly-categories-2026-count",
+      "selector": {
+        "bundle": "investor-monthly-categories-2026-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-monthly-categories-2026-inr-crore",
+      "selector": {
+        "bundle": "investor-monthly-categories-2026-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-monthly-categories-2026-sip-count",
+      "selector": {
+        "bundle": "investor-monthly-categories-2026-sip-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-monthly-categories-2026-sip-inr-crore",
+      "selector": {
+        "bundle": "investor-monthly-categories-2026-sip-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-monthly-mcr-2019-count",
+      "selector": {
+        "bundle": "investor-monthly-mcr-2019-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-monthly-mcr-2019-inr-crore",
+      "selector": {
+        "bundle": "investor-monthly-mcr-2019-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-passive-native-count",
+      "selector": {
+        "bundle": "investor-passive-native-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-passive-native-inr-crore",
+      "selector": {
+        "bundle": "investor-passive-native-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-legacy-count",
+      "selector": {
+        "bundle": "investor-sebi-legacy-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-legacy-crore",
+      "selector": {
+        "bundle": "investor-sebi-legacy-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-legacy-inr-crore",
+      "selector": {
+        "bundle": "investor-sebi-legacy-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-legacy-lakh",
+      "selector": {
+        "bundle": "investor-sebi-legacy-lakh"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-legacy-million",
+      "selector": {
+        "bundle": "investor-sebi-legacy-million"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-legacy-percent",
+      "selector": {
+        "bundle": "investor-sebi-legacy-percent"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-modern-count",
+      "selector": {
+        "bundle": "investor-sebi-modern-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-modern-crore",
+      "selector": {
+        "bundle": "investor-sebi-modern-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-modern-inr-crore",
+      "selector": {
+        "bundle": "investor-sebi-modern-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-modern-lakh",
+      "selector": {
+        "bundle": "investor-sebi-modern-lakh"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-modern-million",
+      "selector": {
+        "bundle": "investor-sebi-modern-million"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sebi-modern-percent",
+      "selector": {
+        "bundle": "investor-sebi-modern-percent"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Securities and Exchange Board of India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sif-native-count",
+      "selector": {
+        "bundle": "investor-sif-native-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sif-native-inr-crore",
+      "selector": {
+        "bundle": "investor-sif-native-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sif-native-sip-count",
+      "selector": {
+        "bundle": "investor-sif-native-sip-count"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-sif-native-sip-inr-crore",
+      "selector": {
+        "bundle": "investor-sif-native-sip-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-states-categories-2026-inr-crore",
+      "selector": {
+        "bundle": "investor-states-categories-2026-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-states-ladakh-listed-inr-crore",
+      "selector": {
+        "bundle": "investor-states-ladakh-listed-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-states-legacy-geography-inr-crore",
+      "selector": {
+        "bundle": "investor-states-legacy-geography-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    },
+    {
+      "id": "investor-pending-investor-states-totals-native-inr-crore",
+      "selector": {
+        "bundle": "investor-states-totals-native-inr-crore"
+      },
+      "status": "source-interpretation-review-pending",
+      "publicTitle": "Association of Mutual Funds in India: source records under review",
+      "canInterpret": false,
+      "canCompare": false,
+      "reason": "Source cells and canonical values are retained and mechanically reconciled, but this bundle has not completed a bounded source-definition, unit, population and reference-period interpretation review. Literal archive access remains separate from interpretation.",
+      "evidence": [
+        "data/coverage/investor-source-review.json"
+      ]
+    }
+  ]
+}

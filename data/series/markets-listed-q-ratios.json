@@ -1,22 +1,22 @@
 {
  "meta": {
   "dossier": "markets-listed",
-  "source": "Reserve Bank of India, DBIE, via the Reserve Bank Innovation Hub's data service",
-  "vintage": "2026-10-10",
-  "mock": false,
+  "source": "Reserve Bank of India, DBIE (official CAS and prompted statistical reports), via the local Data Bank",
+  "vintage": null,
+  "vintageStatus": "unknown",
+  "vintageNote": "The archived RBI CAS and prompted report exports do not publish a source revision timestamp. Archive capture is recorded separately and does not establish when estimates were revised.",
+  "archiveCapturedDate": "2026-10-10",
   "geo": "IND",
+  "mock": false,
+  "base": "as published",
   "releaseDate": null,
   "revisionPolicy": "Each quarter's figures come from the companies that reported in that quarter; growth rates compare the same companies a year apart and are final as printed.",
-  "base": "as published",
   "frequency": "quarterly",
-  "product": "SDMX dataset RATIO_LNGNFC_QTR_RN (Ratios of Listed Non-Government Non-Financial Companies Quartely)",
-  "dsd": "RATIO_LNGNFC_QTR_RN",
-  "loadedAt": "2026-09-18T15:12:22.135861Z",
-  "cut": null,
   "unit": "pct",
-  "coverage": "Listed private non-financial companies, ratios, quarterly",
-  "note": "Per cent, except interest coverage and cash coverage, which are times. Each period's ratios are for the companies that reported that period.",
-  "latestPeriod": "2025-10"
+  "product": "Listed non-government non-financial companies",
+  "coverage": "Quarterly results of listed non-government non-financial companies: profit margins, interest coverage and other financial ratios and reporting-company counts.",
+  "note": "Direct RBI DBIE: CAS full history, newest prompted report restatements preferred. Growth compares common companies; period totals and ratios use changing samples. Amounts are not a comparable time series. CAS omits some zero or |rate| ≥150 cells; reports preserve meaningful numeric cells and quarantine the exact 999999999 sentinel. Zero-filled CAS amount vectors and rupee-valued growth are missing, never true zero. Historical duplicate-key ratios retain the inherited mirror selection with an ambiguity flag until official reports resolve them. See sourceByDate for each cell; full source defects and overlap in markets-rbi.source-quality.json.",
+  "latestPeriod": "2026-04"
  },
  "dates": [
   "2014-04-01",
@@ -65,171 +65,1469 @@
   "2025-01-01",
   "2025-04-01",
   "2025-07-01",
-  "2025-10-01"
+  "2025-10-01",
+  "2026-01-01",
+  "2026-04-01"
  ],
  "series": {
   "corm_to_sal": {
    "label": "Cost of Raw Materials to Sales",
    "unit": "pct",
+   "measure": "ratio",
+   "itemCode": "CORM_TO_SAL",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 619,
+     "companies": 1981
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 188,
+     "companies": 1989
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 33,
+     "companies": 1961
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 518,
+     "companies": 2079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 429,
+     "companies": 2110
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 150,
+     "companies": 2161
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 281,
+     "companies": 2189
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 265,
+     "companies": 2202
+    }
+   },
    "data": [
-    55.938,
-    56.872,
-    54.2711,
-    51.5174,
-    51.5945,
-    50.7785,
-    49.6422,
-    48.2178,
-    48.4159,
-    48.5271,
-    51.3621,
-    51.2508,
-    50.7087,
-    49.0743,
-    50.9719,
-    50.9127,
-    51.5365,
-    52.4066,
-    52.3892,
-    50.6177,
-    50.9578,
-    49.7506,
-    49.2034,
-    50.1978,
-    43.1297,
-    46.884,
-    49.2287,
-    50.5465,
-    52.3798,
-    51.0149,
-    53.4344,
-    54.0317,
-    56.2346,
-    53.7885,
-    53.5002,
-    51.7363,
-    50.8439,
-    51.1742,
-    52.202,
-    50.4539,
-    51.1143,
-    52.2002,
-    52.1038,
-    52.2209,
-    51.3429,
-    53.0746,
-    54.2882
+    55.937977514895,
+    56.872029828358,
+    54.27113663867,
+    51.517411488617,
+    51.594525682551,
+    50.778483465801,
+    49.642207724498,
+    48.217805047775,
+    48.415941324729,
+    48.52706152485,
+    51.362098364006,
+    51.250841515617,
+    50.708727192846,
+    49.074272931821,
+    50.971870345801,
+    50.91267593914,
+    51.536450373166,
+    52.406647275445,
+    52.389156026983,
+    50.61769584361,
+    50.957848645511,
+    49.75057916604,
+    49.20342079766,
+    50.197782017047,
+    43.129709471696,
+    46.884034758104,
+    49.228660813228,
+    50.5465136628,
+    52.379795916183,
+    51.014867742182,
+    53.434359884972,
+    54.031687453147,
+    56.234599274554,
+    53.788491843425,
+    53.500226826196,
+    51.736329284003,
+    50.843911436162,
+    51.174207190185,
+    52.20202677113,
+    50.453900167295,
+    51.114271681483,
+    52.200195089624,
+    52.103792641464,
+    52.220851118383,
+    51.342893750046,
+    53.074625605916,
+    54.288169727588,
+    54.901230026916,
+    54.701987640674
    ]
   },
   "csh_cvg_ratio": {
    "label": "Cash Coverage Ratio(times)",
    "unit": "times",
+   "measure": "ratio",
+   "itemCode": "CSH_CVG_RATIO",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 152,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 489,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 530,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 722,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 664,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 472,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 687,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 468,
+     "companies": 3247
+    }
+   },
    "data": [
-    4.4003,
-    4.137,
-    3.7025,
-    4.0258,
-    4.0228,
-    4.2041,
-    3.9043,
-    4.1841,
-    4.0816,
-    4.9081,
-    3.8381,
-    4.4343,
-    3.9882,
-    4.2582,
-    4.5963,
-    5.4513,
-    5.05,
-    5.5154,
-    5.6346,
-    5.5638,
-    5.5677,
-    4.5064,
-    4.7728,
-    3.8253,
-    3.2784,
-    4.8983,
-    5.8438,
-    6.19,
-    5.8474,
-    6.6974,
-    6.6522,
-    7.373,
-    6.2556,
-    5.9596,
-    5.9523,
-    6.8354,
-    6.5023,
-    6.7686,
-    6.6921,
-    6.9586,
-    7.148,
-    7.0415,
-    7.0446,
-    7.5528,
-    7.6478,
-    7.6697,
-    7.7726
+    4.400336512899,
+    4.136972337403,
+    3.70250256495,
+    4.025830307085,
+    4.022750862165,
+    4.204092491461,
+    3.904284622856,
+    4.184136968108,
+    4.081564202869,
+    4.908052740301,
+    3.838083449319,
+    4.434291431621,
+    3.988220589187,
+    4.258206697179,
+    4.596298762884,
+    5.45129911163,
+    5.049960309072,
+    5.515355797248,
+    5.634642914921,
+    5.56384163669,
+    5.567746998789,
+    4.506430615596,
+    4.772819067015,
+    3.825298834945,
+    3.278408260616,
+    4.898345385647,
+    5.843750498236,
+    6.190001975262,
+    5.847431091893,
+    6.69739910836,
+    6.652167021371,
+    7.372951952291,
+    6.255649366584,
+    5.959564759279,
+    5.952321776619,
+    6.835355986758,
+    6.502323504571,
+    6.768579439963,
+    6.692146318955,
+    6.958612331737,
+    7.147962699793,
+    7.04154028945,
+    7.044646280213,
+    7.552812588976,
+    7.647795098308,
+    7.669708609758,
+    7.772635587113,
+    8.212731216565,
+    9.112949382647
    ]
   },
   "ebitda_to_sal": {
    "label": "EBITDA to Sales",
    "unit": "pct",
+   "measure": "ratio",
+   "itemCode": "EBITDA_TO_SAL",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 299,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 587,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 172,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 532,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 509,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 129,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 627,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 64,
+     "companies": 3247
+    }
+   },
    "data": [
-    16.6032,
-    16.6307,
-    15.6027,
-    17.0119,
-    17.9921,
-    18.6159,
-    17.5006,
-    17.8918,
-    19.9517,
-    19.9955,
-    18.9555,
-    18.0562,
-    17.2447,
-    18.885,
-    18.1871,
-    18.1747,
-    18.4979,
-    18.4207,
-    17.8222,
-    17.5182,
-    19.0153,
-    16.3004,
-    18.2913,
-    17.3159,
-    20.6641,
-    22.1823,
-    22.5739,
-    20.6398,
-    21.1633,
-    20.6968,
-    19.3482,
-    19.0328,
-    17.3727,
-    16.621,
-    17.3761,
-    18.7365,
-    18.8289,
-    19.2345,
-    19.1429,
-    19.0646,
-    19.2777,
-    19.4614,
-    18.825,
-    19.1213,
-    20.1127,
-    18.9011,
-    18.4733
+    16.603177745208,
+    16.630717018526,
+    15.602682181765,
+    17.011918466575,
+    17.992050847347,
+    18.615855021754,
+    17.500641509921,
+    17.891829253315,
+    19.951749302167,
+    19.99547185323,
+    18.955454262337,
+    18.056196423073,
+    17.244674062118,
+    18.885006745399,
+    18.187062505791,
+    18.174711831309,
+    18.497938497869,
+    18.420698966279,
+    17.822231062855,
+    17.518207119586,
+    19.015264278575,
+    16.300386094413,
+    18.291307397644,
+    17.315852202069,
+    20.664137687515,
+    22.182255315439,
+    22.573868739401,
+    20.639759866618,
+    21.163276347836,
+    20.696805426978,
+    19.348190219063,
+    19.032765051426,
+    17.372691998294,
+    16.621048060038,
+    17.376051071328,
+    18.736499689123,
+    18.828886085534,
+    19.234538563241,
+    19.142861268355,
+    19.064607975321,
+    19.277650595373,
+    19.461373917007,
+    18.825023864459,
+    19.121344897692,
+    20.112700031146,
+    18.901091950951,
+    18.473296285408,
+    18.214529461663,
+    19.547086936186
    ]
   },
   "companies": {
    "label": "number of companies in the period",
    "unit": "count",
+   "measure": "count",
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 299,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 587,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 172,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 532,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 509,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 129,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 627,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 64,
+     "companies": 3247
+    }
+   },
    "data": [
     2755,
     2863,
@@ -277,489 +1575,3404 @@
     2936,
     3079,
     3118,
-    3188
+    3188,
+    3266,
+    3247
    ]
   },
   "ebit_to_sal": {
    "label": "EBIT to Sales",
    "unit": "pct",
+   "measure": "ratio",
+   "itemCode": "EBIT_TO_SAL",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 545,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 118,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 177,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 701,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 390,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 122,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 476,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 267,
+     "companies": 3247
+    }
+   },
    "data": [
-    12.9108,
-    12.9654,
-    11.7701,
-    13.1673,
-    14.0109,
-    14.6153,
-    13.2868,
-    13.6888,
-    15.5212,
-    15.5587,
-    14.4688,
-    13.8385,
-    12.9749,
-    14.6186,
-    14.0613,
-    14.3379,
-    14.6287,
-    14.8292,
-    14.1665,
-    13.9115,
-    14.7585,
-    11.7463,
-    13.1905,
-    11.7517,
-    12.9076,
-    16.5487,
-    17.5458,
-    16.0971,
-    16.168,
-    16.306,
-    15.2331,
-    15.1775,
-    13.6472,
-    12.8322,
-    13.4896,
-    14.9229,
-    14.9199,
-    15.2318,
-    15.0603,
-    15.0759,
-    15.247,
-    15.4195,
-    14.7742,
-    15.1733,
-    16.0366,
-    14.8205,
-    14.4807
+    12.910794998875,
+    12.965364019577,
+    11.770072641247,
+    13.167327850987,
+    14.010862009151,
+    14.615325004857,
+    13.28681198426,
+    13.688787022685,
+    15.521237393699,
+    15.558712300999,
+    14.468802920764,
+    13.838461084045,
+    12.974900181475,
+    14.618579230579,
+    14.061250329532,
+    14.3378761927,
+    14.628651991858,
+    14.82924733516,
+    14.166455414183,
+    13.911527935466,
+    14.758456949697,
+    11.746278752414,
+    13.190465941957,
+    11.751739473323,
+    12.907554202221,
+    16.548705579114,
+    17.545819855677,
+    16.097064081142,
+    16.168020025897,
+    16.305970950904,
+    15.233126125908,
+    15.177534250248,
+    13.647231922467,
+    12.832154144121,
+    13.489568185583,
+    14.92289541684,
+    14.919905762357,
+    15.231807170201,
+    15.060271376586,
+    15.075875713557,
+    15.246967588404,
+    15.419508872613,
+    14.774161307985,
+    15.17333226774,
+    16.03657521229,
+    14.820526897159,
+    14.480692386785,
+    14.49555845716,
+    15.784137885603
    ]
   },
   "int_burden": {
    "label": "Interest Burden",
    "unit": "pct",
+   "measure": "ratio",
+   "itemCode": "INT_BURDEN",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 408,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 497,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 627,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 644,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 474,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 121,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 182,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 2,
+     "companies": 3247
+    }
+   },
    "data": [
-    29.2249,
-    31.0059,
-    35.8034,
-    32.0923,
-    31.9222,
-    30.2972,
-    33.7359,
-    31.238,
-    31.494,
-    26.1848,
-    34.134,
-    29.4248,
-    33.3251,
-    30.3379,
-    28.1404,
-    23.2532,
-    25.0398,
-    22.5223,
-    22.3272,
-    22.6329,
-    23.141,
-    30.7939,
-    29.0542,
-    38.5191,
-    48.8327,
-    27.3648,
-    22.0161,
-    20.7142,
-    22.3852,
-    18.9518,
-    19.0936,
-    17.0082,
-    20.3493,
-    21.7342,
-    21.6405,
-    18.3685,
-    19.4084,
-    18.6566,
-    18.9937,
-    18.1728,
-    17.6884,
-    17.924,
-    18.0873,
-    16.6851,
-    16.3992,
-    16.6282,
-    16.413
+    29.224853432793,
+    31.005850041906,
+    35.803439610246,
+    32.092250870446,
+    31.922189943495,
+    30.297182895772,
+    33.735854025219,
+    31.238047834485,
+    31.494013219575,
+    26.184771352113,
+    34.133999857973,
+    29.424848890721,
+    33.325125502829,
+    30.337880737596,
+    28.140406650326,
+    23.253198307739,
+    25.039811665508,
+    22.522337512288,
+    22.327210771312,
+    22.63289269357,
+    23.140989241445,
+    30.793914503666,
+    29.054248085536,
+    38.519119147682,
+    48.832650153747,
+    27.364799218861,
+    22.016113934833,
+    20.714152995057,
+    22.385198605809,
+    18.95180034749,
+    19.093615191462,
+    17.008235525047,
+    20.349331644967,
+    21.734231772239,
+    21.640467368461,
+    18.368522611428,
+    19.40841076508,
+    18.656613243288,
+    18.993658548468,
+    18.17283521222,
+    17.688391819597,
+    17.924014527059,
+    18.087290232126,
+    16.685097868141,
+    16.399194140065,
+    16.628167346263,
+    16.412954333773,
+    15.300139665312,
+    13.589460647792
    ]
   },
   "int_cvg": {
    "label": "Interest Coverage(times)",
    "unit": "times",
+   "measure": "ratio",
+   "itemCode": "INT_CVG",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 2,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 265,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 189,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 45,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 332,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 230,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 262,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 513,
+     "companies": 3247
+    }
+   },
    "data": [
-    3.4217,
-    3.2252,
-    2.793,
-    3.116,
-    3.1326,
-    3.3006,
-    2.9642,
-    3.2012,
-    3.1752,
-    3.819,
-    2.9296,
-    3.3985,
-    3.0007,
-    3.2962,
-    3.5536,
-    4.3005,
-    3.9936,
-    4.44,
-    4.4788,
-    4.4183,
-    4.3213,
-    3.2474,
-    3.4418,
-    2.5961,
-    2.0478,
-    3.6543,
-    4.5421,
-    4.8276,
-    4.4672,
-    5.2765,
-    5.2374,
-    5.8795,
-    4.9142,
-    4.601,
-    4.621,
-    5.4441,
-    5.1524,
-    5.36,
-    5.2649,
-    5.5027,
-    5.6534,
-    5.5791,
-    5.5287,
-    5.9934,
-    6.0979,
-    6.0139,
-    6.0927
+    3.421745133127,
+    3.225197821213,
+    2.793027739474,
+    3.116017022417,
+    3.132617159944,
+    3.300636905551,
+    2.964205379987,
+    3.201224370033,
+    3.175206643333,
+    3.819013679947,
+    2.929630292848,
+    3.398488140802,
+    3.000738886685,
+    3.2962091474,
+    3.553608916979,
+    4.300483687301,
+    3.99364026119,
+    4.440036472477,
+    4.478839789898,
+    4.418348169362,
+    4.321336437117,
+    3.247394870441,
+    3.441837479518,
+    2.596113364291,
+    2.047810218883,
+    3.654329754083,
+    4.542127656861,
+    4.827617138092,
+    4.467237560003,
+    5.276543556098,
+    5.237352853152,
+    5.87950465836,
+    4.914166309965,
+    4.601036790623,
+    4.620972287583,
+    5.444095974152,
+    5.152405377772,
+    5.36002964182,
+    5.264915116002,
+    5.502718691509,
+    5.653425196586,
+    5.579107283641,
+    5.528744146671,
+    5.993372097082,
+    6.09786061107,
+    6.013891844941,
+    6.092748323452,
+    6.53588804988,
+    7.358643774891
    ]
   },
   "int_to_sal": {
-   "label": "Interest to Sales",
+   "label": "Interest  to Sales",
    "unit": "pct",
+   "measure": "ratio",
+   "itemCode": "INT_TO_SAL",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 56,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 688,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 104,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 185,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 418,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 39,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 581,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 223,
+     "companies": 3247
+    }
+   },
    "data": [
-    3.7732,
-    4.02,
-    4.2141,
-    4.2257,
-    4.4726,
-    4.428,
-    4.4824,
-    4.2761,
-    4.8883,
-    4.074,
-    4.9388,
-    4.0719,
-    4.3239,
-    4.435,
-    3.9569,
-    3.334,
-    3.663,
-    3.3399,
-    3.163,
-    3.1486,
-    3.4153,
-    3.6171,
-    3.8324,
-    4.5267,
-    6.3031,
-    4.5285,
-    3.8629,
-    3.3344,
-    3.6192,
-    3.0903,
-    2.9086,
-    2.5814,
-    2.7771,
-    2.789,
-    2.9192,
-    2.7411,
-    2.8957,
-    2.8417,
-    2.8605,
-    2.7397,
-    2.6969,
-    2.7638,
-    2.6722,
-    2.5317,
-    2.6299,
-    2.4644,
-    2.3767
+    3.77316091543,
+    4.020021325297,
+    4.214090850191,
+    4.225691886873,
+    4.472573983282,
+    4.428031747533,
+    4.482419495615,
+    4.276109838107,
+    4.888260556613,
+    4.07401324135,
+    4.938781168424,
+    4.071946262781,
+    4.323901769343,
+    4.434967132504,
+    3.956893022851,
+    3.334014784207,
+    3.662986907964,
+    3.339893135357,
+    3.162974359149,
+    3.14858118967,
+    3.415252934933,
+    3.617139036381,
+    3.832390698414,
+    4.526666529654,
+    6.303100786976,
+    4.528520055045,
+    3.862907690226,
+    3.33437048148,
+    3.619243393424,
+    3.090275059335,
+    2.908554484111,
+    2.581430772177,
+    2.777120484261,
+    2.788970123054,
+    2.919205601347,
+    2.741115418922,
+    2.895716596121,
+    2.841739353708,
+    2.860496521741,
+    2.739714050224,
+    2.696943367644,
+    2.763795010328,
+    2.672245435138,
+    2.531685338731,
+    2.629869102481,
+    2.464382014058,
+    2.376709428657,
+    2.217840689212,
+    2.144979206557
    ]
   },
   "net_pft_to_sal": {
-   "label": "Net Profit to Sales",
+   "label": "Net Profit  to Sales",
    "unit": "pct",
+   "measure": "ratio",
+   "itemCode": "NET_PFT_TO_SAL",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 1,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 218,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 637,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 429,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 580,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 162,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 642,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 670,
+     "companies": 3247
+    }
+   },
    "data": [
-    6.7067,
-    6.63,
-    4.3064,
-    5.4117,
-    6.7326,
-    7.6746,
-    5.1681,
-    5.9465,
-    7.4838,
-    8.6839,
-    6.836,
-    4.5761,
-    5.5143,
-    5.8049,
-    6.7476,
-    5.5018,
-    7.748,
-    7.323,
-    7.8892,
-    4.6489,
-    8.1771,
-    3.832,
-    5.886,
-    -0.1642,
-    -0.4329,
-    8.5272,
-    9.2827,
-    9.0637,
-    9.1458,
-    9.7334,
-    9.2186,
-    9.7298,
-    8.3689,
-    7.2744,
-    7.1041,
-    9.2795,
-    9.2529,
-    8.3034,
-    9.5154,
-    9.1211,
-    9.8947,
-    9.8221,
-    9.8987,
-    11.0187,
-    10.8145,
-    9.1812,
-    9.3744
+    6.70671470675,
+    6.629961092768,
+    4.306382172903,
+    5.411726134801,
+    6.732616792454,
+    7.674606077647,
+    5.168051972365,
+    5.946484807784,
+    7.483801778609,
+    8.683938260725,
+    6.835982427697,
+    4.576118831119,
+    5.514289913051,
+    5.80489143783,
+    6.747614657387,
+    5.501755677757,
+    7.748001097538,
+    7.322994657297,
+    7.889173693306,
+    4.648867784164,
+    8.177070584918,
+    3.831980675531,
+    5.886024518858,
+    -0.164179603459,
+    -0.432929980513,
+    8.527163455107,
+    9.282746578655,
+    9.063746740061,
+    9.145848563295,
+    9.733392511249,
+    9.21860743669,
+    9.729815916548,
+    8.368948676883,
+    7.274371206632,
+    7.10410762585,
+    9.279457423964,
+    9.252890086205,
+    8.303418466116,
+    9.51535029391,
+    9.121119996078,
+    9.894708666388,
+    9.822103468074,
+    9.898677376062,
+    11.018724343291,
+    10.814539857025,
+    9.18119667491,
+    9.37443334832,
+    12.112764256231,
+    10.540724546489
    ]
   },
   "opr_pfts_to_sal": {
    "label": "Operating Profits to Sales",
    "unit": "pct",
+   "measure": "ratio",
+   "itemCode": "OPR_PFTS_TO_SAL",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 48,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 273,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 232,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 675,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 616,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 231,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 247,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 315,
+     "companies": 3247
+    }
+   },
    "data": [
-    14.1152,
-    13.2338,
-    13.1366,
-    13.8062,
-    15.1812,
-    15.2844,
-    14.8803,
-    15.0512,
-    16.9525,
-    16.5578,
-    15.9307,
-    14.4242,
-    14.0371,
-    15.7408,
-    15.3632,
-    14.5993,
-    15.6983,
-    14.7158,
-    14.4659,
-    14.3474,
-    16.0663,
-    12.3208,
-    15.4633,
-    13.3066,
-    15.4205,
-    18.0047,
-    19.0128,
-    18.065,
-    18.4221,
-    17.5516,
-    16.6588,
-    15.7626,
-    15.345,
-    13.4792,
-    14.673,
-    15.4986,
-    15.8585,
-    16.0228,
-    16.4503,
-    15.9939,
-    16.2447,
-    15.7047,
-    16.2249,
-    16.2644,
-    16.4947,
-    15.7391,
-    15.7513
+    14.115182636972,
+    13.233787976789,
+    13.136576118545,
+    13.8062070168,
+    15.181220257771,
+    15.284380871685,
+    14.880281214163,
+    15.051216275262,
+    16.952451378632,
+    16.557780118949,
+    15.930664737423,
+    14.424213466841,
+    14.03709757326,
+    15.740828946098,
+    15.363198402349,
+    14.599337678153,
+    15.698314687108,
+    14.71584302239,
+    14.465854245176,
+    14.347435237996,
+    16.06631816708,
+    12.320772823192,
+    15.463347381193,
+    13.30664654116,
+    15.420525389635,
+    18.004701492612,
+    19.012839053454,
+    18.065039124323,
+    18.422072585433,
+    17.551574338866,
+    16.658786430015,
+    15.762644013103,
+    15.344996636645,
+    13.479163157073,
+    14.673023406009,
+    15.498587523532,
+    15.858473033977,
+    16.022834969822,
+    16.450341722469,
+    15.993884238999,
+    16.24468184892,
+    15.704724105692,
+    16.224878362106,
+    16.264428238356,
+    16.49470445482,
+    15.739143048494,
+    15.75129258177,
+    15.353706447936,
+    16.383488411261
    ]
   },
   "oth_inc_net_pft": {
    "label": "Other Income to Net Profit",
    "unit": "pct",
+   "measure": "ratio",
+   "itemCode": "OTH_INC_NET_PFT",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 614,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 238,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 398,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 572,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 516,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 265,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 268,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 50,
+     "companies": 3247
+    }
+   },
    "data": [
-    37.0971,
-    51.236,
-    57.2663,
-    59.2364,
-    41.7495,
-    43.4091,
-    50.7031,
-    47.7696,
-    40.0772,
-    39.5868,
-    44.2481,
-    79.3682,
-    58.1684,
-    54.1643,
-    41.8498,
-    64.9861,
-    36.1335,
-    50.5921,
-    42.5441,
-    68.2052,
-    36.0636,
-    103.8526,
-    48.0453,
+    37.097076840499,
+    51.236032824432,
+    57.266307638399,
+    59.236394634986,
+    41.749451605884,
+    43.409057303569,
+    50.70305619544,
+    47.769616334249,
+    40.077196220089,
+    39.586782299322,
+    44.248058810961,
+    79.368195850459,
+    58.168441257813,
+    54.164282536107,
+    41.849812812753,
+    64.986058316083,
+    36.13349785987,
+    50.592088582199,
+    42.544085707311,
+    68.205249725327,
+    36.063601027668,
+    103.852644577073,
+    48.04533191105,
     null,
     null,
-    48.9911,
-    38.3618,
-    28.4068,
-    29.9721,
-    32.3138,
-    29.1736,
-    33.6093,
-    24.2288,
-    43.1912,
-    38.0488,
-    34.8933,
-    32.1025,
-    38.6793,
-    28.2966,
-    33.6661,
-    30.6524,
-    38.2469,
-    26.2676,
-    25.9278,
-    33.4549,
-    34.4394,
-    29.0365
+    48.991131046344,
+    38.361810868942,
+    28.406803677722,
+    29.972109678314,
+    32.313821563003,
+    29.173644799592,
+    33.609279624307,
+    24.228794319757,
+    43.191154447829,
+    38.04879947881,
+    34.893335005001,
+    32.102543355454,
+    38.679293432281,
+    28.296588803566,
+    33.666081990398,
+    30.652430998362,
+    38.246897149116,
+    26.267605292815,
+    25.92783493195,
+    33.454919249067,
+    34.439398418477,
+    29.036461218488,
+    23.618250576086,
+    30.013103093369
    ],
    "gaps": [
     "2020-01-01",
     "2020-04-01"
    ],
-   "gapsNote": "No figure for this period (the cut had too few companies, or the item was not published); left empty."
+   "gapsNote": "Not published, not meaningful, or quarantined source defect; see sourceByDate and the source-quality download."
   },
   "sc_to_sal": {
    "label": "Staff Cost to Sales",
    "unit": "pct",
+   "measure": "ratio",
+   "itemCode": "SC_TO_SAL",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 60,
+     "companies": 2865
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 337,
+     "companies": 2879
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 658,
+     "companies": 2872
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 139,
+     "companies": 3033
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 388,
+     "companies": 3076
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 381,
+     "companies": 3146
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 110,
+     "companies": 3216
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 244,
+     "companies": 3201
+    }
+   },
    "data": [
-    8.043,
-    8.0101,
-    8.3051,
-    8.9071,
-    8.9161,
-    9.3088,
-    9.3868,
-    9.2792,
-    10.8736,
-    11.3081,
-    10.6756,
-    9.9313,
-    10.6334,
-    10.7825,
-    10.3923,
-    9.9262,
-    10.0978,
-    10.1179,
-    10.2412,
-    10.0672,
-    10.8578,
-    11.5458,
-    11.2097,
-    11.9581,
-    16.5438,
-    12.1604,
-    11.2137,
-    10.3225,
-    11.8949,
-    10.6282,
-    10.1951,
-    9.5717,
-    9.8687,
-    10.2094,
-    10.4613,
-    10.1562,
-    10.7626,
-    10.655,
-    10.6474,
-    10.1601,
-    10.7662,
-    10.8283,
-    10.625,
-    10.1538,
-    10.8643,
-    10.7117,
-    10.4892
+    8.042950530503,
+    8.010067735197,
+    8.305131365221,
+    8.907087555329,
+    8.91607360756,
+    9.308809081253,
+    9.386768198793,
+    9.279246411144,
+    10.873617714583,
+    11.308088720235,
+    10.675632916618,
+    9.931278814232,
+    10.633399543408,
+    10.782513350967,
+    10.392255128008,
+    9.926192791677,
+    10.097753675478,
+    10.117930092677,
+    10.241170645683,
+    10.067159759264,
+    10.857759402515,
+    11.54582221783,
+    11.209674818355,
+    11.958066755952,
+    16.543817047849,
+    12.160376184955,
+    11.21371396739,
+    10.322543213729,
+    11.894935415334,
+    10.628202461497,
+    10.195076214774,
+    9.571658018434,
+    9.868742294369,
+    10.209414088023,
+    10.461300901072,
+    10.156249637943,
+    10.76258105983,
+    10.654987000632,
+    10.647399448047,
+    10.160089480113,
+    10.766233417145,
+    10.828261317509,
+    10.624994829179,
+    10.153833904238,
+    10.864334361752,
+    10.711726328208,
+    10.489173686503,
+    9.675975187033,
+    9.963487167834
    ]
   },
   "tax_prov_to_ebt": {
    "label": "Tax Provisions to EBT",
    "unit": "pct",
+   "measure": "ratio",
+   "itemCode": "TAX_PROV_TO_EBT",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "e6f1f51927a63e5e8d1f7db6f7646d1758778e7355b04da85f817c16f6dabe36",
+     "dsd": "RATIO_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 503,
+     "companies": 2120
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 406,
+     "companies": 2102
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 625,
+     "companies": 2043
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 163,
+     "companies": 2307
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 164,
+     "companies": 2313
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 111,
+     "companies": 2360
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 274,
+     "companies": 2303
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 689,
+     "companies": 2483
+    }
+   },
    "data": [
-    24.9426,
-    23.1852,
-    23.637,
-    23.0682,
-    24.8433,
-    24.2139,
-    24.4223,
-    22.6888,
-    25.8316,
-    25.1744,
-    24.7548,
-    18.131,
-    24.6501,
-    25.1821,
-    22.9186,
-    23.8748,
-    26.5631,
-    24.9206,
-    23.8119,
-    24.1641,
-    26.5211,
-    15.9369,
-    20.4382,
-    20.6614,
-    21.803,
-    18.6186,
-    20.1116,
-    20.1361,
-    23.3636,
-    21.7557,
-    21.5142,
-    16.3908,
-    23.8332,
-    21.7954,
-    22.1303,
-    17.9872,
-    21.1888,
-    20.8214,
-    20.2889,
-    20.5603,
-    22.0907,
-    20.5004,
-    20.3328,
-    20.6078,
-    20.5451,
-    20.8089,
-    20.2485
+    24.942630705711,
+    23.185190976067,
+    23.636966903577,
+    23.068174834629,
+    24.843316792119,
+    24.213883345981,
+    24.422282561258,
+    22.688772015209,
+    25.831583647121,
+    25.174410627955,
+    24.754829458338,
+    18.131042822412,
+    24.65013456546,
+    25.182106028626,
+    22.918553780062,
+    23.874843143487,
+    26.563078443862,
+    24.920636508745,
+    23.811919213242,
+    24.164097159384,
+    26.52107953229,
+    15.93694867488,
+    20.438236633422,
+    20.661366358644,
+    21.80296144118,
+    18.618587377399,
+    20.111600159255,
+    20.136126719863,
+    23.363551083663,
+    21.755748698943,
+    21.514237115652,
+    16.390797157493,
+    23.833167789978,
+    21.795446013903,
+    22.130346125789,
+    17.98717086272,
+    21.188818871593,
+    20.821412738653,
+    20.288903338547,
+    20.560338006211,
+    22.090702520385,
+    20.500383702742,
+    20.332793638761,
+    20.607751645721,
+    20.545082408791,
+    20.808855835752,
+    20.248498828501,
+    20.968901465622,
+    21.795969595422
    ]
   }
  }

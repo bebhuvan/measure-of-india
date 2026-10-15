@@ -339,7 +339,8 @@ setTxt("pf-core", `peak: ${pkCore.value.toFixed(1)}%, ${fmtDate(pkCore.date)}, l
      * the tiny range makes the normalized shape quantitative */
     const vals = r.s.data.map((d) => d.value).filter((v) => v != null);
     const lo = Math.min(...vals), hi = Math.max(...vals);
-    const range = lo === hi ? hi.toFixed(1) : lo.toFixed(1) + "–" + hi.toFixed(1);
+    const sg = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1);
+    const range = lo === hi ? sg(hi) : sg(lo) + " to " + sg(hi);
     /* baseline, two-sided: the time window on the left, the y-range on the
      * right — each panel is self-describing, no axis needed */
     const d0 = r.s.data[0].date, d1 = r.s.data.at(-1).date;
@@ -400,7 +401,7 @@ setTxt("pf-core", `peak: ${pkCore.value.toFixed(1)}%, ${fmtDate(pkCore.date)}, l
   const top = all.slice(0, 15), bot = all.slice(-15);
   const row = (r, rank) => `
   <tr>
-    <td class="name">${r.s.label}<small>№ ${rank} of ${all.length}, ${r.division}, ${r.code}</small></td>
+    <td class="name">${r.s.label}<small>${rank} of ${all.length}, ${r.division}, ${r.code}</small></td>
     <td class="val">${f1(r.latest)}</td>
     <td class="chg">${r.prevV == null ? "—" : moveWord(r.latest - r.prevV)}</td>
     <td class="yr">${r.level == null ? "—" : r.level.toFixed(1)}</td>
@@ -509,7 +510,7 @@ bb.innerHTML = sectorOrder.map(([key, nm]) => {
     .map(([g, label, c]) => `<div class="seg" style="width:${w[g]}%;background:${c}" title="${label}: ${w[g]}%"></div>`).join("");
   return `<div style="display:flex;align-items:center;gap:16px;margin-top:12px"><div style="width:${LAB_W}px;flex-shrink:0;text-align:right;font-family:var(--sans);font-size:.72rem;color:var(--ink-soft);line-height:1.5">${nm}</div><div style="flex:1;display:flex;height:34px;border:1px solid var(--ink)">${segs}</div></div>`;
 }).join("");
-document.getElementById("basket-labels").innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:14px 30px;margin:20px 0 0 ${LAB_W + 16}px">` +
+document.getElementById("basket-labels").innerHTML = `<div class="basket-key" style="--basket-indent:${LAB_W + 16}px">` +
   GROUP_DEFS.map(([g, label, c]) => `<div class="blab"><div class="n"><span class="sw" style="background:${c}"></span>${label}</div></div>`).join("") + "</div>";
 
 /* ---------- plate 1 : headline + components ---------- */
@@ -663,7 +664,6 @@ function componentChart(blockId, plotId, key, d0, d1, yTicks, extraNote) {
       Plot.ruleY([d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
       Plot.rectY([{ y1: 2, y2: 6 }], { y1: "y1", y2: "y2", x1: dates[0], x2: dates.at(-1), fill: "#F4F6FD" }),
       Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
-      Plot.areaY(s.data, { x: "date", y: "value", y1: d0 <= 0 ? 0 : d0, fill: s.color, fillOpacity: 0.06 }),
       Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.lineY(s.data.slice(-13), { x: "date", y: "value", stroke: s.color, strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" }),
       Plot.text([{ date: bandSpot.x, value: bandSpot.y }], { x: "date", y: "value", text: ["Tolerance band, 2–6%"], fontSize: 12, fill: "#878D99", fontFamily: mono, textAnchor: bandSpot.anchor }),
@@ -1312,7 +1312,7 @@ const NUMW = ["zero", "one", "two", "three", "four", "five", "six", "seven", "ei
   const top = all.slice(0, 15), bot = all.slice(-15);
   const row = (r, rank) => `
   <tr>
-    <td class="name">${r.label}<small>№ ${rank} of ${all.length}</small></td>
+    <td class="name">${r.label}<small>${rank} of ${all.length}</small></td>
     <td class="val">${r.level.toFixed(1)}</td>
     <td class="chg">${r.y == null ? "—" : f1(r.y)}</td>
     <td class="spark" id="sp-i12-${rank}"></td>

@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "scope": "Exact ROOT-reviewed pension standalone rules; future rows and definitions require a new reviewed contract",
+  "positiveRulesSha256": "374605c1e704aa51b0beb2bcf7b91b1804d8a856adf300cb3ca94c02dee884c1",
+  "positiveRuleIds": [
+    "pensions-a3-literal-count-draft",
+    "pensions-a14-literal-count-draft",
+    "pensions-a15-literal-count-draft",
+    "pensions-a16-literal-count-draft",
+    "pensions-a17-literal-count-draft",
+    "pensions-a18-literal-count-draft",
+    "pensions-a19-literal-count-draft",
+    "pensions-a20-literal-count-draft",
+    "pensions-a3-literal-vatsalya-stock",
+    "pensions-m3-subscriber-stock",
+    "pensions-m3-literal-vatslya-stock",
+    "pensions-a1-literal-source-reviewed",
+    "pensions-a2-literal-source-reviewed",
+    "pensions-m2-literal-source-reviewed",
+    "pensions-a11-literal-source-reviewed",
+    "pensions-a13-literal-source-reviewed",
+    "pensions-a21-count-literal-source-reviewed",
+    "pensions-a23-primary-expected-schedule"
+  ],
+  "records": 278,
+  "pendingRuleSha256": "8d7448f13a8f76f23c79da81a8db6dc2f4f64cf6b41b51f4e6bcc8b8dc04cbb6",
+  "pendingRuleId": "pensions-unreviewed-source-definition",
+  "catalogue": {
+    "file": "data/raw/pensions/source-documents/c1717e26af47eeb25a9c39657d95af4d9029bf9ee7b578e87a273078f478da04.catalogue.json.gz",
+    "archiveSha256": "8bc546cd9d4ea4ecbe50474a29836b470f7fa6eafff060a6feade60256ede63e",
+    "bodySha256": "c1717e26af47eeb25a9c39657d95af4d9029bf9ee7b578e87a273078f478da04",
+    "bodyBytes": 677072,
+    "source": "https://www.pfrda.org.in/en/research-publications/statistics/statistical-data",
+    "unitContexts": [
+      {
+        "table": "A1",
+        "title": "PF-wise and Scheme-wise Asset Under Management (Rs. in crore)",
+        "url": "https://www.pfrda.org.in/documents/33652/202494/A1_pfm-wise_and_scheme.xlsx?v=1.110",
+        "unit": "inr_crore"
+      },
+      {
+        "table": "A2",
+        "title": "Sector-wise Asset Under Management (Rs. in crore)",
+        "url": "https://www.pfrda.org.in/documents/33652/202494/A2_sector-wise_asset_under_management.xlsx?v=1.109",
+        "unit": "inr_crore"
+      },
+      {
+        "table": "M2",
+        "title": "Sector-wise Asset Under Management (Rs. in crore)",
+        "url": "https://www.pfrda.org.in/documents/33652/202496/M2_sector_wise_asset_under_management.xlsx?v=1.266",
+        "unit": "inr_crore"
+      }
+    ]
+  },
+  "handbook": {
+    "file": "data/raw/pensions/source-documents/5b99a54eb4dd48517db8d85e37097343c84c142484d98de75c61250a577641aa.pdf",
+    "sha256": "5b99a54eb4dd48517db8d85e37097343c84c142484d98de75c61250a577641aa",
+    "bytes": 2651572,
+    "role": "Edition-specific context and limits only; never supplies current workbook association or forecast dates"
+  },
+  "classification": "These are source-literal standalone counts/amounts, not population comparisons; A23 expected class requires its separately pinned original-workbook proof.",
+  "expected": {
+    "ruleId": "pensions-a23-primary-expected-schedule",
+    "records": 5,
+    "proofDescriptorSha256": "df90f07e566f217d4c8462e24bd238c580dc981e1a571c0397d1a33cfc29c7b0",
+    "dependencies": [
+      {
+        "file": "scripts/lib/source-expected-schedule.mjs",
+        "sha256": "5f246dbc37e507847b57f13e10b6f97763d7134b814ea2d65ff1f2fdaec2289d"
+      },
+      {
+        "file": "scripts/lib/pensions-expected-schedule-factory.mjs",
+        "sha256": "aa278bd975a43df3c73920c8d95905e1e4bc0687cf4be7a6eb1070e148c6cf77"
+      },
+      {
+        "file": "scripts/lib/pensions-source-xlsx.py",
+        "sha256": "93ce0b37f687c289a6885be84c2e88d60ba358fb6f2bff87c6a8589bc1c709eb"
+      },
+      {
+        "file": "data/coverage/pensions.expected-schedule-source-contract.json",
+        "sha256": "df90f07e566f217d4c8462e24bd238c580dc981e1a571c0397d1a33cfc29c7b0"
+      }
+    ]
+  }
+}

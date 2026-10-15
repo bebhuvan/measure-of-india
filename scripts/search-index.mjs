@@ -12,10 +12,14 @@
 //             row's anchor (everycut.js rowAnchor) so a result opens on that row
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { DOSSIERS } from "../src/dossiers/registry.js";
 import { everyCutPlan, guideBundles, rowsOf, loadBundle, bundleTitle, cutOf } from "../src/dossiers/everycut.js";
-import { tokens, indexTokens, STOP, encodeIds } from "../src/dossiers/search-core.js";
+import { tokens, indexTokens, STOP, encodeIds, rankUnitGroups } from "../src/dossiers/search-core.js";
+import { getSourceQuality, qualityPublicLabel, qualityRegistryVersion } from '../src/explore/source-quality.js';
+import { discoverSearchPlates } from "./lib/search-plates.mjs";
+import { unitOf } from '../src/dossiers/units.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DIST = path.resolve(process.argv[2] ?? path.join(ROOT, "dist"));
@@ -39,17 +43,11 @@ for (const d of DOSSIERS) {
   const f = path.join(DIST, "guides", d.slug, "index.html");
   if (!fs.existsSync(f)) throw new Error(`search-index: ${f} missing; run after astro build`);
   const html = fs.readFileSync(f, "utf8");
-  const re = /<figure id="([^"]+)"[^>]*>([\s\S]*?)<\/figure>/g;
-  let m;
-  while ((m = re.exec(html))) {
-    const h3 = m[2].match(/<h3[^>]*>([\s\S]*?)<\/h3>/);
-    if (!h3) continue;
-    const sub = m[2].match(/<div class="sub"[^>]*>([\s\S]*?)<\/div>/);
-    // a title the page fills in by script ("–" in the HTML) gives way to the finding
-    let title = decode(h3[1]), finding = sub ? decode(sub[1]) : "";
+  for (const plate of discoverSearchPlates(html)) {
+    let title = decode(plate.titleHTML), finding = plate.findingHTML == null ? "" : decode(plate.findingHTML);
     if (!/[a-z0-9]/i.test(title)) [title, finding] = [clip(finding, 100), ""];
     if (!/[a-z0-9]/i.test(title)) continue;
-    plates.push([gIdx[d.slug], m[1], title, clip(finding, 200)]);
+    plates.push([gIdx[d.slug], plate.id, title, clip(finding, 200)]);
   }
 }
 
@@ -87,8 +85,14 @@ const bundles = [];
 const rows = [];
 const rowIdOf = new Map();   // "bundle|key" -> row id
 const post = new Map();   // token -> row ids
+const defaultQuality=getSourceQuality('',{});
+const quality={version:qualityRegistryVersion,default:defaultQuality.id,policies:{[defaultQuality.id]:defaultQuality},bundles:{},rowOverrides:{}};
+const ranking={version:1,units:{}};
 for (const b of order) {
   const B = loadBundle(b);
+  const bQuality=getSourceQuality(b,B);
+  quality.policies[bQuality.id]=bQuality;
+  if(bQuality.id!==defaultQuality.id)quality.bundles[b]=bQuality.id;
   const p = place.get(b);
   const list = p ? p.rows : rowsOf(b).map((r) => [r, null]);
   const start = rows.length;
@@ -97,10 +101,16 @@ for (const b of order) {
   for (const [r] of list) {
     const s = B.series[r.key];
     let li = s.data.length - 1; while (li >= 0 && s.data[li] == null) li--;
-    const recent = li < 0 ? [] : s.data.slice(Math.max(0, li - 11), li + 1).map(round3);
+    let recent = li < 0 ? [] : s.data.slice(Math.max(0, li - 11), li + 1).map(round3);
     const id = rows.length;
+    const q=getSourceQuality(b,B,{...s,key:r.key});
+    if(q.observationKind==='expected-schedule')recent=[];
+    quality.policies[q.id]=q;
+    if(q.id!==bQuality.id)(quality.rowOverrides[q.id]??=[]).push(id);
+    if(q.canInterpret)for(const group of rankUnitGroups(unitOf(B,s)))(ranking.units[group]??=[]).push(id);
     rowIdOf.set(b + "|" + r.key, id);   // datafix: profile rows, below
-    rows.push([r.label, r.group || "", r.latestText, r.period + (r.estimated ? ", est." : ""), r.id, recent]);
+    rows.push([r.label, r.group || "", r.latestText, r.period + (r.estimated ? ", est." : ""), r.id, recent,
+      ...(!q.canInterpret?[qualityPublicLabel(q,{...s,key:r.key},b)]:[])]);
     for (const t of new Set(indexTokens(r.label + " " + (r.group || "")))) {
       if (STOP.has(t)) continue;
       if (!post.has(t)) post.set(t, []);
@@ -109,7 +119,8 @@ for (const b of order) {
   }
   const m = B.meta ?? {};
   const ctx = clip([m.product || m.source, m.base && m.base !== "null" ? `base ${m.base}` : null, m.frequency].filter(Boolean).join(", "), 120);
-  bundles.push([b, bundleTitle(b), list[0]?.[0].cut ?? cutOf(b), p ? gIdx[p.guide] : -1, start, list.length, segs, ctx]);
+  bundles.push([b, bundleTitle(b), list[0]?.[0].cut ?? cutOf(b), p ? gIdx[p.guide] : -1, start, list.length, segs, ctx,
+    ...(!bQuality.canInterpret&&list[0]?.[0].id?[list[0][0].id]:[])]);
 }
 
 // ----- shards
@@ -164,8 +175,20 @@ for (const m of MEASURES) {
 for (const id of ownIds.glance) ownIds.other.delete(id);
 const own = { glance: encodeIds([...ownIds.glance].sort((a, b) => a - b)), other: encodeIds([...ownIds.other].sort((a, b) => a - b)) };
 // ---- end datafix
-const core = { v: 1, built: new Date().toISOString().slice(0, 10), nSeries: rows.length, guides, plates, bundles, views, profiles, own,
-  shards: { tokens: tFirst, rows: rFirst, frequent: frequent.sort() } };
+// Content-address each file, so a core from an already-open tab cannot silently read the
+// next release's reordered rows. An unavailable old hash is a recoverable error, never mixed data.
+const hashedFiles = dir => fs.readdirSync(path.join(OUT, dir)).sort((a,b)=>parseInt(a)-parseInt(b)).map(file => {
+  // 96-bit content names keep the core compact at thousands of chunks. Deployment audits
+  // verify every filename against SHA256; numeric IDs never identify a release by themselves.
+  const old = path.join(OUT, dir, file), hash = crypto.createHash('sha256').update(fs.readFileSync(old)).digest('hex').slice(0,24);
+  const name = `${file.slice(0,-5)}.${hash}.json`;
+  fs.renameSync(old, path.join(OUT, dir, name));
+  return name;
+});
+for(const key of Object.keys(quality.rowOverrides))quality.rowOverrides[key]=encodeIds(quality.rowOverrides[key]);
+for(const key of Object.keys(ranking.units))ranking.units[key]=encodeIds(ranking.units[key]);
+const core = { v: 1, identityVersion: 1, quality, ranking, built: new Date().toISOString().slice(0, 10), nSeries: rows.length, guides, plates, bundles, views, profiles, own,
+  shards: { tokens: tFirst, rows: rFirst, frequent: frequent.sort(), lexicon: toks, filesT: hashedFiles('t'), filesR: hashedFiles('r') } };
 fs.writeFileSync(path.join(OUT, "core.json"), JSON.stringify(core));
 
 // sizes, for the log; qc enforces the budgets

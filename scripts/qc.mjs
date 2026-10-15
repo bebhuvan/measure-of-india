@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { awaitChartJobs } from './lib/chart-ready.mjs';
 // scripts/qc.mjs — post-build checks, per docs/CONTRACT-render.md:
 //  1. execute every page's JS against a jsdom DOM (catches syntax errors,
 //     missing element ids, runtime exceptions);
@@ -8,6 +9,8 @@
 //
 // Usage: node scripts/qc.mjs   (after astro build)
 
+import {vintageText,vintageSummary} from './lib/vintage.mjs';
+import {guideBundles} from '../src/dossiers/everycut.js';
 import fs from "node:fs";
 // a word joiner (U+2060) after a minus only stops a line break; compare text without it, so a
 // hand-written "−0.8%" and a formatter's "−\u20600.8%" are the same figure
@@ -34,7 +37,50 @@ const ok = (m) => console.log("  ok:", m);
 // health-gender: an NFHS value (All India, total unless named) and a round's states, by sub-indicator
 const nfhsV = (b, round, table, re, geo = "All India", sector = "total") => Object.values(b[`nfhs-${round}-${table}`].series).find((s) => re.test(s.group) && s.geo === geo && s.sector === sector).data[0];
 const nfhsStates = (b, round, table, re) => Object.values(b[`nfhs-${round}-${table}`].series).filter((s) => re.test(s.group) && s.sector === "total" && s.geo !== "All India").map((s) => ({ geo: s.geo, v: s.data[0] }));
+import {householdModel} from "../src/dossiers/households.model.js";
+import {householdFormat} from "../src/dossiers/households.format.js";
+const householdsQC=householdModel();
+import {schoolModel} from "../src/dossiers/schools.model.js";
+import {schoolFormat} from "../src/dossiers/schools.format.js";
+const schoolsQC=schoolModel();
+// ---- energy expansion ----
+import {energyModel} from "../src/dossiers/energy.model.js";
+import {energyFormat} from "../src/dossiers/energy.format.js";
+const energyQC=energyModel();
+// ---- end energy expansion ----
+// farm-households expansion checks
+import {farmModel} from '../src/dossiers/farm-households.model.js';
+import {farmFormat} from '../src/dossiers/farm-households.format.js';
+const farmQC=farmModel();
+// Digital survey values are computed by the same model as the built page.
+import {digitalModel} from "../src/dossiers/digital-access.model.js";
+import {digitalFormat} from "../src/dossiers/digital-access.format.js";
+const digitalQC=digitalModel();
+import {bySlug as guideRegistry} from '../src/dossiers/registry.js';
+import {verifyInvestorSourceArtifacts} from '../src/dossiers/investor-governed-downloads.js';
+import {pensionsModel} from '../src/dossiers/pensions.model.js';
+import {pensionFormat} from '../src/dossiers/pensions.format.js';
+import {monthYearStamp} from '../src/dossiers/display.js';
+// investor-participation is parked; its model throws without bundles, so load it only when registered.
+const investorMods=guideRegistry["investor-participation"]?await Promise.all([import('../src/dossiers/investor-participation.model.js'),import('../src/dossiers/investor-participation.format.js')]):null;
+const investorFormat=investorMods?.[1].investorFormat;
+const investorQC=investorMods?investorMods[0].investorModel():null;
+const pensionQC=guideRegistry.pensions?pensionsModel():null;
 const PAGES = [
+  ...(investorQC?[{url:"/guides/investor-participation/",slug:null,minPlots:investorQC.plates.length,exactPlots:investorQC.plates.length,sourceTableSelector:'[data-investor-layout="source-table"] table',checks:[...investorQC.facts.map(f=>["n-"+f.id,()=>investorFormat(f.value,f.unit)]),...investorQC.plates.map(p=>["pv-"+p.id,()=>investorFormat(p.rows[0].value,p.unit)])]}]:[]),
+  ...(pensionQC?[{url:'/guides/pensions/',slug:null,minPlots:pensionQC.plates.length,checks:[['n-pensions-apy',()=>pensionFormat(pensionQC.headline.lastSourceValue,pensionQC.headline.unit)],...pensionQC.plates.map(p=>['pv-'+p.id,()=>pensionFormat(p.rows[0].value,p.unit)]),['prov-vintage',()=> 'Source revision date: not published.']]}]:[]),
+  {url:"/guides/digital-access/",slug:null,minPlots:158,checks:[
+    ...Object.entries(digitalQC.facts).map(([id,f])=>["n-"+id,()=>digitalFormat(f.value,f.unit)]),
+    ...digitalQC.plates.map(p=>["pv-"+p.id,()=>digitalFormat(p.rows[0].value,p.rows[0].unit)]),
+    ...digitalQC.plates.filter(p=>p.vary==="state").map(p=>["pm-median-"+p.id,()=>digitalFormat(digitalQC.plateFacts[p.id].median,p.unit)]),
+    ["prov-vintage",()=>"Unknown"]
+  ]},
+  {url:"/guides/farm-households/",slug:null,checks:[...Object.entries(farmQC.facts).map(([id,f])=>["n-"+id,()=>farmFormat(f.value,f.unit)]),...farmQC.plates.map(p=>["pv-"+p.id,()=>farmFormat(p.rows[0].value,p.rows[0].unit)]),["prov-vintage",()=>farmQC.plates[0].vintageText],["prov-edition",()=>farmQC.plates[0].reportEditionDate],["prov-capture",()=>farmQC.plates[0].archiveCapturedDate]]},
+  // ---- energy expansion ----
+  {url:"/guides/energy/",slug:null,checks:[...Object.entries(energyQC.facts).map(([id,f])=>["n-"+id,()=>energyFormat(f.value,f.unit)]),...energyQC.plates.map(p=>["pv-"+p.id,()=>{const r=p.kind==="history"?p.rows.filter(r=>r.value!=null).at(-1):p.rows[0];return energyFormat(r.value,p.unit)}]),["prov-vintage",()=>energyQC.plates[0].vintage]]},
+  // ---- end energy expansion ----
+  {url:"/guides/households/",slug:null,checks:[...Object.entries(householdsQC.facts).map(([id,f])=>["n-"+id,()=>householdFormat(f.value,f.unit)]),...householdsQC.plates.map(p=>["pv-"+p.id,()=>householdFormat(p.rows[0].value,p.rows[0].unit)]),["prov-vintage",()=>vintageText(householdsQC.plates[0])]]},
+  {url:"/guides/schools/",slug:null,checks:[...Object.entries(schoolsQC.facts).map(([id,f])=>["n-"+id,()=>schoolFormat(f.value,f.unit)]),...schoolsQC.plates.map(p=>["pv-"+p.id,()=>schoolFormat(p.rows[0].value,p.rows[0].unit)]),["prov-vintage",()=>schoolsQC.plates[0].vintage]]},
   // titleblock and §01 lead with the 2024-base print; the 2012-base story
   // (§05 plate, core) stays below — both bundles are checked
   { url: "/guides/cpi/", slug: null, checks: [
@@ -671,7 +717,8 @@ const PAGES = [
     ["pv-coverage", (b) => fmt.x1(b["markets-listed-q-ratios"].series.int_cvg.data.at(-1))],
     ["pv-studies", (b) => fmt.pct1Minus(b["markets-co-public-growth"].series.net_sales.data.at(-1))],
     ["pv-debt", (b) => fmt.pct1(b["markets-co-public-ratios"].series.debt_to_equity.data.at(-1))],
-    ["prov-vintage", (b) => b["markets-hh-flows"].meta.vintage],
+    ["prov-vintage", (b) => vintageSummary(guideBundles(bySlug.markets).map(s=>b[s].meta))],
+    ["prov-vintage2", (b) => vintageSummary(guideBundles(bySlug.markets).map(s=>b[s].meta))],
   ]},
   { url: "/register/", slug: null, minPlots: 8, checks: [] },
   // profiles (lb/profiles): five profiles of different shapes run their charts here and in lint-charts
@@ -774,6 +821,7 @@ for (const page of PAGES) {
       const blob = new Blob([inline], { type: "text/javascript" });
       // inline module scripts are already executed via imports above in Astro output;
     }
+    await awaitChartJobs(window.document);
   } catch (e) {
     fail(`${page.url}: script threw — ${e.message}`);
   }
@@ -809,7 +857,7 @@ for (const page of PAGES) {
   if (page.url.startsWith("/guides/") && page.url !== "/guides/") {
     const d = bySlug[page.url.split("/")[2]];
     const got = doc.querySelector(".sh-date")?.textContent.trim();
-    const want = display.dateStamp(d);
+    const want = d.slug === 'pensions' ? monthYearStamp(pensionQC.headline.lastSourceDate) : display.dateStamp(d);
     if (got !== want) fail(`${page.url}: titleblock stamp "${got}" != derived "${want}" (src/dossiers/display.js)`);
   }
   if (page.url === "/") {
@@ -835,7 +883,8 @@ for (const page of PAGES) {
     else ok(`${page.url} #n-lvl-now = ${want}`);
   }
   const minPlots = page.minPlots ?? 4;
-  const nPlots = doc.querySelectorAll(".plotzone svg, #frontis-plot svg, .spark svg, .nspark svg").length;
+  const nPlots = doc.querySelectorAll(".plotzone svg, #frontis-plot svg, .spark svg, .nspark svg").length+(page.sourceTableSelector?doc.querySelectorAll(page.sourceTableSelector).length:0);
+  if(page.exactPlots!==undefined&&nPlots!==page.exactPlots)fail(`${page.url}: expected exactly ${page.exactPlots} reviewed source graphics/tables, got ${nPlots}`);
   if (nPlots < minPlots) fail(`${page.url}: expected >=${minPlots} SVGs, got ${nPlots}`);
   else ok(`${page.url}: ${nPlots} charts rendered`);
 
@@ -864,6 +913,8 @@ for (const page of PAGES) {
   const missingTitle = [...doc.querySelectorAll(".plotzone svg")]
     .filter((s) => !s.querySelector("title") && s.getAttribute("aria-hidden") !== "true");
   if (missingTitle.length) fail(`${page.url}: ${missingTitle.length} plates missing <title>`);
+  // Each fully inspected page is finished: release jsdom timers, listeners and its tree.
+  window.close();
 }
 
 // every-cut (F6, framework): each guide lists every series of every bundle it uses EXACTLY
@@ -902,14 +953,18 @@ for (const page of PAGES) {
     // Data and downloads: every bundle of the registry entry (and every file a family claims)
     // downloads from the guide page, or from its family's view one click away
     const unreachable = [];
+    const governedDownloads=d.sourceQualityMode==="required"?await import(pathToFileURL(path.join(ROOT,"src/dossiers/governed-downloads.js")).href):null;
     for (const b of new Set([d.currentBundle, ...(d.bundles ?? []), ...EC.guideBundles(d)])) {
       if (!b || !fs.existsSync(path.join(ROOT, "data/series", b + ".json"))) continue;
+      if(governedDownloads){try{governedDownloads.verifyGovernedDownloadArtifacts(ROOT,DIST,b,JSON.parse(fs.readFileSync(path.join(ROOT,"data/series",b+".json"),"utf8")),{required:true});}catch(error){fail(`${b}: governed download mismatch: ${error.message}`);}}
       if (html.includes(`/data/${b}.csv`)) continue;
       const fam = plan.tails.find((t) => t.kind === "family" && t.bundles.includes(b));
       const fp = fam && path.join(DIST, "guides", d.slug, "every-cut", fam.id, "index.html");
       const ok1 = fam && html.includes(`/guides/${d.slug}/every-cut/${fam.id}/`) && fs.existsSync(fp) && fs.readFileSync(fp, "utf8").includes(`/data/${b}.csv`);
       if (!ok1) unreachable.push(b);
     }
+    if(governedDownloads&&d.slug==="investor-participation"){try{verifyInvestorSourceArtifacts(ROOT,DIST);}catch(error){fail(`investor-participation: source coverage mismatch: ${error.message}`);}}
+    if(governedDownloads&&d.slug==="pensions"){try{governedDownloads.verifyPensionOriginalArtifacts(ROOT,DIST);}catch(error){fail(`pensions: original-source coverage mismatch: ${error.message}`);}}
     if (unreachable.length) fail(`/guides/${d.slug}/: ${unreachable.length} file(s) not downloadable from the guide page or one click away: ${unreachable.slice(0, 5).join(", ")}`);
     else ok(`/guides/${d.slug}/: every file downloads from the page or one click away`);
     if (bad.length) fail(`/guides/${d.slug}/: every-cut does not list each series exactly once: ${bad.slice(0, 5).join("; ")}${bad.length > 5 ? ` (+${bad.length - 5})` : ""}`);
@@ -987,7 +1042,14 @@ for (const page of PAGES) {
     const S = SC.createSearch(core, async (p) => JSON.parse(fs.readFileSync(path.join(SD, p), "utf8")));
     let tried = 0, missed = 0;
     const pageCache = new Map();
-    const page = (url) => { if (!pageCache.has(url)) { const f = path.join(DIST, url, "index.html"); pageCache.set(url, fs.existsSync(f) ? fs.readFileSync(f, "utf8") : null); } return pageCache.get(url); };
+    const page = (url) => {
+      if (!pageCache.has(url)) {
+        const f = path.join(DIST, url, "index.html");
+        pageCache.set(url, fs.existsSync(f) ? fs.readFileSync(f, "utf8") : null);
+        if (pageCache.size > 8) pageCache.delete(pageCache.keys().next().value);
+      }
+      return pageCache.get(url);
+    };
     for (let g = 0; g < core.guides.length; g++) {
       const ids = core.bundles.filter((b) => b[3] === g).flatMap((b) => Array.from({ length: b[5] }, (_, k) => b[4] + k));
       if (!ids.length) { fail(`site search: guide ${core.guides[g][0]} has no series in the index`); continue; }
@@ -1084,6 +1146,7 @@ for (const page of PAGES) {
       const cap = el.closest("table")?.querySelector("caption")?.textContent ?? "";   // a table dated once, in its caption
       if (!PERIOD.test(box.textContent.replace(el.textContent, "")) && !PERIOD.test(cap)) { bad++; fail(`profiles: ${url} figure "${el.textContent}" carries no period`); }
     }
+    dom.window.close();
     if (url !== "/states/" && !fs.existsSync(path.join(DIST, url.replace(/\/$/, "") + ".csv"))) fail(`profiles: ${url.replace(/\/$/, "")}.csv not built`);
   }
   if (!bad) ok(`profiles: ${pages} pages, ${nFig} figures each re-read from its bundle and dated`);

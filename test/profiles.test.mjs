@@ -6,6 +6,12 @@ import assert from "node:assert/strict";
 import { STATES, FORMER_BY_SLUG, SEAMS, placeAll } from "../src/dossiers/states-key.js";
 import { profile, page, MEASURES, load, cells, commonDate, measureAll, FMT, rankPhrase, RANK_EDGE } from "../src/dossiers/profiles.js";
 
+import {loadBundle} from "../src/dossiers/everycut.js";
+
+test("profiles and Every Cut share canonical bundle objects",()=>{
+ assert.strictEqual(load("states-spread"),loadBundle("states-spread"));
+});
+
 const all = STATES.map((u) => ({ u, p: profile(u.slug) }));
 const figsOf = (p) => p.sections.flatMap((s) => s.figures);
 

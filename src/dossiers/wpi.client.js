@@ -299,7 +299,6 @@ function componentChart(blockId, plotId, key, d0, d1, yTicks, extraNote) {
       Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
       Plot.ruleY([d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
       Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
-      Plot.areaY(s.data, { x: "date", y: "value", y1: d0 <= 0 ? 0 : d0, fill: s.color, fillOpacity: 0.06 }),
       Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.lineY(s.data.slice(-13), { x: "date", y: "value", stroke: s.color, strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" }),
       Plot.dot([pk], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
@@ -425,7 +424,7 @@ const SHORT = {
   const shortLabel = (r) => r.s.label.replace(/^Manufacture of /, "").replace(/^./, (c) => c.toUpperCase());
   const row = (r, rank) => `
   <tr>
-    <td class="name">${shortLabel(r)}<small>№ ${rank} of 134, ${r.s.label}</small></td>
+    <td class="name">${shortLabel(r)}<small>${rank} of 134, ${r.s.label}</small></td>
     <td class="val">${f1(r.latest)}</td>
     <td class="chg">${arrow(r.latest - r.prevV)}, ${word(r.latest - r.prevV)}</td>
     <td class="yr">${f1(r.yr)}</td>
@@ -475,7 +474,7 @@ const SHORT = {
   const chgCell = (r) => r.prevV == null ? "—" : `${arrow(r.latest - r.prevV)}, ${word(r.latest - r.prevV)}`;
   const rowI = (r, rank) => `
   <tr>
-    <td class="name">${r.s.label}<small>№ ${rank} of ${nRanked}, ${r.lineage}</small></td>
+    <td class="name">${r.s.label}<small>${rank} of ${nRanked}, ${r.lineage}</small></td>
     <td class="val">${f1(r.latest)}</td>
     <td class="chg">${chgCell(r)}</td>
     <td class="yr">${r.yr == null ? "—" : f1(r.yr)}</td>

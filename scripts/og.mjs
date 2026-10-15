@@ -8,9 +8,9 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { JSDOM } from "jsdom";
-import sharp from "sharp";
 import wawoff2 from "wawoff2";
 import { DOSSIERS, bySlug, kicker } from "../src/dossiers/registry.js";
+import { headlineOf } from "../src/dossiers/headline.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -26,9 +26,26 @@ async function ensureFonts() {
     const ttf = await wawoff2.decompress(fs.readFileSync(path.join(ROOT, "public/fonts", f + ".woff2")));
     fs.writeFileSync(out, Buffer.from(ttf));
   }
+  // v3: librsvg cannot set a variable font's optical size or weight, so the display serif is
+  // shipped as three static instances of the site's Source Serif 4 (opsz 60 at 500 and 300 for
+  // titles and figures, opsz 30 at 600 for the brand), cut with fontTools' instancer from the
+  // self-hosted latin face. Copied into the font dir and registered once.
+  let fresh = false;
+  for (const f of fs.readdirSync(path.join(ROOT, "scripts/og-fonts"))) {
+    const out = path.join(dir, f);
+    if (!fs.existsSync(out)) { fs.copyFileSync(path.join(ROOT, "scripts/og-fonts", f), out); fresh = true; }
+  }
+  void fresh;
+  // sharp carries its own fontconfig, which will not rebuild a cache written by a newer system
+  // fontconfig and so never sees newly installed faces. Point it at a private config with its
+  // own cache, before sharp loads.
+  const fcDir = path.join(os.tmpdir(), "india-atlas-og-fontconfig");
+  fs.mkdirSync(path.join(fcDir, "cache"), { recursive: true });
+  fs.writeFileSync(path.join(fcDir, "fonts.conf"), `<?xml version="1.0"?><!DOCTYPE fontconfig SYSTEM "fonts.dtd"><fontconfig><dir>${dir}</dir><dir>/usr/share/fonts</dir><cachedir>${path.join(fcDir, "cache")}</cachedir></fontconfig>`);
+  process.env.FONTCONFIG_FILE = path.join(fcDir, "fonts.conf");
 }
 // the converted fontsource faces register under these family names
-const RENDER_FAMILY = { "Source Serif 4": "Source Serif 4", "Golos Text": "Golos Text" };
+const RENDER_FAMILY = { "Source Serif 4": "Source Serif 4", "Golos Text": "Golos Text", "Atlas OG Serif Display": "Atlas OG Serif Display", "Atlas OG Serif Light": "Atlas OG Serif Light", "Atlas OG Serif Brand": "Atlas OG Serif Brand" };
 const renderFonts = (svg) =>
   svg.replace(/font-family="([^"]+)"/g, (_, fam) =>
     'font-family="' + fam.split(",").map((f) => RENDER_FAMILY[f.trim().replace(/'/g, "")] ?? f.trim()).join(",") + '"');
@@ -66,26 +83,27 @@ function hydrate(bundle) {
 }
 
 function plotSvg({ S, keys, d0, d1, band, trend, suffix = "%", yStep, fmt, mr }) {
-  const W = 1120, H = 400;
+  const W = 860, H = 340;   // v3: the chart sits in the card's main field, beside the margin
   const dates = S[keys[0]].data.map((d) => d.date);
   const fmtV = fmt ?? ((v) => v.toFixed(2) + suffix);
   const yTicks = [];
   const step = yStep ?? (d1 - d0 > 30 ? 10 : 2);
   for (let v = Math.ceil(d0 / step) * step; v <= d1; v += step) yTicks.push(v);
   const marks = [
-    Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+    Plot.gridY(yTicks, { stroke: "#E8EBEF", strokeWidth: 1 }),
     band ? Plot.rectY([{ y1: band[0], y2: band[1] }], { y1: "y1", y2: "y2", x1: dates[0], x2: dates.at(-1), fill: "#F4F6FD" }) : null,
-    Plot.ruleY([d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+    Plot.ruleY([d0], { stroke: "#DFE2E8", strokeWidth: 1 }),
     Plot.ruleY([0], { stroke: band ? "#B5BAC4" : "#161A22", strokeOpacity: band ? 1 : 0.55, strokeWidth: 1 }),
     trend != null ? Plot.ruleY([trend], { stroke: "#BFC4CD", strokeWidth: 1, strokeDasharray: "2,4" }) : null,
     ...keys.slice(1).map((k) => Plot.lineY(S[k].data, { x: "date", y: "value", stroke: S[k].color, strokeWidth: 1.5, strokeLinejoin: "round", strokeLinecap: "round", ...(S[k].dashed ? { strokeDasharray: "4 3" } : {}) })),
     Plot.lineY(S[keys[0]].data, { x: "date", y: "value", stroke: S[keys[0]].color, strokeWidth: 2.75, strokeLinejoin: "round", strokeLinecap: "round" }),
     ...keys.map((k) => Plot.dot([S[k].data.at(-1)], { x: "date", y: "value", fill: S[k].color, r: k === keys[0] ? 5 : 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
     ...dodgeEndLabels(keys.map((k) => S[k]), (d1 - d0) * 0.05).map((p) =>
-      Plot.text([{ date: p.s.data.at(-1).date, y: p.y }], { x: "date", y: "y", text: () => `${p.s.label} ${fmtV(p.value)}`, dx: 14, fill: "#161A22", fontSize: 15, fontFamily: mono, fontWeight: p.s.label === S[keys[0]].label ? 500 : 400, textAnchor: "start" })),
+      Plot.text([{ date: p.s.data.at(-1).date, y: p.y }], { x: "date", y: "y", text: () => `${p.s.label} ${fmtV(p.value)}`, dx: 12, fill: "#161A22", fontSize: 15, fontFamily: mono, stroke: "#FFFFFF", strokeWidth: 4, paintOrder: "stroke", fontWeight: p.s.label === S[keys[0]].label ? 500 : 400, textAnchor: "start" })),
   ].filter(Boolean);
   const plot = Plot.plot({
-    width: W, height: H, marginLeft: 44, marginRight: mr ?? 170, marginTop: 10, marginBottom: 24,
+    // the end labels need their own room: measured from the longest one (15px Golos, ~8.4px a glyph)
+    width: W, height: H, marginLeft: 0, marginRight: Math.max(mr ?? 0, 150, 26 + 8.4 * Math.max(...keys.map((k) => (S[k].label + " " + fmtV([...S[k].data].reverse().find((d) => d.value != null)?.value ?? 0)).length))), marginTop: 10, marginBottom: 12,
     style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#5F6675" },
     x: { axis: null },
     y: { axis: null, domain: [d0, d1] },
@@ -97,7 +115,28 @@ function plotSvg({ S, keys, d0, d1, band, trend, suffix = "%", yStep, fmt, mr })
 // Visual/data config per card. Dossier kicker + title are NOT here — they
 // come from src/dossiers/registry.js at render time (single source of truth);
 // the "site" card is the only one with local kicker/title.
+import {farmHouseholdsOg} from "./lib/farm-households-og.mjs";
+import {digitalAccessOg} from "./lib/digital-access-og.mjs";
 const CARDS = [
+  ...(bySlug.pensions?[{
+    slug:'pensions',bundleSlug:'pensions-m3',keys:['apy_ca7e68f6'],fmt:v=>Math.round(v).toLocaleString('en-IN'),
+    prep:S=>{headlineOf(bySlug.pensions);S.apy_ca7e68f6={...S.apy_ca7e68f6,label:'APY subscribers',color:'#2E4BD8'};},
+    render:(_b,S)=>{const values=S.apy_ca7e68f6.data.filter(d=>d.value!=null).map(d=>d.value),ceiling=Math.max(...values)*1.15;return plotSvg({S,keys:['apy_ca7e68f6'],d0:0,d1:ceiling,band:null,trend:null,yStep:ceiling/4,fmt:v=>Math.round(v).toLocaleString('en-IN'),mr:260});},
+    foot:()=>{const h=headlineOf(bySlug.pensions);return `APY subscriber stock, ${h.period}. Source: PFRDA`;}
+  }]:[]),
+  {slug:"digital-access",bundleSlug:"digital-access-cmst2025-18",keys:["c_9dfb5647c122b90f0409fc15"],d0:0,d1:100,band:null,trend:null,yStep:25,fmt:v=>v.toFixed(1)+"%",mr:180,render:digitalAccessOg,foot:b=>`Households with internet within their premises, ${b.meta.latestPeriod}. Source: MoSPI, National Statistical Office`},
+  {slug:"farm-households",bundleSlug:"farm-households-nss77-24-03",keys:["c_f933a5307465e8a32ad64e2d"],d0:0,d1:12000,band:null,trend:null,yStep:3000,fmt:v=>"₹"+v.toLocaleString("en-IN"),mr:240,render:farmHouseholdsOg,foot:b=>`Mean monthly income after paid-out costs, ${b.series["c_f933a5307465e8a32ad64e2d"].dims.season}. Source: MoSPI NSS77`},
+  // ---- energy expansion ----
+  {slug:"energy",bundleSlug:"energy-report-2026-balance-ktoe",keys:["c_2fee63973c1676aa96bb"],d0:0,d1:1000000,band:null,trend:null,yStep:250000,fmt:v=>(v/1000).toFixed(0)+"k KToE",mr:180,foot:b=>`Total primary energy supply, ${b.meta.latestPeriod}. Source: MoSPI`},
+  // ---- end energy expansion ----
+  { slug:"households",bundleSlug:"households-aidis-6",keys:["c_1b185419507995b98bdc1bff"],d0:0,d1:2000000,band:null,trend:null,yStep:500000,fmt:v=>"₹"+(v/1e5).toFixed(1)+" lakh",mr:240,foot:b=>`Mean assets per rural household, ${b.meta.latestPeriod}. Source: MoSPI, NSS 77 AIDIS` },
+  {
+    slug: "schools", bundleSlug: "schools-udise-student-2",
+    keys: ["enrolment"], d0:20,d1:28,band:null,trend:null,
+    yStep:2,fmt:v=>v.toFixed(2)+" cr",mr:240,
+    prep:(S,b)=>{S.enrolment={label:"Enrolled pupils",color:"#2E4BD8",data:b.dates.map((d,i)=>({date:new Date(d+"T00:00:00Z"),value:Object.values(b.series).reduce((a,s)=>a+(s.data[i]??0),0)/1e7}))};},
+    foot:(b,S)=>`Enrolment including school pre-primary, ${b.meta.latestPeriod}, student-level collection. Source: Ministry of Education, UDISE+`,
+  },
   {
     slug: "site", bundleSlug: "cpi-2024-linked", kicker: "Guides to India's official economic statistics",
     title: "An atlas of the Indian economy.",
@@ -133,7 +172,8 @@ const CARDS = [
     slug: "external", bundleSlug: "external-reserves-weekly",
     keys: ["total_usd"], d0: 0, d1: 900, band: null, trend: null, scale: 0.001, yStep: 200, fmt: (v) => "$" + v.toFixed(0) + " bn", mr: 200,
     prep: (S) => { S.total_usd = { ...S.total_usd, label: "Reserves", color: "#2E4BD8" }; },
-    foot: (b, S) => `Foreign exchange reserves $${(S.total_usd.data.at(-1).value / 1000).toFixed(0)} bn, week of ${b.dates.at(-1)}. Source: RBI DBIE`,
+    // S is already scaled to $ bn (card.scale) when foot runs
+    foot: (b, S) => { const d = b.dates.at(-1); return `Foreign exchange reserves $${S.total_usd.data.at(-1).value.toFixed(0)} bn, week of ${+d.slice(8, 10)} ${MONTHS[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}. Source: RBI DBIE`; },
   },
   {
     // review-a: the monthly bulletin, the guide's current series (the card drew the urban quarterly
@@ -266,8 +306,9 @@ const CARDS = [
 
   {
     slug: "manufacturing", bundleSlug: "wdi-manufacturing",
-    keys: ["mva_pct_gdp", "industry_pct_gdp"], d0: 0, d1: 30, band: null, trend: null,
-    yStep: 10, fmt: (v) => v.toFixed(1) + "%", mr: 220,
+    keys: ["mva_pct_gdp", "industry_pct_gdp"], d0: 0, d1: 35, band: null, trend: null,
+    yStep: 10, fmt: (v) => v.toFixed(1) + "%",
+    prep: (S) => { S.mva_pct_gdp = { ...S.mva_pct_gdp, label: "Manufacturing" }; S.industry_pct_gdp = { ...S.industry_pct_gdp, label: "Industry" }; },
     foot: (b, S) => `Manufacturing ${S.mva_pct_gdp.data.at(-1).value.toFixed(1)}% of GDP · 2025 · Source: World Bank WDI`,
   },
   // ---- bis family session ----
@@ -385,6 +426,7 @@ const CARDS = [
 ];
 
 await ensureFonts();
+const sharp = (await import("sharp")).default;
 fs.mkdirSync(path.join(ROOT, "public/og"), { recursive: true });
 
 // startup guard: CARDS and the dossier registry must cover each other
@@ -415,17 +457,36 @@ for (const card of CARDS) {
   if (card.scale) for (const k of card.keys) if (S[k]) S[k] = { ...S[k], data: S[k].data.map((d) => ({ ...d, value: d.value == null ? null : d.value * card.scale })) };
   if (S.core) S.core.dashed = true;
   if (card.prep) card.prep(S, bundle);
-  const chart = plotSvg({ S, keys: card.keys, d0: card.d0, d1: card.d1, band: card.band, trend: card.trend, suffix: card.suffix, yStep: card.yStep, fmt: card.fmt, mr: card.mr });
+  const chart = card.render ? card.render(bundle, S) : plotSvg({ S, keys: card.keys, d0: card.d0, d1: card.d1, band: card.band, trend: card.trend, suffix: card.suffix, yStep: card.yStep, fmt: card.fmt, mr: card.mr });
+  // v3 card on the ledger margin (DESIGN §0.1): the brand and the guide's headline figure in the
+  // margin, the kicker, the title and the chart in the main field, the source under a hairline.
+  // The figure is the one the front page and the guides index print (src/dossiers/headline.js).
+  // The figure in the margin must be the chart's own: the guide's headline where the card's
+  // footnote quotes it, otherwise the chart's lead series at its last point, with the footnote's
+  // words for a caption.
+  const head = headlineOf(entry ?? bySlug.cpi);
+  const footMain = card.foot(bundle, S).replace(/ · /g, ", ").split(/[.,] Source/)[0];
+  const leadS = S[card.keys[0]], lastV = [...leadS.data].reverse().find((d) => d.value != null)?.value;
+  const endTxt = (card.fmt ?? ((v) => v.toFixed(2) + (card.suffix ?? "%")))(lastV);
+  const fig = footMain.includes(head.value) || endTxt === head.value ? { value: head.value, cap: `${head.what}, ${head.period}` }
+    : { value: endTxt, cap: footMain.replace(endTxt, "").replace(/\s+,/g, ",").replace(/\s{2,}/g, " ").trim() };
+  const wrapT = (t, n) => { const w = t.split(" "), out = [""]; for (const x of w) { if ((out.at(-1) + " " + x).trim().length > n) out.push(x); else out[out.length - 1] = (out.at(-1) + " " + x).trim(); } return out; };
+  const tl = wrapT(title, 30).slice(0, 2);
+  const capL = wrapT(fig.cap, 24);
+  const figSize = fig.value.length > 9 ? 44 : fig.value.length > 6 ? 60 : 76;
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">` +
     `<rect width="1200" height="630" fill="#FFFFFF"/>` +
-    `<text x="40" y="58" font-family="'Source Serif 4', serif" font-weight="600" font-size="22" fill="#161A22">India Atlas</text>` +
-    `<text x="40" y="100" font-family="'Golos Text', sans-serif" font-size="17" fill="#878D99">${esc(kickerText)}</text>` +
-    `<text x="40" y="150" font-family="'Source Serif 4', serif" font-weight="500" font-size="46" letter-spacing="-0.6" fill="#161A22">${esc(title)}</text>` +
-    `<g transform="translate(40,180)">${chart.replace(/<\?xml[^>]*\?>/, "").replace(/<svg/, '<svg x="0" y="0"').replace(/width="1120"/, 'width="1120"')}</g>` +
-    `<line x1="40" y1="596" x2="1160" y2="596" stroke="#ECEEF2"/>` +
-    `<text x="40" y="618" font-family="'Golos Text', sans-serif" font-size="14" fill="#878D99">${esc(card.foot(bundle, S).replace(/ · /g, ", "))}</text>` +
-    `<text x="1160" y="618" text-anchor="end" font-family="'Golos Text', sans-serif" font-size="14" fill="#878D99">atlas.thisindianlife.today</text>` +
+    `<text x="48" y="66" font-family="'Atlas OG Serif Brand', serif" font-size="24" letter-spacing="-0.2" fill="#161A22">India Atlas</text>` +
+    `<line x1="48" y1="${tl.length > 1 ? 232 : 186}" x2="268" y2="${tl.length > 1 ? 232 : 186}" stroke="#161A22"/>` +
+    `<text x="48" y="${(tl.length > 1 ? 232 : 186) + 16 + figSize}" font-family="'Atlas OG Serif Light', serif" font-size="${figSize}" letter-spacing="-1.5" fill="#161A22">${esc(fig.value)}</text>` +
+    capL.map((l, i) => `<text x="48" y="${(tl.length > 1 ? 232 : 186) + 16 + figSize + 34 + i * 22}" font-family="'Golos Text', sans-serif" font-size="16" fill="#4A5160">${esc(l)}</text>`).join("") +
+    `<text x="300" y="66" font-family="'Golos Text', sans-serif" font-size="17" fill="#6B7180">${esc(kickerText)}</text>` +
+    tl.map((l, i) => `<text x="300" y="${124 + i * 50}" font-family="'Atlas OG Serif Display', serif" font-size="48" letter-spacing="-0.9" fill="#161A22">${esc(l)}</text>`).join("") +
+    `<g transform="translate(300,${tl.length > 1 ? 222 : 176})">${chart.replace(/<\?xml[^>]*\?>/, "").replace(/<svg/, '<svg x="0" y="0"')}</g>` +
+    `<line x1="48" y1="582" x2="1152" y2="582" stroke="#DFE2E8"/>` +
+    `<text x="48" y="608" font-family="'Golos Text', sans-serif" font-size="14" fill="#6B7180">${esc(card.foot(bundle, S).replace(/ · /g, ", "))}</text>` +
+    `<text x="1152" y="608" text-anchor="end" font-family="'Golos Text', sans-serif" font-size="14" fill="#6B7180">atlas.thisindianlife.today</text>` +
     `</svg>`;
   const png = await sharp(Buffer.from(renderFonts(svg))).png().toBuffer();
   fs.writeFileSync(path.join(ROOT, "public/og", card.slug + ".png"), png);
@@ -450,22 +511,22 @@ if (!ONLY || ONLY.has("profiles"))
     const nameSize = u.name.length > 30 ? 40 : u.name.length > 20 ? 50 : 62;
     const cellsSvg = cells.map((c, i) => {
       const x = 40 + i * 282;
-      return `<line x1="${x}" y1="330" x2="${x + 250}" y2="330" stroke="#DFE2E8"/>` +
-        `<text x="${x}" y="362" font-family="'Golos Text', sans-serif" font-size="17" fill="#878D99">${esc(c.label)}</text>` +
-        `<text x="${x}" y="428" font-family="'Source Serif 4', serif" font-weight="300" font-size="50" fill="#161A22">${esc(c.text.replace(/ a day$/, ""))}</text>` +
+      return `<line x1="${x}" y1="330" x2="${x + 250}" y2="330" stroke="#161A22"/>` +
+        `<text x="${x}" y="362" font-family="'Golos Text', sans-serif" font-size="17" fill="#6B7180">${esc(c.label)}</text>` +
+        `<text x="${x}" y="428" font-family="'Atlas OG Serif Light', serif" font-size="50" letter-spacing="-1" fill="#161A22">${esc(c.text.replace(/ a day$/, ""))}</text>` +
         `<text x="${x}" y="462" font-family="'Golos Text', sans-serif" font-size="16" fill="#4A5160">${esc(c.period)}</text>`;
     }).join("");
     const svg =
       `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">` +
       `<rect width="1200" height="630" fill="#FFFFFF"/>` +
-      `<text x="40" y="58" font-family="'Source Serif 4', serif" font-weight="600" font-size="22" fill="#161A22">India Atlas</text>` +
-      `<text x="40" y="100" font-family="'Golos Text', sans-serif" font-size="17" fill="#878D99">${esc(`${KIND[u.kind]} profile, ${u.region}`)}</text>` +
-      `<text x="40" y="${150 + nameSize / 2}" font-family="'Source Serif 4', serif" font-weight="500" font-size="${nameSize}" letter-spacing="-0.6" fill="#161A22">${esc(u.name)}</text>` +
+      `<text x="40" y="58" font-family="'Atlas OG Serif Brand', serif" font-size="24" letter-spacing="-0.2" fill="#161A22">India Atlas</text>` +
+      `<text x="40" y="100" font-family="'Golos Text', sans-serif" font-size="17" fill="#6B7180">${esc(`${KIND[u.kind]} profile, ${u.region}`)}</text>` +
+      `<text x="40" y="${150 + nameSize / 2}" font-family="'Atlas OG Serif Display', serif" font-size="${nameSize}" letter-spacing="-0.9" fill="#161A22">${esc(u.name)}</text>` +
       `<text x="40" y="262" font-family="'Golos Text', sans-serif" font-size="19" fill="#4A5160">How it earns, spends, works, borrows, learns and falls ill, against India and its neighbours</text>` +
       cellsSvg +
       `<line x1="40" y1="596" x2="1160" y2="596" stroke="#ECEEF2"/>` +
-      `<text x="40" y="618" font-family="'Golos Text', sans-serif" font-size="14" fill="#878D99">Each figure with its own period. Sources: MoSPI, RBI, the family health survey and others, as named on the page.</text>` +
-      `<text x="1160" y="618" text-anchor="end" font-family="'Golos Text', sans-serif" font-size="14" fill="#878D99">atlas.thisindianlife.today/states/${u.slug}/</text>` +
+      `<text x="40" y="618" font-family="'Golos Text', sans-serif" font-size="14" fill="#6B7180">Each figure with its own period. Sources: MoSPI, RBI, the family health survey and others, as named on the page.</text>` +
+      `<text x="1160" y="618" text-anchor="end" font-family="'Golos Text', sans-serif" font-size="14" fill="#6B7180">atlas.thisindianlife.today/states/${u.slug}/</text>` +
       `</svg>`;
     const png = await sharp(Buffer.from(renderFonts(svg))).png().toBuffer();
     fs.writeFileSync(path.join(dir, u.slug + ".png"), png);

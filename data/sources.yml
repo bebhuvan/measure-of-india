@@ -9,6 +9,11 @@
 # base revision is a defect; validate.mjs fails on it.
 
 families:
+  pfrda:
+    transport: archived-originals
+    source: Pension Fund Regulatory and Development Authority
+    note: Frozen source bodies and record fingerprints; a new source edition
+      requires independent review.
   mospi:
     transport: mospi
     base: https://api.mospi.gov.in/api/
@@ -112,6 +117,20 @@ families:
   # ---- end profiles ----
 
 dossiers:
+  pensions:
+    family: pfrda
+    geo: IND
+    product: pensions
+    frequency: monthly
+    frequency_exempt: true
+    base: as published
+    release_calendar: irregular
+    revision_policy: Source revision dates unknown; capture and report edition
+      remain separate. Preserve each source ruler and endpoint.
+    source_agency: Pension Fund Regulatory and Development Authority
+    release_url: https://www.pfrda.org.in/en/research-publications/statistics/statistical-data
+    downloadSourceContract: data/coverage/pensions-download-source-contract.json
+    downloadSourceContractSha256: 68c8dd5fba5e68e03d1ad0c2b5e9f9129ee8005796fd8e6a9fa03f236f1b886f
 
   cpi:
     # regression floor (docs/RELEASE-CHECKLIST.md §2): the minimum period this
@@ -879,6 +898,48 @@ dossiers:
       # rows carry no month field: fetch per month_code (1=April..12=March,
       # fiscal order) and read each row's own fiscal-year label. The year
       # param breaks filtering — do not send it.
+
+  households:
+    family: mospi
+    geo: IND
+    product: households
+    frequency: cross-sectional
+    base: "NSS 77 AIDIS 2019, Schedule 18.2"
+    release_calendar: "Periodic household survey; no scheduled monthly release"
+    revision_policy: "Published survey estimates may be revised by MoSPI; changed source bodies are archived before rebaking."
+    source_agency: "MoSPI, National Statistical Office"
+    release_url: https://www.mospi.gov.in/
+    ranges:
+      per_1000: [0, 1000]
+      inr: [0, 1000000000]
+      inr_lakh: [0, 100000000000]
+
+  schools:
+    family: mospi
+    geo: IND
+    product: schools
+    frequency: annual
+    frequency_exempt: true
+    base: "UDISE+ student-level collection, existing structure"
+    release_calendar: "Annual school census; CMSE is a separate one-off survey"
+    revision_policy: "Administrative counts and published survey estimates may be revised by the agency; changed responses are archived before rebaking."
+    source_agency: "Ministry of Education and MoSPI"
+    release_url: https://dashboard.udiseplus.gov.in/report2025/
+    ranges:
+      count: [0, 1000000000]
+      pct: [0, 100.1]
+      # Source-replayed exceptions: GER [0,10000]; NER/ANER/retention [0,300].
+      # CMSE funding has one archived -0.1 share; retained with a source-quality flag.
+      inr_per_year: [0, 1000000]
+      pupils_per_teacher: [0, 1000]
+      count_per_school: [0, 100000]
+      gpi: [0, 10]
+    fetch:
+      udise: udise/getUdiseRecords
+      cmse: nss-80/getNSS80Records
+      survey_code: 2
+    # School student-record collection begins in 2022-23. The adapter splits all
+    # UDISE cubes there; school-stage definitions stay in the existing structure.
 
   aishe:
     # regression floor (docs/RELEASE-CHECKLIST.md §2): the minimum period this
@@ -1755,17 +1816,17 @@ dossiers:
     source_agency: "Reserve Bank of India, studies of company finances (DBIE, via the local Data Bank)"
     release_url: https://data.rbi.org.in
   markets-listed:
-    stale_after: "2025-10"
+    stale_after: "2026-04"
     frequency_exempt: true
-    family: rbihub
+    family: databank
     geo: IND
-    product: markets-hub
+    product: markets-rbi
     frequency: quarterly
     base: "as published"
     release_calendar: "quarterly, about three months after the quarter, in the RBI's data on listed companies"
     revision_policy: "Each quarter's figures come from the companies that reported in that quarter; growth rates compare the same companies a year apart and are final as printed."
-    source_agency: "Reserve Bank of India, DBIE, via the Reserve Bank Innovation Hub's data service"
-    release_url: https://dbie.rbihub.in
+    source_agency: "Reserve Bank of India, DBIE, official CAS and prompted statistical reports"
+    release_url: https://data.rbi.org.in/DBIE/
   markets-spf:
     stale_after: "2026-07"
     frequency_exempt: true
@@ -1811,8 +1872,182 @@ dossiers:
     revision_policy: "Advance estimates are revised until the ministry's final estimates; final figures change rarely. The latest year is kept apart as an advance estimate, never joined to the final years."
     source_agency: "Reserve Bank of India, DBIE (agriculture ministry and food ministry data), via the Data Bank"
     release_url: https://data.rbi.org.in
-  # ---- end farms ----
+  # ---- end farms ----# ---- energy expansion ----
+  energy:
+    family: mospi
+    geo: IND
+    product: energy
+    frequency: annual
+    frequency_exempt: true
+    base: "Published energy accounts; no base-year index"
+    release_calendar: irregular
+    revision_policy: "Published balances and Ember releases may be revised; raw versions retained."
+    source_agency: "MoSPI and Ember"
+    release_url: https://www.mospi.gov.in/themes/product/60-energy-statistics
+    ranges:
+      energy: [-10000000, 10000000]
+  # ---- end energy expansion ----
+
+  # ---- farm-households: complete NSS77 observed survey cubes ----
+  farm-households:
+    family: mospi
+    geo: IND
+    product: farm-households
+    base: "NSS 77, Schedule 33.1, rural India"
+    frequency: cross-sectional
+    frequency_exempt: true
+    release_day: null
+    stale_after: null
+    note: "Historical rural survey; API originals and report-native repairs remain separate. No current-income extrapolation."
+  # ---- end farm-households ----
+
+
+  # Launch adapter is verified offline archive replay; no live refresh is wired.
+  # Required future acquisition/edition guards: shared-proposals/refresh-lifecycle.md.
+  digital-access:
+    family: mospi
+    geo: IND
+    product: digital-access
+    snapshotSourceContract: data/coverage/digital-access.snapshot-source-contract.json
+    snapshotSourceContractSha256: 925ac1974ceb450806a0f8165462e534596d3b5215e494d7c8c1318920fbd65e
+    frequency: cross-sectional
+    frequency_exempt: true
+    base: cmst2025
+    release_calendar: irregular
+    revision_policy: "Archive changed API bodies before replay; API revision date unknown, report edition and capture distinct. Never splice survey instruments."
+    source_agency: "MoSPI, National Statistical Office"
+    release_url: https://www.mospi.gov.in/sites/default/files/publication_reports/CMST_report_m.pdf
+    ranges:
+      pct: [0, 100]
+      pct_rse: [0, 1000]
+      count: [0, 1000000000]
+      hundreds: [0, 1000000000]
+
 seams:
+  schools:
+    - base: UDISE+ institution-level collection, existing structure
+      from: 2018-04
+      to: 2021-04
+      bundles:
+        - schools-udise-institution-1
+        - schools-udise-institution-2
+        - schools-udise-institution-3
+        - schools-udise-institution-4
+        - schools-udise-institution-5
+        - schools-udise-institution-6
+        - schools-udise-institution-7
+        - schools-udise-institution-8
+        - schools-udise-institution-9
+        - schools-udise-institution-10
+        - schools-udise-institution-11
+        - schools-udise-institution-12
+        - schools-udise-institution-13
+        - schools-udise-institution-14
+        - schools-udise-institution-15
+        - schools-udise-institution-16
+        - schools-udise-institution-18
+        - schools-udise-institution-19
+        - schools-udise-institution-20
+        - schools-udise-institution-21
+        - schools-udise-institution-22
+        - schools-udise-institution-23
+        - schools-udise-institution-24
+        - schools-udise-institution-25
+        - schools-udise-institution-26
+        - schools-udise-institution-28
+        - schools-udise-institution-29
+        - schools-udise-institution-30
+        - schools-udise-institution-31
+        - schools-udise-institution-32
+        - schools-udise-institution-33
+        - schools-udise-institution-34
+        - schools-udise-institution-35
+        - schools-udise-institution-36
+        - schools-udise-institution-37
+        - schools-udise-institution-38
+        - schools-udise-institution-39
+        - schools-udise-institution-40
+        - schools-udise-institution-41
+        - schools-udise-institution-42
+        - schools-udise-institution-43
+        - schools-udise-institution-45
+        - schools-udise-institution-46
+        - schools-udise-institution-47
+        - schools-udise-institution-48
+        - schools-udise-institution-49
+    - base: UDISE+ student-level collection, existing structure
+      from: 2022-04
+      to: null
+      bundles:
+        - schools-udise-student-1
+        - schools-udise-student-2
+        - schools-udise-student-3
+        - schools-udise-student-4
+        - schools-udise-student-5
+        - schools-udise-student-6
+        - schools-udise-student-7
+        - schools-udise-student-8
+        - schools-udise-student-9
+        - schools-udise-student-10
+        - schools-udise-student-11
+        - schools-udise-student-12
+        - schools-udise-student-13
+        - schools-udise-student-14
+        - schools-udise-student-15
+        - schools-udise-student-16
+        - schools-udise-student-18
+        - schools-udise-student-19
+        - schools-udise-student-20
+        - schools-udise-student-21
+        - schools-udise-student-22
+        - schools-udise-student-23
+        - schools-udise-student-24
+        - schools-udise-student-25
+        - schools-udise-student-26
+        - schools-udise-student-28
+        - schools-udise-student-29
+        - schools-udise-student-30
+        - schools-udise-student-31
+        - schools-udise-student-32
+        - schools-udise-student-33
+        - schools-udise-student-34
+        - schools-udise-student-35
+        - schools-udise-student-36
+        - schools-udise-student-37
+        - schools-udise-student-38
+        - schools-udise-student-39
+        - schools-udise-student-40
+        - schools-udise-student-41
+        - schools-udise-student-42
+        - schools-udise-student-43
+        - schools-udise-student-45
+        - schools-udise-student-46
+        - schools-udise-student-47
+        - schools-udise-student-48
+        - schools-udise-student-49
+        - schools-national
+    - base: CMSE April–June 2025, school spending and coaching separate
+      from: 2025-04
+      to: 2025-04
+      bundles:
+        - schools-cmse-40
+        - schools-cmse-39
+        - schools-cmse-37
+        - schools-cmse-35
+        - schools-cmse-34
+        - schools-cmse-36
+        - schools-cmse-33
+        - schools-cmse-30
+        - schools-cmse-31
+        - schools-cmse-32
+        - schools-cmse-25
+        - schools-cmse-24
+        - schools-cmse-23
+        - schools-cmse-42
+        - schools-cmse-41
+        - schools-cmse-28
+        - schools-cmse-29
+        - schools-cmse-38
   cpi:
     - base: "2012=100"
       from: "2011-01"
@@ -2539,3 +2774,120 @@ seams:
       to: "2019-04"
       bundles: [markets-co-listed-halfyear]
   # ---- end markets ----
+
+  # ---- energy expansion seams ----
+  energy:
+    - base: MoSPI API 2025 balance, coal-includes-lignite
+      from: 2012-04
+      to: 2020-04
+      bundles:
+        - energy-mospi-ktoe-supply-coal-includes-lignite
+        - energy-mospi-ktoe-consumption-gwh-coal-includes-lignite
+        - energy-mospi-ktoe-consumption-coal-includes-lignite
+        - energy-mospi-pj-supply-coal-includes-lignite
+        - energy-mospi-pj-consumption-gwh-coal-includes-lignite
+        - energy-mospi-pj-consumption-coal-includes-lignite
+    - base: MoSPI API 2025 balance, coal-lignite-separate
+      from: 2021-04
+      to: 2023-04
+      bundles:
+        - energy-mospi-ktoe-supply-coal-lignite-separate
+        - energy-mospi-ktoe-consumption-gwh-coal-lignite-separate
+        - energy-mospi-ktoe-consumption-coal-lignite-separate
+        - energy-mospi-pj-supply-coal-lignite-separate
+        - energy-mospi-pj-consumption-gwh-coal-lignite-separate
+        - energy-mospi-pj-consumption-coal-lignite-separate
+    - base: Ember national electricity API, calendar-year estimates
+      from: 2000-01
+      to: 2025-01
+      bundles:
+        - energy-ember-national-electricity-generation-twh
+        - energy-ember-national-electricity-generation-pct
+        - energy-ember-national-electricity-demand-twh
+        - energy-ember-national-electricity-demand-mwh_per_person
+        - energy-ember-national-power-sector-emissions-mt_co2e
+        - energy-ember-national-power-sector-emissions-pct
+        - energy-ember-national-carbon-intensity-g_co2e_per_kwh
+    - base: Ember India subnational electricity release, other-states
+      from: 2019-01
+      to: 2025-11
+      bundles:
+        - energy-ember-states-yearly-capacity-mw
+        - energy-ember-states-yearly-electricity-generation-pct
+        - energy-ember-states-yearly-electricity-generation-gwh
+        - energy-ember-states-yearly-power-sector-emissions-pct
+        - energy-ember-states-yearly-power-sector-emissions-kt-co2e
+        - energy-ember-states-yearly-power-sector-emissions-g-co2e-per-kwh
+        - energy-ember-states-monthly-capacity-mw
+        - energy-ember-states-monthly-electricity-generation-pct
+        - energy-ember-states-monthly-electricity-generation-gwh
+        - energy-ember-states-monthly-power-sector-emissions-pct
+        - energy-ember-states-monthly-power-sector-emissions-kt-co2e
+        - energy-ember-states-monthly-power-sector-emissions-g-co2e-per-kwh
+    - base: Ember India subnational electricity release, jk-includes-ladakh
+      from: 2019-01
+      to: 2021-06
+      bundles:
+        - energy-ember-states-yearly-capacity-mw-geo-jk-includes-ladakh
+        - energy-ember-states-yearly-electricity-generation-pct-geo-jk-includes-ladakh
+        - energy-ember-states-yearly-electricity-generation-gwh-geo-jk-includes-ladakh
+        - energy-ember-states-yearly-power-sector-emissions-pct-geo-jk-includes-ladakh
+        - energy-ember-states-yearly-power-sector-emissions-kt-co2e-geo-jk-includes-ladakh
+        - energy-ember-states-yearly-power-sector-emissions-g-co2e-per-kwh-geo-jk-includes-ladakh
+        - energy-ember-states-monthly-capacity-mw-geo-jk-includes-ladakh
+        - energy-ember-states-monthly-electricity-generation-pct-geo-jk-includes-ladakh
+        - energy-ember-states-monthly-electricity-generation-gwh-geo-jk-includes-ladakh
+        - energy-ember-states-monthly-power-sector-emissions-pct-geo-jk-includes-ladakh
+        - energy-ember-states-monthly-power-sector-emissions-kt-co2e-geo-jk-includes-ladakh
+        - energy-ember-states-monthly-power-sector-emissions-g-co2e-per-kwh-geo-jk-includes-ladakh
+    - base: Ember India subnational electricity release, jk-ladakh-transition
+      from: 2021-01
+      to: 2021-01
+      bundles:
+        - energy-ember-states-yearly-capacity-mw-geo-jk-ladakh-transition
+        - energy-ember-states-yearly-electricity-generation-pct-geo-jk-ladakh-transition
+        - energy-ember-states-yearly-electricity-generation-gwh-geo-jk-ladakh-transition
+        - energy-ember-states-yearly-power-sector-emissions-pct-geo-jk-ladakh-transition
+        - energy-ember-states-yearly-power-sector-emissions-kt-co2e-geo-jk-ladakh-transition
+        - energy-ember-states-yearly-power-sector-emissions-g-co2e-per-kwh-geo-jk-ladakh-transition
+    - base: Ember India subnational electricity release, jk-ladakh-separate
+      from: 2021-07
+      to: 2025-11
+      bundles:
+        - energy-ember-states-yearly-capacity-mw-geo-jk-ladakh-separate
+        - energy-ember-states-yearly-electricity-generation-pct-geo-jk-ladakh-separate
+        - energy-ember-states-yearly-electricity-generation-gwh-geo-jk-ladakh-separate
+        - energy-ember-states-yearly-power-sector-emissions-pct-geo-jk-ladakh-separate
+        - energy-ember-states-yearly-power-sector-emissions-kt-co2e-geo-jk-ladakh-separate
+        - energy-ember-states-yearly-power-sector-emissions-g-co2e-per-kwh-geo-jk-ladakh-separate
+        - energy-ember-states-monthly-capacity-mw-geo-jk-ladakh-separate
+        - energy-ember-states-monthly-electricity-generation-pct-geo-jk-ladakh-separate
+        - energy-ember-states-monthly-electricity-generation-gwh-geo-jk-ladakh-separate
+        - energy-ember-states-monthly-power-sector-emissions-pct-geo-jk-ladakh-separate
+        - energy-ember-states-monthly-power-sector-emissions-kt-co2e-geo-jk-ladakh-separate
+        - energy-ember-states-monthly-power-sector-emissions-g-co2e-per-kwh-geo-jk-ladakh-separate
+    - base: MoSPI report 2025 transformation, coal-includes-lignite
+      from: 2012-04
+      to: 2020-04
+      bundles:
+        - energy-report-transformation-ktoe-coal-includes-lignite
+    - base: MoSPI report 2025 transformation, coal-lignite-separate
+      from: 2021-04
+      to: 2023-04
+      bundles:
+        - energy-report-transformation-ktoe-coal-lignite-separate
+        - energy-report-transformation-pj-coal-lignite-separate
+    - base: Energy Statistics India 2026 edition
+      from: 2015-04
+      to: 2024-04
+      bundles:
+        - energy-report-2026-commodity-thousand-tonnes
+        - energy-report-2026-commodity-mmscm
+        - energy-report-2026-commodity-gwh
+        - energy-report-2026-balance-ktoe
+        - energy-report-2026-balance-gwh
+        - energy-report-2026-balance-pj
+        - energy-report-2026-balance-source-scaled-gwh
+        - energy-report-2026-petroleum-ktoe
+        - energy-report-2026-petroleum-gwh
+  # ---- end energy expansion seams ----

@@ -7,8 +7,9 @@ line: "Read AGENTS.md and follow it."
 
 ## What this site is
 
-A static reference work on Indian economic statistics: 13 guides, ~3,800
-data series, build-time-rendered charts, mechanically verified prose. No
+A static reference work on Indian economic statistics: 32 guides and 36
+state profiles at the 2026-10-10 launch checkpoint, build-time-rendered charts,
+mechanically verified prose. Live inventory: `npm run coverage:expansion`. No
 framework runtime, no database, no client-side fetching of data. Everything
 is a file, every file has a gate, every gate exits non-zero on failure.
 
@@ -90,6 +91,10 @@ Hard rules — breaking any of these is a bug regardless of what else works:
 - `site/` — design-phase reference implementation (plain HTML visual spec)
 - `docs/reference/` — source reverse-engineering notes (eSankhyiki API, TradeStat)
 - `skills/` — task playbooks for agents (see skills/README.md)
+- Current coverage expansion: read `skills/atlas-comprehensive-expansion/SKILL.md`
+  and `docs/PLAN-coverage-expansion.md`. The owner's rule is: when in doubt,
+  more data points, granularity, cuts, explanations and charts. Account for every
+  published sub-statistic; stored data alone is not a completed guide.
 
 ## Contracts you must not violate
 

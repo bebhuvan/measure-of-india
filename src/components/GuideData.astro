@@ -6,9 +6,11 @@
 // long-tail view, where every file of the family downloads as CSV or JSON. Every file stays
 // on this page or one click from it (scripts/qc.mjs checks).
 import fs from "node:fs";
+import {vintageText, vintageSummary} from "../../scripts/lib/vintage.mjs";
 import { bySlug } from "../dossiers/registry.js";
 import { everyCutPlan, guideBundles } from "../dossiers/everycut.js";
 import { archiveFor } from "../dossiers/archive.js";
+import {governedDownloadPlan,loadGovernedSourceInventory} from "../dossiers/governed-downloads.js";
 interface Props { slug: string }
 const d = bySlug[Astro.props.slug];
 const M3 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -17,13 +19,14 @@ const clean = (t) => String(t ?? "").replace(/ — /g, ": ").replace(/ · /g, ",
 const info = (b) => {
   const j = JSON.parse(fs.readFileSync(`data/series/${b}.json`, "utf8"));
   const m = j.meta || {};
+  const downloads=governedDownloadPlan(b,j,{required:d.sourceQualityMode==="required"});
   // a row is named by what it covers; files without a coverage note list their first series
   const labels = Object.values(j.series).map((x) => String(x.label || "").replace(/ · /g, ", "));
   const what = m.coverage ? clean(m.coverage)
     : labels.slice(0, 3).join(", ") + (labels.length > 3 ? `, and ${labels.length - 3} more` : "");
   return { b, what, src: clean(m.source), base: m.base && m.base !== "null" && !/^n\/a/.test(m.base) ? clean(m.base) : "", freq: m.frequency,
-    n: Object.keys(j.series).length, d0: j.dates[0], d1: j.dates.at(-1), from: lab(j.dates[0], m.frequency), to: lab(j.dates.at(-1), m.frequency), vintage: m.vintage,
-    current: b === d.currentBundle, arc: archiveFor(b) };
+    n: Object.keys(j.series).length, d0: j.dates[0], d1: j.dates.at(-1), from: lab(j.dates[0], m.frequency), to: lab(j.dates.at(-1), m.frequency), vintage: m.vintage, vintageStatus:m.vintageStatus, vintageNote:m.vintageNote, vintageText:vintageText(m),
+    current: b === d.currentBundle, arc: archiveFor(b), downloads };
 };
 const fams = everyCutPlan(d).tails.filter((t) => t.kind === "family");
 const inFamily = new Set(fams.flatMap((f) => f.bundles));
@@ -31,7 +34,7 @@ const rows = guideBundles(d).filter((b) => !inFamily.has(b)).map(info);
 const famRows = fams.map((f) => {
   const fi = f.bundles.map(info);
   const d0 = fi.map((x) => x.d0).sort()[0], d1 = fi.map((x) => x.d1).sort().at(-1);
-  const vint = fi.map((x) => x.vintage).filter(Boolean).sort().at(-1) ?? "";
+  const vint = vintageSummary(fi);
   const srcs = [...new Set(fi.map((x) => x.src))];
   // the archive tables under any of the family's files, counted once
   const arcs = fi.map((x) => x.arc).filter(Boolean);
@@ -41,11 +44,14 @@ const famRows = fams.map((f) => {
 });
 const nFiles = rows.length + famRows.reduce((a, f) => a + f.files, 0);
 const nSeries = rows.reduce((a, r) => a + r.n, 0) + famRows.reduce((a, f) => a + f.n, 0);
-const today = rows.find((r) => r.current)?.vintage ?? "";
+const sourceDateSummary = vintageSummary(guideBundles(d).map(info));
+const sourceInventory=loadGovernedSourceInventory(d.slug);
+const governed=d.sourceQualityMode==="required"||Boolean(sourceInventory);
+const citationVintage = sourceDateSummary === "Mixed dated and unknown revisions" ? "mixed dated sources and unpublished revision dates" : sourceDateSummary === "Source revision date not published" ? "source revision dates not published" : `latest dated source vintage ${sourceDateSummary}`;
 ---
 <section class="endmatter" aria-labelledby="data-h">
   <div class="em-head"><h2 id="data-h">Data and downloads</h2>
-    <p>Every series this guide draws on: {nFiles.toLocaleString("en-IN")} {nFiles === 1 ? "file" : "files"}, {nSeries.toLocaleString("en-IN")} series. Each downloads as published, as JSON or as a table (CSV). Missing values are left empty, never zero.{famRows.length ? " Large families of source tables are one row each; their files download from the family's own page." : ""}</p></div>
+    {governed ? <p>{nFiles.toLocaleString("en-IN")} canonical files contain {nSeries.toLocaleString("en-IN")} source records. Reviewed CSVs contain reviewed source columns, with explicit coverage and status. Archival JSON retains every canonical record with its review policy. Original workbooks retain all published cells, including held records.</p> : <p>Every series this guide draws on: {nFiles.toLocaleString("en-IN")} {nFiles === 1 ? "file" : "files"}, {nSeries.toLocaleString("en-IN")} series. Each downloads as published, as JSON or as a table (CSV). Missing values are left empty, never zero.{famRows.length ? " Large families of source tables are one row each; their files download from the family's own page." : ""}</p>}</div>
   <div class="em-table">
     <table>
       <thead><tr><th>Data</th><th>Base</th><th>Coverage</th><th class="n">Series</th><th>Vintage</th><th class="n">Download</th></tr></thead>
@@ -54,12 +60,12 @@ const today = rows.find((r) => r.current)?.vintage ?? "";
           <tr class={r.current ? "cur" : ""}>
             <td class="w">{r.what}<small>{r.src}{r.current ? ". The current series this guide leads with" : ""}</small>
               {r.arc && <small><a class="archive-link" href={r.arc.href}>Finer detail: {r.arc.tables.toLocaleString("en-IN")} {r.arc.tables === 1 ? "table" : "tables"} in the archive</a></small>}
-              <span class="em-m">{[r.base, r.from === r.to ? r.from : `${r.from} to ${r.to}`, r.freq, `${r.n} series`, `vintage ${r.vintage}`].filter(Boolean).join(", ")}</span></td>
+              <span class="em-m">{[r.base, r.from === r.to ? r.from : `${r.from} to ${r.to}`, r.freq, `${r.n} series`, `vintage ${r.vintageText}`].filter(Boolean).join(", ")}</span></td>
             <td>{r.base}</td>
             <td class="nw">{r.from === r.to ? r.from : `${r.from} to ${r.to}`}<small>{r.freq}</small></td>
             <td class="n">{r.n}</td>
-            <td class="nw">{r.vintage}</td>
-            <td class="n nw"><a href={`/data/${r.b}.csv`} download>CSV</a><a href={`/data/${r.b}.json`} download>JSON</a></td>
+            <td>{r.vintageText}</td>
+            <td class="n nw"><a href={`/data/${r.b}.csv`} download>{r.downloads?(r.downloads.eligible.length?"Reviewed CSV":"Review status CSV"):"CSV"}</a><a href={`/data/${r.b}.json`} download>{r.downloads?"Archival JSON":"JSON"}</a>{r.downloads&&<><small>{r.downloads.eligible.length} reviewed; {r.downloads.pending.length} pending</small><a href={r.downloads.source.href} download>{r.downloads.source.linkLabel||"Original workbook"}</a></>}</td>
           </tr>
         ))}
         {famRows.map((f) => (
@@ -70,15 +76,18 @@ const today = rows.find((r) => r.current)?.vintage ?? "";
             <td></td>
             <td class="nw">{f.from === f.to ? f.from : `${f.from} to ${f.to}`}<small>{f.files.toLocaleString("en-IN")} {f.files === 1 ? "file" : "files"}</small></td>
             <td class="n">{f.n.toLocaleString("en-IN")}</td>
-            <td class="nw">{f.vintage}</td>
+            <td>{f.vintage}</td>
             <td class="n nw"><a href={`/guides/${d.slug}/every-cut/${f.id}/#files`}>All {f.files.toLocaleString("en-IN")} {f.files === 1 ? "file" : "files"}</a></td>
           </tr>
         ))}
       </tbody>
     </table>
   </div>
+  {sourceInventory&&<details class="ec-files" id="source-archive"><summary>All {sourceInventory.originals.length} original source files and source coverage</summary>
+    {d.slug==="pensions"?<><p>{sourceInventory.sourceOnlyRecords} source records are held while their units, contribution basis or territorial scope remain under review. The original workbooks retain these published cells.</p><ul>{sourceInventory.originals.map(s=><li>{s.id}: {s.title} <a href={s.href} download>Original XLSX</a></li>)}</ul></>:<><p>Canonical JSON retains every source record. CSVs distinguish reviewed columns from pending status receipts. Public original archive: {sourceInventory.archiveAvailable?"verified public copies":"not available; upload and full public readback remain pending"}.</p><p>The source inventory names every original hash, native format and publisher URL. Legacy XLS, XLSX and JSON retain their original bytes and units.</p>{sourceInventory.archiveAvailable&&<ul>{sourceInventory.originals.map(s=><li><a href={s.href} download={s.filename}>{s.filename}</a> ({s.format})</li>)}</ul>}</>}
+    <a href={sourceInventory.sourceCoverage||"/data/pensions-source-coverage.json"} download>Full source inventory and review status</a></details>}
   <div class="em-cite">
     <h3>Cite this guide</h3>
-    <p>India Atlas, “{d.title}”, data vintage {today}. atlas.thisindianlife.today/guides/{d.slug}/</p>
+    <p>India Atlas, “{d.title}”, {citationVintage}. atlas.thisindianlife.today/guides/{d.slug}/</p>
   </div>
 </section>

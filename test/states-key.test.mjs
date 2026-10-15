@@ -6,6 +6,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {sourceNonTerritorialResidual} from '../src/dossiers/source-residual.js';
 import { STATES, FORMER, SEAMS, placeAll, place, placeAggregate, placeStrict, placeFirst, sameTerritory, successorOf, normalise } from "../src/dossiers/states-key.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -26,6 +27,7 @@ const otherGeo = (slug) => OTHER_GEOGRAPHY.find(([re]) => re.test(slug))?.[1] ??
 
 // Inside a state cut, rows that are not one state, declared with the reason.
 const NON_STATE_ROWS = [
+  [/./, sourceNonTerritorialResidual, "explicit source category outside territorial state membership; never assigned to India or a state"],
   [/^asuse-/, (s) => /^(All|HWE|OAE|Manufacturing|Trade|Other Services)$/.test(s.group ?? "") && !place(s.label), "all-India rows by enterprise type"],
   [/./, (s) => /^(others|nhb\/states|others \(nri\/defense\))\b/i.test(s.label.split(/ · |: /).at(s.label.includes(" · ") ? -1 : 0)), "the source's own 'Others' row"],
   [/^states-hbs-t142$/, (s) => /^Damodar Valley Corporation/.test(s.label), "a power utility serving two states"],
@@ -84,6 +86,18 @@ test("boundary seams: a figure for the undivided unit is never the present unit'
   assert.equal(successorOf("andhra-pradesh"), "telangana");
   assert.equal(successorOf("jammu-kashmir"), "ladakh");
   assert.equal(successorOf("bihar"), null);
+});
+
+test('source residual declaration does not accept unknown states or false/absent metadata',()=>{
+  const row={label:'Others · Female',dimensions:['Others','Female'],dims:{state:'Others',geography_type:'source nonresident/other category'},geographyStatus:'source aggregate or nonresident category'};
+  assert.equal(sourceNonTerritorialResidual(row),true);
+  assert.equal(place(row.label),null);
+  assert.equal(placeAggregate(row.label),null);
+  assert.equal(sourceNonTerritorialResidual({...row,dims:{state:'Others'}}),false);
+  assert.equal(sourceNonTerritorialResidual({...row,geographyStatus:undefined}),false);
+  assert.equal(sourceNonTerritorialResidual({...row,label:'Atlantis · Female',dimensions:['Atlantis','Female'],dims:{...row.dims,state:'Atlantis'}}),false);
+  assert.equal(sourceNonTerritorialResidual({...row,label:'Assam · Female'}),false);
+  assert.equal(sourceNonTerritorialResidual({...row,dimensions:['Assam','Female']}),false);
 });
 
 test("every state label in every baked bundle is placed, or the bundle is national or another geography", () => {

@@ -1,0 +1,648 @@
+{
+ "meta": {
+  "dossier": "energy",
+  "geo": "IND",
+  "base": "Energy Statistics India 2026 edition",
+  "revisionPolicy": "Agency revisions retained as new raw vintages before rebaking.",
+  "source": "MoSPI, Energy Statistics India 2026, original Excel tables",
+  "sourceUrl": "https://www.mospi.gov.in/uploads/documents/publicationsReports/1776238032990-Chapter%207.xlsx",
+  "product": "energy-report-2026-commodity",
+  "frequency": "annual",
+  "calendar": "fiscal-apr",
+  "unit": "gwh",
+  "rawFile": "data/raw/energy-report-2026-workbook-rows.json",
+  "note": "2026 report edition; revised historical balances kept separate from the 2025 API edition. Workbook precision retained without rounding source cells. Latest year provisional. Nested totals overlap parts; blanks are unpublished, not zeros. Bunkers have source sign/total inconsistencies disclosed by validation. PJ electricity-output rows are scaled despite GWh headings and are audit-only.",
+  "vintage": "2026-03-30",
+  "vintageStatus": "known",
+  "vintageBasis": "publisher-publication-edition",
+  "vintageNote": "This is the publisher listing date of the report edition; it does not assert the date of any later undocumented file revision.",
+  "reportEditionDate": "2026-03-30",
+  "reportEditionYear": 2026,
+  "sourceDateURL": "https://www.mospi.gov.in/publications-reports/innerpage/2817",
+  "sourceDateEvidence": {
+   "rawFile": "data/raw/energy-report-2026-list.json",
+   "chapterId": "3690",
+   "field": "published_date",
+   "sourceFileURL": "https://www.mospi.gov.in/uploads/documents/publicationsReports/1776238032990-Chapter%207.xlsx"
+  },
+  "sourceRevisionDate": null,
+  "archiveCapturedDate": null,
+  "archiveCapturedAt": null,
+  "archiveCaptureNote": "Capture time was not recorded in the preserved workbook envelope.",
+  "latestPeriod": "2024–25"
+ },
+ "dates": [
+  "2023-04-01",
+  "2024-04-01"
+ ],
+ "series": {
+  "c_5073a354dcd4c7c149a5": {
+   "name": "c_5073a354dcd4c7c149a5",
+   "label": "Electricity / Production",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Production",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    1734375.082076824,
+    1824213.67
+   ],
+   "sourceCells": 2
+  },
+  "c_5548bc5fc0d8de17519e": {
+   "name": "c_5548bc5fc0d8de17519e",
+   "label": "Electricity / From Other Sources",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "From Other Sources",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    223902.69,
+    235098
+   ],
+   "sourceCells": 2
+  },
+  "c_bf80ca9a00b09649e2c5": {
+   "name": "c_bf80ca9a00b09649e2c5",
+   "label": "Electricity / Imports",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Imports",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    6147.233016,
+    7457.24
+   ],
+   "sourceCells": 2
+  },
+  "c_91f7a4fda88bc4099a48": {
+   "name": "c_91f7a4fda88bc4099a48",
+   "label": "Electricity / Exports",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Exports",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    -11295.187793000001,
+    -10620.78
+   ],
+   "sourceCells": 2
+  },
+  "c_33885a9c94b2cb72ae5d": {
+   "name": "c_33885a9c94b2cb72ae5d",
+   "label": "Electricity / Domestic Supply",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Domestic Supply",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    1953129.817299824,
+    2056148.13
+   ],
+   "sourceCells": 2
+  },
+  "c_1d2d1cc7276e481d3608": {
+   "name": "c_1d2d1cc7276e481d3608",
+   "label": "Electricity / Statistical difference",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Statistical difference",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    17007.40785385645,
+    18683.474640082568
+   ],
+   "sourceCells": 2
+  },
+  "c_cb3a1597fb1dfe49fc50": {
+   "name": "c_cb3a1597fb1dfe49fc50",
+   "label": "Electricity / Transformation",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Transformation",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_e9c11f54fa0f0580d8f8": {
+   "name": "c_e9c11f54fa0f0580d8f8",
+   "label": "Electricity / Energy industry own use",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Energy industry own use",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    106650.4551134563,
+    112190
+   ],
+   "sourceCells": 2
+  },
+  "c_59acd4fec2bf9f7e4fe9": {
+   "name": "c_59acd4fec2bf9f7e4fe9",
+   "label": "Electricity / Own use in electricity, CHP and heat plants",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Own use in electricity, CHP and heat plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    106650.4551134563,
+    112190
+   ],
+   "sourceCells": 2
+  },
+  "c_07d3b1795d35f5eec442": {
+   "name": "c_07d3b1795d35f5eec442",
+   "label": "Electricity / Distribution losses",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Distribution losses",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    288884.9663640021,
+    302305.6699999999
+   ],
+   "sourceCells": 2
+  },
+  "c_37b9c4be91479bfe4140": {
+   "name": "c_37b9c4be91479bfe4140",
+   "label": "Electricity / Final Consumption",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Final Consumption",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    1540586.987968509,
+    1622968.9853599174
+   ],
+   "sourceCells": 2
+  },
+  "c_5eb369eab8b29d38f4b7": {
+   "name": "c_5eb369eab8b29d38f4b7",
+   "label": "Electricity / Industry Sector / Industry Sector",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Industry Sector",
+    "sector": "Industry Sector"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    640625.9127293387,
+    655561.7523647094
+   ],
+   "sourceCells": 2
+  },
+  "c_91d9b3d7cfaca22ae035": {
+   "name": "c_91d9b3d7cfaca22ae035",
+   "label": "Electricity / Iron and steel / Industry Sector",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Iron and steel",
+    "sector": "Industry Sector"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    172797.42105808627,
+    177585.5039166959
+   ],
+   "sourceCells": 2
+  },
+  "c_82a482a58f640f10ce0f": {
+   "name": "c_82a482a58f640f10ce0f",
+   "label": "Electricity / Chemical and petrochemical / Industry Sector",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Chemical and petrochemical",
+    "sector": "Industry Sector"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    98955.32896888869,
+    null
+   ],
+   "sourceCells": 1
+  },
+  "c_f5f366d2dd8bb0c98aae": {
+   "name": "c_f5f366d2dd8bb0c98aae",
+   "label": "Electricity / Non-ferrous metals / Industry Sector",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Non-ferrous metals",
+    "sector": "Industry Sector"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    36508.198929391176,
+    38691.12372459793
+   ],
+   "sourceCells": 2
+  },
+  "c_ad4684598c3c7c247d31": {
+   "name": "c_ad4684598c3c7c247d31",
+   "label": "Electricity / Non-metallic minerals / Industry Sector",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Non-metallic minerals",
+    "sector": "Industry Sector"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    59390.25526140797,
+    61872.34481291439
+   ],
+   "sourceCells": 2
+  },
+  "c_829f6be5d5270c57656f": {
+   "name": "c_829f6be5d5270c57656f",
+   "label": "Electricity / Transport equipment / Transport equipment",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Transport equipment",
+    "sector": "Transport equipment"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    30725.04883331933,
+    30775.66199044519
+   ],
+   "sourceCells": 2
+  },
+  "c_9e3703e987e81e523026": {
+   "name": "c_9e3703e987e81e523026",
+   "label": "Electricity / Machinery / Transport equipment",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Machinery",
+    "sector": "Transport equipment"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    44053.17566473974,
+    45741.005556741984
+   ],
+   "sourceCells": 2
+  },
+  "c_28b140bd36c656bc1479": {
+   "name": "c_28b140bd36c656bc1479",
+   "label": "Electricity / Mining & Quarrying / Transport equipment",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Mining & Quarrying",
+    "sector": "Transport equipment"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    163.86070502185032,
+    177.8361933541904
+   ],
+   "sourceCells": 2
+  },
+  "c_875eeeabb2479c53ed65": {
+   "name": "c_875eeeabb2479c53ed65",
+   "label": "Electricity / Food, beverages and tobacco / Transport equipment",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Food, beverages and tobacco",
+    "sector": "Transport equipment"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    58138.89863486724,
+    59808.855206915265
+   ],
+   "sourceCells": 2
+  },
+  "c_6fe77635d593ca4c4c61": {
+   "name": "c_6fe77635d593ca4c4c61",
+   "label": "Electricity / Paper, pulp and print / Transport equipment",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Paper, pulp and print",
+    "sector": "Transport equipment"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    17271.03665605936,
+    17489.224358665153
+   ],
+   "sourceCells": 2
+  },
+  "c_c9fbb45323922268725a": {
+   "name": "c_c9fbb45323922268725a",
+   "label": "Electricity / Wood and wood products / Transport equipment",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Wood and wood products",
+    "sector": "Transport equipment"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    2696.94881801365,
+    2795.7735745615005
+   ],
+   "sourceCells": 2
+  },
+  "c_1f0d17380ef62419a6a7": {
+   "name": "c_1f0d17380ef62419a6a7",
+   "label": "Electricity / Construction / Transport equipment",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Construction",
+    "sector": "Transport equipment"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_5685d9267d3d855a7015": {
+   "name": "c_5685d9267d3d855a7015",
+   "label": "Electricity / Textile and leather / Transport equipment",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Textile and leather",
+    "sector": "Transport equipment"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    74162.7406672942,
+    72045.18866009363
+   ],
+   "sourceCells": 2
+  },
+  "c_1e9fc12ac2aa78ac4f77": {
+   "name": "c_1e9fc12ac2aa78ac4f77",
+   "label": "Electricity / Non-specified / Transport equipment",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Non-specified",
+    "sector": "Transport equipment"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    45762.9985322493,
+    48222.79464546438
+   ],
+   "sourceCells": 2
+  },
+  "c_d77e57b18a93b0755da0": {
+   "name": "c_d77e57b18a93b0755da0",
+   "label": "Electricity / Transport Sector / Transport Sector",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Transport Sector",
+    "sector": "Transport Sector"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    33917.669239999996,
+    34500
+   ],
+   "sourceCells": 2
+  },
+  "c_f2ec7529ea1dd5b0b403": {
+   "name": "c_f2ec7529ea1dd5b0b403",
+   "label": "Electricity / Road / Transport Sector",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Road",
+    "sector": "Transport Sector"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_898ecf8e7041bf8cc1af": {
+   "name": "c_898ecf8e7041bf8cc1af",
+   "label": "Electricity / Domestic Aviation / Transport Sector",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Domestic Aviation",
+    "sector": "Transport Sector"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_af28f96ee844d9d24dec": {
+   "name": "c_af28f96ee844d9d24dec",
+   "label": "Electricity / Rail / Transport Sector",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Rail",
+    "sector": "Transport Sector"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    33917.669239999996,
+    34500
+   ],
+   "sourceCells": 2
+  },
+  "c_4dc281e3bd32fdd9c7a1": {
+   "name": "c_4dc281e3bd32fdd9c7a1",
+   "label": "Electricity / Pipeline transport / Transport Sector",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Pipeline transport",
+    "sector": "Transport Sector"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_cb06f1126fe046fccb43": {
+   "name": "c_cb06f1126fe046fccb43",
+   "label": "Electricity / Domestic navigation / Transport Sector",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Domestic navigation",
+    "sector": "Transport Sector"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_b254a533b3670dbc40c0": {
+   "name": "c_b254a533b3670dbc40c0",
+   "label": "Electricity / Non-specified / Transport Sector",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Non-specified",
+    "sector": "Transport Sector"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_a8d69c2539e392a40a69": {
+   "name": "c_a8d69c2539e392a40a69",
+   "label": "Electricity / Other Sectors / Other Sectors",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Other Sectors",
+    "sector": "Other Sectors"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    866043.4059991704,
+    932907.2329952081
+   ],
+   "sourceCells": 2
+  },
+  "c_2ff9804b2c044af47392": {
+   "name": "c_2ff9804b2c044af47392",
+   "label": "Electricity / Residential / Other Sectors",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Residential",
+    "sector": "Other Sectors"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    369059.49704861024,
+    408514.8875924448
+   ],
+   "sourceCells": 2
+  },
+  "c_58fdd3b7f45ddfadf942": {
+   "name": "c_58fdd3b7f45ddfadf942",
+   "label": "Electricity / Comm. And public services / Other Sectors",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Comm. And public services",
+    "sector": "Other Sectors"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    128623.1997862606,
+    135163.34540276334
+   ],
+   "sourceCells": 2
+  },
+  "c_d1b97f58a931a4f89133": {
+   "name": "c_d1b97f58a931a4f89133",
+   "label": "Electricity / Agriculture/forestry / Other Sectors",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Agriculture/forestry",
+    "sector": "Other Sectors"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    275484.9550784711,
+    260276
+   ],
+   "sourceCells": 2
+  },
+  "c_f013de7f6ce2fcaefb29": {
+   "name": "c_f013de7f6ce2fcaefb29",
+   "label": "Electricity / Non-specified / Other Sectors",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Non-specified",
+    "sector": "Other Sectors"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    92875.7540858284,
+    128953
+   ],
+   "sourceCells": 2
+  },
+  "c_6266509734ce9f484966": {
+   "name": "c_6266509734ce9f484966",
+   "label": "Electricity / Chemical and petroleum / Industry Sector",
+   "dims": {
+    "fuel": "Electricity",
+    "flow": "Chemical and petroleum",
+    "sector": "Industry Sector"
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    null,
+    100356.43972426002
+   ],
+   "sourceCells": 1
+  }
+ }
+}

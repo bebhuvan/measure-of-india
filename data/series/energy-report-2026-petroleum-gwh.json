@@ -1,0 +1,616 @@
+{
+ "meta": {
+  "dossier": "energy",
+  "geo": "IND",
+  "base": "Energy Statistics India 2026 edition",
+  "revisionPolicy": "Agency revisions retained as new raw vintages before rebaking.",
+  "source": "MoSPI, Energy Statistics India 2026, original Excel tables",
+  "sourceUrl": "https://www.mospi.gov.in/uploads/documents/publicationsReports/1776238032990-Chapter%207.xlsx",
+  "product": "energy-report-2026-petroleum",
+  "frequency": "annual",
+  "calendar": "fiscal-apr",
+  "unit": "gwh",
+  "rawFile": "data/raw/energy-report-2026-workbook-rows.json",
+  "note": "2026 report edition; revised historical balances kept separate from the 2025 API edition. Workbook precision retained without rounding source cells. Latest year provisional. Nested totals overlap parts; blanks are unpublished, not zeros. Bunkers have source sign/total inconsistencies disclosed by validation. PJ electricity-output rows are scaled despite GWh headings and are audit-only.",
+  "vintage": "2026-03-30",
+  "vintageStatus": "known",
+  "vintageBasis": "publisher-publication-edition",
+  "vintageNote": "This is the publisher listing date of the report edition; it does not assert the date of any later undocumented file revision.",
+  "reportEditionDate": "2026-03-30",
+  "reportEditionYear": 2026,
+  "sourceDateURL": "https://www.mospi.gov.in/publications-reports/innerpage/2817",
+  "sourceDateEvidence": {
+   "rawFile": "data/raw/energy-report-2026-list.json",
+   "chapterId": "3690",
+   "field": "published_date",
+   "sourceFileURL": "https://www.mospi.gov.in/uploads/documents/publicationsReports/1776238032990-Chapter%207.xlsx"
+  },
+  "sourceRevisionDate": null,
+  "archiveCapturedDate": null,
+  "archiveCapturedAt": null,
+  "archiveCaptureNote": "Capture time was not recorded in the preserved workbook envelope.",
+  "latestPeriod": "2024–25"
+ },
+ "dates": [
+  "2023-04-01",
+  "2024-04-01"
+ ],
+ "series": {
+  "c_ffd0308325afb3d5ab92": {
+   "name": "c_ffd0308325afb3d5ab92",
+   "label": "LPG / Elect. output in GWh",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Elect. output in GWh",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_bafc933017e598cb6bad": {
+   "name": "c_bafc933017e598cb6bad",
+   "label": "Naphtha / Elect. output in GWh",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Elect. output in GWh",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_73cf663b86c07a4eec09": {
+   "name": "c_73cf663b86c07a4eec09",
+   "label": "Kerosene / Elect. output in GWh",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Elect. output in GWh",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_a5ec7959f0a11b1e2ceb": {
+   "name": "c_a5ec7959f0a11b1e2ceb",
+   "label": "Diesel (HSD+ LDO) / Elect. output in GWh",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Elect. output in GWh",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_3c78c48bf9148e579f7f": {
+   "name": "c_3c78c48bf9148e579f7f",
+   "label": "Fuel Oil / Elect. output in GWh",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Elect. output in GWh",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_37886529c80a62eae0ce": {
+   "name": "c_37886529c80a62eae0ce",
+   "label": "Lubricants / Elect. output in GWh",
+   "dims": {
+    "fuel": "Lubricants",
+    "flow": "Elect. output in GWh",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_e50ebf05f84c6423b9c0": {
+   "name": "c_e50ebf05f84c6423b9c0",
+   "label": "Bitumin / Elect. output in GWh",
+   "dims": {
+    "fuel": "Bitumin",
+    "flow": "Elect. output in GWh",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_f353143d8aff1e765fe4": {
+   "name": "c_f353143d8aff1e765fe4",
+   "label": "Petrol/Motor Spirit / Elect. output in GWh",
+   "dims": {
+    "fuel": "Petrol/Motor Spirit",
+    "flow": "Elect. output in GWh",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_8386e4db1ed2d88ebb97": {
+   "name": "c_8386e4db1ed2d88ebb97",
+   "label": "ATF / Elect. output in GWh",
+   "dims": {
+    "fuel": "ATF",
+    "flow": "Elect. output in GWh",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_6b5ed247e439f049080f": {
+   "name": "c_6b5ed247e439f049080f",
+   "label": "Petroleum Coke / Elect. output in GWh",
+   "dims": {
+    "fuel": "Petroleum Coke",
+    "flow": "Elect. output in GWh",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_b8288fea50413c972afb": {
+   "name": "c_b8288fea50413c972afb",
+   "label": "Other Petroleum Products* / Elect. output in GWh",
+   "dims": {
+    "fuel": "Other Petroleum Products*",
+    "flow": "Elect. output in GWh",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_4b9e55e198543a784eed": {
+   "name": "c_4b9e55e198543a784eed",
+   "label": "Petroleum Products Total / Elect. output in GWh",
+   "dims": {
+    "fuel": "Petroleum Products Total",
+    "flow": "Elect. output in GWh",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_e093eb6b6f6c51d65be2": {
+   "name": "c_e093eb6b6f6c51d65be2",
+   "label": "LPG / Elec output-main activity producer ele plants",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Elec output-main activity producer ele plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_cf74f32736cffa7f0008": {
+   "name": "c_cf74f32736cffa7f0008",
+   "label": "Naphtha / Elec output-main activity producer ele plants",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Elec output-main activity producer ele plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_8d228cc9dd969abd0ade": {
+   "name": "c_8d228cc9dd969abd0ade",
+   "label": "Kerosene / Elec output-main activity producer ele plants",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Elec output-main activity producer ele plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_cb180320e7adc5f429ed": {
+   "name": "c_cb180320e7adc5f429ed",
+   "label": "Diesel (HSD+ LDO) / Elec output-main activity producer ele plants",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Elec output-main activity producer ele plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_54bc2bbcb629dcbd3c59": {
+   "name": "c_54bc2bbcb629dcbd3c59",
+   "label": "Fuel Oil / Elec output-main activity producer ele plants",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Elec output-main activity producer ele plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_97780d322b240e830b14": {
+   "name": "c_97780d322b240e830b14",
+   "label": "Lubricants / Elec output-main activity producer ele plants",
+   "dims": {
+    "fuel": "Lubricants",
+    "flow": "Elec output-main activity producer ele plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_27ac00fe25658f1214d7": {
+   "name": "c_27ac00fe25658f1214d7",
+   "label": "Bitumin / Elec output-main activity producer ele plants",
+   "dims": {
+    "fuel": "Bitumin",
+    "flow": "Elec output-main activity producer ele plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_469489abf541b8c10fdd": {
+   "name": "c_469489abf541b8c10fdd",
+   "label": "Petrol/Motor Spirit / Elec output-main activity producer ele plants",
+   "dims": {
+    "fuel": "Petrol/Motor Spirit",
+    "flow": "Elec output-main activity producer ele plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_0772690ba34526ca3118": {
+   "name": "c_0772690ba34526ca3118",
+   "label": "ATF / Elec output-main activity producer ele plants",
+   "dims": {
+    "fuel": "ATF",
+    "flow": "Elec output-main activity producer ele plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_29de349ee56801f4ff3b": {
+   "name": "c_29de349ee56801f4ff3b",
+   "label": "Petroleum Coke / Elec output-main activity producer ele plants",
+   "dims": {
+    "fuel": "Petroleum Coke",
+    "flow": "Elec output-main activity producer ele plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_d49b2dd6bcec9ce40e99": {
+   "name": "c_d49b2dd6bcec9ce40e99",
+   "label": "Other Petroleum Products* / Elec output-main activity producer ele plants",
+   "dims": {
+    "fuel": "Other Petroleum Products*",
+    "flow": "Elec output-main activity producer ele plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_16892a61d999939aec3c": {
+   "name": "c_16892a61d999939aec3c",
+   "label": "Petroleum Products Total / Elec output-main activity producer ele plants",
+   "dims": {
+    "fuel": "Petroleum Products Total",
+    "flow": "Elec output-main activity producer ele plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_d5945c6154ba25c3e9bd": {
+   "name": "c_d5945c6154ba25c3e9bd",
+   "label": "LPG / Elec output-autoproducer electricity plants",
+   "dims": {
+    "fuel": "LPG",
+    "flow": "Elec output-autoproducer electricity plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_c82f9814a5bbc13ec1b2": {
+   "name": "c_c82f9814a5bbc13ec1b2",
+   "label": "Naphtha / Elec output-autoproducer electricity plants",
+   "dims": {
+    "fuel": "Naphtha",
+    "flow": "Elec output-autoproducer electricity plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_a537bc355aed38540fcb": {
+   "name": "c_a537bc355aed38540fcb",
+   "label": "Kerosene / Elec output-autoproducer electricity plants",
+   "dims": {
+    "fuel": "Kerosene",
+    "flow": "Elec output-autoproducer electricity plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_32e19a0bd66c56037a89": {
+   "name": "c_32e19a0bd66c56037a89",
+   "label": "Diesel (HSD+ LDO) / Elec output-autoproducer electricity plants",
+   "dims": {
+    "fuel": "Diesel (HSD+ LDO)",
+    "flow": "Elec output-autoproducer electricity plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_d2c2abea79291e1f4dc3": {
+   "name": "c_d2c2abea79291e1f4dc3",
+   "label": "Fuel Oil / Elec output-autoproducer electricity plants",
+   "dims": {
+    "fuel": "Fuel Oil",
+    "flow": "Elec output-autoproducer electricity plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_ad718e0a3e4f90cb4e99": {
+   "name": "c_ad718e0a3e4f90cb4e99",
+   "label": "Lubricants / Elec output-autoproducer electricity plants",
+   "dims": {
+    "fuel": "Lubricants",
+    "flow": "Elec output-autoproducer electricity plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_3817a1e5877b17e26151": {
+   "name": "c_3817a1e5877b17e26151",
+   "label": "Bitumin / Elec output-autoproducer electricity plants",
+   "dims": {
+    "fuel": "Bitumin",
+    "flow": "Elec output-autoproducer electricity plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_d285f83d3645ddbe6f26": {
+   "name": "c_d285f83d3645ddbe6f26",
+   "label": "Petrol/Motor Spirit / Elec output-autoproducer electricity plants",
+   "dims": {
+    "fuel": "Petrol/Motor Spirit",
+    "flow": "Elec output-autoproducer electricity plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_1fbe8dfdca2e65be4d70": {
+   "name": "c_1fbe8dfdca2e65be4d70",
+   "label": "ATF / Elec output-autoproducer electricity plants",
+   "dims": {
+    "fuel": "ATF",
+    "flow": "Elec output-autoproducer electricity plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_11fa5da8d6d37292a1af": {
+   "name": "c_11fa5da8d6d37292a1af",
+   "label": "Petroleum Coke / Elec output-autoproducer electricity plants",
+   "dims": {
+    "fuel": "Petroleum Coke",
+    "flow": "Elec output-autoproducer electricity plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_bca9ece20678871b9851": {
+   "name": "c_bca9ece20678871b9851",
+   "label": "Other Petroleum Products* / Elec output-autoproducer electricity plants",
+   "dims": {
+    "fuel": "Other Petroleum Products*",
+    "flow": "Elec output-autoproducer electricity plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  },
+  "c_d0dd2a504346de5dcd26": {
+   "name": "c_d0dd2a504346de5dcd26",
+   "label": "Petroleum Products Total / Elec output-autoproducer electricity plants",
+   "dims": {
+    "fuel": "Petroleum Products Total",
+    "flow": "Elec output-autoproducer electricity plants",
+    "sector": ""
+   },
+   "unit": "gwh",
+   "color": "#2E4BD8",
+   "data": [
+    0,
+    0
+   ],
+   "sourceCells": 2
+  }
+ }
+}

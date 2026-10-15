@@ -1,22 +1,22 @@
 {
  "meta": {
   "dossier": "markets-listed",
-  "source": "Reserve Bank of India, DBIE, via the Reserve Bank Innovation Hub's data service",
-  "vintage": "2026-10-10",
-  "mock": false,
+  "source": "Reserve Bank of India, DBIE (official CAS and prompted statistical reports), via the local Data Bank",
+  "vintage": null,
+  "vintageStatus": "unknown",
+  "vintageNote": "The archived RBI CAS and prompted report exports do not publish a source revision timestamp. Archive capture is recorded separately and does not establish when estimates were revised.",
+  "archiveCapturedDate": "2026-10-10",
   "geo": "IND",
+  "mock": false,
+  "base": "as published",
   "releaseDate": null,
   "revisionPolicy": "Each quarter's figures come from the companies that reported in that quarter; growth rates compare the same companies a year apart and are final as printed.",
-  "base": "as published",
   "frequency": "annual",
-  "product": "SDMX dataset PRF_LNGNFC_ANN_RN (Performance of Listed Non-Government Non-Financial Companies Annually)",
-  "dsd": "PRF_LNGNFC_ANN_RN",
-  "loadedAt": "2026-09-18T15:11:42.320996Z",
-  "cut": null,
   "unit": "inr_crore",
-  "coverage": "Listed private non-financial companies, rupee levels, annual",
-  "note": "₹ crore. Each period is a different set of companies (those that reported in time): levels are not comparable across periods and are never read as a series. Use the growth rates for change.",
-  "latestPeriod": "2024-04"
+  "product": "Listed non-government non-financial companies",
+  "coverage": "Annual results of listed non-government non-financial companies: rupee totals for the companies reporting in each period.",
+  "note": "Direct RBI DBIE: CAS full history, newest prompted report restatements preferred. Growth compares common companies; period totals and ratios use changing samples. Amounts are not a comparable time series. CAS omits some zero or |rate| ≥150 cells; reports preserve meaningful numeric cells and quarantine the exact 999999999 sentinel. Zero-filled CAS amount vectors and rupee-valued growth are missing, never true zero. Historical duplicate-key ratios retain the inherited mirror selection with an ambiguity flag until official reports resolve them. See sourceByDate for each cell; full source defects and overlap in markets-rbi.source-quality.json.",
+  "latestPeriod": "2025-04"
  },
  "dates": [
   "2015-04-01",
@@ -28,12 +28,93 @@
   "2021-04-01",
   "2022-04-01",
   "2023-04-01",
-  "2024-04-01"
+  "2024-04-01",
+  "2025-04-01"
  ],
  "series": {
   "deprc": {
    "label": "Depreciation, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "DEPRC",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 64,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 240,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 992,
+     "companies": 4278
+    }
+   },
    "data": [
     122552.47,
     137505.71,
@@ -44,12 +125,93 @@
     204288.42,
     220397.33,
     247452.34,
-    274680.82
+    274680.82,
+    305537.06
    ]
   },
   "ebitda": {
    "label": "EBITDA, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "EBITDA",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 180,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 106,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 704,
+     "companies": 4278
+    }
+   },
    "data": [
     546314.97,
     593208.27,
@@ -60,12 +222,93 @@
     951132.13,
     1013861.35,
     1173378.55,
-    1340729.52
+    1340729.52,
+    1459419.78
    ]
   },
   "ebt_before_nop": {
    "label": "EBT (before NOP), ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "EBT_BEFORE_NOP",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 350,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 64,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 784,
+     "companies": 4278
+    }
+   },
    "data": [
     292743.25,
     313626.98,
@@ -76,28 +319,78 @@
     604845,
     634407.39,
     751386.01,
-    875223.42
-   ]
-  },
-  "expd": {
-   "label": "Expenditure, ₹ crore (this period's companies)",
-   "unit": "inr_crore",
-   "data": [
-    2526873.22,
-    2662014.8,
-    2886637.97,
-    3363602.33,
-    3177999.24,
-    2877154.46,
-    4036780.2,
-    4976360.54,
-    5223449.54,
-    5844079.56
+    875223.42,
+    969842.82
    ]
   },
   "expd_oth": {
-   "label": "Expenditure: Others, ₹ crore (this period's companies)",
+   "label": "Others, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "EXPD_OTH",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3902
+    }
+   },
    "data": [
     958676.39,
     1003780.92,
@@ -108,12 +401,93 @@
     1393883.02,
     1738837.32,
     1888360.23,
-    2163092.36
+    2163092.36,
+    null
    ]
   },
   "expd_pnf": {
    "label": "Power & fuel, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "EXPD_PNF",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 32,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 154,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 826,
+     "companies": 4278
+    }
+   },
    "data": [
     105088.94,
     97664.46,
@@ -124,12 +498,93 @@
     141346.21,
     237176.2,
     222938.34,
-    223835.45
+    223835.45,
+    198153.66
    ]
   },
   "expd_raw_matr": {
    "label": "Raw Material, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "EXPD_RAW_MATR",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 276,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 282,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 928,
+     "companies": 4278
+    }
+   },
    "data": [
     1172613.26,
     1229957.67,
@@ -140,12 +595,93 @@
     2005730.5,
     2415252.49,
     2459661.44,
-    2739993.17
+    2739993.17,
+    3213245.57
    ]
   },
   "expd_staff_cost": {
    "label": "Staff Cost, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "EXPD_STAFF_COST",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 560,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 506,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1248,
+     "companies": 4278
+    }
+   },
    "data": [
     290494.63,
     330611.75,
@@ -156,12 +692,190 @@
     495820.47,
     585094.53,
     652489.53,
-    717158.58
+    717158.58,
+    800686.59
+   ]
+  },
+  "expd": {
+   "label": "Expenditure, ₹ crore (this period's companies)",
+   "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "EXPD",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 212,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 208,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 960,
+     "companies": 4278
+    }
+   },
+   "data": [
+    2526873.22,
+    2662014.8,
+    2886637.97,
+    3363602.33,
+    3177999.24,
+    2877154.46,
+    4036780.2,
+    4976360.54,
+    5223449.54,
+    5844079.56,
+    6645516.88
    ]
   },
   "gross_pft_ebit": {
    "label": "Gross Profits (EBIT), ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "GROSS_PFT_EBIT",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 318,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 314,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1066,
+     "companies": 4278
+    }
+   },
    "data": [
     423762.5,
     455702.56,
@@ -172,12 +886,93 @@
     746843.71,
     793464.02,
     925926.21,
-    1066048.7
+    1066048.7,
+    1153882.72
    ]
   },
   "int": {
    "label": "Interest, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "INT",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 138,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 346,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1098,
+     "companies": 4278
+    }
+   },
    "data": [
     131019.25,
     142075.58,
@@ -188,12 +983,93 @@
     141998.71,
     159056.63,
     174540.2,
-    190825.28
+    190825.28,
+    184039.9
    ]
   },
   "net_pft": {
    "label": "Net Profits, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "NET_PFT",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 478,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 640,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1312,
+     "companies": 4278
+    }
+   },
    "data": [
     196608.42,
     204844.43,
@@ -204,12 +1080,93 @@
     453889.65,
     469288.12,
     556267.29,
-    708707.33
+    708707.33,
+    911789.65
    ]
   },
   "opr_pft": {
    "label": "Operating Profits, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "OPR_PFT",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 382,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 32,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 752,
+     "companies": 4278
+    }
+   },
    "data": [
     454526.44,
     489591.42,
@@ -220,12 +1177,93 @@
     811616.67,
     852386.73,
     992265.5,
-    1122537.66
+    1122537.66,
+    1213790.26
    ]
   },
   "oth_inc": {
    "label": "Other Income, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "OTH_INC",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 592,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 548,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1140,
+     "companies": 4278
+    }
+   },
    "data": [
     91788.53,
     103616.85,
@@ -236,12 +1274,93 @@
     139515.46,
     161474.62,
     181113.05,
-    218191.86
+    218191.86,
+    245629.52
    ]
   },
   "sales": {
    "label": "Sales, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "SALES",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 244,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 436,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1034,
+     "companies": 4278
+    }
+   },
    "data": [
     2989834.44,
     3131626.3,
@@ -252,12 +1371,93 @@
     4773731.59,
     5788536.58,
     6186125.19,
-    6904943.8
+    6904943.8,
+    7767883.44
    ]
   },
   "tax_prov": {
    "label": "Tax Provision, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "TAX_PROV",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 640,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 608,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1280,
+     "companies": 4278
+    }
+   },
    "data": [
     77943.7,
     83372.02,
@@ -268,12 +1468,93 @@
     139374.33,
     147831.78,
     170094.32,
-    187922.39
+    187922.39,
+    207629.08
    ]
   },
   "val_of_prod": {
    "label": "Value of Production, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "VAL_OF_PROD",
+   "groupCode": null,
+   "sourceByDate": {
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 2932
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3007
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3096
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3151
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3064
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3049
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3166
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "9b99161afd706a092f5cc819dbeb2b19545443e6724e57dd22891f6435f58509",
+     "dsd": "PRF_LNGNFC_ANN_RN",
+     "companies": 3115
+    },
+    "2023-04-01": {
+     "source": "report",
+     "artifact": "b00516b96ee6a0664dd9ca409310cdd54d64ba2852979a86ca3bff3bcfb35a2d",
+     "report": "1074",
+     "prompt": "2024-25",
+     "provider": "DP0",
+     "row": 106,
+     "companies": 3281
+    },
+    "2024-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 474,
+     "companies": 3902
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "0566ff70cdd4f2d9a5ad4fff8c5b9a7dcbcc30d4a62c088919967b4d727a9055",
+     "report": "1074",
+     "prompt": "2025-26",
+     "provider": "DP0",
+     "row": 1216,
+     "companies": 4278
+    }
+   },
    "data": [
     2981399.66,
     3151606.22,
@@ -284,7 +1565,8 @@
     4848396.87,
     5828747.27,
     6215715.04,
-    6966617.22
+    6966617.22,
+    7859307.14
    ]
   }
  }

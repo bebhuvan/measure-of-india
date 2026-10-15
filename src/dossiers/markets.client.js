@@ -1,3 +1,4 @@
+import {rbiComparison,rbiTime} from './markets-rbi.plot.js';
 // Guide: savings, markets and companies. Plates and number wiring.
 // Data: data/series/markets-*.json, baked by scripts/lib/products/markets.mjs (DBIE via the Data
 // Bank), markets-companies.mjs (the RBI's company studies) and markets-hub.mjs (forecasters and
@@ -19,9 +20,6 @@ import goldB from "../../data/series/markets-gold.json";
 import issuesAB from "../../data/series/markets-issues-annual.json";
 import issuesB from "../../data/series/markets-issues.json";
 import mcapB from "../../data/series/markets-mcap.json";
-import lqB from "../../data/series/markets-listed-q.json";
-import lqsB from "../../data/series/markets-listed-q-sector.json";
-import lqrB from "../../data/series/markets-listed-q-ratios.json";
 import pubG from "../../data/series/markets-co-public-growth.json";
 import pubG0 from "../../data/series/markets-co-public-growth-2011.json";
 import pvtG from "../../data/series/markets-co-private-growth.json";
@@ -35,6 +33,7 @@ import pvtR0 from "../../data/series/markets-co-private-ratios-2011.json";
 import { MONO as sans, a11y, addCrosshair, spark, dodgeEndLabels, downloadSVG, downloadPNG, saveBlob, seamMarks, fmt } from "../charts/plumbing.js";
 
 const BK = JSON.parse(document.getElementById("markets-baked")?.textContent || "{}");
+const lqB=BK.listed.lq, lqsB=BK.listed.lqs, lqrB=BK.listed.lqr;
 const INK = "#161A22", GRID = "#F0F2F5", BASE = "#D3D7DE", MUTED = "#878D99";
 const ACC = "#2E4BD8", GOLD = "#C47A16", G1 = "#5F6675", G2 = "#A3A9B4", G3 = "#C9CED6";
 const W = 1184;
@@ -328,7 +327,7 @@ const fA = (k, i = flowsAB.dates.length - 1) => flowsAB.series[FA[k]]?.data[i] ?
 {
   const s = lastOf(lqB, "sales");
   const list = [{ label: "Sales", color: ACC, bold: true, data: pts(lqB, "sales") }, { label: "Operating profit", color: GOLD, data: pts(lqB, "opr_pft") }];
-  lines("cb-listed", "plot-listed", list, { y: { step: 10, label: "growth on a year earlier, per cent", fmt: (v) => String(v) }, tipFmt: (v) => p1(v), dateFmt: qOfDate, x: { step: 2 }, mr: 220 });
+  rbiTime("cb-listed", "plot-listed", list, {dateFmt: qOfDate});
   setHTML("pv-listed", p1(s.v));
   setHTML("ex-ls-n", lqB.series.companies.data[s.i].toLocaleString("en-IN")); setHTML("ex-ls-s", p1(s.v)); setHTML("ex-ls-o", p1(lqB.series.opr_pft.data[s.i]));
   setHTML("ex-ls-p", p1(lqB.series.net_pft.data[s.i])); setHTML("ex-ls-w", p1(lqB.series.expd_staff_cost.data[s.i]));
@@ -336,13 +335,13 @@ const fA = (k, i = flowsAB.dates.length - 1) => flowsAB.series[FA[k]]?.data[i] ?
 {
   const k = { m: "icc_manf__sales", i: "icc_srv_it__sales", s: "icc_srv_non_it__sales" };
   const list = [{ label: "Manufacturing", color: ACC, bold: true, data: pts(lqsB, k.m) }, { label: "IT", color: GOLD, data: pts(lqsB, k.i) }, { label: "Other services", color: G2, data: pts(lqsB, k.s) }];
-  lines("cb-sectors", "plot-sectors", list, { y: { step: 10, label: "sales growth on a year earlier, per cent", fmt: (v) => String(v) }, tipFmt: (v) => p1(v), dateFmt: qOfDate, x: { step: 2 }, mr: 220 });
+  rbiTime("cb-sectors", "plot-sectors", list, {dateFmt: qOfDate});
   const L = (x) => lastOf(lqsB, x).v;
   setHTML("pv-sectors", p1(L(k.m))); setHTML("ex-sec-m", p1(L(k.m))); setHTML("ex-sec-i", p1(L(k.i))); setHTML("ex-sec-s", p1(L(k.s)));
 }
 {
-  const list = [{ label: "Interest coverage", color: ACC, bold: true, data: pts(lqrB, "int_cvg") }, { label: "Net profit to sales", color: GOLD, data: pts(lqrB, "net_pft_to_sal") }];
-  lines("cb-coverage", "plot-coverage", list, { y: { step: 2, label: "times (coverage) and per cent (margin)", fmt: (v) => String(v) }, tipFmt: (v) => v.toFixed(1), labelFmt: (v) => v.toFixed(1), dateFmt: qOfDate, x: { step: 2 }, mr: 240 });
+  const list = [{ label: "Interest coverage", color: ACC, bold: true, data: pts(lqrB, "int_cvg") }];
+  rbiTime("cb-coverage", "plot-coverage", list, {unit: "times", dateFmt: qOfDate});
   const c = lastOf(lqrB, "int_cvg");
   setHTML("pv-coverage", fmt.x1(c.v)); setHTML("ex-cv-i", fmt.x1(c.v)); setHTML("ex-cv-p", fmt.pct1(lastOf(lqrB, "net_pft_to_sal").v)); setHTML("ex-cv-is", fmt.pct1(lastOf(lqrB, "int_to_sal").v));
 }
@@ -350,7 +349,7 @@ const fA = (k, i = flowsAB.dates.length - 1) => flowsAB.series[FA[k]]?.data[i] ?
   const R = (BK.industries ?? []).filter((r) => r.v != null).sort((a, b) => b.v - a.v);
   const rows = R.map((r) => ({ label: r.label, v: r.v, ref: r.y }));
   if (rows.length) rows[0].hi = true;
-  bars("cb-industries", "plot-industries", rows, { step: 20, fmt: (v) => p1(v), label: "sales growth, per cent", csvHead: `${qtr(BK.industriesDate)}, per cent`, refHead: "a year earlier, per cent", ml: 360, rowH: 24 });
+  rbiComparison("cb-industries", "plot-industries", rows.map(r=>({label:r.label,value:r.v})), "pct");
   const sorted = R.map((r) => r.v).sort((a, b) => a - b), med = sorted.length % 2 ? sorted[(sorted.length - 1) / 2] : (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2;
   setHTML("pv-industries", `${fmt.count(R.filter((r) => r.v > 10).length)} of ${fmt.count(R.length)}`);
   if (R.length) {
@@ -359,6 +358,8 @@ const fA = (k, i = flowsAB.dates.length - 1) => flowsAB.series[FA[k]]?.data[i] ?
   }
 }
 
+
+for(const view of BK.rbiViews??[]){rbiComparison('cb-'+view.id,'plot-'+view.id,view.rows,view.unit);setHTML('pv-'+view.id,`${view.available} / ${view.total}`);setHTML('ex-'+view.id,`${view.available} of ${view.total}`);}
 /* =================== § 12 the company studies (two formats, drawn apart) =================== */
 {
   const run = (b, k) => pts(b, k).filter((p) => p.value != null);
@@ -415,5 +416,5 @@ const fA = (k, i = flowsAB.dates.length - 1) => flowsAB.series[FA[k]]?.data[i] ?
 }
 
 /* =================== provenance =================== */
-setHTML("prov-vintage", flowsB.meta.vintage);
-setHTML("prov-vintage2", flowsB.meta.vintage);
+setHTML("prov-vintage", esc(BK.guideRevisionSummary));
+setHTML("prov-vintage2", esc(BK.guideRevisionSummary));

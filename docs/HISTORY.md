@@ -3,6 +3,14 @@
 For posterity: the lineage of the project, so future contributors know what
 was tried, what was rejected, and why things look the way they do.
 
+## MoSPI direct API discovery (2026-10-10)
+
+Verified NSS 80 direct listings (20 telecom, 18 education), metadata and records;
+corrected its profile adapter parameters and endpoint casing. Economic Census
+EC6 form-POST ranking matches the MCP canary. NSS 74 direct listing has 21
+indicators. See `docs/reference/mospi-api-discovery.md` and its source responses.
+These are discovery checks; new canonical bundles and guides are still pending.
+
 ## Timeline
 
 **2026-08-02 — The brief.** The founding document (now `docs/VISION.md`):
@@ -300,6 +308,23 @@ stamps, silent series). What the audit changed:
 - The four hand-revised print-slot prose files (cpi/wpi/jobs) should be
   regenerated with `npm run prose` once the LLM account has balance.
 
+## Coverage expansion assessment, 10 October 2026
+
+The owner asked to widen coverage before launch and explicitly prefer more
+components, cuts, explanation and charts. Added a temporary repository skill,
+linked through AGENTS.md, and a ranked expansion plan. A repeatable audit now
+separates canonical holdings, national guide-table access and declared ledger
+status: 354 of 2,288 bundles are outside the guide tables, mostly the newer
+MoSPI profile bundles and seventeen WDI topics. They can still supply profile
+tiles; this is not an assertion of missing data everywhere on the site.
+
+Energy supply/consumption canaries now succeed, superseding the August failure
+note. NSS 74 provides a previously unlisted services-enterprise opportunity.
+Lineage-only Data Bank queries confirm AMFI, SEBI, PortWatch and prompted RBI
+corporate holdings. No new guide or complete ingestion in this assessment.
+The pipeline, strict coverage and all seventy tests pass on the existing
+build. Details: `docs/status/coverage-expansion.md`.
+
 ## Invariants that have survived every phase
 
 1. Data integrity over prettiness (no smoothing, domains admit negatives).
@@ -308,3 +333,85 @@ stamps, silent series). What the audit changed:
 3. One accent colour; derived series dashed; charts on paper, not in boxes.
 4. Conflicting estimates shown as separate series, never reconciled.
 5. The system may say "we do not know."
+
+### 2026-10-10: Schools expansion
+
+Added a national Schools guide with every observed UDISE and CMSE education cut,
+collection-seam separation, published national anchors and 66 explained plates.
+Added source-cell replay, share/count identities, deterministic editorial facts,
+coverage decisions and a source-quality register. Scope and limitations are in
+`docs/status/schools-expansion.md`. No deployment or commit in this task.
+
+## 2026-10-11 — Schools phone chart layout
+
+Fixed the label-only first screen reported by the owner. Schools’ shared category
+renderer now wraps complete names above each measurement on phones, with visible
+dots and a separate exact-value column. All 66 plates fit without horizontal
+scrolling. Desktop plots retain their wide layout; source values are unchanged.
+Added regression coverage for every Schools plate at four narrow widths and recorded
+actual browser checks in `docs/status/schools-expansion.md`.
+
+### 11 October 2026: AIDIS household guide
+
+Recovered all 218,818 observed AIDIS API cells from the profile archives and added
+a distinct household guide. Kept stock dates apart from expenditure periods,
+aggregate rupee-lakh cells apart from means, and directly published conditional
+debt means apart from all-household means. Source-quality discrepancies remain
+visible. Complete report transcription is explicitly unfinished. The no-estimate
+wage check now uses structured submeasure labels before household/occupation
+labels; expenditure by wage-earning households must not be treated as a wage rate.
+EveryCut plans are cached per guide and cut configuration, complementing the
+existing immutable bundle/row caches for large survey pagination.
+
+### 11 October 2026: official RBI company-finance depth
+
+Integrated publication-aware local official CAS and prompted RBI report data
+into the existing Markets guide, with32additional explained plates. Changing
+company samples remain explicit; levels are not spliced into comparable
+growth histories. Duplicate non-additive margin aggregation and incompatible
+share populations retain exact source evidence and caveats. The legacy mirror
+adapter now respects listed-company output ownership, preventing an SPF
+refresh from overwriting the official company-finance bundles. Source/ownership
+regressions pass; final combined production build and gates remain pending.
+
+### 2026-10-11: Energy source packet integrated
+
+Integrated the verified 73-bundle Energy packet and 164 explained plates,
+keeping report editions, the coal/lignite definition boundary and the
+Jammu & Kashmir/Ladakh geographic boundary in separate canonical instruments.
+Canonical CO2-equivalent units retain the original raw tags and values. Each
+comparison row now carries its actual observation date, including older state
+observations. Source checks, served JSON/CSV replay, static browser QA at four
+widths and strict desktop/phone geometry checks passed in the isolated build.
+
+The main checkout preserves the existing design and RBI expansion through
+narrow shared registrations. Its combined build and final browser verification
+remain pending Farm integration. Energy's automatic future-release acquisition
+and the enumerated report-only chapters remain unfinished.
+
+### 2026-10-12: recovery and provenance correction
+
+Recovered expansion checkpoints after laptop shutdown and moved verification
+logs/handoffs into persistent project directories. Removed only superseded
+Atlas build outputs. Corrected incoming survey, Energy and listed-company API
+metadata that had presented capture dates or unevidenced dates as data vintages.
+Unpublished revision dates now require explicit unknown declarations and notes;
+known report publication/edition dates and archive captures remain separate.
+Raw bytes, observation dates, units and values are preserved by before/after
+equivalence audits. Shared rendering, citations, source tables and RSS handle
+this distinction. Raw versioning preserves distinct same-key snapshots and
+avoids capture-only revision churn.
+
+Profile indexing now shares canonical bundle objects with Every Cut, eliminating
+a second corpus cache that exhausted the default heap. RBI coverage captions
+are reader-facing descriptions; detailed technical notes and lineage are kept.
+Current Energy facts replace a retired active canary, whose original sheet is
+preserved as audit evidence. Registry-controlled native facts entrypoints serve
+multi-instrument guides without forcing source editions into one ruler.
+
+The corrected combined source is under fresh bounded tests/build/gates; final
+static browser/export verification remains pending. No publication is implied.
+
+2026-10-12 presentation recovery: verified the combined build, then retained it as pre-follow-up evidence when phone chart gates failed. Fixed aggregate citation wording for mixed/unknown revisions, EveryCut plural interpolation, CPI basket-key indentation on phones, and narrow chart export header/footer stacking. Multiline chart lint now measures rendered line lengths and vertical extents rather than concatenated text. Final gate and production browser verification remain pending.
+
+2026-10-13 recovery completed: fixed shared annotation placement to reserve full font line boxes at canvas boundaries, retaining ink bounds for stroke collisions. Combined production build, required gates and all 280 actual Chrome guide/state viewport checks pass. Four family HTML payload/provenance hashes reproduce prior verified artifacts after entry-script URL normalization; earlier source/download receipts are explicitly carried forward. Temporary generated preflight output removed, source and archives preserved. No commit or publication. Detailed completion evidence is in docs/status/expansion-verification/completion-2026-10-13.json.

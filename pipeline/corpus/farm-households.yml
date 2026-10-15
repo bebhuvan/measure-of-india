@@ -1,0 +1,23 @@
+slug: farm-households
+instrument: NSS 77 Situation Assessment of Agricultural Households and Land and Livestock Holdings, Schedule 33.1
+source: MoSPI Report 587 and archived complete API visualisation cubes
+voice: Explain farm livelihoods, household budgets and agricultural risk in plain English.
+reference:
+  income: Agricultural year July 2018 to June 2019, common households across visits.
+  debt: As on interview date in visit 1, January to August 2019.
+  animal_and_nonfarm_business: Moving last-30-day reference; combined visit weights follow the report.
+universe: Agricultural households are a subset of rural households; all/non-agricultural rural land and livestock measures have broader bases.
+misreadings:
+  - Agricultural households are not all rural households or all agricultural wage workers.
+  - Crop-producer means do not equal all-agricultural-household means.
+  - Income after imputed inputs is different from a cash budget.
+  - Household count, rupee amount, area and quantity shares use different denominators.
+  - Survey-state groups overlap their constituents.
+  - Historical survey income is not current income.
+source_defects:
+  - API creditor table duplicates Andhra Pradesh under all state labels; report Table 29 replaces interpreted values.
+  - API MSP labels are corrupted; report Table 18 replaces them.
+  - Insurance API includes column headers as values; report Table 19 replaces them.
+  - Leasing-in API repeats leasing-out sublabels; disclosed rather than silently overwritten.
+  - Out-of-base disposal rates are quarantined pending exact report reconciliation.
+prose_policy: No generated dated slot; rendered numerical observations are bound to family facts, and plate notes carry the asof contract.

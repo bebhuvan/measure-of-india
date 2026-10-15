@@ -2,32 +2,44 @@
 import Base from "../layouts/Base.astro";
 import "../styles/pages.css";
 import { DOSSIERS } from "../dossiers/registry.js";
+const SECTIONS = [...new Set(DOSSIERS.map((d) => d.section))];
 ---
 <Base
   title="Page not found · India Atlas"
   description="The page you asked for does not exist. The guides are one click away."
   canonical="https://atlas.thisindianlife.today/404/"
 >
-<div class="page spage">
-  <div class="break" style="padding:72px 0 24px">
-    <div class="kicker">Error 404</div>
-    <h1 style="font-size:3rem;max-width:20ch">This page does not exist.</h1>
-    <p style="max-width:52ch;margin-top:18px;color:var(--ink-soft)">
-      The address may be mistyped, or the page moved when the atlas was
-      reorganised. Nothing was lost: every guide is one click away. </p>
-    <p style="margin-top:28px">
-      <a class="btn" href="/" style="font-family:var(--sans);font-size:.85rem;text-decoration:none;border:1px solid var(--ink);padding:10px 18px;color:var(--ink)">← Front page</a>
-      &nbsp;&nbsp;
-      <a class="btn" href="/register/" style="font-family:var(--sans);font-size:.85rem;text-decoration:none;border:1px solid var(--ink);padding:10px 18px;color:var(--ink)">The register ↑</a>
-    </p>
-  </div>
-  <div class="break" style="padding:24px 0 88px">
-    <div class="sec-head"><span class="no">§</span><h2>All {DOSSIERS.length} guides</h2><span class="line"></span></div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:22px;font-family:var(--sans);font-size:.86rem;letter-spacing:.06em">
-      {DOSSIERS.map((d) => (
-        <a href={`/guides/${d.slug}/`} style="text-decoration:none;color:var(--ink)">№ {d.no}, {d.name}</a>
+<div class="page spage nf">
+  <header class="titleblock">
+    <div class="kicker">Page not found</div>
+    <h1>This page does not exist.</h1>
+    <p class="lede">The address may be mistyped, or the page moved when the atlas was reorganised. Nothing was lost: every guide is below, and the <a href="/">front page</a> has the search.</p>
+  </header>
+  <section class="nf-list" aria-labelledby="nf-h">
+    <h2 id="nf-h" class="nf-h">All {DOSSIERS.length} guides</h2>
+    <div class="nf-cols">
+      {SECTIONS.map((sec) => (
+        <div class="nf-grp">
+          <h3>{sec}</h3>
+          <ul>{DOSSIERS.filter((d) => d.section === sec).map((d) => <li><a href={`/guides/${d.slug}/`}>{d.title}</a></li>)}</ul>
+        </div>
       ))}
     </div>
-  </div>
+    <p class="nf-more"><a href="/states/">States and union territories</a><a href="/learn/">Learn</a><a href="/register/">Every indicator</a></p>
+  </section>
 </div>
+<style>
+  .nf .lede a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--rule-2);text-underline-offset:3px}
+  .nf-list{padding:80px 0 112px}
+  .nf-h{font-family:var(--serif);font-weight:500;font-size:2.125rem;letter-spacing:-.015em;padding-bottom:14px;border-bottom:1px solid var(--ink)}
+  .nf-cols{columns:4 220px;column-gap:40px;padding-top:8px}
+  .nf-grp{break-inside:avoid;padding:20px 0 4px}
+  .nf-grp h3{font-family:var(--sans);font-size:.875rem;font-weight:500;color:var(--muted);margin-bottom:6px}
+  .nf-grp ul{list-style:none}
+  .nf-grp a{display:block;padding:5px 0;font-family:var(--serif);font-size:1.0625rem;color:var(--ink);text-decoration:none}
+  .nf-grp a:hover{text-decoration:underline;text-decoration-color:var(--rule-2);text-underline-offset:3px}
+  .nf-more{display:flex;flex-wrap:wrap;gap:8px 28px;margin-top:40px;padding-top:16px;border-top:1px solid var(--rule);font-family:var(--sans);font-size:.9375rem}
+  .nf-more a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--rule-2)}
+  .nf-more a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+</style>
 </Base>

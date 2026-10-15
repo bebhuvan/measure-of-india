@@ -3,6 +3,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";
+import crypto from "node:crypto";
 
 export const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 export const round2 = (v) => Math.round(v * 100) / 100;
@@ -123,14 +124,20 @@ export function writeRaw(root, rel, obj) {
   const stored = fs.existsSync(gz) ? gz : fs.existsSync(plain) ? plain : null;
   if (stored) {
     const prev = readRawFile(stored);
-    const { vintage: pv, ...prevBody } = prev;
-    const { vintage: nv, ...nextBody } = obj;
+    const { vintage: pv, archiveCapturedDate: pcd, archiveCapturedAt: pca, ...prevBody } = prev;
+    const { vintage: nv, archiveCapturedDate: ncd, archiveCapturedAt: nca, ...nextBody } = obj;
     if (stable(prevBody) === stable(nextBody)) {
       console.log(`unchanged ${rel} (vintage ${pv} kept)`);
       if (stored === plain) { fs.writeFileSync(gz, gzipRaw(fs.readFileSync(plain))); fs.rmSync(plain); }
       return pv;
     }
-    const archive = path.join(root, path.dirname(rel), "vintages", `${path.basename(rel, ".json")}.${pv}.json.gz`);
+    const dateKey = pv ?? prev.archiveCapturedDate ?? "undated";
+    let archive = path.join(root, path.dirname(rel), "vintages", `${path.basename(rel, ".json")}.${dateKey}.json.gz`);
+    const existing = fs.existsSync(archive) ? archive : fs.existsSync(archive.replace(/\.gz$/, "")) ? archive.replace(/\.gz$/, "") : null;
+    if (existing && stable(readRawFile(existing)) !== stable(prev)) {
+      const digest = crypto.createHash("sha256").update(stable(prev)).digest("hex");
+      archive = path.join(root, path.dirname(rel), "vintages", `${path.basename(rel, ".json")}.${dateKey}.${digest}.json.gz`);
+    }
     if (!fs.existsSync(archive) && !fs.existsSync(archive.replace(/\.gz$/, ""))) {
       fs.mkdirSync(path.dirname(archive), { recursive: true });
       fs.writeFileSync(archive, gzipRaw(JSON.stringify(prev, null, 1) + "\n"));

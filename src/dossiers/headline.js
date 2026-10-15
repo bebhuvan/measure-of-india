@@ -22,9 +22,26 @@ const inr = (v) => Math.round(v).toLocaleString("en-IN");
 // review-a (2026-10): the precision rule (src/dossiers/precision.js). Rates at the agency's
 // precision, one decimal unless the guide is WPI or rates; counts in readable units.
 import { round } from "./precision.js";
+import {getSourceQuality,sourceRecordFingerprint} from '../explore/source-quality.js';
 const p1 = (v) => round(v, 1).toFixed(1);
 
+function pensionHeadlineRecord(b) {
+  const key='apy_ca7e68f6',s=b.series[key],q=getSourceQuality('pensions-m3',b,{...s,key}),last=s?.data.findLastIndex(Number.isFinite);
+  if(!s||last<0||q.canInterpret!==true||q.observationKind!=='observed-stock'||q.binding?.records?.[key]!==sourceRecordFingerprint(b,{...s,key}))throw Error('Pension headline requires an exact reviewed observed stock');
+  const date=b.dates[last];
+  return {value:s.data[last],date,period:b.meta.periodLabels?.[date]||`${MONTHS[+date.slice(5,7)-1]} ${date.slice(0,4)}`};
+}
+
 export const HEADLINE = {
+  pensions: {value:b=>pensionHeadlineRecord(b).value.toLocaleString('en-IN'),what:'APY subscribers, published stock',period:b=>pensionHeadlineRecord(b).period,asOf:b=>pensionHeadlineRecord(b).date},
+  "digital-access": { value: b => last(b, "c_9dfb5647c122b90f0409fc15").toFixed(1) + "%", what: "households with internet within their premises", period: b => b.meta.latestPeriod },
+  // farm-households: historical income after paid-out costs
+  "farm-households": { value: (b) => "₹" + last(b, "c_f933a5307465e8a32ad64e2d").toLocaleString("en-IN"), what: "mean monthly agricultural-household income, historical survey", period: (b) => b.meta.latestPeriod },
+  // ---- energy expansion ----
+  energy: { value: (b) => last(b, "c_2fee63973c1676aa96bb").toLocaleString("en-IN", {maximumFractionDigits:2}) + " KToE", what: "total primary energy supply", period: (b) => b.meta.latestPeriod },
+  // ---- end energy expansion ----
+  households: { value: (b) => "₹" + last(b, "c_1b185419507995b98bdc1bff").toLocaleString("en-IN"), what: "mean assets per rural household, historical snapshot", period: (b) => b.meta.latestPeriod },
+  schools: { value: (b) => `${(last(b, "enrolments_total_number_of_enrolments_pre_primary_to_higher_secondary") / 1e7).toFixed(2)} crore`, what: "students enrolled in recognised schools, including school pre-primary", period: (b) => b.meta.latestPeriod },
   cpi:           { value: (b) => `${p1(last(b, "headline"))}%`, what: "consumer price inflation, year on year", period: month },
   gdp:           { value: (b) => `${p1(last(b, "gdp"))}%`, what: "real GDP growth, year on year", period: quarter },
   wpi:           { value: (b) => `${last(b, "headline").toFixed(2)}%`, what: "wholesale price inflation, year on year", period: month },
@@ -76,6 +93,14 @@ export const HEADLINE = {
 // sits beside a figure from a different base. `n` keeps the most recent points; `slope` marks
 // two-round surveys drawn as a before-and-after.
 export const SPARK = {
+  pensions: {bundle:"pensions-m3",series:"apy_ca7e68f6"},
+  "digital-access": {bundle:"digital-access-cmst2025-18", series:"c_9dfb5647c122b90f0409fc15"},
+  "farm-households": {bundle:"farm-households-nss77-24-03",series:"c_f933a5307465e8a32ad64e2d"},
+  // ---- energy expansion ----
+  energy: {bundle:"energy-report-2026-balance-ktoe",series:"c_2fee63973c1676aa96bb"},
+  // ---- end energy expansion ----
+  households: { bundle: "households-aidis-6", series: "c_1b185419507995b98bdc1bff" },
+  schools: { bundle: "schools-national", series: "enrolments_total_number_of_enrolments_pre_primary_to_higher_secondary" },
   cpi:           { bundle: "cpi-2024-linked", series: "headline", n: 36 },
   gdp:           { bundle: "gdp-2022", series: "gdp" },
   wpi:           { bundle: "wpi-2022", series: "headline" },
@@ -125,11 +150,15 @@ export function headlineOf(d) {
   if (!h) throw new Error(`headline: no entry for guide "${d.slug}" (src/dossiers/headline.js)`);
   const b = bundle(d.currentBundle);
   // asOf: the last period the data describes; lists sort on this, never on fetch or vintage dates
-  return { value: h.value(b), what: h.what, period: h.period(b), asOf: lastDate(b), released: b.meta.releaseDate ?? null, vintage: b.meta.vintage, bundle: b };
+  return { value: h.value(b), what: h.what, period: h.period(b), asOf: h.asOf ? h.asOf(b) : lastDate(b), released: b.meta.releaseDate ?? null, vintage: b.meta.vintage, bundle: b };
 }
 
 /** { dates, values, slope } for the guide's small chart. */
 export function sparkOf(d) {
+  if(d.slug==='pensions'){
+    const h=headlineOf(d),b=h.bundle,s=b.series[d.spark.series],first=s.data.findIndex(Number.isFinite),last=s.data.findLastIndex(Number.isFinite);
+    return {dates:b.dates.slice(first,last+1),values:s.data.slice(first,last+1),slope:false};
+  }
   const sp = SPARK[d.slug];
   if (!sp) throw new Error(`headline: no spark for guide "${d.slug}"`);
   // health-gender: a survey whose rounds are separate bundles (two rulers): one point from each

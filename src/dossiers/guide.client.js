@@ -1,22 +1,25 @@
 // src/dossiers/guide.client.js: shared behaviour for every guide page.
 // 1. "On this page": a contents list under the title block, built from the guide's own
 //    section headings, so it can never drift from the page.
-// 2. Share: each chart's download buttons become one quiet Share menu (image, SVG, data,
-//    a link to that chart). The buttons themselves are moved, not recreated, so the download
-//    handlers wired by plumbing.wireTools keep working.
+// 2. Actions: each chart's download buttons become one quiet row in its footer (image, SVG,
+//    data, a link to that chart, the source). The buttons themselves are moved, not
+//    recreated, so the download handlers wired by plumbing.wireTools keep working.
 
 /* ---------- on this page ---------- */
+// numbered as the sections are (a guide is a sequence: broad first, granular last)
 const tb = document.querySelector(".titleblock");
 const heads = [...document.querySelectorAll("section > .sec-head h2, section.everycut > .em-head h2")];
 if (tb && heads.length > 2) {
   const slug = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48);
+  const esc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;");
   const used = new Set();
   const links = heads.map((h) => {
     const sec = h.closest("section");
     let id = sec.id || slug(h.textContent);
     while (used.has(id)) id += "-2";
     used.add(id); sec.id = id;
-    return `<a href="#${id}">${h.textContent.replace(/\s+/g, " ").trim()}</a>`;
+    const no = h.parentElement.querySelector(".no")?.textContent.trim() ?? "";
+    return `<a href="#${id}"><i>${esc(no)}</i><b>${esc(h.textContent.replace(/\s+/g, " ").trim())}</b></a>`;
   });
   const nav = document.createElement("nav");
   nav.className = "onpage";
@@ -25,56 +28,76 @@ if (tb && heads.length > 2) {
   tb.after(nav);
 }
 
-/* ---------- share ---------- */
-const LABEL = { png: "Download image", svg: "Download SVG", csv: "Download data (CSV)" };
-let open = null;
-const close = () => { if (!open) return; open.classList.remove("open"); open.querySelector(".sh").setAttribute("aria-expanded", "false"); open = null; };
-document.addEventListener("click", (e) => { if (open && !open.contains(e.target)) close(); });
-document.addEventListener("keydown", (e) => { if (e.key === "Escape" && open) { const b = open.querySelector(".sh"); close(); b.focus(); } });
+/* ---------- readouts fit the margin ----------
+ * A plate's readout sits in the 220px margin (DESIGN §0.1). Most are a figure ("4.8%"); some
+ * are a figure with words ("₹158.1 lakh crore") or a name ("Personal care, incl. gold"). They
+ * are set by length, once the client has filled them: a figure large, a long figure smaller,
+ * words as a short serif line. Runs again whenever a client fills one late. */
+const fitReadout = (v) => {
+  const t = (v.textContent || "").replace(/\s+/g, " ").trim();
+  v.classList.remove("rv-m", "rv-w");
+  if (!t || t === "–") return;
+  const digits = (t.match(/[0-9]/g) || []).length;
+  if (digits === 0 || t.length > 13) v.classList.add("rv-w");
+  else if (t.length > 8) v.classList.add("rv-m");
+};
+const readouts = () => document.querySelectorAll("figure[id^='cb-'] .plate-val .v, .titleblock .num .v");
+readouts().forEach(fitReadout);
+if (typeof window !== "undefined" && window.MutationObserver) {
+  const mo = new window.MutationObserver((ms) => { for (const m of ms) { const v = (m.target.nodeType === 1 ? m.target : m.target.parentElement)?.closest?.(".plate-val .v, .titleblock .num .v"); if (v) fitReadout(v); } });
+  readouts().forEach((v) => mo.observe(v, { childList: true, characterData: true, subtree: true }));
+}
 
+/* ---------- actions (DESIGN §0.5) ----------
+ * Each chart's footer carries its actions in the open: Download image, SVG, data; Copy link;
+ * Source. The download buttons are moved, not recreated, so the handlers plumbing.wireTools
+ * attached keep working. A status ("Link copied") is announced in a polite live region and
+ * fades; it never replaces a label or moves the row. */
+const LABEL = { png: "Image", svg: "SVG", csv: "Data" };
+const TITLE = { png: "Download the chart as an image (PNG), with its title and source", svg: "Download the chart as SVG, for print and editing", csv: "Download the chart's data as CSV" };
 for (const dl of document.querySelectorAll(".plotfoot .dl, .dl")) {
   if (dl.dataset.shared) continue;
   dl.dataset.shared = "1";
   const btns = [...dl.querySelectorAll("button[data-dl]")];
-  const source = dl.querySelector("a[href]");
+  const links = [...dl.querySelectorAll("a[href]")];
+  const source = links.find((a) => /^https?:/.test(a.getAttribute("href")));
   const fig = dl.closest("figure[id]");
   if (!btns.length && !fig) continue;
-  // order: image first, then SVG, then data
   btns.sort((a, b) => ["png", "svg", "csv"].indexOf(a.dataset.dl) - ["png", "svg", "csv"].indexOf(b.dataset.dl));
-  const wrap = document.createElement("div");
-  wrap.className = "share";
-  wrap.innerHTML = `<button type="button" class="sh" aria-haspopup="menu" aria-expanded="false">Share</button><div class="menu" role="menu"></div>`;
-  const menu = wrap.querySelector(".menu");
-  for (const b of btns) { b.textContent = LABEL[b.dataset.dl] || b.textContent; b.setAttribute("role", "menuitem"); menu.append(b); }
+  const row = document.createElement("div");
+  row.className = "acts";
+  row.setAttribute("role", "group");
+  row.setAttribute("aria-label", "Download or share this chart");
+  if (btns.length) {
+    const lab = document.createElement("span");
+    lab.className = "lab"; lab.textContent = "Download";
+    row.append(lab);
+    for (const b of btns) { b.textContent = LABEL[b.dataset.dl] || b.textContent; b.type = "button"; b.title = TITLE[b.dataset.dl] || ""; row.append(b); }
+  }
+  const st = document.createElement("span");
+  st.className = "st"; st.setAttribute("role", "status"); st.setAttribute("aria-live", "polite");
   if (fig) {
+    if (btns.length) { const g = document.createElement("span"); g.className = "gap"; row.append(g); }
     const c = document.createElement("button");
-    c.type = "button"; c.setAttribute("role", "menuitem"); c.textContent = "Copy link to this chart";
+    c.type = "button"; c.textContent = "Copy link";
+    c.title = "Copy a link that opens the page at this chart";
     c.addEventListener("click", async () => {
       const url = location.origin + location.pathname + "#" + fig.id;
       let ok = false; try { await navigator.clipboard.writeText(url); ok = true; } catch {}
-      flash(wrap.querySelector(".sh"), ok ? "Link copied" : "Copy failed");
+      say(st, ok ? "Link copied" : "Copy failed: the link is " + url);
     });
-    menu.append(c);
+    row.append(c);
   }
-  for (const b of menu.querySelectorAll("button")) b.addEventListener("click", () => setTimeout(close, 0));
+  for (const a of links) {
+    if (a === source) { a.textContent = "Source"; a.title = "The publisher's page for this data"; }
+    else if (/^\/data\//.test(a.getAttribute("href")) && /^data$/i.test(a.textContent.trim())) { a.textContent = "Whole file"; a.title = "Download the whole data file this chart is drawn from (CSV)"; }
+    row.append(a);
+  }
+  row.append(st);
   dl.textContent = "";
-  dl.append(wrap);
-  if (source) { source.textContent = "Source"; source.classList.add("srclink"); dl.append(source); }
-  const sh = wrap.querySelector(".sh");
-  sh.addEventListener("click", (e) => {
-    e.stopPropagation();
-    const was = wrap.classList.contains("open"); close();
-    if (!was) {
-      wrap.classList.add("open"); sh.setAttribute("aria-expanded", "true"); open = wrap;
-      // keep the menu on screen: open leftward from the button unless that would run off the left edge
-      menu.style.left = "auto"; menu.style.right = "0";
-      const r = menu.getBoundingClientRect();
-      if (r.left < 8) { menu.style.right = "auto"; menu.style.left = "0"; }
-      menu.querySelector("button")?.focus();
-    }
-  });
+  dl.append(row);
 }
-function flash(b, msg) { const o = b.dataset.l || b.textContent; b.dataset.l = o; b.textContent = msg; b.classList.add("st"); setTimeout(() => { b.textContent = o; b.classList.remove("st"); }, 1800); }
+function say(el, msg) { el.textContent = msg; el.classList.add("on"); clearTimeout(el._t); el._t = setTimeout(() => { el.classList.remove("on"); setTimeout(() => { el.textContent = ""; }, 250); }, 2400); }
 
 /* ---------- display punctuation ----------
  * House style: no middle-dot strings and no spaced em dashes in what readers see. Much of the
@@ -136,8 +159,14 @@ if (MO) new MO((ms) => {
     const fig = [...z.querySelectorAll("figure, svg")].find((el) => typeof el.scale === "function" && el.scale("x"));
     if (!fig) return "";   // not drawn yet (or not a Plot chart): decide on the next pass
     const x = fig.scale("x");
+    // bars faceted by year (one panel per year, a few groups in each) are a time series too
+    const fx = fig.scale("fx");
+    if (fx?.domain?.length > 3 && fx.domain.every((v) => v instanceof Date || (typeof v === "number" && v > 1900 && v < 2200) || /^\d{4}/.test(String(v)))) return (z.dataset.x = "time");
+    // a run of year labels on a category axis ("2000-01", "March 2023") is a time series drawn
+    // as columns: it opens at the latest end too (src/charts/plot.js YEARISH)
+    const yearish = /^(\d{4}(-\d{2,4})?|[A-Z][a-z]+ \d{4}|Q\d\b.*|FY ?\d{2,4})$/;
     const time = x.type === "time" || x.type === "utc"
-      || ((x.type === "band" || x.type === "point") && x.domain?.length && x.domain.every((v) => v instanceof Date));
+      || ((x.type === "band" || x.type === "point") && x.domain?.length && (x.domain.every((v) => v instanceof Date) || (x.domain.length > 8 && x.domain.every((v) => yearish.test(String(v))))));
     return (z.dataset.x = time ? "time" : "other");
   };
   // the cue is hidden once the reader reaches the far end: the start for time, the end otherwise

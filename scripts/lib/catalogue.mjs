@@ -10,6 +10,7 @@
 // fine, so a ledger glob can address a branch (`cpi:2024:*:*:item:*`).
 import fs from "node:fs";
 import path from "node:path";
+import zlib from "node:zlib";
 import { fileURLToPath } from "node:url";
 import YAML from "yaml";
 
@@ -29,12 +30,30 @@ export function writeCatalogue(family, { source, generator, note, items }) {
   const head = { family, source, generator, generated_at: new Date().toISOString().slice(0, 10), ...(note ? { note } : {}), count: list.length };
   const body = JSON.stringify(head, null, 1).replace(/\n}$/, "");
   const out = body + ',\n "items": [\n' + list.map((it) => "  " + JSON.stringify(it)).join(",\n") + "\n ]\n}\n";
-  const file = path.join(ROOT, "data/coverage", family + ".catalogue.json");
-  fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file + ".tmp", out);
-  fs.renameSync(file + ".tmp", file);
+  const file = writeCatalogueText(path.join(ROOT, "data/coverage", family + ".catalogue.json"), out);
   console.log(`catalogue ${family}: ${list.length} items -> ${path.relative(ROOT, file)}`);
   return list.length;
+}
+
+/* Catalogues over GZ_OVER bytes are stored gzipped (<name>.catalogue.json.gz) so no tracked
+ * file nears the 25 MB repo limit (docs/PLAN-launch.md §2b). Ledgers keep naming the plain
+ * .json path; readCatalogue falls back to the .gz. gzipSync leaves the header mtime at 0, so
+ * a regenerated catalogue with the same items is byte-identical. */
+export const GZ_OVER = 20e6;
+export function writeCatalogueText(file, text) {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  const gz = Buffer.byteLength(text) > GZ_OVER, target = gz ? file + ".gz" : file, stale = gz ? file : file + ".gz";
+  fs.writeFileSync(target + ".tmp", gz ? zlib.gzipSync(text, { level: 9 }) : text);
+  fs.renameSync(target + ".tmp", target);
+  fs.rmSync(stale, { force: true });
+  return target;
+}
+/** A catalogue by its ledger path (plain or gzipped), or null when neither exists. */
+export function readCatalogue(rel, root = ROOT) {
+  const file = path.isAbsolute(rel) ? rel : path.join(root, rel);
+  if (fs.existsSync(file)) return JSON.parse(fs.readFileSync(file, "utf8"));
+  if (fs.existsSync(file + ".gz")) return JSON.parse(zlib.gunzipSync(fs.readFileSync(file + ".gz")).toString("utf8"));
+  return null;
 }
 
 /** The adapter's sources.yml entry, for catalogue modes that need its fetch params. */

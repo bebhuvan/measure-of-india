@@ -1,3 +1,4 @@
+import {narrowNameLines} from '../charts/plot.js';
 // src/dossiers/profiles.client.js: the charts of a state profile (src/pages/states/[state].astro).
 // One module for all 36 profiles; each page carries its own data as one inline JSON block
 // (#pf-data), written at build time by src/dossiers/profiles.js from the baked bundles. No
@@ -62,7 +63,7 @@ if (D.where?.length && el("plot-where")) {
       // the measure on one line and its period under it, so no label runs past the left edge;
       // on a phone, the measure and its period on one line above the row
       ...(narrow
-        ? [Plot.text(rows.map((_, i) => ({ y: i })), { x: -0.02, y: "y", text: (d) => `${rows[d.y].label}, ${rows[d.y].period}`, textAnchor: "start", dy: -36, fill: INK, fontSize: 12.5 })]
+        ? [Plot.text(rows.map((_, i) => ({ y: i })), { x: -0.02, y: "y", text: (d) => narrowNameLines(`${rows[d.y].label}, ${rows[d.y].period}`, (PW - 40) * 12 / 12.5 + 28).join("\n"), textAnchor: "start", dy: -36, fill: INK, fontSize: 12.5 })]
         : [Plot.text(rows.map((_, i) => ({ y: i })), { x: -0.02, y: "y", text: (d) => rows[d.y].label, textAnchor: "end", dx: -14, dy: -7, fill: INK, fontSize: 12.5 }),
            Plot.text(rows.map((_, i) => ({ y: i })), { x: -0.02, y: "y", text: (d) => rows[d.y].period, textAnchor: "end", dx: -14, dy: 9, fill: MUTED, fontSize: 11.5 })]),
     ],

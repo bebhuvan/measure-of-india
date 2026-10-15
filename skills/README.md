@@ -24,6 +24,7 @@ tools must never require editing the playbooks.
 
 | File | When to use |
 |---|---|
+| `atlas-comprehensive-expansion/SKILL.md` | Temporary owner guardrails for launch coverage expansion: every published component and cut, with explanations and charts; distinguish ingested from reader-accessible |
 | `analyze-series.md` | MANDATORY before touching any dossier's prose/charts/structure: run the census, account for every series |
 | `add-source.md` | Adding a new data product (API, CSV dump) end-to-end |
 | `write-dossier.md` | Writing or restructuring a dossier page + client module: registry, plates, slots, as-of governance, gates |

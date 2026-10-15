@@ -1,10 +1,10 @@
-/* India Atlas design system, v2 (2026-10 redesign). See docs/DESIGN.md.
+/* India Atlas design system, v3 (2026-10-10 design pass). See docs/DESIGN.md §0.
    Two faces with fixed jobs: Source Serif 4 for reading and headings, Golos Text for
    everything measured or navigational. One accent (ultramarine) for the series a chart is
-   about; marigold only for a comparison; cool greys for the rest. Sentence case throughout:
-   no tracked capitals, no monospace labels. Class names are kept from v1 so every page,
-   and the gates that read them (qc, lint-charts, asof), keep working.
-   The v1 stylesheet is archived in design-backups/2026-10-09-pre-redesign/. */
+   about; marigold only for a comparison; cool greys for the rest. Sentence case throughout.
+   One left axis: every block on every page starts on the same edge (§0.1). Class names are
+   kept from v1 and v2 so every page, and the gates that read them (qc, lint-charts, asof),
+   keep working. v2 is in git history (lb/design, before the design pass). */
 
 @font-face{font-family:"Source Serif 4";font-style:normal;font-weight:300 700;font-display:swap;
   src:url("/fonts/source-serif-4-normal-latin.woff2") format("woff2");
@@ -29,10 +29,14 @@
   --bg:#FFFFFF;
   --ink:#161A22;
   --ink-soft:#4A5160;
-  --muted:#878D99;
-  --faint:#B5BAC4;
+  --body:#262B35;            /* reading text: a shade off ink, so headings carry */
+  --muted:#6B7180;           /* v3: 4.9:1 on white (v2's #878D99 was 3.3:1) */
+  --axis:#6B7180;            /* chart text */
+  --faint:#B5BAC4;           /* rules and marks only, never text */
   --rule:#ECEEF2;
   --rule-2:#DFE2E8;
+  --wash:#F7F8FA;
+  --hover:#F8F9FB;
   --accent:#2E4BD8;          /* ultramarine: the series the chart is about */
   --accent-soft:#B9C3F3;
   --gold:#C47A16;            /* marigold: a comparison, never decoration */
@@ -43,130 +47,177 @@
   --band:#F4F6FD;
   --serif:"Source Serif 4",Georgia,serif;
   --sans:"Golos Text",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --wrap:1184px;
+  --gutter:32px;
+  --measure:64ch;
+  --rail:220px;              /* the ledger margin (DESIGN §0.1) */
+  --rail-gap:56px;
+  --main:calc(var(--rail) + var(--rail-gap));   /* where the main field starts, from the axis */
 }
 *{margin:0;padding:0;box-sizing:border-box}
 ::selection{background:rgba(46,75,216,.14)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:1px}
-.skip{position:absolute;left:-9999px;top:0;z-index:10;font-family:var(--sans);font-size:.9rem;
+.skip{position:absolute;left:-9999px;top:0;z-index:10;font-family:var(--sans);font-size:.9375rem;
   background:var(--bg);color:var(--ink);padding:10px 18px;border:1px solid var(--ink);text-decoration:none}
 .skip:focus-visible{left:12px;top:12px;outline-offset:0}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none !important;animation:none !important}}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{
   background:var(--bg);color:var(--ink);
   font-family:var(--serif);font-weight:400;font-optical-sizing:auto;
-  font-size:1.2rem;line-height:1.66;
+  font-size:1.1875rem;line-height:1.62;
   -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
 }
-.page{max-width:880px;margin:0 auto;padding:0 32px}
+/* the wrap: one left axis for every page (DESIGN §0.1) */
+.page{max-width:calc(var(--wrap) + 2 * var(--gutter));margin:0 auto;padding:0 var(--gutter)}
 .mono,.sans{font-family:var(--sans)}
-.break{width:min(1184px, calc(100vw - 48px));margin-left:50%;transform:translateX(-50%)}
+.break{width:auto;margin-left:0;transform:none}
 
 /* ---------- masthead ---------- */
 .sitehead{border-bottom:1px solid var(--rule)}
-.sh-in{max-width:1184px;margin:0 auto;padding:0 32px;height:72px;display:flex;align-items:center;gap:36px}
+.sh-in{max-width:calc(var(--wrap) + 2 * var(--gutter));margin:0 auto;padding:0 var(--gutter);height:68px;display:flex;align-items:center;gap:36px}
 .brand{display:flex;align-items:center;text-decoration:none;color:var(--ink);
-  font-family:var(--serif);font-weight:600;font-size:1.4rem;letter-spacing:-.012em;font-variation-settings:"opsz" 30;white-space:nowrap}
+  font-family:var(--serif);font-weight:600;font-size:1.375rem;letter-spacing:-.012em;font-variation-settings:"opsz" 30;white-space:nowrap}
 .brand .mark{display:none}
-.sh-nav{display:flex;gap:28px;margin-left:auto;font-family:var(--sans);font-size:.95rem}
-.sh-nav a{color:var(--ink-soft);text-decoration:none;padding:2px 0;border-bottom:1px solid transparent;transition:color .15s ease,border-color .15s ease}
+.sh-nav{display:flex;gap:28px;margin-left:auto;font-family:var(--sans);font-size:.9375rem}
+.sh-nav a{color:var(--ink-soft);text-decoration:none;padding:4px 0;border-bottom:1px solid transparent;transition:color .15s ease,border-color .15s ease}
 .sh-nav a:hover{color:var(--ink)}
 .sh-nav a[aria-current]{color:var(--ink);border-bottom-color:var(--ink)}
-.sh-search{font-family:var(--sans);font-size:.9rem;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--rule-2);padding:2px 40px 3px 0;position:relative;white-space:nowrap}
-.sh-search kbd{position:absolute;right:0;top:1px;font:11.5px var(--sans);color:var(--muted);border:1px solid var(--rule-2);border-radius:3px;padding:0 5px}
-.sh-search:hover{color:var(--ink);border-bottom-color:var(--ink)}
-.sh-date{font-family:var(--sans);font-size:.85rem;color:var(--muted);white-space:nowrap}
-.crumb{font-family:var(--sans);font-size:.88rem;color:var(--muted)}
-.crumb .crumb-in{max-width:1184px;margin:0 auto;padding:22px 32px 0;display:flex;justify-content:space-between;gap:24px}
-.crumb a{color:var(--muted)}
-.crumb b{color:var(--ink-soft);font-weight:500}
+.sh-search{font-family:var(--sans);font-size:.875rem;color:var(--muted);text-decoration:none;border:1px solid var(--rule-2);padding:5px 34px 6px 12px;position:relative;white-space:nowrap;transition:border-color .15s ease,color .15s ease}
+.sh-search kbd{position:absolute;right:8px;top:6px;font:12px/1.4 var(--sans);color:var(--muted);border:1px solid var(--rule-2);border-radius:2px;padding:0 5px}
+.sh-search:hover{color:var(--ink);border-color:var(--ink-soft)}
+.sh-date{font-family:var(--sans);font-size:.8125rem;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.crumb{font-family:var(--sans);font-size:.875rem;color:var(--muted)}
+.crumb .crumb-in{max-width:calc(var(--wrap) + 2 * var(--gutter));margin:0 auto;padding:20px var(--gutter) 0;display:flex;justify-content:space-between;gap:24px}
+.crumb a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--rule-2)}
+.crumb a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+.crumb b{color:var(--ink);font-weight:500}
 
-/* ---------- title block ---------- */
-.titleblock{padding:64px 0 0}
-.hero-grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:64px;align-items:end}
-.hero-grid .lede{justify-self:start;margin-bottom:10px}
-.kicker{font-family:var(--sans);font-size:.92rem;color:var(--muted);margin-bottom:18px}
+/* ---------- title block: kicker, title and lede on the left, the key figures as a short
+   ledger on the right, the meta strip underneath (DESIGN §0.2, critique "Title block") ---------- */
+.titleblock{padding:72px 0 0}
+/* the guide's title block on the ledger margin: kicker and the key figures down the margin,
+   the title, lede and the facts of the source in the main field */
+.titleblock.break{display:grid;grid-template-columns:var(--rail) minmax(0,1fr);column-gap:var(--rail-gap);
+  grid-template-areas:"k h" "n h" "n m";grid-template-rows:auto auto 1fr;align-items:start}
+.titleblock > .kicker{grid-area:k;padding-top:16px;margin:0;font-size:.875rem;line-height:1.45;color:var(--ink-soft)}
+.titleblock > .hero-grid{grid-area:h}
+.titleblock > .numbers{grid-area:n}
+.titleblock > .meta{grid-area:m;align-self:start}
+.hero-grid{display:block}
+.hero-grid .lede{margin-top:26px}
+.kicker{font-family:var(--sans);font-size:.9375rem;color:var(--muted);margin-bottom:20px}
 h1{font-family:var(--serif);font-weight:500;font-variation-settings:"opsz" 60;
-  font-size:4.2rem;line-height:1.03;letter-spacing:-.022em;text-wrap:balance}
+  font-size:4rem;line-height:1.02;letter-spacing:-.022em;text-wrap:balance;max-width:16em}
 h1 i{font-style:inherit;font-weight:inherit;color:inherit}
-.lede{font-size:1.4rem;line-height:1.5;color:var(--ink-soft);max-width:34ch;text-wrap:pretty}
-.meta{display:flex;flex-wrap:wrap;gap:10px 40px;margin-top:44px;padding-top:20px;border-top:1px solid var(--rule);
-  font-family:var(--sans);font-size:.85rem;color:var(--muted)}
-.meta span{display:flex;flex-direction:column;gap:2px}
-.meta b{color:var(--ink);font-weight:500;font-size:.92rem}
+.lede{font-size:1.375rem;line-height:1.45;color:var(--ink-soft);max-width:44ch;text-wrap:pretty}
+.meta{display:flex;flex-wrap:wrap;gap:16px 36px;margin-top:48px;padding-top:16px;border-top:1px solid var(--rule-2);
+  font-family:var(--sans);font-size:.8125rem;color:var(--muted)}
+.meta span{display:flex;flex-direction:column;gap:3px}
+.meta b{color:var(--ink);font-weight:500;font-size:.875rem}
 
-.numbers{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0 32px;padding:52px 0 8px}
+/* a plain page's title block (register, method, about, learn, guides index): kicker in the
+   margin, title and lede in the main field */
+.titleblock:not(.break),.titleblock.break:not(:has(> .hero-grid)){display:grid;grid-template-columns:var(--rail) minmax(0,1fr);column-gap:var(--rail-gap);align-items:start;grid-template-areas:none;grid-template-rows:none}
+.titleblock:not(.break) > *,.titleblock.break:not(:has(> .hero-grid)) > *{grid-area:auto / 2}
+.titleblock:not(.break) > .kicker,.titleblock.break:not(:has(> .hero-grid)) > .kicker{grid-area:1 / 1;padding-top:16px;margin:0;font-size:.875rem;line-height:1.45;color:var(--ink-soft)}
+.titleblock:not(.break) > h1,.titleblock.break:not(:has(> .hero-grid)) > h1{grid-row:1}
+.titleblock:not(.break) > .lede,.titleblock.break:not(:has(> .hero-grid)) > .lede{margin-top:24px}
+
+/* the key figures, in the margin: one per row, label, figure, change */
+.numbers{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0 32px;padding:48px 0 0}
+.titleblock > .numbers{display:block;padding:0;margin-top:28px}
 .num{padding:0}
-.num .l{font-family:var(--sans);font-size:.85rem;line-height:1.45;color:var(--muted);margin-bottom:12px;min-height:2.9em}
+.titleblock .num{padding:14px 0 18px;border-top:1px solid var(--rule-2)}
+.titleblock .num:first-child{border-top-color:var(--ink)}
+.num .l{font-family:var(--sans);font-size:.875rem;line-height:1.45;color:var(--ink-soft);margin-bottom:12px;min-height:2.9em}
+.titleblock .num .l{margin:0 0 10px;min-height:0;font-size:.8125rem}
 .num .v{font-family:var(--serif);font-weight:300;font-variation-settings:"opsz" 60;
-  font-size:3.2rem;letter-spacing:-.025em;line-height:1;font-variant-numeric:lining-nums}
+  font-size:3rem;letter-spacing:-.025em;line-height:1;font-variant-numeric:lining-nums}
+.titleblock .num .v{font-size:2.5rem;overflow-wrap:anywhere}
 .num .v.acc{color:var(--ink)}
-.num .v .pc{font-size:.42em;color:var(--muted);margin-left:3px}
+.num .v .pc{font-size:.42em;color:var(--muted);margin-left:3px;letter-spacing:0}
 .num .v.acc .pc{color:var(--muted);opacity:1}
-.num .d{font-family:var(--sans);font-size:.85rem;color:var(--muted);margin-top:12px;font-variant-numeric:tabular-nums}
+.num .d{font-family:var(--sans);font-size:.8125rem;line-height:1.45;color:var(--muted);margin-top:12px;font-variant-numeric:tabular-nums}
+.titleblock .num .d{margin-top:8px}
 .num .d b{color:var(--ink-soft);font-weight:500}
 .num .nspark{margin-top:16px}
+.titleblock .num .nspark{display:none}   /* the figure and its change carry the row; a 100px sparkline said nothing (critique) */
 
-/* ---------- on this page ---------- */
-.onpage{display:flex;flex-wrap:wrap;gap:6px 22px;margin-top:40px;padding-top:18px;border-top:1px solid var(--rule);font-family:var(--sans);font-size:.9rem;line-height:1.5}
-.onpage span{color:var(--muted);flex-basis:100%;margin-bottom:2px}
-.onpage a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--rule-2)}
-.onpage a:hover{color:var(--ink);border-bottom-color:var(--ink)}
-section[id]{scroll-margin-top:24px}
+/* a state profile carries six figures: they run in three columns under the title */
+.titleblock.break:has(> .pf-numbers){grid-template-areas:"k h" ". m" "n n"}
+.titleblock > .pf-numbers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:48px;margin-top:48px;padding-left:var(--main)}
+.titleblock > .pf-numbers .num{border-top:1px solid var(--rule-2)}
+.titleblock > .pf-numbers .num:nth-child(-n+3){border-top-color:var(--ink)}
+.titleblock .num .v .fig{font-weight:inherit}
+
+/* ---------- on this page: a contents list, the label in the margin, numbered as the sections are ---------- */
+.onpage{margin-top:48px;padding-top:16px;border-top:1px solid var(--rule-2);font-family:var(--sans);font-size:.875rem;line-height:1.45;
+  display:grid;grid-template-columns:var(--rail) repeat(3,minmax(0,1fr));column-gap:var(--rail-gap);row-gap:6px}
+.onpage > span{grid-column:1;grid-row:1 / span 40;color:var(--ink);font-weight:500}
+.onpage a{display:flex;gap:12px;color:var(--ink-soft);text-decoration:none;padding:2px 0;min-width:0}
+.onpage a i{font-style:normal;color:var(--muted);font-variant-numeric:tabular-nums;min-width:1.4em}
+.onpage a:hover{color:var(--ink)}
+.onpage a:hover b{text-decoration:underline;text-decoration-color:var(--rule-2);text-underline-offset:3px}
+.onpage a b{font-weight:400}
+section[id],figure[id]{scroll-margin-top:24px}
 
 /* ---------- sections ---------- */
-section{padding:104px 0 0}
-.sec-head{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:28px}
-.sec-head .no{font-family:var(--sans);font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+section{padding:112px 0 0}
+.sec-head{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-bottom:28px;max-width:52rem}
+.sec-head .no{font-family:var(--sans);font-size:.875rem;color:var(--muted);font-variant-numeric:tabular-nums}
 .sec-head h2{font-family:var(--serif);font-weight:500;font-variation-settings:"opsz" 48;
-  font-size:2.3rem;line-height:1.12;letter-spacing:-.015em;text-wrap:balance}
+  font-size:2.125rem;line-height:1.12;letter-spacing:-.015em;text-wrap:balance}
 .sec-head .line{display:none}
-.sec-head .unit{font-family:var(--sans);font-size:.85rem;color:var(--muted)}
-p{color:#2A2F3A;max-width:64ch;hyphens:manual;text-wrap:pretty;hanging-punctuation:first allow-end}
+.sec-head .unit{font-family:var(--sans);font-size:.875rem;color:var(--muted)}
+p{color:var(--body);max-width:var(--measure);hyphens:manual;text-wrap:pretty;hanging-punctuation:first allow-end}
 p b{color:var(--ink);font-weight:600}
-p+p{margin-top:1.05em}
+p+p{margin-top:1em}
+.prose{max-width:var(--measure)}
 
 /* ---------- the current reading ---------- */
-.reading-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:52px;align-items:end;
-  padding:0 0 30px;border-bottom:1px solid var(--rule)}
-.reading-top .rk{display:block;font-family:var(--sans);font-size:.85rem;color:var(--muted);margin-bottom:10px}
+.reading-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:56px;align-items:end;
+  padding:0 0 30px;border-bottom:1px solid var(--rule-2)}
+.reading-top .rk{display:block;font-family:var(--sans);font-size:.875rem;color:var(--muted);margin-bottom:10px}
 .reading-top .big{font-family:var(--serif);font-weight:300;font-variation-settings:"opsz" 60;
-  font-size:6.4rem;line-height:.88;letter-spacing:-.035em;font-variant-numeric:lining-nums;white-space:nowrap}
+  font-size:6rem;line-height:.88;letter-spacing:-.035em;font-variant-numeric:lining-nums;white-space:nowrap}
 .reading-top .big .pc{font-size:.36em;color:var(--muted);margin-left:6px;letter-spacing:0}
-.reading-top .rt-cap{font-family:var(--sans);font-size:.95rem;line-height:1.55;color:var(--ink-soft);max-width:46ch;min-width:22ch}
+.reading-top .rt-cap{font-family:var(--sans);font-size:.9375rem;line-height:1.55;color:var(--ink-soft);max-width:46ch;min-width:22ch}
 .reading-top .rt-side{text-align:right;flex-shrink:0}
 .reading-top .rt-side .rk{margin-bottom:8px}
 .reading-top .rt-side-v{font-family:var(--serif);font-weight:300;font-variation-settings:"opsz" 60;
-  font-size:2.6rem;line-height:1;letter-spacing:-.02em;font-variant-numeric:lining-nums;white-space:nowrap}
+  font-size:2.625rem;line-height:1;letter-spacing:-.02em;font-variant-numeric:lining-nums;white-space:nowrap}
 .reading-top .rt-side-v .pc{font-size:.42em;color:var(--muted);margin-left:3px}
 .reading-top .band-scale{width:260px}
 .reading-top .band-scale svg{display:block;width:100%;height:auto}
-.reading-top .band-chip{margin-top:10px;font-family:var(--sans);font-size:.85rem;color:var(--muted)}
+.reading-top .band-chip{margin-top:10px;font-family:var(--sans);font-size:.8125rem;color:var(--muted)}
 .reading-top .band-chip b{color:var(--ink);font-weight:500}
-.reading-cols{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:34px}
-.reading-col .mk{font-family:var(--sans);font-size:.88rem;font-weight:500;display:block;margin-bottom:10px;color:var(--muted)}
-.reading-col.now .mk{color:var(--muted)}
-.reading-col p{font-size:1.1rem;line-height:1.66;max-width:none}
+.reading-cols{display:grid;grid-template-columns:repeat(2,minmax(0,34rem));gap:56px;margin-top:34px}
+.reading-col .mk{font-family:var(--sans);font-size:.875rem;font-weight:500;display:block;margin-bottom:10px;color:var(--ink)}
+.reading-col.now .mk{color:var(--ink)}
+.reading-col p{font-size:1.0625rem;line-height:1.62;max-width:none}
 .reading-col p + p{margin-top:.9em}
 
-/* ---------- register of series ---------- */
+/* ---------- register of series and ranked tables (DESIGN §0.6) ---------- */
 .ledger{overflow-x:auto}
 .ledger table{width:100%;min-width:640px;border-collapse:collapse;font-family:var(--sans)}
-.ledger th{font-size:.82rem;color:var(--muted);font-weight:400;text-align:left;padding:0 20px 10px 0;border-bottom:1px solid var(--rule-2)}
-.ledger td{padding:16px 20px 16px 0;border-bottom:1px solid var(--rule);vertical-align:middle}
+.ledger th{font-size:.8125rem;color:var(--muted);font-weight:400;text-align:left;padding:0 20px 10px 0;border-bottom:1px solid var(--rule-2);vertical-align:bottom;line-height:1.4}
+.ledger td{padding:11px 20px 11px 0;border-bottom:1px solid var(--rule);vertical-align:middle}
 .ledger tbody tr{transition:background .15s}
-.ledger tbody tr:hover{background:#F8F9FB}
-.ledger .name{font-family:var(--serif);font-size:1.08rem;color:var(--ink)}
-.ledger .name small{display:block;font-family:var(--sans);font-size:.8rem;color:var(--muted);margin-top:3px}
+.ledger tbody tr:hover{background:var(--hover)}
+.ledger .name{font-family:var(--serif);font-size:1.0625rem;line-height:1.35;color:var(--ink)}
+.ledger .name small{display:block;font-family:var(--sans);font-size:.8125rem;color:var(--muted);margin-top:2px;line-height:1.4}
 .sw{display:inline-block;width:9px;height:9px;margin-right:10px}
 .s-acc{background:var(--accent)} .s-g1{background:var(--grey1)}
 .s-g2{background:var(--grey2)} .s-g3{background:var(--grey3)}
 .s-g4{background:var(--grey4)}
-.ledger .wt,.ledger .chg,.ledger .yr{font-size:.88rem;color:var(--ink-soft);white-space:nowrap;font-variant-numeric:tabular-nums}
+.ledger .wt,.ledger .chg,.ledger .yr{font-size:.875rem;color:var(--ink-soft);white-space:nowrap;font-variant-numeric:tabular-nums}
 .ledger .wt .wtrack{display:block;width:64px;height:2px;background:var(--rule);margin-top:8px}
 .ledger .wt .wtrack i{display:block;height:100%}
-.ledger .val{font-size:1.05rem;font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink)}
-.ledger .spark{width:170px}
+.ledger .val{font-size:1rem;font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink)}
+.ledger .spark{width:150px}
+.ledger .spark svg{display:block;width:100%;height:auto;max-height:36px}
 
 /* ---------- composition ---------- */
 .basket{margin-top:8px}
@@ -174,209 +225,313 @@ p+p{margin-top:1.05em}
 .basket .seg{position:relative}
 .basket .labels{display:flex;margin-top:12px}
 .basket .blab{padding-right:20px}
-.basket .blab .n{font-family:var(--sans);font-size:.88rem;color:var(--ink)}
-.basket .blab .w{font-family:var(--sans);font-size:.8rem;color:var(--muted);margin-top:2px}
+.basket .blab .n{font-family:var(--sans);font-size:.875rem;color:var(--ink)}
+.basket .blab .w{font-family:var(--sans);font-size:.8125rem;color:var(--muted);margin-top:2px}
 .basket .blab .sw{margin-right:8px}
-.basket .note{margin-top:18px;font-family:var(--sans);font-size:.88rem;color:var(--muted);max-width:62ch}
+.basket .note{margin-top:18px;font-family:var(--sans);font-size:.875rem;color:var(--muted);max-width:62ch}
 
-/* ---------- chart plates ---------- */
-.frame{position:relative;margin-top:22px;padding:0;background:none;border:0}
+/* ---------- the chart card (DESIGN §0.4): finding and readout, subtitle, key, plot,
+   a footer with the source and the actions, then the notes ---------- */
+.frame{position:relative;margin-top:0;padding:0;background:none;border:0}
 .frame::before{display:none}
-.frame .legend{padding-top:0}
-.frame .plotzone{padding-top:14px}
-.frame .plotfoot{margin-top:16px}
 
-.plate-val{text-align:right;flex-shrink:0;font-family:var(--sans)}
-.plate-val .v{font-size:1.2rem;font-weight:500;line-height:1.1;font-variant-numeric:tabular-nums}
-.plate-val .c{font-size:.8rem;color:var(--muted);margin-top:4px}
-
-.plate-head{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;padding-bottom:0;border:0}
+.plate-head{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:56px;align-items:start;padding-bottom:0;border:0}
 .plate-head .t{min-width:0}
-.plate-head .t h3{font-family:var(--serif);font-weight:500;font-variation-settings:"opsz" 28;
-  font-size:1.5rem;letter-spacing:-.008em;line-height:1.28;text-wrap:balance}
-.plate-head .t .sub{font-family:var(--sans);font-size:.9rem;line-height:1.55;color:var(--muted);margin-top:6px;max-width:62em}
+.plate-head .t h3{font-family:var(--serif);font-weight:500;font-variation-settings:"opsz" 32;
+  font-size:1.625rem;letter-spacing:-.01em;line-height:1.22;text-wrap:balance;max-width:34em}
+.plate-head .t .sub{font-family:var(--sans);font-size:.9375rem;line-height:1.55;color:var(--ink-soft);margin-top:8px;max-width:72ch;text-wrap:pretty}
+.plate-val{text-align:right;flex-shrink:0;font-family:var(--sans);padding-top:2px;max-width:16em}
+.plate-val .v{font-family:var(--serif);font-weight:300;font-variation-settings:"opsz" 60;font-size:2.25rem;line-height:1;letter-spacing:-.02em;
+  font-variant-numeric:lining-nums;white-space:nowrap;color:var(--ink)}
+.plate-val .c{font-size:.8125rem;line-height:1.4;color:var(--muted);margin-top:8px}
 
-.legend{display:flex;gap:6px 22px;flex-wrap:wrap;padding:14px 0 0}
+.legend{display:flex;gap:8px 24px;flex-wrap:wrap;padding:20px 0 0}
 .legend .chip{display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;
-  font-family:var(--sans);font-size:.85rem;color:var(--muted);padding:2px 0}
-.legend .chip i{width:16px;height:2px}
+  font-family:var(--sans);font-size:.875rem;color:var(--ink-soft);padding:2px 0;text-align:left}
+.legend .chip i{width:18px;height:2px;flex-shrink:0}
 .legend .chip i.dash{height:0;border-top:2px dashed var(--grey3)}
 .legend .chip:hover{color:var(--ink)}
 
-.plotzone{position:relative;padding:14px 0 0}
+.plotzone{position:relative;padding:18px 0 0}
+.frame .legend{padding-top:20px}
+.frame .plotzone{padding-top:18px}
 .pz-cue{display:none}
-.plotzone svg{font-family:var(--sans);font-size:11.5px}   /* Plot defaults to 10px; nothing on the site is that small */
+.plotzone svg{font-family:var(--sans);font-size:12px}   /* Plot defaults to 10px; nothing on the site is that small */
 .plotzone svg text{paint-order:stroke;stroke:#FFFFFF;stroke-width:4px;stroke-linejoin:round;font-variant-numeric:tabular-nums}
 .plotzone svg{touch-action:pan-y}
 .plotzone svg .inbar text{stroke:none}
+/* category names above their rows on a phone (src/charts/plot.js): a wide white halo makes a
+   plate behind the name, so a reference rule passes behind it, never through it */
+.plotzone svg g.rowname text{stroke-width:11px;font-weight:500}
 .plotzone svg line,.plotzone svg path,.plotzone svg circle,.plotzone svg rect,.plotzone svg text{transition:opacity .16s ease}
+/* Chart text to AA (DESIGN §0.3). Client code sets light greys on axes and notes; the axis
+   colour (currentColor) and those fills are lifted here, and serializeSVG inlines the result,
+   so a download matches the page. Hairline grids are lifted from near-invisible to quiet. */
+.plotzone svg{color:var(--axis) !important}
+.plotzone svg g[fill="#878D99"] text,.plotzone svg text[fill="#878D99"],
+.plotzone svg g[fill="#A3A9B4"] text,.plotzone svg text[fill="#A3A9B4"],
+.plotzone svg g[fill="#9AA0AB"] text,.plotzone svg text[fill="#9AA0AB"],
+.plotzone svg g[fill="#B5BAC4"] text,.plotzone svg text[fill="#B5BAC4"],
+.plotzone svg g[fill="#C9CED6"] text,.plotzone svg text[fill="#C9CED6"]{fill:var(--axis)}
+.plotzone svg [stroke="#F0F2F5"],.plotzone svg [stroke="#EEF0F3"]{stroke:#E8EBEF}
+
 .cb-tip{position:absolute;pointer-events:none;display:none;z-index:3;background:#FFFFFF;border:1px solid var(--rule-2);
-  border-radius:3px;box-shadow:0 8px 24px -14px rgba(22,26,34,.22);
-  padding:10px 14px;min-width:190px;font-family:var(--sans);font-size:.82rem;line-height:1.7}
-.cb-tip .d{color:var(--muted);padding-bottom:3px;margin-bottom:3px;border-bottom:1px solid var(--rule)}
+  border-radius:2px;box-shadow:0 10px 28px -16px rgba(22,26,34,.28);
+  padding:10px 14px 9px;min-width:190px;font-family:var(--sans);font-size:.8125rem;line-height:1.7}
+.cb-tip .d{color:var(--ink);font-weight:500;padding-bottom:4px;margin-bottom:4px;border-bottom:1px solid var(--rule)}
 .cb-tip .r{display:flex;align-items:center;gap:8px}
 .cb-tip .r .sw2{width:8px;height:8px;flex-shrink:0;border-radius:50%}
 .cb-tip .r .n{color:var(--ink-soft)}
-.cb-tip .r .v{margin-left:auto;font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
+.cb-tip .r .v{margin-left:auto;padding-left:16px;font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
 
-.plotfoot{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px 32px;
-  margin-top:16px;font-family:var(--sans);font-size:.8rem;line-height:1.6;color:var(--muted)}
-.plotfoot .src{display:block;flex:1;min-width:0;max-width:56em}
-.plotfoot .dl{flex-shrink:0;margin-left:auto}
+/* the footer: source on the left, the actions on the right, under a hairline */
+.plotfoot{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:8px 40px;
+  margin-top:18px;padding-top:12px;border-top:1px solid var(--rule);font-family:var(--sans);font-size:.8125rem;line-height:1.55;color:var(--muted)}
+.frame .plotfoot{margin-top:18px}
+.plotfoot .src{display:block;min-width:0;max-width:80ch}
+.plotfoot .dl{flex-shrink:0;justify-self:end}
 .plotfoot a{color:var(--muted)}
 .plotfoot a:hover{color:var(--ink)}
 .dl{display:flex;align-items:center;gap:16px}
-.dl button,.dl a{background:none;cursor:pointer;text-decoration:none;font:inherit;font-size:.82rem;color:var(--ink-soft);
+.dl button,.dl a{background:none;cursor:pointer;text-decoration:none;font:inherit;font-size:.8125rem;color:var(--ink-soft);
   padding:1px 0;border:0;border-bottom:1px solid var(--rule-2);transition:color .15s ease,border-color .15s ease}
 .dl button:hover,.dl a:hover{color:var(--ink);border-bottom-color:var(--ink)}
 .dl .sep{display:none}
 
+/* the actions (DESIGN §0.5), built by guide.client.js from the plate's own buttons */
+.acts{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 18px;white-space:nowrap;line-height:1.55}
+.acts .lab{color:var(--muted);margin-right:-6px}
+.acts button,.acts a,.dl .acts button,.dl .acts a{font:inherit;font-size:.8125rem;color:var(--ink-soft);background:none;border:0;padding:0;cursor:pointer;text-decoration:none;
+  border-bottom:1px solid transparent;transition:color .15s ease,border-color .15s ease}
+.acts button:hover,.acts a:hover,.dl .acts button:hover,.dl .acts a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+.acts .gap{width:6px}
+.acts .st{color:var(--ink);opacity:0;transition:opacity .2s ease}
+.acts .st.on{opacity:1}
+
 /* ---------- evergreen and dated notes under a plate ---------- */
-.explain{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:30px;padding-top:24px;border-top:1px solid var(--rule)}
+.explain{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:56px;align-items:start;margin-top:36px;padding-top:0;border-top:0}
 .explain > div{padding:0}
-.explain .mk{font-family:var(--sans);font-size:.88rem;font-weight:500;display:block;margin-bottom:8px;color:var(--muted)}
-.explain .ev .mk,.explain .now .mk{color:var(--muted)}
-.explain p{font-size:1.04rem;line-height:1.66;color:#2A2F3A;max-width:none}
+.explain .mk{font-family:var(--sans);font-size:.875rem;font-weight:500;display:block;margin-bottom:8px;color:var(--ink)}
+.explain .ev .mk,.explain .now .mk{color:var(--ink)}
+.explain .ev{padding-top:2px}
+.explain .now{background:var(--wash);border-radius:0;padding:18px 24px 20px}
+.explain p{font-size:1.0625rem;line-height:1.6;color:var(--body);max-width:none}
+.explain .now p{font-size:1rem}
 .explain p + p{margin-top:.85em}
 
 /* ---------- what this measures, with margin notes ---------- */
-.wm-grid{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:52px}
+.wm-grid{display:grid;grid-template-columns:minmax(0,var(--measure)) 248px;gap:64px}
+.wm-grid p{font-size:inherit}
 .wm-rail .margin-note{margin-bottom:28px}
 .wm-rail .margin-note:last-child{margin-bottom:0}
-.margin-note{position:relative;font-family:var(--sans);font-size:.88rem;line-height:1.6;color:var(--ink-soft);padding:0 0 0 16px;border-left:1px solid var(--rule-2)}
+.margin-note{position:relative;font-family:var(--sans);font-size:.875rem;line-height:1.6;color:var(--ink-soft);padding:0 0 0 16px;border-left:1px solid var(--rule-2)}
 .margin-note::before{display:none}
-.margin-note .mk{font-size:.82rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px}
+.margin-note .mk{font-size:.8125rem;font-weight:500;color:var(--muted);display:block;margin-bottom:4px}
 .margin-note b{color:var(--ink);font-weight:500}
 
 /* ---------- misreadings ---------- */
-.misread{margin-top:8px;padding:0}
+.misread{margin-top:8px;padding:0;max-width:52rem}
 .misread li{list-style:none;display:grid;grid-template-columns:44px 1fr;gap:12px;padding:26px 0;border-top:1px solid var(--rule);align-items:baseline}
-.misread .no{font-family:var(--sans);font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
-.misread h3{font-family:var(--serif);font-style:italic;font-weight:400;font-size:1.35rem;line-height:1.38;margin-bottom:8px;text-wrap:balance;hanging-punctuation:first}
-.misread p{font-size:1.04rem;max-width:58ch;color:var(--ink-soft)}
+.misread li:last-child{border-bottom:1px solid var(--rule)}
+.misread .no{font-family:var(--sans);font-size:.875rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.misread h3{font-family:var(--serif);font-style:italic;font-weight:400;font-size:1.375rem;line-height:1.38;margin-bottom:8px;text-wrap:balance;hanging-punctuation:first}
+.misread p{font-size:1.0625rem;max-width:60ch;color:var(--ink-soft)}
 
 /* ---------- definition ---------- */
-.defbox{position:relative;max-width:64ch;margin:36px 0 0;padding:20px 24px;background:#F7F8FA;border-radius:3px}
-.defbox::before{content:"Definition";display:block;margin-bottom:6px;font-family:var(--sans);font-size:.82rem;font-weight:500;color:var(--muted)}
+.defbox{position:relative;max-width:var(--measure);margin:36px 0 0;padding:20px 24px;background:var(--wash);border-radius:0;border-left:2px solid var(--rule-2)}
+.defbox::before{content:"Definition";display:block;margin-bottom:6px;font-family:var(--sans);font-size:.8125rem;font-weight:500;color:var(--muted)}
 .defbox .term{font-family:var(--serif);font-weight:500;font-size:1.3rem;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:8px}
-.defbox .term .sub{font-family:var(--sans);font-size:.82rem;color:var(--muted);font-weight:400}
-.defbox p{font-size:1.04rem;line-height:1.64;color:#2A2F3A;max-width:none}
+.defbox .term .sub{font-family:var(--sans);font-size:.8125rem;color:var(--muted);font-weight:400}
+.defbox p{font-size:1.0625rem;line-height:1.6;color:var(--body);max-width:none}
 .defbox p + p{margin-top:.8em}
 .defbox .eg{margin-top:12px;padding-top:10px;border-top:1px solid var(--rule-2);font-size:.95rem;color:var(--ink-soft)}
 .defbox .eg b{color:var(--ink);font-weight:500}
 
-/* ---------- provenance ---------- */
-.provenance{margin-top:128px;padding:32px 0 72px;border-top:1px solid var(--rule)}
-.provenance .cols{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:48px}
-.provenance h6{font-family:var(--sans);font-size:.88rem;font-weight:500;color:var(--ink);margin-bottom:10px}
-.provenance p{font-family:var(--sans);font-size:.88rem;line-height:1.65;color:var(--ink-soft);max-width:none}
-.provenance p + p{margin-top:.7em}
-.provenance .fine{margin-top:40px;padding-top:16px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 24px;
-  font-family:var(--sans);font-size:.82rem;color:var(--muted)}
+/* ---------- links in reading text ---------- */
+.page p a,.provenance p a,.explain a,.prose a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--rule-2);text-decoration-thickness:1px;text-underline-offset:3px}
+.page p a:hover,.provenance p a:hover,.explain a:hover,.prose a:hover{text-decoration-color:var(--ink)}
 
+/* ---------- plates in a run: air and a hairline between them ---------- */
+.break > figure[id^="cb-"], figure[id^="cb-"]{padding-top:8px}
+section .break + .break > figure[id^="cb-"]{margin-top:96px !important;padding-top:44px;border-top:1px solid var(--rule)}
+section > .break:not(.titleblock){margin-top:40px}
+section > .sec-head + .break{margin-top:0}
+
+
+/* =====================================================================================
+   THE LEDGER MARGIN (DESIGN §0.1). Every section is a sheet of two columns: a 220px margin
+   on the left that carries the figures and the furniture (section numerals, each chart's
+   readout, its actions, margin notes, numbered misreadings) and the main field that carries
+   the story (headings, prose, findings). Charts, tables and ledgers span both. Read down the
+   margin for the numbers, across for the account of them.
+   ===================================================================================== */
+.page > section:not(.hm-sec):not(.nf-list){display:grid;grid-template-columns:var(--rail) minmax(0,1fr);column-gap:var(--rail-gap);align-items:start}
+.page > section:not(.hm-sec):not(.nf-list) > *{grid-column:2;min-width:0}
+.page > section:not(.hm-sec):not(.nf-list) > :is(.break,.ledger,.ec,.em-table,.tail-ledger,.pf-table,table){grid-column:1 / -1}
+/* the section head: its numeral hangs in the margin, light serif, level with the heading */
+.page > section > .sec-head{display:contents}
+.page > section > .sec-head .no{grid-column:1;grid-row:1;align-self:baseline;font-family:var(--serif);font-weight:300;font-variation-settings:"opsz" 60;
+  font-size:2.125rem;line-height:1.12;letter-spacing:-.01em;color:var(--muted);font-variant-numeric:lining-nums tabular-nums}
+.page > section > .sec-head h2{grid-column:2;grid-row:1;align-self:baseline;max-width:30em}
+.page > section > .sec-head .unit{grid-column:1;grid-row:2;align-self:start;padding-top:12px;font-size:.8125rem;line-height:1.5;color:var(--muted)}
+.page > section > .sec-head h2 + .line + .unit,.page > section > .sec-head h2 + .unit{}
+.page > section > .sec-head ~ *:not(.sec-head){}
+.page > section > :nth-child(2){margin-top:28px}
+.page > section > .sec-head + *{grid-row:2}
+.page > section > .sec-head + .break{grid-row:auto}
+
+/* the plate: readout in the margin level with the finding; title, subtitle and key in the
+   main field; the plot across the sheet; the source in the main field with the actions in
+   the margin beside it; the notes in the main field */
+figure[id^="cb-"]{display:grid;grid-template-columns:var(--rail) minmax(0,1fr);column-gap:var(--rail-gap);align-items:start}
+figure[id^="cb-"] > *{grid-column:1 / -1;min-width:0}
+figure[id^="cb-"] > .plate-head{display:contents}
+figure[id^="cb-"] > .plate-head > .t{grid-column:2;grid-row:1}
+figure[id^="cb-"] > .plate-head > .plate-val{grid-column:1;grid-row:1;text-align:left;padding-top:0;max-width:none}
+figure[id^="cb-"] > .explain{grid-column:2}
+figure[id^="cb-"] .plate-val .v{font-size:2.75rem}
+figure[id^="cb-"] .plate-val .c{margin-top:10px;max-width:15em}
+figure[id^="cb-"] .plate-val .v.rv-m,.titleblock .num .v.rv-m{font-size:2rem}
+figure[id^="cb-"] .plate-val .v.rv-w,.titleblock .num .v.rv-w{font-size:1.375rem;font-weight:400;line-height:1.25;letter-spacing:-.005em;white-space:normal;font-variation-settings:"opsz" 24}
+figure[id^="cb-"] .frame > .legend{padding-left:var(--main)}
+figure[id^="cb-"] .frame > .plotfoot{grid-template-columns:var(--rail) minmax(0,1fr);column-gap:var(--rail-gap)}
+figure[id^="cb-"] .frame > .plotfoot > .src{grid-column:2;grid-row:1}
+figure[id^="cb-"] .frame > .plotfoot > .dl{grid-column:1;grid-row:1;justify-self:start}
+figure[id^="cb-"] .frame > .plotfoot .acts{flex-wrap:wrap;white-space:normal;row-gap:4px}
+figure[id^="cb-"] .frame > .plotfoot .acts .gap{flex-basis:100%;height:0;width:auto}
+
+/* notes in the margin: "what this measures" carries its margin notes on the left */
+.wm-grid{grid-column:1 / -1 !important;grid-template-columns:var(--rail) minmax(0,var(--measure));column-gap:var(--rail-gap)}
+.wm-grid > .wm-rail{grid-column:1;grid-row:1}
+.wm-grid > :not(.wm-rail){grid-column:2;grid-row:1}
+/* misreadings and standing rules: the numeral hangs in the margin */
+.misread li,.method ol.rules li{position:relative;display:block}
+.method ol.rules li::before{position:absolute;left:calc(-1 * var(--main));top:20px;font-family:var(--serif);font-weight:300;font-size:1.625rem;line-height:1.2;color:var(--muted)}
+.misread li > .no{position:absolute;left:calc(-1 * var(--main));top:24px;font-family:var(--serif);font-weight:300;font-size:1.625rem;line-height:1.2;color:var(--muted)}
+
+/* ---------- end matter: data and downloads, citation ---------- */
+.endmatter{padding-top:120px}
+.em-head h2{font-family:var(--serif);font-weight:500;font-variation-settings:"opsz" 48;font-size:2.125rem;line-height:1.12;letter-spacing:-.015em;margin-bottom:10px}
+.em-head p{font-family:var(--sans);font-size:.9375rem;line-height:1.6;color:var(--ink-soft);max-width:68ch}
+.em-table{overflow-x:auto;margin-top:24px}
+.em-table table{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:.875rem;min-width:620px}
+.em-table th{font-weight:400;font-size:.8125rem;color:var(--muted);text-align:left;padding:0 16px 10px 0;border-bottom:1px solid var(--rule-2);vertical-align:bottom}
+.em-table td{padding:11px 16px 11px 0;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-soft)}
+.em-table .w{color:var(--ink);max-width:28em}
+/* the description column takes the room: narrow, it wrapped each row to a dozen lines */
+.em-table th:first-child,.em-table td.w{width:46%}
+.em-table small{display:block;font-size:.8125rem;color:var(--muted);margin-top:2px}
+.em-table .cur .w{font-weight:500}
+.em-table .n{text-align:right;font-variant-numeric:tabular-nums}
+.em-table th.n{text-align:right}
+.em-table .nw{white-space:nowrap}
+.em-table td a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--rule-2);margin-left:12px}
+.em-table td a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+.em-table .em-m{display:none}
+.em-cite{margin-top:40px;padding:18px 24px;background:var(--wash);border-radius:0;max-width:68ch}
+.em-cite h3{font-family:var(--sans);font-size:.875rem;font-weight:500;color:var(--ink);margin-bottom:4px}
+.em-cite p{font-family:var(--sans);font-size:.9375rem;color:var(--ink);max-width:none;overflow-wrap:anywhere}
+
+/* ---------- sources, method and revisions: labelled rows ---------- */
+.provenance{margin-top:112px;padding:0 0 72px;border-top:0}
+.provenance .prov-h{padding-left:var(--main);font-family:var(--serif);font-weight:500;font-variation-settings:"opsz" 48;font-size:2.125rem;line-height:1.12;letter-spacing:-.015em;margin-bottom:20px}
+.provenance .cols{display:block}
+.provenance .cols > div{display:grid;grid-template-columns:220px minmax(0,1fr);column-gap:56px;padding:22px 0;border-top:1px solid var(--rule)}
+.provenance .cols > div > h6{grid-row:1 / span 30;margin:2px 0 0;font-family:var(--sans);font-size:.9375rem;font-weight:500;color:var(--ink)}
+.provenance .cols > div > *:not(h6){grid-column:2}
+.provenance h6{font-family:var(--sans);font-size:.9375rem;font-weight:500;color:var(--ink);margin-bottom:10px}
+.provenance p{font-family:var(--sans);font-size:.9375rem;line-height:1.65;color:var(--ink-soft);max-width:72ch}
+.provenance p + p{margin-top:.7em}
+.provenance .fine{margin-top:48px;padding-top:16px;border-top:1px solid var(--rule-2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 24px;
+  font-family:var(--sans);font-size:.8125rem;color:var(--muted)}
+
+/* ---------- phone (DESIGN §0.1: 390 px is not a squeezed desktop) ---------- */
 @media (max-width:860px){
-  body{font-size:1.1rem}
-  .page{padding:0 18px}
-  .break{width:calc(100vw - 36px)}
-  h1{font-size:2.6rem}
-  .lede{font-size:1.2rem}
-  .sec-head h2{font-size:1.8rem}
-  .num .v{font-size:2.6rem}
-  .hero-grid{grid-template-columns:1fr;gap:22px}
-  .sh-in{flex-wrap:wrap;height:auto;padding:16px 18px 10px;row-gap:10px}
-  .sh-nav{display:flex;order:3;width:100%;margin-left:0;gap:20px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+  :root{--gutter:20px}
+  body{font-size:1.0625rem;line-height:1.6}
+  h1{font-size:2.5rem;line-height:1.05}
+  .lede{font-size:1.1875rem}
+  .sec-head h2,.em-head h2,.provenance .prov-h{font-size:1.75rem}
+  section{padding-top:72px}
+  .titleblock{padding-top:36px}
+  .titleblock.break,.titleblock.break:has(> .pf-numbers){grid-template-columns:minmax(0,1fr);grid-template-areas:"k" "h" "n" "m";grid-template-rows:none}
+  .titleblock > .kicker{padding-top:0;margin-bottom:14px}
+  .titleblock > .numbers{margin-top:32px}
+  .titleblock > .numbers:not(.pf-numbers){display:grid;grid-template-columns:1fr 1fr;column-gap:20px}
+  .titleblock .num .v{font-size:2rem}
+  .titleblock > .pf-numbers{grid-template-columns:1fr 1fr;column-gap:20px;padding-left:0}
+  .titleblock > .pf-numbers .num:nth-child(-n+3){border-top-color:var(--rule-2)}
+  .titleblock > .numbers .num:nth-child(-n+2){border-top-color:var(--ink)}
+  .acts .gap{display:none}
+  .page > section:not(.hm-sec):not(.nf-list),figure[id^="cb-"],.wm-grid{grid-template-columns:minmax(0,1fr)}
+  .page > section:not(.hm-sec):not(.nf-list) > *,figure[id^="cb-"] > *,
+  .page > section > .sec-head > *,figure[id^="cb-"] > .plate-head > *{grid-column:1 !important;grid-row:auto !important}
+  .page > section > .sec-head .no{font-family:var(--sans);font-weight:400;font-size:.875rem;line-height:1.4;color:var(--muted)}
+  .page > section > .sec-head h2{margin-top:6px}
+  .page > section > .sec-head .unit{padding-top:6px}
+  figure[id^="cb-"] > .plate-head > .t{order:-1}
+  figure[id^="cb-"] > .plate-head > .plate-val{margin-top:14px}
+  figure[id^="cb-"] .plate-val .v{font-size:2.25rem}
+  figure[id^="cb-"] .frame > .legend{padding-left:0}
+  figure[id^="cb-"] .frame > .plotfoot{grid-template-columns:minmax(0,1fr)}
+  figure[id^="cb-"] .frame > .plotfoot > .src,figure[id^="cb-"] .frame > .plotfoot > .dl{grid-column:1;grid-row:auto}
+  .wm-grid > .wm-rail,.wm-grid > :not(.wm-rail){grid-column:1;grid-row:auto}
+  .wm-grid > .wm-rail{order:2}
+  .misread li > .no{position:static;font-size:1rem;display:block;margin-bottom:4px}
+  .method ol.rules li::before{position:static;display:block;font-size:1rem;margin-bottom:4px}
+  .titleblock:not(.break),.titleblock.break:not(:has(> .hero-grid)){grid-template-columns:minmax(0,1fr)}
+  .titleblock:not(.break) > *,.titleblock.break:not(:has(> .hero-grid)) > *{grid-column:1 !important;grid-row:auto !important}
+  .titleblock:not(.break) > .kicker,.titleblock.break:not(:has(> .hero-grid)) > .kicker{padding:0;margin-bottom:14px}
+  .hero-grid .lede{margin-top:18px}
+  .kicker{margin-bottom:14px;font-size:.875rem}
+  .meta{display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;margin-top:32px}
+  .num .v{font-size:2.5rem}
+  .sh-in{flex-wrap:wrap;height:auto;padding:12px var(--gutter) 0;row-gap:4px;column-gap:16px}
+  .brand{font-size:1.25rem}
+  .sh-nav{display:flex;order:3;width:calc(100% + 2 * var(--gutter));margin:0 calc(-1 * var(--gutter));padding:4px var(--gutter) 8px;gap:22px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .sh-nav::-webkit-scrollbar{display:none}
+  .sh-nav a{white-space:nowrap}
   .sh-search{display:none}
   .sh-date{margin-left:auto}
-  .crumb .crumb-in{padding:16px 18px 0;flex-direction:column;gap:4px}
+  .crumb .crumb-in{padding:14px var(--gutter) 0}
+  .crumb .crumb-in > span:last-child{display:none}
   .numbers{grid-template-columns:1fr 1fr;gap:30px 20px}
+  .numbers[data-long-values]{grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr))}
+  .onpage{grid-template-columns:1fr;margin-top:32px}
+  .onpage > span{grid-row:auto;margin-bottom:6px}
+  .provenance .prov-h{padding-left:0}
   .reading-top{grid-template-columns:1fr;gap:24px}
-  .reading-top .big{font-size:4.6rem}
+  .reading-top .big{font-size:4.5rem}
   .reading-top .rt-side{text-align:left}
   .reading-cols{grid-template-columns:1fr;gap:28px}
-  .explain{grid-template-columns:1fr;gap:22px}
+  .explain{grid-template-columns:1fr;gap:24px;margin-top:28px}
+  .explain .now{padding:16px 18px 18px}
   .wm-grid{grid-template-columns:1fr;gap:32px}
   .ledger .spark,.ledger th.spark{display:none}
-  .plate-head{flex-direction:column;align-items:flex-start;gap:10px}
-  .plate-val{text-align:left}
+  .plate-head{grid-template-columns:minmax(0,1fr);row-gap:14px}
+  .plate-head .t h3{font-size:1.375rem}
+  .plate-val{text-align:left;padding-top:0;max-width:none}
+  .plate-val .v{font-size:2rem}
+  .plate-val .c{margin-top:4px}
+  section .break + .break > figure[id^="cb-"]{margin-top:64px !important;padding-top:32px}
   /* Plates are authored wide. Shrinking them to phone width makes 12px labels unreadable,
      so the plot scrolls sideways instead. */
   .plotzone{overflow-x:auto;padding-bottom:8px}
   /* a scrolling plot opens at its latest end (guide.client.js); this cue says there is more */
-  .pz-cue{display:block;font-family:var(--sans);font-size:.78rem;color:var(--muted);margin:8px 0 -6px}
+  .pz-cue{display:block;font-family:var(--sans);font-size:.8125rem;color:var(--muted);margin:10px 0 -8px}
   .pz-cue[hidden]{display:none}
   /* Only a plate's main plot gets the 700px floor: an svg directly in the plotzone, or in its
      #plot-* holder. Everything nested deeper (small-multiple panels, ledger sparklines) is
      authored narrow and fits its own slot; forcing 700px clipped those grids to their first half. */
   .plotzone svg{min-width:0;max-width:100%}
   .plotzone > svg,.plotzone > [id^="plot-"] > svg{max-width:none;min-width:700px}
+  /* Compact category plots stack labels above measurements at phone widths. */
+  .plotzone > [id^="plot-"] > svg[data-compact]{min-width:0;max-width:100%;height:auto}
+  .plotfoot{grid-template-columns:minmax(0,1fr)}
+  .plotfoot .dl{justify-self:start}
   .basket .labels{flex-wrap:wrap;gap:12px 20px}
   .misread li{grid-template-columns:28px 1fr}
-  .provenance .cols{grid-template-columns:1fr;gap:28px}
-}
-
-
-/* ---------- guide v2: plates, notes, share, end matter ---------- */
-/* each plate in a run of deep cuts is separated by air and a hairline, so the eye knows where one ends */
-.break > figure[id^="cb-"], figure[id^="cb-"]{padding-top:8px}
-section .break + .break > figure[id^="cb-"]{margin-top:72px !important;padding-top:40px;border-top:1px solid var(--rule)}
-.explain{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;border-top:0;padding-top:0;margin-top:34px}
-.explain .ev{padding-top:2px}
-.explain .now{background:#F6F7FA;border-radius:4px;padding:18px 22px 20px}
-.explain .now .mk{color:var(--ink-soft)}
-.explain .mk{font-size:.85rem}
-.explain p{font-size:1.02rem;line-height:1.64}
-.explain .now p{font-size:1rem}
-
-.plotfoot{align-items:center}
-.plotfoot .dl{display:flex;align-items:center;gap:18px}
-.share{position:relative}
-.share .sh{font-family:var(--sans);font-size:.85rem;color:var(--ink-soft);padding:1px 0;border:0;border-bottom:1px solid var(--rule-2);background:none;cursor:pointer;white-space:nowrap}
-.share .sh:hover,.share.open .sh{color:var(--ink);border-bottom-color:var(--ink)}
-.share .sh.st{color:var(--accent);border-bottom-color:var(--accent)}
-.share .menu{display:none;position:absolute;right:0;bottom:calc(100% + 10px);z-index:30;background:#fff;border:1px solid var(--rule-2);border-radius:4px;padding:6px 0;min-width:210px;box-shadow:0 10px 28px -14px rgba(22,26,34,.22)}
-.share.open .menu{display:block}
-.share .menu button{display:block;width:100%;text-align:left;padding:8px 16px;font-family:var(--sans);font-size:.88rem;color:var(--ink-soft);background:none;border:0;cursor:pointer;white-space:nowrap}
-.share .menu button:hover,.share .menu button:focus-visible{background:#F4F5F8;color:var(--ink);outline:none}
-.plotfoot .srclink{font-family:var(--sans);font-size:.85rem;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--rule-2)}
-.plotfoot .srclink:hover{color:var(--ink);border-bottom-color:var(--ink)}
-
-/* links in reading text */
-.page p a,.provenance p a,.explain a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--rule-2);text-decoration-thickness:1px;text-underline-offset:3px}
-.page p a:hover,.provenance p a:hover{text-decoration-color:var(--ink)}
-
-/* end matter: data and downloads, citation */
-.endmatter{padding-top:120px}
-.em-head h2{font-family:var(--serif);font-weight:500;font-size:2rem;letter-spacing:-.012em;margin-bottom:8px}
-.em-head p{font-family:var(--sans);font-size:.95rem;color:var(--ink-soft);max-width:60ch}
-.em-table{overflow-x:auto;margin-top:22px}
-.em-table table{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:.9rem;min-width:620px}
-.em-table th{font-weight:400;font-size:.8rem;color:var(--muted);text-align:left;padding:0 16px 10px 0;border-bottom:1px solid var(--rule-2)}
-.em-table td{padding:12px 16px 12px 0;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-soft)}
-.em-table .w{color:var(--ink);max-width:28em}
-/* the description column takes the room: narrow, it wrapped each row to a dozen lines */
-.em-table th:first-child,.em-table td.w{width:46%}
-.em-table small{display:block;font-size:.78rem;color:var(--muted);margin-top:2px}
-.em-table .cur .w{font-weight:500}
-.em-table .n{text-align:right;font-variant-numeric:tabular-nums}
-.em-table .nw{white-space:nowrap}
-.em-table td a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--rule-2);margin-left:12px}
-.em-table td a:hover{color:var(--ink);border-bottom-color:var(--ink)}
-.em-table .em-m{display:none}
-.em-cite{margin-top:36px;padding:18px 22px;background:#F6F7FA;border-radius:4px;max-width:64ch}
-.em-cite h3{font-family:var(--sans);font-size:.85rem;font-weight:500;color:var(--muted);margin-bottom:4px}
-.em-cite p{font-family:var(--sans);font-size:.92rem;color:var(--ink);max-width:none}
-
-/* sources, method and revisions: labelled rows, the label on the left, the text on the right */
-.provenance{margin-top:96px;border-top:0;padding-top:0}
-.provenance .prov-h{font-family:var(--serif);font-weight:500;font-size:2rem;letter-spacing:-.012em;margin-bottom:18px}
-.provenance .cols{display:block}
-.provenance .cols > div{display:grid;grid-template-columns:200px minmax(0,1fr);column-gap:48px;padding:22px 0;border-top:1px solid var(--rule)}
-.provenance .cols > div > h6{grid-row:1 / span 30;margin:2px 0 0;font-size:.92rem;color:var(--ink)}
-.provenance .cols > div > *:not(h6){grid-column:2}
-.provenance p{font-size:.95rem;line-height:1.68;max-width:72ch}
-.provenance .fine{border-top:1px solid var(--rule)}
-@media (max-width:860px){
-  .explain{grid-template-columns:1fr}
+  .provenance{margin-top:80px}
   .provenance .cols > div{grid-template-columns:1fr;row-gap:6px}
   .provenance .cols > div > h6,.provenance .cols > div > *:not(h6){grid-column:1;grid-row:auto}
   /* the data table stacks on a phone: what the file covers first, then its details on one line */
@@ -386,15 +541,19 @@ section .break + .break > figure[id^="cb-"]{margin-top:72px !important;padding-t
   .em-table td{display:none;border:0;padding:0}
   .em-table td.w{display:block;font-size:.95rem;color:var(--ink);width:auto;max-width:none}   /* the desktop 46% column must not survive the stacking */
   .em-table td.w small{display:block}
-  .em-table td.w .em-m{display:block;font-size:.82rem;color:var(--muted);margin-top:6px}
-  .em-table td.n.nw{display:block;text-align:left;margin-top:8px;font-size:.85rem}
+  .em-table td.w .em-m{display:block;font-size:.8125rem;color:var(--muted);margin-top:6px}
+  .em-table td.n.nw{display:block;text-align:left;margin-top:8px;font-size:.875rem}
   .em-table td a{margin:0 14px 0 0}
 }
 
 @media print{
-  .dl{display:none}
+  .dl,.acts{display:none}
   .frame{break-inside:avoid}
   .reading-top,.reading-cols,.explain{break-inside:avoid}
   section{padding-top:56px}
   .cb-tip{display:none !important}
 }
+
+/* Basket keys retain the bar seam on desktop and use the full phone width. */
+.basket-key{display:flex;flex-wrap:wrap;gap:14px 30px;margin:20px 0 0 var(--basket-indent);min-width:0}
+@media(max-width:680px){.basket-key{margin-left:0}}

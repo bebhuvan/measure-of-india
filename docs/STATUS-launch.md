@@ -1,6 +1,42 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 21:10.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-13, Digital verification checkpoint.
+
+## Digital access verification (2026-10-13)
+
+The thirty-fifth guide is integrated locally: 38 separate survey bundles, 44,283
+series and 158 analytical plates. Full gates, 48 strict coverage ledgers and 294
+tests pass. Real Chrome checks cover six Digital widths and all 36 state pages;
+328 downloads and selected JSON exports match the source. The integrated build
+has 15,594 files, below the 16,000 limit. Cold mobile Digital searches still take
+about 4.3–5.1 seconds; older MIS/CAMS report-only recovery and unattended live
+refresh remain unfinished. Root handoff and human release/deployment remain.
+Evidence: `docs/status/wave-2-digital-epoch-attempt-5/final-acceptance.json`.
+
+## Schools implementation (2026-10-10)
+
+Added the thirty-first guide: all 46 UDISE API indicators, all 18 CMSE education
+indicators and Ministry national highlights. 111 bundles, 110,498 source cuts,
+66 analytical plates. See `docs/status/schools-expansion.md` for scope and checks.
+
+## MoSPI direct API discovery (2026-10-10)
+
+Verified NSS 80 direct listings (20 telecom, 18 education), metadata and records;
+corrected its profile adapter parameters and endpoint casing. Economic Census
+EC6 form-POST ranking matches the MCP canary. NSS 74 direct listing has 21
+indicators. See `docs/reference/mospi-api-discovery.md` and its source responses.
+These are discovery checks; new canonical bundles and guides are still pending.
+
+## Coverage expansion assessment (10 October, following the launch checkpoint)
+
+The owner requested broader pre-launch coverage and explicit completeness
+guardrails. The thirty-guide baseline remains unchanged in this pass.
+`docs/PLAN-coverage-expansion.md` ranks new guide packets from already held
+MoSPI/WDI/AMFI/SEBI data and verified source canaries. The temporary skill is
+linked from AGENTS.md. Progress and validation: `docs/status/coverage-expansion.md`.
+Regenerate the distinction between baked bundles and national-guide access with
+`npm run coverage:expansion`. Energy endpoints now answer; the old failure note
+has a dated correction. No source family or guide is marked newly completed.
 
 ## Running now: ten family sessions
 
@@ -162,3 +198,7 @@ with `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`, DNS for atlas.thisindia
   gzip shrinks them 6-50x with the audit trail intact.
 - Every-cut: one paged view for a family of small bundles (the 204 Handbook tables).
 - Manufacturing page: hand-typed last years go stale on a WDI refresh (asof flags it).
+
+## Investor source-only implementation — 2026-10-15
+
+Source implementation and bounded QA complete; admission blocked on the existing public HF archive destination (unauthenticated 401, configured-token 404). Three reviewed records and 7,654 pending remain fully accounted for. 31 focused tests pass; 18 actual source chart layouts and seven print pages checked. Accepted pension artifact and pre-existing canonical/raw bytes are unchanged. No canonical promotion or production build/gates. [Review packet](status/investor-implementation-2026-10-15/README.md).

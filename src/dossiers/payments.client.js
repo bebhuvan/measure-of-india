@@ -6,7 +6,7 @@
 // lakh crore. The old table (to October 2019) and the re-organised one are never joined.
 
 import * as Plot from "@observablehq/plot";
-import { MONO as sans, a11y, addCrosshair, spark, downloadSVG, downloadPNG, saveBlob, seamMarks, dodgeEndLabels, tint } from "../charts/plumbing.js";
+import { MONO as sans, a11y, addCrosshair, spark, downloadSVG, downloadPNG, saveBlob, seamMarks, dodgeEndLabels, tint, panelPlotWidth } from "../charts/plumbing.js";
 import * as F from "./payments.fmt.js";
 
 const P = JSON.parse(document.getElementById("payments-data")?.textContent || "{}");
@@ -64,10 +64,11 @@ function panel(grid, name, sub, valueText, plot) {
   grid?.append(div);
   return div;
 }
-function miniLine(data, { color = ACC, w = 280, h = 120, xTicks, yMax } = {}) {
+function miniLine(data, { color = ACC, w = 280, h = 120, xTicks, yMax, grid } = {}) {
+  w = panelPlotWidth(grid, w);
   const top = yMax ?? Math.max(...pub(data).map((d) => d.value));
   return Plot.plot({
-    width: w, height: h, marginLeft: 4, marginRight: 8, marginTop: 8, marginBottom: 20, style: { ...baseStyle, fontSize: "11px" },
+    width: w, height: h, marginLeft: 24, marginRight: 24, marginTop: 8, marginBottom: 20, style: { ...baseStyle, fontSize: "11px" },
     x: { label: null, tickSize: 0, ticks: xTicks ?? [2020, 2023, 2026].map((y) => new Date(Date.UTC(y, 0, 1))), tickFormat: (d) => String(d.getUTCFullYear()) },
     y: { axis: null, domain: [0, top * 1.08] },
     marks: [
@@ -198,7 +199,7 @@ const lakhRs = (v) => (v >= 1e5 ? "₹" + (v / 1e5).toFixed(1) + " lakh" : F.rup
   for (const [f, title, sub] of [["volume", "Of every 100 payments", "share of the number of payments"], ["value", "Of every ₹100 paid", "share of the money"]]) {
     const R = rows(f);
     const plot = Plot.plot({
-      width: 560, height: 40 + R.length * 34, marginLeft: 250, marginRight: 64, marginTop: 10, marginBottom: 26, style: baseStyle,
+      width: 560, narrow: true, height: 40 + R.length * 34, marginLeft: 250, marginRight: 64, marginTop: 10, marginBottom: 26, style: baseStyle,
       x: { domain: [0, 100], ticks: [0, 50, 100], tickFormat: (v) => v + "%", tickSize: 0, tickPadding: 6, label: null },
       y: { label: null, domain: R.map((r) => r.name), tickSize: 0, tickPadding: 12 },
       marks: [
@@ -279,8 +280,8 @@ const I = P.i, IL = I.dates.length - 1;
   const grid = document.getElementById("plot-cash");
   const atm = ser(M.dates, M.atm_cash_volume, CR);
   const C = P.cash, cwp = ser(C.dates, C.cwp);
-  const p1 = miniLine(atm, { color: ACC, w: 560, h: 220, yMax: Math.max(...pub(atm).map((d) => d.value)) });
-  const p2 = miniLine(cwp, { color: ACC, w: 560, h: 220, xTicks: [2016, 2019, 2022, 2025].map((y) => new Date(Date.UTC(y, 0, 1))) });
+  const p1 = miniLine(atm, { grid, color: ACC, w: 560, h: 220, yMax: Math.max(...pub(atm).map((d) => d.value)) });
+  const p2 = miniLine(cwp, { grid, color: ACC, w: 560, h: 220, xTicks: [2016, 2019, 2022, 2025].map((y) => new Date(Date.UTC(y, 0, 1))) });
   const atmL = lastPt(atm), cwpL = lastPt(cwp), cwpNov = pub(cwp).find((d) => d.date >= new Date(Date.UTC(2019, 10, 1)));
   panel(grid, "Cash withdrawals at ATMs", `crore a month, ${firstMonth} ${F.crore(M.atm_cash_volume[0])}`, F.crore(M.atm_cash_volume[L]), p1);
   panel(grid, "Currency with the public", `₹ lakh crore, January 2016 ₹${firstPt(cwp).value.toFixed(1)} lakh crore`, "₹" + cwpL.value.toFixed(1) + " lakh crore", p2);
@@ -300,7 +301,7 @@ const I = P.i, IL = I.dates.length - 1;
     ["credit_cards", "Credit cards", "in issue"], ["ppi_wallets", "Wallets", "prepaid wallets in issue"]];
   for (const [k, name, sub] of PANELS) {
     const s = ser(I.dates, I[k]);
-    panel(grid, name, sub, F.count(lastPt(s).value), miniLine(s, { color: k === "upi_qr" ? ACC : G1 }));
+    panel(grid, name, sub, F.count(lastPt(s).value), miniLine(s, { grid, color: k === "upi_qr" ? ACC : G1 }));
   }
   const at = (k, i = IL) => I[k][i];
   setHTML("h-machines", `${F.count(at("upi_qr"))} UPI QR codes, ${F.count(at("pos"))} card machines, ${F.count(at("atms"))} ATMs`);
@@ -324,7 +325,7 @@ const I = P.i, IL = I.dates.length - 1;
     ["netc", "FASTag (NETC)", "toll payments from bank accounts"], ["bhim_aadhaar_pay", "BHIM Aadhaar Pay", "paying a shop by thumbprint"], ["upi_ussd", "UPI over USSD", "on a phone without internet"]];
   for (const [k, name, sub] of PANELS) {
     const s = ser(M.dates, M[k + "_volume"]);
-    panel(grid, name, sub, F.count(lastPt(s).value), miniLine(s, { color: k === "nach_dr" ? ACC : G1 }));
+    panel(grid, name, sub, F.count(lastPt(s).value), miniLine(s, { grid, color: k === "nach_dr" ? ACC : G1 }));
   }
   setHTML("pv-systems", F.count(mv("nach_dr_volume")));
   for (const [id, k] of [["ex-sy-nachdr", "nach_dr"], ["ex-sy-apbs", "apbs"], ["ex-sy-aeps", "microatm_cash"], ["ex-sy-imps", "imps"], ["ex-sy-neft", "neft"], ["ex-sy-wallets", "ppi_wallets"], ["ex-sy-netc", "netc"]]) setHTML(id, F.count(mv(k + "_volume")));
@@ -456,7 +457,7 @@ const I = P.i, IL = I.dates.length - 1;
   const CH = P.ch, C = P.c, grid = document.getElementById("plot-clearing");
   const bars = CH.dates.map((d, i) => ({ y: d.slice(0, 4), v: CH.total[i] })).filter((r) => r.v != null);
   const p1 = Plot.plot({
-    width: 560, height: 260, marginLeft: 44, marginRight: 10, marginTop: 20, marginBottom: 26, style: { ...baseStyle, fontSize: "11px" },
+    width: panelPlotWidth(grid, 560), height: 260, marginLeft: 44, marginRight: 10, marginTop: 20, marginBottom: 26, style: { ...baseStyle, fontSize: "11px" },
     x: { type: "band", label: null, tickSize: 0, padding: 0.25, tickFormat: (y) => (+y % 5 === 0 ? y : ""), domain: bars.map((r) => r.y) },
     y: { label: null, domain: [0, niceMax(Math.max(...bars.map((r) => r.v)) * 1.1, 200)], tickSize: 0, tickPadding: 6, tickFormat: (v) => v.toLocaleString("en-IN"), ticks: 4 },
     marks: [
@@ -470,7 +471,7 @@ const I = P.i, IL = I.dates.length - 1;
   const grid0 = ser(C.dates, C.national_grid_number, CR);
   const cmax = Math.max(...ls.flatMap((s) => pub(s.data).map((d) => d.value)), ...pub(grid0).map((d) => d.value));
   const p2 = Plot.plot({
-    width: 560, height: 260, marginLeft: 36, marginRight: 110, marginTop: 20, marginBottom: 26, style: { ...baseStyle, fontSize: "11px" },
+    width: panelPlotWidth(grid, 560), height: 260, marginLeft: 36, marginRight: 110, marginTop: 20, marginBottom: 26, style: { ...baseStyle, fontSize: "11px" },
     x: { label: null, tickSize: 0, ticks: [2005, 2010, 2015, 2020, 2025].map((y) => new Date(Date.UTC(y, 2, 1))), tickFormat: (d) => String(d.getUTCFullYear()) },
     y: { label: null, domain: [0, niceMax(cmax * 1.1, 10)], tickSize: 0, tickPadding: 6, ticks: 4 },
     marks: [

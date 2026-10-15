@@ -1,0 +1,20 @@
+// DRAFT production destination scripts/lib/digital-source-snapshot-factory.mjs.
+// Imports MAIN shared proof module so its private proof brand matches future checkRange.
+import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';
+import {readRawFile} from './util.mjs';
+import {parseNumber} from './tabular.mjs';
+import {digitalKey,buildDigitalReport} from './products/digital-access.mjs';
+import {validateCmstReportArchive} from './digital-access-validation.mjs';
+import {loadReviewedSnapshotContracts,replaySourceUnpublishedSnapshots} from './source-unpublished-snapshot.mjs';
+const REVIEWED={cmst2025:{period:'2025-03-31',label:'January–March 2025',round:80},nss78:{period:'2021-08-15',label:'NSS 78 Multiple Indicator Survey; fieldwork 2020–2021',round:78},cams2022:{period:'2023-06-30',label:'July 2022–June 2023',round:79},'cmst2025-report':{period:'2025-03-31',label:'January–March 2025',round:80}};
+export function replayDigitalSnapshotProofs(root,{relativeContractFile,reviewedConfigSha256,canonicalBundles}={}){
+ const bytes=fs.readFileSync(path.join(root,relativeContractFile));if(crypto.createHash('sha256').update(bytes).digest('hex')!==reviewedConfigSha256)throw Error('Source contract pin mismatch');
+ const config=JSON.parse(bytes),contracts=loadReviewedSnapshotContracts(root,relativeContractFile,reviewedConfigSha256,{allowedFamilies:['digital-access']}),report=validateCmstReportArchive(root,{expectedPins:config.reportArchive});if(report.errors.length)throw Error(report.errors.join('\n'));
+ const reportReceipt=readRawFile(path.join(root,'data/raw/digital-access/cmst-report.pdf.provenance.json')),docSha=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'data/raw/digital-access/cmst-report.pdf'))).digest('hex');if(docSha!==config.reportArchive.sourceDocumentSha256||docSha!==reportReceipt.sha256)throw Error('Pinned report context differs');
+ const reportRecords=new Map(buildDigitalReport(root,{write:false}).map(({slug,bundle})=>[slug,Object.entries(bundle.series).map(([key,s])=>({key,cut:s.dims,unit:s.unit,measureLabel:s.label,sourceValue:s.sourceValue,location:s.provenance}))]));
+ const result=new Map();for(const c of contracts){const reviewed=REVIEWED[c.instrument],b=canonicalBundles.get(c.bundle);if(!reviewed||c.period!==reviewed.period||c.periodLabel!==reviewed.label||c.sourceRound!==reviewed.round||!b||b.meta.dossier!==c.family||b.meta.base!==c.instrument||b.meta.frequency!=='cross-sectional'||b.dates.length!==1||b.dates[0]!==reviewed.period||b.meta.latestPeriod!==reviewed.label)throw Error('Independent reviewed ruler/period mismatch');if(c.instrument.startsWith('cmst2025')&&c.referenceDocumentSha256!==docSha)throw Error('Independent reference document mismatch');
+  const resolver={parseValue:parseNumber,verifyContext:raw=>{if(c.instrument==='cmst2025'){const pages=raw.archiveProvenance?.sourcePages;return raw.catalogue?.indicator_code===c.code&&Array.isArray(pages)&&pages.length>0&&pages.every(p=>{const url=new URL(p.url);return url.pathname==='/api/nss-80/getNSS80Records'&&url.searchParams.get('survey_code')==='1'&&Number(url.searchParams.get('indicator_code'))===c.code;})&&(raw.survey_round==null||raw.survey_round===80)&&(raw.survey_year==null||raw.survey_year===2025);}if(c.instrument==='cmst2025-report')return raw.sourceDocumentSha256===docSha&&raw.pages.length===120;return raw.product===(c.instrument==='nss78'?'nss78':'nss79')&&raw.indicator.code===c.code&&(c.instrument==='nss78'||raw.indicator.survey===1);},records:raw=>c.instrument==='cmst2025-report'?reportRecords.get(c.bundle):raw.rows.map(row=>{const dims=Object.keys(row).filter(k=>!['indicator','value'].includes(k)).sort(),cut=Object.fromEntries(dims.map(k=>[k,row[k]??null]));return {key:digitalKey(cut),cut,unit:'pct',measureLabel:row.subindicator??row.sub_indicator??row.indicator,sourceValue:row.value,location:{indicator:c.code,source:'Exact observed API cut, never an inferred Cartesian cell'}};})};
+  for(const [key,proof]of replaySourceUnpublishedSnapshots(root,c,resolver))result.set(c.bundle+':'+key,proof);
+ }
+ return {proofs:result,report,config};
+}

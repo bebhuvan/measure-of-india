@@ -24,7 +24,9 @@ if (slug === "--all") {
   const YAML = (await import("yaml")).default;
   const slots = YAML.parse(fs.readFileSync(path.join(ROOT, "pipeline/slots.yml"), "utf8"));
   let bad = 0;
-  for (const s of Object.keys(slots)) {
+  // Snapshot guides with deterministic generators also need fresh facts.
+  const requested = new Set([...Object.keys(slots), ...Object.values(bySlug).filter(d => d.factsGenerator).map(d => d.slug)]);
+  for (const s of requested) {
     try { execFileSync(process.execPath, [import.meta.filename, s], { stdio: "inherit" }); }
     catch { bad++; }
   }
@@ -36,6 +38,15 @@ if (slug === "--all") {
 // the CURRENT ruler — the registry's currentBundle, not a retired base.
 const D = bySlug[slug];
 if (!D) { console.error(`facts: dossier "${slug}" is not in src/dossiers/registry.js`); process.exit(1); }
+// Multi-instrument guides use a trusted registry entrypoint rather than forcing
+// different source editions through the single-bundle prose facts machinery.
+if (D.factsGenerator) {
+  if (!/^scripts\/[a-z0-9-]+-editorial\.mjs$/.test(D.factsGenerator)) throw new Error("Invalid facts generator path");
+  const {execFileSync}=await import("node:child_process");
+  execFileSync(process.execPath,[path.join(ROOT,D.factsGenerator)],{cwd:ROOT,stdio:"inherit"});
+  process.exit(0);
+}
+
 // health-gender: a guide whose current bundle is not a time series (two survey rounds, a
 // many-agency compendium) names a module that assembles its sheet in the same shape
 if (D.factsModule) {

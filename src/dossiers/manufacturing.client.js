@@ -204,7 +204,6 @@ function endLabelMark(s, fmt, fontSize = 14) {
     marks: [
       Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
       Plot.ruleY([0], { stroke: "#161A22", strokeOpacity: 0.55, strokeWidth: 1 }),
-      Plot.areaY(s.data, { x: "date", y: "value", y1: 0, fill: s.color, fillOpacity: 0.06 }),
       Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.lineY(s.data.slice(-13), { x: "date", y: "value", stroke: s.color, strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" }),
       Plot.dot([lastP(s)], { x: "date", y: "value", fill: s.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
@@ -383,7 +382,6 @@ function endLabelMark(s, fmt, fontSize = 14) {
       Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
       // the domain excludes zero, so the wash anchors at the floor — an area
       // anchored at 0 renders below the plot (overflow:"visible" never clips)
-      Plot.areaY(s.data, { x: "date", y: "value", y1: geo.d0, fill: s.color, fillOpacity: 0.06 }),
       Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.lineY(s.data.slice(-13), { x: "date", y: "value", stroke: s.color, strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" }),
       Plot.dot([expPk], { x: "date", y: "value", fill: s.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
@@ -434,7 +432,6 @@ function endLabelMark(s, fmt, fontSize = 14) {
       Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
       // the domain excludes zero, so the wash anchors at the floor — an area
       // anchored at 0 renders below the plot (overflow:"visible" never clips)
-      Plot.areaY(s.data, { x: "date", y: "value", y1: geo.d0, fill: s.color, fillOpacity: 0.06 }),
       Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.lineY(s.data.slice(-13), { x: "date", y: "value", stroke: s.color, strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" }),
       Plot.dot([techPk], { x: "date", y: "value", fill: s.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),

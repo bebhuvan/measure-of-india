@@ -16,10 +16,11 @@
 // (mospiAll fails a short read). Raw dumps, one per indicator, go to data/raw/profiles-mospi/. Bundles
 // are baked afterwards, product by product, once the shapes are seen.
 //
-// The Economic Census is not here: the eSankhyiki SPA serves it at macroindicators?product=ec4|5|6,
-// a page route, and no record endpoint is known (docs/reference/esankhyiki-api.md). It needs one
-// discovery step by hand once MoSPI is released; it stays `blocked` in the ledger until then.
+// Economic Census has a separate form-POST API, not this GET product pipeline.
+// Routes and a successful MCP canary are in docs/reference/mospi-api-discovery.md.
+// A dedicated adapter must validate its HTML tables and pagination before ingestion.
 import fs from "node:fs";
+import {profileVintage,profileCapture} from '../profiles-vintage.mjs';
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -41,7 +42,7 @@ export const PRODUCTS = [
   { id: "nss77aidis", surveys: ["nss-77/getNss77AidisSurveyList", {}], list: ["nss-77/getNss77AidisIndicatorList", { survey_code: "{survey}" }], filter: ["nss-77/getNss77AidisFiltersByIndicatorCode", "indicator_code"], records: "nss-77/getNss77AidisRecords", why: "household debt and assets (AIDIS 2019)" },
   { id: "nss78", list: ["nss-78/getIndicatorList", { viz_status: 1 }], filter: ["nss-78/getFilterByIndicatorId", "indicator_code"], records: "nss-78/getNss78Records", why: "living conditions, digital skills, migration (2020-21)" },
   { id: "nss79", surveys: ["nss-79/getNSS79SurveyList", {}], list: ["nss-79/getnss79IndicatorList", { survey_code: "{survey}" }], filter: ["nss-79/getNSS79FilterByIndicatorId", "indicator_code"], records: "nss-79/getNSS79Records", why: "AYUSH and the comprehensive annual modular survey: health spending, finance, digital (2022-23)" },
-  { id: "nss80", surveys: ["nss-80/getSurvey", {}], list: ["nss-80/getIndicatorList", { survey: "{survey}" }], filter: ["nss-80/getFilterBySurveryAndIndicator", "indicator_id"], records: "nss-80/getNss80Records", why: "telecom use and education spending (2025)" },
+  { id: "nss80", surveys: [null, [1, 2]], list: ["nss-80/getIndicatorList", { survey_code: "{survey}" }], filter: ["nss-80/getFilterBySurveryAndIndicator", "indicator_code"], records: "nss-80/getNSS80Records", why: "telecom use and education spending (2025); survey_code 1=CMST, 2=CMSE" },
 ];
 
 const readPlan = () => (fs.existsSync(PLAN_FILE) ? JSON.parse(fs.readFileSync(PLAN_FILE, "utf8")) : { written: null, products: {} });
@@ -67,7 +68,7 @@ async function listOne(mospi, P, st) {
     const inds = [];
     for (const s of surveys) {
       const params = Object.fromEntries(Object.entries(P.list[1]).map(([k, v]) => [k, v === "{survey}" ? s : v]));
-      for (const x of rowsOf(await mospi(P.list[0], params))) inds.push({ code: codeOf(x), survey: s, label: x.description ?? x.indicator_name ?? x.label ?? x.name ?? null });
+      for (const x of rowsOf(await mospi(P.list[0], params))) inds.push({ code: codeOf(x), survey: s, label: x.description ?? x.desc ?? x.indicator_name ?? x.label ?? x.name ?? null });
     }
     st.indicators = inds.map((x) => ({ ...x, filters: null, expected: null, done: false }));
     console.log(`A ${P.id}: ${inds.length} indicators`);
@@ -130,7 +131,7 @@ async function phaseFetch(mospi, mospiAll, plan) {
       }
       delete ind.fetchError;
       fs.mkdirSync(path.join(ROOT, "data/raw/profiles-mospi"), { recursive: true });
-      writeRaw(ROOT, rel, { vintage: new Date().toISOString().slice(0, 10), note: `MoSPI eSankhyiki ${P.records}, indicator ${ind.code}${ind.survey != null ? `, survey ${ind.survey}` : ""}: every row (profiles step 5)`, product: P.id, indicator: ind, rows });
+      writeRaw(ROOT, rel, { ...profileCapture(), note: `MoSPI eSankhyiki ${P.records}, indicator ${ind.code}${ind.survey != null ? `, survey ${ind.survey}` : ""}: every row (profiles step 5)`, product: P.id, indicator: ind, rows });
       ind.done = true; ind.archived = true; wrote++;
       savePlan(plan);
     }
@@ -198,7 +199,7 @@ async function phaseRetry(mospi, mospiAll, plan) {
     if (/page 1 reported/.test(ind.fetchError)) continue;   // a short read is the server's, not paging order
     try {
       const rows = await readUnion(mospi, P, ind);
-      writeRaw(ROOT, `data/raw/profiles-mospi/${P.id}-${ind.survey ?? 0}-${ind.code}.json`, { vintage: new Date().toISOString().slice(0, 10), note: `MoSPI eSankhyiki ${P.records}, indicator ${ind.code}${ind.survey != null ? `, survey ${ind.survey}` : ""}: every row, the union of fresh full reads because the server pages it in no fixed order (profiles step 5)`, product: P.id, indicator: ind, rows });
+      writeRaw(ROOT, `data/raw/profiles-mospi/${P.id}-${ind.survey ?? 0}-${ind.code}.json`, { ...profileCapture(), note: `MoSPI eSankhyiki ${P.records}, indicator ${ind.code}${ind.survey != null ? `, survey ${ind.survey}` : ""}: every row, the union of fresh full reads because the server pages it in no fixed order (profiles step 5)`, product: P.id, indicator: ind, rows });
       ind.archived = true; ind.done = true; ind.recovered = "union"; delete ind.fetchError;
       console.log(`C2 ${P.id} ${ind.code}: recovered as a union of reads, ${rows.length} rows`);
       savePlan(plan);
@@ -221,7 +222,7 @@ async function phaseRetry(mospi, mospiAll, plan) {
     }
     if (ok && rows.length !== ind.expected) { console.log(`C2 ${P.id} ${ind.code}: ${rows.length} rows by state, page 1 reported ${ind.expected}`); ok = false; }
     if (!ok) { ind.fetchError += "; the split by state did not recover it"; savePlan(plan); continue; }
-    writeRaw(ROOT, `data/raw/profiles-mospi/${P.id}-${ind.survey ?? 0}-${ind.code}.json`, { vintage: new Date().toISOString().slice(0, 10), note: `MoSPI eSankhyiki ${P.records}, indicator ${ind.code}${ind.survey != null ? `, survey ${ind.survey}` : ""}: every row, read one state at a time because one query paged unstably (profiles step 5)`, product: P.id, indicator: ind, rows });
+    writeRaw(ROOT, `data/raw/profiles-mospi/${P.id}-${ind.survey ?? 0}-${ind.code}.json`, { ...profileCapture(), note: `MoSPI eSankhyiki ${P.records}, indicator ${ind.code}${ind.survey != null ? `, survey ${ind.survey}` : ""}: every row, read one state at a time because one query paged unstably (profiles step 5)`, product: P.id, indicator: ind, rows });
     ind.archived = true; ind.done = true; ind.recovered = "by state"; delete ind.fetchError;
     console.log(`C2 ${P.id} ${ind.code}: recovered by state, ${rows.length} rows`);
     savePlan(plan);
@@ -388,7 +389,7 @@ async function phaseBake(plan) {
       const round = ROUND[P.id];
       writeSeries(ROOT, `data/series/${slug}.json`, { dates, series, meta: {
         dossier: "profiles-mospi", product: `mospi-${P.id}`, source: "MoSPI, eSankhyiki (" + P.records.split("/")[0] + ")", base: round ? round[1] : `${P.id} survey years`,
-        frequency: dates.length > 1 ? "annual" : "cross-sectional", unit: "see each series", vintage: raw.vintage, geo: "IND", latestPeriod: round?.[1] ?? null, releaseDate: null,
+        frequency: dates.length > 1 ? "annual" : "cross-sectional", unit: "see each series", ...profileVintage(raw), geo: "IND", latestPeriod: round?.[1] ?? null, releaseDate: null,
         revisionPolicy: "Survey estimates are final on release; MoSPI may revise a table without notice, and each fetch is checked against the archived rows.",
         // the API's field names ("age_group", "sub_indicator") read as words in a title
         coverage: `${String(ind.label ?? "").trim().slice(0, 200)}: every state and UT, at the headline of ${[...headOf.keys()].map(fieldWords).join(", ") || "no standard cut"}${keep.length ? `, by ${keep.map(fieldWords).join(", ")}` : ""}`,
@@ -423,7 +424,7 @@ if (argv.includes("--plan")) {
   for (const P of PRODUCTS) console.log(`   ${P.id.padEnd(11)} ${P.surveys ? (P.surveys[0] ?? `surveys ${P.surveys[1].join(", ")}`) + " -> " : ""}${P.list[0]}   (${P.why})`);
   console.log("B  meta:   per indicator, the filter listing and page 1 of the records (totalRecords = the expected rows)");
   console.log("C  fetch:  per indicator, every page (100 rows a page, MoSPI's cap), checked against B's count; raw dump per product");
-  console.log("   Economic Census: no record endpoint known; one discovery step by hand once MoSPI is released");
+  console.log("   Economic Census: separate POST API discovered; dedicated adapter pending (docs/reference/mospi-api-discovery.md)");
   console.log(`\nPlan file: ${path.relative(ROOT, PLAN_FILE)} ${fs.existsSync(PLAN_FILE) ? "(exists)" : "(not yet written: phase A writes it)"}`);
 } else if (argv.includes("--status")) {
   const plan = readPlan();

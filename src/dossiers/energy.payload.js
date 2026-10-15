@@ -1,0 +1,7 @@
+// Compact repeated row and source provenance metadata; decoding restores every field.
+export const ENERGY_PROVENANCE_FIELDS=['vintage','vintageStatus','vintageNote','vintageBasis','vintageText','archiveCapturedDate','archiveCapturedAt','archiveCaptureNote','archiveSourceSha256','legacySnapshotLabel','apiResponseAt','apiRevisionDate','sourceRevisionDate','reportEditionDate','reportEditionYear','documentForewordDate','documentForewordURL','sourceDateURL','sourceDateEvidence'];
+export function encodeEnergyPayload(model){
+ const provenance=Object.fromEntries(model.plates.flatMap(p=>Object.entries(p.sourceProvenance)));
+ return{facts:model.facts,provenance,plates:model.plates.map(p=>{const historySeries=p.kind==='history'?p.rows[0].series:null,base={...p};delete base.sourceProvenance;for(const k of ENERGY_PROVENANCE_FIELDS)delete base[k];return{...base,...(historySeries?{historySeries}:{}),rows:p.rows.map(r=>{const{unit,bundle,series,name,...rest}=r;return{...rest,...(unit!==p.unit?{unit}:{}),...(bundle!==p.bundle?{bundle}:{}),...(series!==historySeries?{series}:{}),...(name!==r.date?{name}:{})};})};})};
+}
+export function decodeEnergyPayload(payload){return{facts:payload.facts,plates:payload.plates.map(p=>{const{historySeries,...rest}=p;return{...rest,...payload.provenance[p.bundle],sourceProvenance:Object.fromEntries(p.sourceBundles.map(sl=>[sl,payload.provenance[sl]])),rows:p.rows.map(r=>({...r,unit:r.unit??p.unit,bundle:r.bundle??p.bundle,series:r.series??historySeries,name:r.name??r.date}))};})};}

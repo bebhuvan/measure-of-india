@@ -21,6 +21,58 @@ import * as Plot from "@observablehq/plot";
 export const SANS = "'Golos Text', system-ui, sans-serif";
 export const MONO = SANS;
 
+// Draw the complete plate list while letting input/paint run between batches. The job list
+// is document-scoped so independent modules never overwrite each other's readiness.
+// A single expensive chart can exceed the budget; browser tracing must measure that too.
+export function queueCharts(items, draw, { budget = 45, doc = document } = {}) {
+  const view = doc.defaultView;
+  let resolve, reject, cursor = 0, finished = false;
+  const job = { total: items.length, completed: 0, errors: [], promise: new Promise((a,b) => { resolve=a; reject=b; }) };
+  (doc.__atlasChartJobs ??= []).push(job);
+  // Errors remain visible and reject readiness, while letting unaffected plates finish.
+  job.promise.catch(() => {});
+  const next = () => {
+    const item = items[cursor++];
+    try { draw(item); } catch (e) {
+      job.errors.push(String(e.message ?? e));
+      const zone = doc.getElementById('plot-' + item.id);
+      if (zone) { const message=doc.createElement('p');message.setAttribute('role','alert');message.textContent='This chart could not load.';zone.append(message); }
+    }
+    job.completed++;
+  };
+  const complete = () => {
+    if (finished) return;
+    finished=true; view?.removeEventListener('beforeprint', drain);
+    if (job.errors.length) reject(new Error(`Chart rendering failed: ${job.errors.join('; ')}`));
+    else resolve();
+  };
+  const drain = () => { while(cursor<items.length)next();complete(); };
+  view?.addEventListener('beforeprint', drain);
+  const run = async () => {
+    while(cursor<items.length) {
+      const start=view?.performance.now() ?? performance.now();
+      do { next(); } while(cursor<items.length&&(view?.performance.now() ?? performance.now())-start<budget);
+      if(cursor<items.length) {
+        if(view?.scheduler?.yield) await view.scheduler.yield();
+        else await new Promise(r => (view?.setTimeout.bind(view) ?? setTimeout)(r,0));
+      }
+    }
+    complete();
+  };
+  run().catch(reject);
+  return job;
+}
+
+// Small multiples draw at the actual CSS grid track width, preserving font size.
+// Before layout (including jsdom), retain the authored width rather than inventing one.
+export function panelPlotWidth(grid, authoredWidth) {
+  const view = grid?.ownerDocument?.defaultView;
+  if (!view?.getComputedStyle) return authoredWidth;
+  const tracks = view.getComputedStyle(grid).gridTemplateColumns.match(/\d+(?:\.\d+)?px/g);
+  const widths = tracks?.map(parseFloat).filter(v => v > 0);
+  return widths?.length ? Math.min(authoredWidth, Math.min(...widths)) : authoredWidth;
+}
+
 /* ---------- downloads ---------- */
 /* A downloaded chart leaves the site; the site fonts must travel with it.
  * The card faces (Source Serif 4 for the title, Golos Text for everything else) are
@@ -51,8 +103,34 @@ function withFonts(svgText, css) {
   return svgText.replace(/(<svg[^>]*>)/, `$1<style>${css}</style>`);
 }
 
+/* The page lifts chart text and hairlines with CSS (atlas.css, DESIGN §0.3) and draws a white
+ * halo behind every label. A download leaves the page's CSS behind, so the computed paint is
+ * written onto a copy of the chart first: what the reader saw is what the file holds. Where
+ * there is no computed style (jsdom, the qc gate) the chart is serialised as authored. */
+const PAINT = ["fill", "stroke"];
+function inlinePaint(svg) {
+  const view = svg.ownerDocument?.defaultView;
+  if (!view?.getComputedStyle || !svg.cloneNode) return svg;
+  const copy = svg.cloneNode(true);
+  const src = [svg, ...svg.querySelectorAll("*")], dst = [copy, ...copy.querySelectorAll("*")];
+  const rootColor = view.getComputedStyle(svg).color;
+  if (rootColor) copy.style.color = rootColor;
+  src.forEach((el, i) => {
+    const cs = view.getComputedStyle(el), out = dst[i];
+    for (const k of PAINT) if (el.hasAttribute(k) && cs[k] && cs[k] !== "none") out.setAttribute(k, cs[k]);
+    if (el.tagName.toLowerCase() === "text" && cs.paintOrder && /stroke/.test(cs.paintOrder) && cs.stroke && cs.stroke !== "none" && !el.closest?.(".inbar")) {
+      out.setAttribute("fill", cs.fill);
+      out.setAttribute("stroke", cs.stroke);
+      out.setAttribute("stroke-width", cs.strokeWidth || "4px");
+      out.setAttribute("stroke-linejoin", "round");
+      out.setAttribute("paint-order", "stroke");
+    }
+  });
+  return copy;
+}
+
 export function serializeSVG(svg) {
-  let s = new XMLSerializer().serializeToString(svg);
+  let s = new XMLSerializer().serializeToString(inlinePaint(svg));
   if (!/^<svg[^>]*\sxmlns=/.test(s)) s = s.replace(/<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
   const w = svg.getAttribute("width"), h = svg.getAttribute("height");
   return s.replace(/(<svg[^>]*>)/, `$1<rect width="${w}" height="${h}" fill="#FFFFFF"/>`);
@@ -62,8 +140,9 @@ export function serializeSVG(svg) {
  * the unit/source line, and the site brand — never a bare plot. */
 const escapeXml = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 export function composeCardSVG(svg, meta = {}) {
-  // A finished graphic, ready to post: title (the finding), subtitle, the chart, a hairline,
-  // the source in one quiet block, and the site's name. Text is wrapped by an advance-width
+  // A finished graphic, ready to post, set like the chart card on the page (DESIGN §0.4): the
+  // finding as the title with the readout figure on the right, the subtitle, the key, the
+  // chart, a hairline, the source, and the site's name. Text is wrapped by an advance-width
   // estimate so it works the same in the browser and in jsdom (the qc gate).
   const W = +svg.getAttribute("width"), H = +svg.getAttribute("height");
   const pad = 56, inner = W, totalW = W + pad * 2;
@@ -77,43 +156,77 @@ export function composeCardSVG(svg, meta = {}) {
     if (line) out.push(line);
     return out;
   };
-  const titleL = meta.title ? wrap(meta.title, 30, 0.47, inner - 40) : [];
-  const subL = meta.sub ? wrap(meta.sub, 15, 0.5, inner - 60) : [];
-  const footL = meta.foot ? wrap(meta.foot, 12, 0.52, inner - 260) : [];
+  const fig = svg.closest?.("figure");
+  // the readout: the one figure the finding is about, as the page shows it beside the title
+  const val = meta.val ?? fig?.querySelector(".plate-val .v")?.textContent.replace(/\s+/g, " ").trim();
+  const valCap = meta.valCap ?? fig?.querySelector(".plate-val .c")?.textContent.replace(/\s+/g, " ").trim();
+  // set by length, as on the page: a figure large, a long figure smaller, words as a serif line
+  const vSize = !val ? 0 : (!/[0-9]/.test(val) || val.length > 13) ? 24 : val.length > 8 ? 32 : 40;
+  const valW = val ? Math.max(val.length * vSize * 0.5, (valCap || "").length * 13 * 0.52) + 48 : 0;
+  const stacked = inner < 640;
+  const titleL = meta.title ? wrap(meta.title, 30, 0.47, Math.min(stacked ? inner : inner - 40 - valW, 980)) : [];
+  const subL = meta.sub ? wrap(meta.sub, 15, 0.5, Math.min(stacked ? inner : inner - 60 - valW, 860)) : [];
+  const footL = meta.foot ? wrap(meta.foot, 12.5, 0.52, Math.min(stacked ? inner : inner - 280, 820)) : [];
   let y = pad + 24;
   const parts = [];
+  if (val && !stacked) {
+    parts.push(`<text x="${totalW - pad}" y="${pad + 30}" text-anchor="end" font-family="'Source Serif 4', serif" font-weight="${vSize === 24 ? 400 : 300}" font-size="${vSize}" letter-spacing="${vSize === 24 ? -0.1 : -0.6}" fill="#161A22">${escapeXml(val)}</text>`);
+    if (valCap) parts.push(`<text x="${totalW - pad}" y="${pad + 54}" text-anchor="end" font-family="'Golos Text', sans-serif" font-size="13" fill="#6B7180">${escapeXml(valCap)}</text>`);
+  }
   titleL.forEach((l, i) => parts.push(`<text x="${pad}" y="${y + i * 38}" font-family="'Source Serif 4', serif" font-weight="500" font-size="30" letter-spacing="-0.3" fill="#161A22">${escapeXml(l)}</text>`));
-  y += titleL.length ? (titleL.length - 1) * 38 + 30 : 0;
+  y += titleL.length ? (titleL.length - 1) * 38 + 32 : 0;
   subL.forEach((l, i) => parts.push(`<text x="${pad}" y="${y + i * 22}" font-family="'Golos Text', sans-serif" font-size="15" fill="#4A5160">${escapeXml(l)}</text>`));
-  y += subL.length ? (subL.length - 1) * 22 + 26 : 0;
+  y += subL.length ? (subL.length - 1) * 22 + 30 : 0;
+  if (val && stacked) {
+    y += 12;
+    parts.push(`<text x="${pad}" y="${y + vSize}" font-family="'Source Serif 4', serif" font-size="${vSize}" fill="#161A22">${escapeXml(val)}</text>`);
+    y += vSize + 20;
+    if (valCap) {
+      for (const line of wrap(valCap, 13, 0.52, inner)) {
+        parts.push(`<text x="${pad}" y="${y}" font-family="'Golos Text', sans-serif" font-size="13" fill="#6B7180">${escapeXml(line)}</text>`);
+        y += 19;
+      }
+    }
+    y += 14;
+  }
+  if (val && y < pad + 74) y = pad + 74;   // the readout's caption must clear the key
   // the colour key: taken from the chart's own legend on the page, so a shared image is never
-  // a set of unexplained colours. Swatches are read from each chip's <i> background.
-  const key = meta.key ?? [...(svg.closest?.("figure")?.querySelectorAll(".legend .chip") ?? [])].map((c) => {
+  // a set of unexplained colours. Swatches are read from each chip's <i>: a thin chip is a line
+  // series and is drawn as a short line, a square chip as a square, a ringed chip as a ring.
+  const key = meta.key ?? [...(fig?.querySelectorAll(".legend .chip") ?? [])].map((c) => {
     const i = c.querySelector("i"); const st = i?.getAttribute("style") || "";
     const col = (st.match(/background(?:-color)?:\s*([^;]+)/) || [])[1]?.trim() || "#878D99";
     const ring = /border/.test(st) && /#fff/i.test(col);
-    const swatchCol = ring ? ((st.match(/border:[^;]*?(#[0-9A-Fa-f]{3,6})/) || [])[1] || "#878D99") : col;
-    return { label: c.textContent.replace(/\s+/g, " ").trim(), color: swatchCol, ring };
+    const dash = i?.classList?.contains("dash");
+    const swatchCol = ring ? ((st.match(/border:[^;]*?(#[0-9A-Fa-f]{3,6})/) || [])[1] || "#878D99") : dash ? "#A3A9B4" : col;
+    const hgt = parseFloat((st.match(/height:\s*([\d.]+)px/) || [])[1] ?? "2");
+    return { label: c.textContent.replace(/\s+/g, " ").trim(), color: swatchCol, ring, line: !ring && hgt <= 4, dash };
   }).filter((k) => k.label);
   if (key.length) {
-    let kx = pad; const ky = y + 2;
+    let kx = pad; const ky = y + 4;
     for (const k of key) {
-      parts.push(k.ring ? `<circle cx="${kx + 5}" cy="${ky - 4}" r="4" fill="#fff" stroke="${escapeXml(k.color)}" stroke-width="1.5"/>`
-        : `<rect x="${kx}" y="${ky - 9}" width="10" height="10" fill="${escapeXml(k.color)}"/>`);
-      parts.push(`<text x="${kx + 16}" y="${ky}" font-family="'Golos Text', sans-serif" font-size="13" fill="#4A5160">${escapeXml(k.label)}</text>`);
-      kx += 16 + k.label.length * 7 + 22;
+      const lw = k.label.length * 13 * 0.52;
+      if (kx + 24 + lw > totalW - pad && kx > pad) { kx = pad; y += 22; }
+      const yy = y + 4;
+      parts.push(k.ring ? `<circle cx="${kx + 6}" cy="${yy - 4.5}" r="4" fill="#fff" stroke="${escapeXml(k.color)}" stroke-width="1.5"/>`
+        : k.line ? `<line x1="${kx}" x2="${kx + 18}" y1="${yy - 4.5}" y2="${yy - 4.5}" stroke="${escapeXml(k.color)}" stroke-width="2.5"${k.dash ? ' stroke-dasharray="3 2"' : ""}/>`
+        : `<rect x="${kx + 2}" y="${yy - 9.5}" width="10" height="10" fill="${escapeXml(k.color)}"/>`);
+      parts.push(`<text x="${kx + 26}" y="${yy}" font-family="'Golos Text', sans-serif" font-size="13" fill="#4A5160">${escapeXml(k.label)}</text>`);
+      kx += 26 + lw + 26;
     }
-    y += 26;
+    void ky;
+    y += 30;
   }
   const chartY = y;
   const chart = serializeSVG(svg).replace(/<\?xml[^>]*\?>\s*/, "");
   parts.push(`<g transform="translate(${pad},${chartY})">${chart}</g>`);
-  const footY = chartY + H + 26;
-  parts.push(`<line x1="${pad}" y1="${footY}" x2="${totalW - pad}" y2="${footY}" stroke="#E3E6EB"/>`);
-  footL.forEach((l, i) => parts.push(`<text x="${pad}" y="${footY + 24 + i * 18}" font-family="'Golos Text', sans-serif" font-size="12" fill="#878D99">${escapeXml(l)}</text>`));
-  parts.push(`<text x="${totalW - pad}" y="${footY + 25}" text-anchor="end" font-family="'Source Serif 4', serif" font-weight="500" font-size="17" fill="#161A22">India Atlas</text>`);
-  parts.push(`<text x="${totalW - pad}" y="${footY + 43}" text-anchor="end" font-family="'Golos Text', sans-serif" font-size="12" fill="#878D99">atlas.thisindianlife.today</text>`);
-  const totalH = Math.ceil(footY + Math.max(24 + footL.length * 18, 48) + pad - 16);
+  const footY = chartY + H + 28;
+  parts.push(`<line x1="${pad}" y1="${footY}" x2="${totalW - pad}" y2="${footY}" stroke="#DFE2E8"/>`);
+  footL.forEach((l, i) => parts.push(`<text x="${pad}" y="${footY + 26 + i * 19}" font-family="'Golos Text', sans-serif" font-size="12.5" fill="#6B7180">${escapeXml(l)}</text>`));
+  const brandY = stacked ? footY + 26 + footL.length * 19 + 24 : footY + 27;
+  parts.push(`<text x="${totalW - pad}" y="${brandY}" text-anchor="end" font-family="'Source Serif 4', serif" font-weight="600" font-size="18" letter-spacing="-0.2" fill="#161A22">India Atlas</text>`);
+  parts.push(`<text x="${totalW - pad}" y="${brandY + 19}" text-anchor="end" font-family="'Golos Text', sans-serif" font-size="12.5" fill="#6B7180">atlas.thisindianlife.today</text>`);
+  const totalH = Math.ceil(footY + Math.max(26 + footL.length * 19, brandY - footY + 35) + pad - 16);
   const out = [
     `<svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}">`,
     `<rect width="${totalW}" height="${totalH}" fill="#FFFFFF"/>`,

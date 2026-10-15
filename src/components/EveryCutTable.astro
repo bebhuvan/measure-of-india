@@ -3,9 +3,14 @@
 // src/dossiers/everycut.client.js. Used by EveryCut.astro on a guide and by the long-tail
 // pages (/guides/<slug>/every-cut/<bundle>/). Server-rendered: every row is in the HTML,
 // so the table reads without script; the script only sorts, filters and folds.
+import crypto from "node:crypto";
 import { SPARK_W, SPARK_H } from "../dossiers/everycut.js";
-interface Props { rows: any[]; id: string; titles: Record<string, string>; fold?: number; filterBy?: "cut" | "group" }
-const { rows, id, titles, fold = 25, filterBy = "cut" } = Astro.props;
+import { seriesURL, identity } from "../explore/model.js";
+interface Props { rows: any[]; id: string; titles: Record<string, string>; fold?: number; filterBy?: "cut" | "group"; policyNotes?: boolean }
+const { rows, id, titles, fold = 25, filterBy = "cut", policyNotes = false } = Astro.props;
+const policyNotesId=q=>id+"-policy-"+crypto.createHash("sha256").update(q.id).digest("hex").slice(0,12);
+const notes=policyNotes?[...new Map(rows.filter(r=>r.sourceQuality).map(r=>[r.sourceQuality.id,r])).values()]:[];
+const changesWithheld=rows.some(r=>r.changeMode==="none");
 const facet = (r) => (filterBy === "group" ? r.group : r.cut) || "Other";
 const facets = [...new Set(rows.map(facet))];
 const files = [...new Set(rows.map((r) => r.bundle))];
@@ -13,6 +18,7 @@ const cap = (t) => (t ? t[0].toUpperCase() + t.slice(1) : t);
 const num = (v) => (v == null ? "" : String(Math.round(v * 1e4) / 1e4));
 ---
 <div class="ec" id={id} data-fold={fold}>
+  {policyNotes&&<details class="ec-policy-notes"><summary>Source review definitions for this page</summary>{notes.map(r=><div id={policyNotesId(r.sourceQuality)}><p><b>{r.sourceQuality.publicTitle||r.sourceQuality.status}</b>: {r.sourceDefinition}{r.referenceBasis&&` Reference basis: ${r.referenceBasis}`}</p></div>)}</details>}
   <div class="ec-tools">
     <label class="ec-q"><span>Find</span><input type="search" placeholder="A state, an item, a sector" autocomplete="off" /></label>
     {facets.length > 1 && (
@@ -30,24 +36,24 @@ const num = (v) => (v == null ? "" : String(Math.round(v * 1e4) / 1e4));
       <thead><tr>
         <th scope="col"><button type="button" data-sort="label">Series</button></th>
         <th scope="col"><button type="button" data-sort="facet">{filterBy === "group" ? "Group" : "Cut"}</button></th>
-        <th scope="col" class="n"><button type="button" data-sort="v">Latest</button></th>
-        <th scope="col" class="n"><button type="button" data-sort="c">Change on a year earlier</button></th>
+        <th scope="col" class="n"><button type="button" data-sort="v">{rows.some(r => r.expected) ? "Published value / expected schedule" : "Latest"}</button></th>
+        <th scope="col" class="n"><button type="button" data-sort="c">{changesWithheld ? "Derived changes not supplied" : "Change on a year earlier"}</button></th>
         <th scope="col" class="sp">Trend</th>
         <th scope="col" class="n">Data</th>
       </tr></thead>
       <tbody>
         {rows.map((r, i) => (
           <tr id={r.id} data-o={i} data-file={r.bundle} data-v={num(r.latest)} data-c={num(r.change)}>
-            <td class="w">{r.label}<small>{cap([filterBy === "group" ? r.cut : r.group, r.unitNote, r.base].filter(Boolean).join(", "))}</small></td>
-            <td class="ct">{facet(r)}</td>
-            <td class="n v" title={r.estimated ? r.estimatedNote || "An estimate, not a measurement" : undefined}>{r.latestText}<small>{r.period}{r.estimated && ", est."}</small></td>
+            <td class="w"><a href={seriesURL([identity(r.bundle,r.id)])}>{r.label}</a><small>{cap([filterBy === "group" ? r.cut : r.group, r.unitNote, r.base].filter(Boolean).join(", "))}</small></td>
+            <td class="ct">{facet(r)}{r.sourceQuality && <small>{policyNotes?<a href={"#"+policyNotesId(r.sourceQuality)}>Source review details</a>:<>{r.sourceDefinition}{r.referenceBasis && ` Reference basis: ${r.referenceBasis}`}</>}</small>}{r.expected && <small>{r.expectedWindowNote} {r.expectedMethod}</small>}</td>
+            <td class="n v" title={r.expected ? r.expectedNote || "Expected source schedule" : r.sourceQuality?.canInterpret === false ? (policyNotes?r.sourceQuality.status:r.sourceQuality.reason) : r.unavailableReason || (r.estimated ? r.estimatedNote || "An estimate, not a measurement" : undefined)}>{r.latestText}<small>{r.period}{r.expected && ` · Expected schedule; ${r.expectedAsOf}`}{r.estimated && ", est."}{r.unavailableReason && " · Not published"}{r.sourceQuality?.canInterpret === false && " · Source definition under review"}</small></td>
             <td class="n c" title={r.changeEstimated ? "Uses an estimated value" : undefined}>{r.changeText}{r.changeEstimated && <small> est.</small>}</td>
             <td class="sp">{r.spark && (
               <svg width={SPARK_W} height={SPARK_H} viewBox={`0 0 ${SPARK_W} ${SPARK_H}`} aria-hidden="true">
                 {r.spark.zero != null && <line x1="0" x2={SPARK_W} y1={r.spark.zero} y2={r.spark.zero} />}
                 <path d={r.spark.d} /><circle cx={r.spark.end[0]} cy={r.spark.end[1]} r="1.75" />
               </svg>)}</td>
-            <td class="n"><a href={`/data/${r.bundle}.csv`} download>CSV</a></td>
+            <td class="n"><a href={seriesURL([identity(r.bundle,r.id)])}>Series data</a></td>
           </tr>
         ))}
       </tbody>
@@ -61,16 +67,20 @@ const num = (v) => (v == null ? "" : String(Math.round(v * 1e4) / 1e4));
 </script>
 <style is:global>
   .ec{margin-top:26px;font-family:var(--sans)}
-  .ec-tools{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 22px;padding-bottom:14px;border-bottom:1px solid var(--rule-2)}
-  .ec-tools label{display:flex;flex-direction:column;gap:4px;font-size:.78rem;color:var(--muted)}
-  .ec-tools input,.ec-tools select{font:inherit;font-size:.9rem;color:var(--ink);background:var(--bg);border:0;border-bottom:1px solid var(--rule-2);padding:4px 0;min-width:12em;max-width:22em;border-radius:0}
-  .ec-tools input:focus,.ec-tools select:focus{border-bottom-color:var(--ink);outline:none}
+  .ec-tools{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 20px;padding-bottom:16px;border-bottom:1px solid var(--rule-2)}
+  .ec-tools label{display:flex;flex-direction:column;gap:6px;font-size:.8125rem;color:var(--ink-soft)}
+  /* controls (DESIGN §0.7): a 1px box, square, 40px tall; focus is the ultramarine ring */
+  .ec-tools input,.ec-tools select{font:inherit;font-size:.9375rem;color:var(--ink);background:var(--bg);border:1px solid var(--rule-2);height:40px;padding:0 12px;min-width:12em;max-width:22em;border-radius:0;transition:border-color .15s ease}
+  .ec-tools select{appearance:none;-webkit-appearance:none;padding-right:34px;background-image:linear-gradient(45deg,transparent 50%,var(--ink-soft) 50%),linear-gradient(135deg,var(--ink-soft) 50%,transparent 50%);background-position:calc(100% - 17px) 17px,calc(100% - 12px) 17px;background-size:5px 5px;background-repeat:no-repeat}
+  .ec-tools input:hover,.ec-tools select:hover{border-color:var(--ink-soft)}
+  .ec-tools input:focus-visible,.ec-tools select:focus-visible{border-color:var(--accent);outline:1px solid var(--accent);outline-offset:0}
+  .ec-tools input::placeholder{color:var(--muted)}
   .ec-q input{min-width:16em}
-  .ec-n{margin-left:auto;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+  .ec-n{margin-left:auto;font-size:.8125rem;color:var(--muted);font-variant-numeric:tabular-nums;padding-bottom:11px}
   .ec-wrap{overflow-x:auto}   /* a wide table scrolls inside the page, never widens it (debt at 390px was 417px) */
   .ec-wrap table{width:100%;border-collapse:collapse;font-size:.88rem}
   .ec-wrap tr[hidden]{display:none !important}
-  .ec-wrap th{font-weight:400;font-size:.78rem;color:var(--muted);text-align:left;padding:12px 14px 8px 0;border-bottom:1px solid var(--rule-2);vertical-align:bottom}
+  .ec-wrap th{font-weight:400;font-size:.8125rem;color:var(--muted);text-align:left;padding:12px 14px 8px 0;border-bottom:1px solid var(--rule-2);vertical-align:bottom}
   .ec-wrap th button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:inherit}
   .ec-wrap th button:hover{color:var(--ink)}
   .ec-wrap th[aria-sort] button{color:var(--ink)}
@@ -80,7 +90,7 @@ const num = (v) => (v == null ? "" : String(Math.round(v * 1e4) / 1e4));
   .ec-wrap td.w{color:var(--ink);max-width:30em}
   .ec-wrap tr:target td,.ec-wrap tr.ec-hit td{background:var(--band)}
   .ec-wrap tr{scroll-margin-top:96px}
-  .ec-wrap small{display:block;font-size:.75rem;color:var(--muted);margin-top:1px;line-height:1.4}
+  .ec-wrap small{display:block;font-size:.78rem;color:var(--muted);margin-top:1px;line-height:1.4}
   .ec-wrap .n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
   .ec-wrap td.v{color:var(--ink)}
   .ec-wrap td.ct{font-size:.8rem;color:var(--muted);max-width:16em;line-height:1.45}
@@ -91,7 +101,8 @@ const num = (v) => (v == null ? "" : String(Math.round(v * 1e4) / 1e4));
   .ec-wrap svg circle{fill:var(--accent)}
   .ec-wrap td a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--rule-2)}
   .ec-wrap td a:hover{color:var(--ink);border-bottom-color:var(--ink)}
-  .ec-more{margin-top:16px;font:inherit;font-size:.88rem;color:var(--ink);background:none;border:0;border-bottom:1px solid var(--ink);padding:0 0 1px;cursor:pointer}
+  .ec-more{margin-top:18px;font:inherit;font-size:.9375rem;color:var(--ink);background:none;border:1px solid var(--rule-2);height:40px;padding:0 16px;cursor:pointer;transition:border-color .15s ease}
+  .ec-more:hover{border-color:var(--ink-soft)}
   .ec-none{margin-top:16px;font-size:.88rem;color:var(--muted)}
   @media (max-width:680px){
     .ec-tools label,.ec-q{flex:1 1 100%}

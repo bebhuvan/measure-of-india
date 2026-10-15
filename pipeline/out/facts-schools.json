@@ -1,0 +1,4293 @@
+{
+ "slug": "schools",
+ "facts": {
+  "enrolment": {
+   "value": 246932680,
+   "unit": "crore"
+  },
+  "schools": {
+   "value": 1471473,
+   "unit": "lakh"
+  },
+  "teachers": {
+   "value": 10122420,
+   "unit": "crore"
+  },
+  "secondary_ger": {
+   "value": 78.7,
+   "unit": "pct"
+  },
+  "higher_ger": {
+   "value": 58.4,
+   "unit": "pct"
+  },
+  "dropout": {
+   "value": 11.5,
+   "unit": "pct"
+  },
+  "school_bill": {
+   "value": 12616,
+   "unit": "inr_per_year"
+  }
+ },
+ "sources": {
+  "enrolment": {
+   "bundle": "schools-national",
+   "series": "enrolments_total_number_of_enrolments_pre_primary_to_higher_secondary",
+   "date": "2024-04-01"
+  },
+  "schools": {
+   "bundle": "schools-national",
+   "series": "schools_total_number_of_schools",
+   "date": "2024-04-01"
+  },
+  "teachers": {
+   "bundle": "schools-national",
+   "series": "teachers_total_number_of_teachers",
+   "date": "2024-04-01"
+  },
+  "secondary_ger": {
+   "bundle": "schools-national",
+   "series": "gross_enrolment_ratio_ger_all_categories_gross_enrolment_ratio_ger_secondary",
+   "date": "2024-04-01"
+  },
+  "higher_ger": {
+   "bundle": "schools-national",
+   "series": "gross_enrolment_ratio_ger_all_categories_gross_enrolment_ratio_ger_higher_secondary",
+   "date": "2024-04-01"
+  },
+  "dropout": {
+   "bundle": "schools-national",
+   "series": "dropout_rates_all_categories_dropout_rates_secondary",
+   "date": "2024-04-01"
+  },
+  "school_bill": {
+   "bundle": "schools-cmse-33",
+   "series": "all_items__person__all__all_india",
+   "date": "2025-04-01"
+  }
+ },
+ "plates": [
+  {
+   "id": "stages",
+   "title": "The school population thins at the later stages",
+   "sub": "Published national enrolment by school stage; counts include children outside the usual age for that stage.",
+   "explain": "These are pupils enrolled at each stage, not one cohort followed as it gets older. Different numbers at the primary and higher-secondary stages reflect different age groups, school participation and progression. Pre-primary here covers classes attached to recognised schools; it does not count the whole Anganwadi system.",
+   "extra": "",
+   "bundle": "schools-national",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+ existing structure report, Table 1",
+   "rows": [
+    {
+     "name": "Enrolment in Pre-primary",
+     "value": 14047080,
+     "unit": "count"
+    },
+    {
+     "name": "Enrolment in Primary",
+     "value": 104381347,
+     "unit": "count"
+    },
+    {
+     "name": "Enrolment in Upper Primary",
+     "value": 63695100,
+     "unit": "count"
+    },
+    {
+     "name": "Enrolment in Secondary",
+     "value": 37165436,
+     "unit": "count"
+    },
+    {
+     "name": "Enrolment in Higher Secondary",
+     "value": 27643717,
+     "unit": "count"
+    }
+   ],
+   "group": "Access and enrolment",
+   "unit": "count"
+  },
+  {
+   "id": "national-ger",
+   "title": "Enrolment counts and age-group access give different answers",
+   "sub": "Published national gross enrolment ratios, all social groups; total enrolment divided by the population of the official age group.",
+   "explain": "A gross ratio includes children older and younger than the usual age for the class. It can exceed full coverage without every child of the right age attending. Read it alongside net and age-specific rates; none measures whether pupils learned the curriculum.",
+   "extra": "",
+   "bundle": "schools-national",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+ existing structure report, Table 1",
+   "rows": [
+    {
+     "name": "Gross Enrolment Ratio (GER) – Primary",
+     "value": 90.9,
+     "unit": "pct"
+    },
+    {
+     "name": "Gross Enrolment Ratio (GER) – Upper Primary",
+     "value": 90.3,
+     "unit": "pct"
+    },
+    {
+     "name": "Gross Enrolment Ratio (GER) – Elementary",
+     "value": 90.6,
+     "unit": "pct"
+    },
+    {
+     "name": "Gross Enrolment Ratio (GER) – Secondary",
+     "value": 78.7,
+     "unit": "pct"
+    },
+    {
+     "name": "Gross Enrolment Ratio (GER) – Higher Secondary",
+     "value": 58.4,
+     "unit": "pct"
+    }
+   ],
+   "group": "Access and enrolment",
+   "unit": "pct"
+  },
+  {
+   "id": "social-ger",
+   "title": "The later-stage access gap differs across social groups",
+   "sub": "Published national GER: all categories, Scheduled Castes and Scheduled Tribes, shown within their own population bases.",
+   "explain": "The denominators belong to different groups, so these ratios must not be added. A state with no notified population base may have no usable group ratio. Such source zero GER cells are carried as missing estimates, with the untouched source values retained in the archive.",
+   "extra": "",
+   "bundle": "schools-national",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+ existing structure report, Table 1",
+   "rows": [
+    {
+     "name": "All Categories / Primary",
+     "value": 90.9,
+     "unit": "pct"
+    },
+    {
+     "name": "All Categories / Upper Primary",
+     "value": 90.3,
+     "unit": "pct"
+    },
+    {
+     "name": "All Categories / Elementary",
+     "value": 90.6,
+     "unit": "pct"
+    },
+    {
+     "name": "All Categories / Secondary",
+     "value": 78.7,
+     "unit": "pct"
+    },
+    {
+     "name": "All Categories / Higher Secondary",
+     "value": 58.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Scheduled Castes (SC) / Primary",
+     "value": 92.7,
+     "unit": "pct"
+    },
+    {
+     "name": "Scheduled Castes (SC) / Upper Primary",
+     "value": 96.1,
+     "unit": "pct"
+    },
+    {
+     "name": "Scheduled Castes (SC) / Elementary",
+     "value": 94,
+     "unit": "pct"
+    },
+    {
+     "name": "Scheduled Castes (SC) / Secondary",
+     "value": 82,
+     "unit": "pct"
+    },
+    {
+     "name": "Scheduled Castes (SC) / Higher Secondary",
+     "value": 59.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Scheduled Tribes (ST) / Primary",
+     "value": 98.8,
+     "unit": "pct"
+    },
+    {
+     "name": "Scheduled Tribes (ST) / Upper Primary",
+     "value": 99.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Scheduled Tribes (ST) / Elementary",
+     "value": 99,
+     "unit": "pct"
+    },
+    {
+     "name": "Scheduled Tribes (ST) / Secondary",
+     "value": 81.3,
+     "unit": "pct"
+    },
+    {
+     "name": "Scheduled Tribes (ST) / Higher Secondary",
+     "value": 51.9,
+     "unit": "pct"
+    }
+   ],
+   "group": "Access and enrolment",
+   "unit": "pct"
+  },
+  {
+   "id": "states-ger",
+   "title": "School access varies widely across states",
+   "sub": "Higher-secondary GER, all social groups, Total; each state and UT against its own age-group population.",
+   "explain": "This comparison keeps the denominator visible. A small union territory and a populous state each supply one ratio; an average of those ratios would not be the national enrolment ratio. Enrolment can be affected by children travelling across state borders.",
+   "extra": "",
+   "bundle": "schools-udise-student-31",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Andaman & Nicobar Islands",
+     "value": 85.8,
+     "unit": "pct"
+    },
+    {
+     "name": "Andhra Pradesh",
+     "value": 67.8,
+     "unit": "pct"
+    },
+    {
+     "name": "Arunachal Pradesh",
+     "value": 43.7,
+     "unit": "pct"
+    },
+    {
+     "name": "Assam",
+     "value": 43.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Bihar",
+     "value": 38.1,
+     "unit": "pct"
+    },
+    {
+     "name": "Chandigarh",
+     "value": 107.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Chhattisgarh",
+     "value": 53.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Dadra & Nagar Haveli and Daman & Diu",
+     "value": 68.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Delhi",
+     "value": 82.7,
+     "unit": "pct"
+    },
+    {
+     "name": "Goa",
+     "value": 93.8,
+     "unit": "pct"
+    },
+    {
+     "name": "Gujarat",
+     "value": 47.3,
+     "unit": "pct"
+    },
+    {
+     "name": "Haryana",
+     "value": 71.7,
+     "unit": "pct"
+    },
+    {
+     "name": "Himachal Pradesh",
+     "value": 84.7,
+     "unit": "pct"
+    },
+    {
+     "name": "Jammu & Kashmir",
+     "value": 44.8,
+     "unit": "pct"
+    },
+    {
+     "name": "Jharkhand",
+     "value": 48.6,
+     "unit": "pct"
+    },
+    {
+     "name": "Karnataka",
+     "value": 61.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Kerala",
+     "value": 89.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Ladakh",
+     "value": 57.7,
+     "unit": "pct"
+    },
+    {
+     "name": "Lakshadweep",
+     "value": 51.1,
+     "unit": "pct"
+    },
+    {
+     "name": "Madhya Pradesh",
+     "value": 45,
+     "unit": "pct"
+    },
+    {
+     "name": "Maharashtra",
+     "value": 70.8,
+     "unit": "pct"
+    },
+    {
+     "name": "Manipur",
+     "value": 58.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Meghalaya",
+     "value": 39.7,
+     "unit": "pct"
+    },
+    {
+     "name": "Mizoram",
+     "value": 53.9,
+     "unit": "pct"
+    },
+    {
+     "name": "Nagaland",
+     "value": 39.8,
+     "unit": "pct"
+    },
+    {
+     "name": "Odisha",
+     "value": 60.7,
+     "unit": "pct"
+    },
+    {
+     "name": "Puducherry",
+     "value": 95.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Punjab",
+     "value": 79.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Rajasthan",
+     "value": 66.1,
+     "unit": "pct"
+    },
+    {
+     "name": "Sikkim",
+     "value": 49.6,
+     "unit": "pct"
+    },
+    {
+     "name": "Tamil Nadu",
+     "value": 83.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Telangana",
+     "value": 67.6,
+     "unit": "pct"
+    },
+    {
+     "name": "Tripura",
+     "value": 56.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Uttarakhand",
+     "value": 80.9,
+     "unit": "pct"
+    },
+    {
+     "name": "Uttar Pradesh",
+     "value": 57.4,
+     "unit": "pct"
+    },
+    {
+     "name": "West Bengal",
+     "value": 51.5,
+     "unit": "pct"
+    }
+   ],
+   "group": "Access and enrolment",
+   "unit": "pct"
+  },
+  {
+   "id": "net",
+   "title": "Net enrolment asks whether children are enrolled at the usual age",
+   "sub": "Median across published state/UT ratios by school stage; unweighted state median, not an India rate.",
+   "explain": "Net enrolment uses children of the official age for the stage, excluding older and younger pupils. It is closer to an age-appropriate access measure than GER. Every finer state and gender cut is in the data register.",
+   "extra": "",
+   "bundle": "schools-udise-student-32",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Primary (1-5)",
+     "value": 86.05000000000001,
+     "unit": "pct"
+    },
+    {
+     "name": "Upper Primary (6-8)",
+     "value": 67.35,
+     "unit": "pct"
+    },
+    {
+     "name": "Elementary (1-8)",
+     "value": 78.1,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary (9-10)",
+     "value": 47.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Higher Secondary (11-12)",
+     "value": 34.2,
+     "unit": "pct"
+    }
+   ],
+   "group": "Access and enrolment",
+   "unit": "pct"
+  },
+  {
+   "id": "adjusted-net",
+   "title": "Adjusted net enrolment includes pupils who moved ahead",
+   "sub": "Median across published state/UT ratios by school stage; unweighted state median, not an India rate.",
+   "explain": "Adjusted net enrolment counts children of the official age who are enrolled at that stage or a higher one. A child ahead of the usual progression is included here. Every finer state and gender cut is in the data register.",
+   "extra": "",
+   "bundle": "schools-udise-student-33",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Primary (1-5)",
+     "value": 94.7,
+     "unit": "pct"
+    },
+    {
+     "name": "Upper Primary (6-8)",
+     "value": 85.2,
+     "unit": "pct"
+    },
+    {
+     "name": "Elementary (1-8)",
+     "value": 94.80000000000001,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary (9-10)",
+     "value": 69,
+     "unit": "pct"
+    }
+   ],
+   "group": "Access and enrolment",
+   "unit": "pct"
+  },
+  {
+   "id": "age",
+   "title": "Age-specific rates follow ages rather than school stages",
+   "sub": "Median across published state/UT ratios by age group; unweighted state median, not an India rate.",
+   "explain": "Age-specific enrolment asks how many children in a given age group are enrolled anywhere in school. It answers a different question from enrolment at a particular class stage. Every finer state and gender cut is in the data register.",
+   "extra": "",
+   "bundle": "schools-udise-student-34",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "6-10 years",
+     "value": 94.7,
+     "unit": "pct"
+    },
+    {
+     "name": "11-13 years",
+     "value": 98.69999999999999,
+     "unit": "pct"
+    },
+    {
+     "name": "6-13 years",
+     "value": 94.80000000000001,
+     "unit": "pct"
+    },
+    {
+     "name": "14-15 years",
+     "value": 87.2,
+     "unit": "pct"
+    },
+    {
+     "name": "16-17 years",
+     "value": 52.8,
+     "unit": "pct"
+    }
+   ],
+   "group": "Access and enrolment",
+   "unit": "pct"
+  },
+  {
+   "id": "parity",
+   "title": "Parity in enrolment rates does not guarantee equal opportunities",
+   "sub": "Median across published state/UT ratios by school stage; unweighted state median, not an India rate.",
+   "explain": "The gender parity index divides girls’ gross enrolment ratio by boys’. Parity says the rates are equal; it says nothing by itself about classroom treatment, attendance or learning. Every finer state and gender cut is in the data register.",
+   "extra": "",
+   "bundle": "schools-udise-student-35",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Primary (1-5)",
+     "value": 1,
+     "unit": "gpi"
+    },
+    {
+     "name": "Upper Primary (6-8)",
+     "value": 1.05,
+     "unit": "gpi"
+    },
+    {
+     "name": "Elementary (1-8)",
+     "value": 1,
+     "unit": "gpi"
+    },
+    {
+     "name": "Secondary (9-10)",
+     "value": 1.05,
+     "unit": "gpi"
+    },
+    {
+     "name": "Higher Secondary (11-12)",
+     "value": 1.1,
+     "unit": "gpi"
+    }
+   ],
+   "group": "Access and enrolment",
+   "unit": "gpi"
+  },
+  {
+   "id": "student-map",
+   "title": "Where the pupils are",
+   "sub": "Enrolment in each state and UT; pre-primary through higher secondary.",
+   "explain": "Large counts tell us where school resources must serve the most pupils. They do not tell us which state offers the widest access; a large school population can coexist with a low enrolment rate. Compare this count with the rate plate rather than ranking education quality by size.",
+   "extra": "",
+   "bundle": "schools-udise-student-2",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Andaman & Nicobar Islands",
+     "value": 71343,
+     "unit": "count"
+    },
+    {
+     "name": "Andhra Pradesh",
+     "value": 8454817,
+     "unit": "count"
+    },
+    {
+     "name": "Arunachal Pradesh",
+     "value": 319826,
+     "unit": "count"
+    },
+    {
+     "name": "Assam",
+     "value": 7041824,
+     "unit": "count"
+    },
+    {
+     "name": "Bihar",
+     "value": 21133228,
+     "unit": "count"
+    },
+    {
+     "name": "Chandigarh",
+     "value": 253012,
+     "unit": "count"
+    },
+    {
+     "name": "Chhattisgarh",
+     "value": 5806871,
+     "unit": "count"
+    },
+    {
+     "name": "Dadra & Nagar Haveli and Daman & Diu",
+     "value": 146825,
+     "unit": "count"
+    },
+    {
+     "name": "Delhi",
+     "value": 4491032,
+     "unit": "count"
+    },
+    {
+     "name": "Goa",
+     "value": 300546,
+     "unit": "count"
+    },
+    {
+     "name": "Gujarat",
+     "value": 11501328,
+     "unit": "count"
+    },
+    {
+     "name": "Haryana",
+     "value": 5769330,
+     "unit": "count"
+    },
+    {
+     "name": "Himachal Pradesh",
+     "value": 1425266,
+     "unit": "count"
+    },
+    {
+     "name": "Jammu & Kashmir",
+     "value": 2654012,
+     "unit": "count"
+    },
+    {
+     "name": "Jharkhand",
+     "value": 7436931,
+     "unit": "count"
+    },
+    {
+     "name": "Karnataka",
+     "value": 11780251,
+     "unit": "count"
+    },
+    {
+     "name": "Kerala",
+     "value": 6164059,
+     "unit": "count"
+    },
+    {
+     "name": "Ladakh",
+     "value": 57107,
+     "unit": "count"
+    },
+    {
+     "name": "Lakshadweep",
+     "value": 12325,
+     "unit": "count"
+    },
+    {
+     "name": "Madhya Pradesh",
+     "value": 15172607,
+     "unit": "count"
+    },
+    {
+     "name": "Maharashtra",
+     "value": 21272611,
+     "unit": "count"
+    },
+    {
+     "name": "Manipur",
+     "value": 673118,
+     "unit": "count"
+    },
+    {
+     "name": "Meghalaya",
+     "value": 1061320,
+     "unit": "count"
+    },
+    {
+     "name": "Mizoram",
+     "value": 279882,
+     "unit": "count"
+    },
+    {
+     "name": "Nagaland",
+     "value": 414421,
+     "unit": "count"
+    },
+    {
+     "name": "Odisha",
+     "value": 7644052,
+     "unit": "count"
+    },
+    {
+     "name": "Puducherry",
+     "value": 240691,
+     "unit": "count"
+    },
+    {
+     "name": "Punjab",
+     "value": 5908507,
+     "unit": "count"
+    },
+    {
+     "name": "Rajasthan",
+     "value": 16364187,
+     "unit": "count"
+    },
+    {
+     "name": "Sikkim",
+     "value": 117576,
+     "unit": "count"
+    },
+    {
+     "name": "Tamil Nadu",
+     "value": 12518167,
+     "unit": "count"
+    },
+    {
+     "name": "Telangana",
+     "value": 7457851,
+     "unit": "count"
+    },
+    {
+     "name": "Tripura",
+     "value": 690084,
+     "unit": "count"
+    },
+    {
+     "name": "Uttarakhand",
+     "value": 2426815,
+     "unit": "count"
+    },
+    {
+     "name": "Uttar Pradesh",
+     "value": 42789347,
+     "unit": "count"
+    },
+    {
+     "name": "West Bengal",
+     "value": 17081511,
+     "unit": "count"
+    }
+   ],
+   "group": "Access and enrolment",
+   "unit": "count"
+  },
+  {
+   "id": "social-counts",
+   "title": "Social groups have different shares of the school population",
+   "sub": "Published SC, ST and OBC counts as shares of national enrolment; remaining pupils are a calculated residual.",
+   "explain": "These categories describe pupils enrolled, not whether each group is proportionately represented in the population. Group enrolment ratios above are the appropriate companion. Religion and disability are separate classifications and overlap these categories.",
+   "extra": "",
+   "bundle": "schools-national",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+ existing structure report, Table 1",
+   "rows": [
+    {
+     "name": "SC Students (Pre-primary to Higher Secondary)",
+     "value": 17.788666935457876,
+     "unit": "pct"
+    },
+    {
+     "name": "ST Students (Pre-primary to Higher Secondary)",
+     "value": 9.864638815729048,
+     "unit": "pct"
+    },
+    {
+     "name": "OBC students (Pre-primary to Higher Secondary)",
+     "value": 45.21838138232655,
+     "unit": "pct"
+    },
+    {
+     "name": "Remaining pupils (derived residual)",
+     "value": 27.128312866486525,
+     "unit": "pct"
+    }
+   ],
+   "group": "Access and enrolment",
+   "unit": "pct"
+  },
+  {
+   "id": "obc",
+   "title": "OBC representation differs by stage",
+   "sub": "Unweighted median state/UT enrolment share, Total gender, by school stage.",
+   "explain": "OBC enrolment is a share of the pupils at that stage, not an enrolment ratio against the OBC population. The register retains every gender and state cut.",
+   "extra": "",
+   "bundle": "schools-udise-student-36",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Primary (1-5)",
+     "value": 30.25,
+     "unit": "pct"
+    },
+    {
+     "name": "Upper Primary (6-8)",
+     "value": 29.2,
+     "unit": "pct"
+    },
+    {
+     "name": "Elementary (1-8)",
+     "value": 30.700000000000003,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary (9-10)",
+     "value": 27.6,
+     "unit": "pct"
+    },
+    {
+     "name": "Higher Secondary (11-12)",
+     "value": 28.549999999999997,
+     "unit": "pct"
+    },
+    {
+     "name": "Primary to higher secondary (1-12)",
+     "value": 29.25,
+     "unit": "pct"
+    }
+   ],
+   "group": "Access and enrolment",
+   "unit": "pct"
+  },
+  {
+   "id": "muslim",
+   "title": "Religious representation is a separate lens",
+   "sub": "Unweighted median state/UT enrolment share, Total gender, by school stage.",
+   "explain": "Muslim-minority enrolment is a share of enrolment. It overlaps social categories; it cannot be added to SC, ST or OBC shares. The register retains every gender and state cut.",
+   "extra": "",
+   "bundle": "schools-udise-student-37",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Primary (1-5)",
+     "value": 11.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Upper Primary (6-8)",
+     "value": 10.1,
+     "unit": "pct"
+    },
+    {
+     "name": "Elementary (1-8)",
+     "value": 11,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary (9-10)",
+     "value": 8.75,
+     "unit": "pct"
+    },
+    {
+     "name": "Higher Secondary (11-12)",
+     "value": 7.6,
+     "unit": "pct"
+    },
+    {
+     "name": "Primary to higher secondary (1-12)",
+     "value": 9.850000000000001,
+     "unit": "pct"
+    }
+   ],
+   "group": "Access and enrolment",
+   "unit": "pct"
+  },
+  {
+   "id": "minorities",
+   "title": "The all-minority measure includes more than one community",
+   "sub": "Unweighted median state/UT enrolment share, Total gender, by school stage.",
+   "explain": "The all-minority series covers the source’s named minority groups. It includes Muslim-minority pupils; adding the two would count some pupils twice. The register retains every gender and state cut.",
+   "extra": "",
+   "bundle": "schools-udise-student-38",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Primary (1-5)",
+     "value": 20.65,
+     "unit": "pct"
+    },
+    {
+     "name": "Upper Primary (6-8)",
+     "value": 18.35,
+     "unit": "pct"
+    },
+    {
+     "name": "Elementary (1-8)",
+     "value": 19.85,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary (9-10)",
+     "value": 16.8,
+     "unit": "pct"
+    },
+    {
+     "name": "Higher Secondary (11-12)",
+     "value": 14.9,
+     "unit": "pct"
+    },
+    {
+     "name": "Primary to higher secondary (1-12)",
+     "value": 18.5,
+     "unit": "pct"
+    }
+   ],
+   "group": "Access and enrolment",
+   "unit": "pct"
+  },
+  {
+   "id": "cwsn",
+   "title": "Counting pupils with special needs is only the start",
+   "sub": "Reported children with special needs, Total gender, summed across states by school stage; overlapping stage totals are omitted from this chart.",
+   "explain": "A reported count depends on identification and enrolment. A low count cannot establish that few children need support. Read it alongside accessible toilets and ramps, and keep elementary totals separate from their primary and upper-primary components.",
+   "extra": "",
+   "bundle": "schools-udise-student-29",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Pre-primary",
+     "value": 33239,
+     "unit": "count"
+    },
+    {
+     "name": "Primary (1-5)",
+     "value": 943512,
+     "unit": "count"
+    },
+    {
+     "name": "Upper Primary (6-8)",
+     "value": 698544,
+     "unit": "count"
+    },
+    {
+     "name": "Secondary (9-10)",
+     "value": 324941,
+     "unit": "count"
+    },
+    {
+     "name": "Higher Secondary (11-12)",
+     "value": 149022,
+     "unit": "count"
+    }
+   ],
+   "group": "Access and enrolment",
+   "unit": "count"
+  },
+  {
+   "id": "management",
+   "title": "School management changes the resource picture",
+   "sub": "Published national school counts by management; the four management groups are mutually exclusive.",
+   "explain": "Government, government-aided and private unaided schools are different management groups. Their counts should be read alongside enrolment and teachers, not treated as a measure of quality or as the share of families choosing each type.",
+   "extra": "",
+   "bundle": "schools-national",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+ existing structure report, Table 1",
+   "rows": [
+    {
+     "name": "Total Government Schools",
+     "value": 1013322,
+     "unit": "count"
+    },
+    {
+     "name": "Total Government Aided Schools",
+     "value": 79349,
+     "unit": "count"
+    },
+    {
+     "name": "Total Private unaided Schools",
+     "value": 339583,
+     "unit": "count"
+    },
+    {
+     "name": "Total Other Schools",
+     "value": 39219,
+     "unit": "count"
+    }
+   ],
+   "group": "School resources",
+   "unit": "count"
+  },
+  {
+   "id": "school-category",
+   "title": "A school can offer several stages",
+   "sub": "All-management schools by the exact combination of classes they offer, summed across states.",
+   "explain": "A primary-only school is different from a school running from primary through higher secondary. These school categories are distinct institutional types. They are not the same as stage enrolment counts, where one institution can supply pupils at several stages.",
+   "extra": "",
+   "bundle": "schools-udise-student-19",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Primary (1-5)",
+     "value": 730518,
+     "unit": "count"
+    },
+    {
+     "name": "Upper Primary (1-8)",
+     "value": 345749,
+     "unit": "count"
+    },
+    {
+     "name": "Upper Primary (6-8)",
+     "value": 88264,
+     "unit": "count"
+    },
+    {
+     "name": "Secondary (1-10)",
+     "value": 73379,
+     "unit": "count"
+    },
+    {
+     "name": "Secondary (6-10)",
+     "value": 42541,
+     "unit": "count"
+    },
+    {
+     "name": "Secondary (9-10)",
+     "value": 26829,
+     "unit": "count"
+    },
+    {
+     "name": "Higher Secondary (1-12)",
+     "value": 79980,
+     "unit": "count"
+    },
+    {
+     "name": "Higher Secondary (6-12)",
+     "value": 41784,
+     "unit": "count"
+    },
+    {
+     "name": "Higher Secondary (9-12)",
+     "value": 26437,
+     "unit": "count"
+    },
+    {
+     "name": "Higher Secondary (11-12)",
+     "value": 15992,
+     "unit": "count"
+    }
+   ],
+   "group": "School resources",
+   "unit": "count"
+  },
+  {
+   "id": "school-share",
+   "title": "The mix of schools across stages",
+   "sub": "Unweighted median state/UT percentage share by source school stage/category.",
+   "explain": "The same state receives equal weight in this median, irrespective of population. It describes the middle of the state distribution, not the national composition. The school, pupil and teacher classifications answer different resource questions.",
+   "extra": "",
+   "bundle": "schools-udise-student-4",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Primary",
+     "value": 46.85,
+     "unit": "pct"
+    },
+    {
+     "name": "Upper Primary",
+     "value": 26.15,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary",
+     "value": 11.7,
+     "unit": "pct"
+    },
+    {
+     "name": "Higher Secondary",
+     "value": 9.850000000000001,
+     "unit": "pct"
+    }
+   ],
+   "group": "School resources",
+   "unit": "pct"
+  },
+  {
+   "id": "pupil-share",
+   "title": "The mix of pupils across stages",
+   "sub": "Unweighted median state/UT percentage share by source school stage/category.",
+   "explain": "The same state receives equal weight in this median, irrespective of population. It describes the middle of the state distribution, not the national composition. The school, pupil and teacher classifications answer different resource questions.",
+   "extra": "",
+   "bundle": "schools-udise-student-5",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Primary",
+     "value": 48.3,
+     "unit": "pct"
+    },
+    {
+     "name": "Upper Primary",
+     "value": 24.799999999999997,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary",
+     "value": 14.9,
+     "unit": "pct"
+    },
+    {
+     "name": "Higher Secondary",
+     "value": 11,
+     "unit": "pct"
+    }
+   ],
+   "group": "School resources",
+   "unit": "pct"
+  },
+  {
+   "id": "teacher-share",
+   "title": "The mix of teachers across stages",
+   "sub": "Unweighted median state/UT percentage share by source school stage/category.",
+   "explain": "The same state receives equal weight in this median, irrespective of population. It describes the middle of the state distribution, not the national composition. The school, pupil and teacher classifications answer different resource questions.",
+   "extra": "",
+   "bundle": "schools-udise-student-6",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Primary",
+     "value": 20.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Upper Primary",
+     "value": 25.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary",
+     "value": 18.8,
+     "unit": "pct"
+    },
+    {
+     "name": "Higher Secondary",
+     "value": 31.3,
+     "unit": "pct"
+    }
+   ],
+   "group": "School resources",
+   "unit": "pct"
+  },
+  {
+   "id": "teachers-stage",
+   "title": "Teachers are distributed differently across school stages",
+   "sub": "All-management teacher counts for the stages supplied in the latest API round, summed across states; higher secondary is not supplied in this table for that round.",
+   "explain": "A count of teachers is a staffing measure. It does not reveal vacancies, days present, the subjects they teach or the size of individual classes. The stage-specific pupil-teacher ratio adds a workload measure, while preserving those limits.",
+   "extra": "",
+   "bundle": "schools-udise-student-21",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Primary",
+     "value": 2368195,
+     "unit": "count"
+    },
+    {
+     "name": "Upper Primary",
+     "value": 2892682,
+     "unit": "count"
+    },
+    {
+     "name": "Secondary",
+     "value": 1604358,
+     "unit": "count"
+    }
+   ],
+   "group": "School resources",
+   "unit": "count"
+  },
+  {
+   "id": "teacher-management",
+   "title": "Who employs the teachers",
+   "sub": "Published national teacher counts by management; the four management groups are mutually exclusive.",
+   "explain": "Management groups partition the institutions. Their teacher counts can be compared with their school and enrolment counts, but a larger teaching workforce alone does not establish smaller classes or better instruction.",
+   "extra": "",
+   "bundle": "schools-national",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+ existing structure report, Table 1",
+   "rows": [
+    {
+     "name": "Total number of teachers in Government Schools",
+     "value": 5149771,
+     "unit": "count"
+    },
+    {
+     "name": "Total number of teachers in Government Aided schools",
+     "value": 757624,
+     "unit": "count"
+    },
+    {
+     "name": "Total number of teachers in Private unaided schools",
+     "value": 3962114,
+     "unit": "count"
+    },
+    {
+     "name": "Total number of teachers in Other schools",
+     "value": 252911,
+     "unit": "count"
+    }
+   ],
+   "group": "School resources",
+   "unit": "count"
+  },
+  {
+   "id": "teaching-classes",
+   "title": "Teaching across stages is part of the staffing problem",
+   "sub": "All-management teachers, Total gender, by combination of classes taught; state counts summed.",
+   "explain": "Some teachers work only at one stage; others teach across adjacent stages. Those combined assignments are separate source categories. Counting them at both stages would overstate the workforce.",
+   "extra": "",
+   "bundle": "schools-udise-student-24",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Secondary Only",
+     "value": 1087282,
+     "unit": "count"
+    },
+    {
+     "name": "Secondary and Higher Secondary",
+     "value": 534544,
+     "unit": "count"
+    },
+    {
+     "name": "Higher Secondary Only",
+     "value": 684129,
+     "unit": "count"
+    },
+    {
+     "name": "Pre-primary Only",
+     "value": 142713,
+     "unit": "count"
+    },
+    {
+     "name": "Pre-primary and Primary",
+     "value": 445823,
+     "unit": "count"
+    },
+    {
+     "name": "Primary Only",
+     "value": 3571539,
+     "unit": "count"
+    },
+    {
+     "name": "Primary and Upper Primary",
+     "value": 1173627,
+     "unit": "count"
+    },
+    {
+     "name": "Upper Primary Only",
+     "value": 1665795,
+     "unit": "count"
+    },
+    {
+     "name": "Upper Primary and Secondary",
+     "value": 816968,
+     "unit": "count"
+    }
+   ],
+   "group": "School resources",
+   "unit": "count"
+  },
+  {
+   "id": "ptr",
+   "title": "A pupil-teacher ratio is not a classroom headcount",
+   "sub": "Published national students per teacher, by school stage.",
+   "explain": "Dividing enrolled pupils by teachers averages across many schools and assignments. A favourable ratio can coexist with single-teacher schools or crowded classrooms. It does not tell us how many teachers are present on a particular day.",
+   "extra": "",
+   "bundle": "schools-national",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+ existing structure report, Table 1",
+   "rows": [
+    {
+     "name": "PTR at Primary level",
+     "value": 20,
+     "unit": "pupils_per_teacher"
+    },
+    {
+     "name": "PTR at Upper Primary level",
+     "value": 17,
+     "unit": "pupils_per_teacher"
+    },
+    {
+     "name": "PTR at Secondary level",
+     "value": 15,
+     "unit": "pupils_per_teacher"
+    },
+    {
+     "name": "PTR at Higher Secondary level",
+     "value": 23,
+     "unit": "pupils_per_teacher"
+    }
+   ],
+   "group": "School resources",
+   "unit": "pupils_per_teacher"
+  },
+  {
+   "id": "teachers-per-school",
+   "title": "The average school can hide very thin staffing",
+   "sub": "Each state/UT’s published average, all-management schools.",
+   "explain": "Average teachers per school is an institutional average, not an entitlement or a count of filled subject posts. Every historical value and state cut remains downloadable.",
+   "extra": "",
+   "bundle": "schools-udise-student-8",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Andaman & Nicobar Islands",
+     "value": 15,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Andhra Pradesh",
+     "value": 6,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Arunachal Pradesh",
+     "value": 8,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Assam",
+     "value": 6,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Bihar",
+     "value": 7,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Chandigarh",
+     "value": 48,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Chhattisgarh",
+     "value": 5,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Dadra & Nagar Haveli and Daman & Diu",
+     "value": 12,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Delhi",
+     "value": 29,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Goa",
+     "value": 10,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Gujarat",
+     "value": 7,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Haryana",
+     "value": 11,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Himachal Pradesh",
+     "value": 6,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Jammu & Kashmir",
+     "value": 7,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Jharkhand",
+     "value": 5,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Karnataka",
+     "value": 6,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Kerala",
+     "value": 19,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Ladakh",
+     "value": 7,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Lakshadweep",
+     "value": 21,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Madhya Pradesh",
+     "value": 6,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Maharashtra",
+     "value": 7,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Manipur",
+     "value": 9,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Meghalaya",
+     "value": 4,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Mizoram",
+     "value": 6,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Nagaland",
+     "value": 12,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Odisha",
+     "value": 6,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Puducherry",
+     "value": 18,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Punjab",
+     "value": 10,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Rajasthan",
+     "value": 7,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Sikkim",
+     "value": 12,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Tamil Nadu",
+     "value": 9,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Telangana",
+     "value": 8,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Tripura",
+     "value": 8,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Uttarakhand",
+     "value": 6,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Uttar Pradesh",
+     "value": 6,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "West Bengal",
+     "value": 6,
+     "unit": "count_per_school"
+    }
+   ],
+   "group": "School resources",
+   "unit": "count_per_school"
+  },
+  {
+   "id": "pupils-per-school",
+   "title": "Schools operate at very different scales",
+   "sub": "Each state/UT’s published average, all-management schools.",
+   "explain": "Average enrolment per school distinguishes institutional scale from access. It cannot reveal the distribution of class sizes. Every historical value and state cut remains downloadable.",
+   "extra": "",
+   "bundle": "schools-udise-student-9",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Andaman & Nicobar Islands",
+     "value": 175,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Andhra Pradesh",
+     "value": 138,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Arunachal Pradesh",
+     "value": 99,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Assam",
+     "value": 127,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Bihar",
+     "value": 224,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Chandigarh",
+     "value": 1222,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Chhattisgarh",
+     "value": 102,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Dadra & Nagar Haveli and Daman & Diu",
+     "value": 339,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Delhi",
+     "value": 808,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Goa",
+     "value": 203,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Gujarat",
+     "value": 216,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Haryana",
+     "value": 246,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Himachal Pradesh",
+     "value": 82,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Jammu & Kashmir",
+     "value": 110,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Jharkhand",
+     "value": 168,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Karnataka",
+     "value": 157,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Kerala",
+     "value": 391,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Ladakh",
+     "value": 59,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Lakshadweep",
+     "value": 342,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Madhya Pradesh",
+     "value": 124,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Maharashtra",
+     "value": 197,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Manipur",
+     "value": 144,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Meghalaya",
+     "value": 73,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Mizoram",
+     "value": 70,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Nagaland",
+     "value": 151,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Odisha",
+     "value": 124,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Puducherry",
+     "value": 315,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Punjab",
+     "value": 217,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Rajasthan",
+     "value": 154,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Sikkim",
+     "value": 94,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Tamil Nadu",
+     "value": 216,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Telangana",
+     "value": 173,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Tripura",
+     "value": 140,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Uttarakhand",
+     "value": 108,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Uttar Pradesh",
+     "value": 163,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "West Bengal",
+     "value": 182,
+     "unit": "count_per_school"
+    }
+   ],
+   "group": "School resources",
+   "unit": "count_per_school"
+  },
+  {
+   "id": "books",
+   "title": "A library label says little about the books available",
+   "sub": "Each state/UT’s published average, all-management schools.",
+   "explain": "Books per school describes reported stock. It does not tell us whether the books are used, current, readable or accessible to pupils. Every historical value and state cut remains downloadable.",
+   "extra": "",
+   "bundle": "schools-udise-student-46",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Andaman & Nicobar Islands",
+     "value": 4277,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Andhra Pradesh",
+     "value": 1099,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Arunachal Pradesh",
+     "value": 413,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Assam",
+     "value": 617,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Bihar",
+     "value": 318,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Chandigarh",
+     "value": 9990,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Chhattisgarh",
+     "value": 571,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Dadra & Nagar Haveli and Daman & Diu",
+     "value": 1983,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Delhi",
+     "value": 5932,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Goa",
+     "value": 2992,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Gujarat",
+     "value": 1231,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Haryana",
+     "value": 2242,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Himachal Pradesh",
+     "value": 1044,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Jammu & Kashmir",
+     "value": 436,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Jharkhand",
+     "value": 606,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Karnataka",
+     "value": 1634,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Kerala",
+     "value": 2836,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Ladakh",
+     "value": 529,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Lakshadweep",
+     "value": 3129,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Madhya Pradesh",
+     "value": 451,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Maharashtra",
+     "value": 1193,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Manipur",
+     "value": 355,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Meghalaya",
+     "value": 120,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Mizoram",
+     "value": 170,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Nagaland",
+     "value": 510,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Odisha",
+     "value": 1314,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Puducherry",
+     "value": 3348,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Punjab",
+     "value": 1703,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Rajasthan",
+     "value": 720,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Sikkim",
+     "value": 549,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Tamil Nadu",
+     "value": 948,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Telangana",
+     "value": 588,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Tripura",
+     "value": 388,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Uttarakhand",
+     "value": 831,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "Uttar Pradesh",
+     "value": 473,
+     "unit": "count_per_school"
+    },
+    {
+     "name": "West Bengal",
+     "value": 488,
+     "unit": "count_per_school"
+    }
+   ],
+   "group": "School resources",
+   "unit": "count_per_school"
+  },
+  {
+   "id": "trained",
+   "title": "Training and staffing are different measures",
+   "sub": "Unweighted median state/UT percentage, Total gender, by school stage.",
+   "explain": "The trained-teacher share records the source’s training classification. It is separate from the formal qualification measure and does not directly measure classroom practice.",
+   "extra": "",
+   "bundle": "schools-udise-student-25",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Pre-primary",
+     "value": 42.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Primary (1-5)",
+     "value": 91.69999999999999,
+     "unit": "pct"
+    },
+    {
+     "name": "Upper Primary (6-8)",
+     "value": 92.6,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary (9-10)",
+     "value": 95.30000000000001,
+     "unit": "pct"
+    },
+    {
+     "name": "Higher Secondary (11-12)",
+     "value": 94.35,
+     "unit": "pct"
+    }
+   ],
+   "group": "School resources",
+   "unit": "pct"
+  },
+  {
+   "id": "qualified",
+   "title": "Formal qualification is not a learning-outcome score",
+   "sub": "Unweighted median state/UT percentage, Total gender, by school stage.",
+   "explain": "Professional qualification records credentials, not whether children learned the curriculum. Its denominator is the reported teaching workforce at that stage.",
+   "extra": "",
+   "bundle": "schools-udise-student-26",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Pre-primary",
+     "value": 33.900000000000006,
+     "unit": "pct"
+    },
+    {
+     "name": "Primary (1-5)",
+     "value": 88,
+     "unit": "pct"
+    },
+    {
+     "name": "Upper Primary (6-8)",
+     "value": 89.35,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary (9-10)",
+     "value": 93.45,
+     "unit": "pct"
+    },
+    {
+     "name": "Higher Secondary (11-12)",
+     "value": 92,
+     "unit": "pct"
+    }
+   ],
+   "group": "School resources",
+   "unit": "pct"
+  },
+  {
+   "id": "single-teacher",
+   "title": "One teacher can mean several classes competing for attention",
+   "sub": "Single-teacher schools and pupils enrolled in them, summed across all states; counts are separate units of school organisation.",
+   "explain": "A single teacher may cover several classes and administrative duties. These counts reveal thin staffing more directly than the national average. They do not record attendance, vacancies or which subjects go untaught.",
+   "extra": "",
+   "bundle": "schools-udise-student-12",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Single-teacher schools",
+     "value": 104125,
+     "unit": "count"
+    },
+    {
+     "name": "Pupils in single-teacher schools",
+     "value": 3376769,
+     "unit": "count"
+    }
+   ],
+   "group": "School resources",
+   "unit": "count"
+  },
+  {
+   "id": "empty-schools",
+   "title": "A registered school need not have enrolled pupils",
+   "sub": "Zero-enrolment schools and teachers attached to those schools, summed across states.",
+   "explain": "An empty roll can reflect demographic change, reorganisation, reporting or a school awaiting pupils. The count alone cannot diagnose closure or wasted staffing. Teachers attached to those schools are a separate count.",
+   "extra": "",
+   "bundle": "schools-udise-student-10",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Schools with zero enrolment",
+     "value": 7993,
+     "unit": "count"
+    },
+    {
+     "name": "Teachers in zero-enrolment schools",
+     "value": 20817,
+     "unit": "count"
+    }
+   ],
+   "group": "School resources",
+   "unit": "count"
+  },
+  {
+   "id": "enrolment-brackets",
+   "title": "The size distribution matters more than a single average",
+   "sub": "Unweighted median state/UT share of schools in each source enrolment bracket.",
+   "explain": "Many small schools and a few large schools can produce the same average as evenly sized schools. These bracket medians describe the state distribution separately and need not add to the whole; each bracket has its own median.",
+   "extra": "",
+   "bundle": "schools-udise-student-14",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "< 10",
+     "value": 5.35,
+     "unit": "pct"
+    },
+    {
+     "name": "11-20",
+     "value": 10.2,
+     "unit": "pct"
+    },
+    {
+     "name": "21-30",
+     "value": 9.95,
+     "unit": "pct"
+    },
+    {
+     "name": "31-40",
+     "value": 7.4,
+     "unit": "pct"
+    },
+    {
+     "name": "41-50",
+     "value": 5.15,
+     "unit": "pct"
+    },
+    {
+     "name": "51-60",
+     "value": 4.7,
+     "unit": "pct"
+    },
+    {
+     "name": "61-70",
+     "value": 4.1,
+     "unit": "pct"
+    },
+    {
+     "name": "71-80",
+     "value": 3.5,
+     "unit": "pct"
+    },
+    {
+     "name": "81-90",
+     "value": 2.95,
+     "unit": "pct"
+    },
+    {
+     "name": "91-100",
+     "value": 2.8,
+     "unit": "pct"
+    },
+    {
+     "name": "101-200",
+     "value": 16.55,
+     "unit": "pct"
+    },
+    {
+     "name": "201-300",
+     "value": 7.4,
+     "unit": "pct"
+    },
+    {
+     "name": "301-400",
+     "value": 3.95,
+     "unit": "pct"
+    },
+    {
+     "name": "401-500",
+     "value": 2.7,
+     "unit": "pct"
+    },
+    {
+     "name": ">500",
+     "value": 6.699999999999999,
+     "unit": "pct"
+    }
+   ],
+   "group": "School resources",
+   "unit": "pct"
+  },
+  {
+   "id": "early-years",
+   "title": "A school’s pre-primary section is only part of early education",
+   "sub": "All-management schools with Anganwadi centres or pre-primary sections, summed across states; categories can overlap.",
+   "explain": "A school can have both a pre-primary section and an Anganwadi centre. The categories overlap and must not be added. Children in standalone centres sit outside the UDISE school pre-primary count.",
+   "extra": "",
+   "bundle": "schools-udise-student-20",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Having AWC in the school campus",
+     "value": 300274,
+     "unit": "count"
+    },
+    {
+     "name": "Having Pre-primary Sections",
+     "value": 466070,
+     "unit": "count"
+    },
+    {
+     "name": "Having AWC in the school campus and Pre-primary Sections",
+     "value": 81560,
+     "unit": "count"
+    }
+   ],
+   "group": "School resources",
+   "unit": "count"
+  },
+  {
+   "id": "preschool-experience",
+   "title": "Children can enter primary school with different starting experience",
+   "sub": "New class-entry counts and reported source of pre-school experience; All Management, Total gender, states summed.",
+   "explain": "Previous experience in the same school, another school or an Anganwadi/ECCE centre describes the routes into school. The admission total is a comparison base, not an additional category to add to those routes.",
+   "extra": "",
+   "bundle": "schools-udise-student-30",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Admitted in Class-I",
+     "value": 19202653,
+     "unit": "count"
+    },
+    {
+     "name": "Pre-School Experience in Same School",
+     "value": 9179677,
+     "unit": "count"
+    },
+    {
+     "name": "Pre-School Experience in Another School",
+     "value": 1626252,
+     "unit": "count"
+    },
+    {
+     "name": "Pre-School Experience in Anganwadi/ ECCE Centre",
+     "value": 4566554,
+     "unit": "count"
+    }
+   ],
+   "group": "School resources",
+   "unit": "count"
+  },
+  {
+   "id": "facilities",
+   "title": "Having a facility and having a working facility are different",
+   "sub": "Reported schools with each facility, summed across states, divided by the national school count; derived percentage of schools.",
+   "explain": "The paired facility and functional-facility measures show why a connection, toilet or computer is not enough by itself. These facilities overlap within schools. Their percentages must not be added, and presence alone does not establish regular use or adequacy. These derived shares use all schools as the denominator; published boys’ and girls’ toilet rates use eligible populations and therefore differ.",
+   "extra": "",
+   "bundle": "schools-udise-student-16",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Library/ Book Bank/ Reading Corner",
+     "value": 89.50154029329794,
+     "unit": "pct"
+    },
+    {
+     "name": "Playground",
+     "value": 82.99377562483308,
+     "unit": "pct"
+    },
+    {
+     "name": "Digital Library",
+     "value": 6.898189773104909,
+     "unit": "pct"
+    },
+    {
+     "name": "Kitchen Garden",
+     "value": 40.24525084728024,
+     "unit": "pct"
+    },
+    {
+     "name": "Girls Toilet",
+     "value": 96.58383130373443,
+     "unit": "pct"
+    },
+    {
+     "name": "Functional Girls Toilet",
+     "value": 93.29977512329482,
+     "unit": "pct"
+    },
+    {
+     "name": "Boys Toilet",
+     "value": 94.47961328546293,
+     "unit": "pct"
+    },
+    {
+     "name": "Functional Boys Toilet",
+     "value": 90.70767863222771,
+     "unit": "pct"
+    },
+    {
+     "name": "Electricity",
+     "value": 93.64392007192792,
+     "unit": "pct"
+    },
+    {
+     "name": "Functional Electricity",
+     "value": 91.88486638898573,
+     "unit": "pct"
+    },
+    {
+     "name": "Solar Panel",
+     "value": 10.849536484869244,
+     "unit": "pct"
+    }
+   ],
+   "group": "Facilities and progression",
+   "unit": "pct"
+  },
+  {
+   "id": "national-facilities",
+   "title": "Published facility rates use their own eligible populations",
+   "sub": "Ministry national facility percentages, preserving the report’s denominators and rounding.",
+   "explain": "Some facilities apply to a particular eligible population, including boys’ and girls’ toilets. These published rates must not be substituted for a count divided by all schools. Presence does not establish functionality or regular use.",
+   "extra": "",
+   "bundle": "schools-national",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+ existing structure report, Table 1",
+   "rows": [
+    {
+     "name": "electricity connection",
+     "value": 93.6,
+     "unit": "pct"
+    },
+    {
+     "name": "drinking water facility",
+     "value": 99.3,
+     "unit": "pct"
+    },
+    {
+     "name": "toilet facility",
+     "value": 98.6,
+     "unit": "pct"
+    },
+    {
+     "name": "boys’ toilet facility",
+     "value": 96.2,
+     "unit": "pct"
+    },
+    {
+     "name": "girls’ toilet facility",
+     "value": 97.3,
+     "unit": "pct"
+    },
+    {
+     "name": "hand wash facilities",
+     "value": 95.9,
+     "unit": "pct"
+    },
+    {
+     "name": "playground facility",
+     "value": 83,
+     "unit": "pct"
+    },
+    {
+     "name": "computer facility",
+     "value": 64.7,
+     "unit": "pct"
+    },
+    {
+     "name": "internet facility",
+     "value": 63.5,
+     "unit": "pct"
+    },
+    {
+     "name": "CWSN friendly toilets",
+     "value": 35.6,
+     "unit": "pct"
+    },
+    {
+     "name": "ramps with handrail facility for CWSN students",
+     "value": 54.9,
+     "unit": "pct"
+    },
+    {
+     "name": "Kitchen Gardens",
+     "value": 40.2,
+     "unit": "pct"
+    },
+    {
+     "name": "Functional Rainwater Harvesting System",
+     "value": 29.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Libraries/Reading Corner/Book Bank facilities",
+     "value": 89.5,
+     "unit": "pct"
+    }
+   ],
+   "group": "Facilities and progression",
+   "unit": "pct"
+  },
+  {
+   "id": "digital-devices",
+   "title": "School digital equipment covers several distinct tools",
+   "sub": "All-management schools with functional devices, summed across states; reported device categories overlap.",
+   "explain": "A desktop, a tablet, a projector and an integrated teaching device can all be present in one school. Counts show availability, not the number of pupils using them or the quality of digital teaching. Internet access is a separate facility measure.",
+   "extra": "",
+   "bundle": "schools-udise-student-48",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Desktop/PCs availability",
+     "value": 513533,
+     "unit": "count"
+    },
+    {
+     "name": "Laptop/Notebook availability",
+     "value": 291048,
+     "unit": "count"
+    },
+    {
+     "name": "Tablets availability",
+     "value": 382543,
+     "unit": "count"
+    },
+    {
+     "name": "PCs with functional Integrated Teaching Learning Devices",
+     "value": 138330,
+     "unit": "count"
+    },
+    {
+     "name": "Projector availability",
+     "value": 316723,
+     "unit": "count"
+    }
+   ],
+   "group": "Facilities and progression",
+   "unit": "count"
+  },
+  {
+   "id": "water",
+   "title": "A water facility has a source and a location",
+   "sub": "All-management counts of schools having drinking water within premises, summed across states by source; “any source” is an overlapping total.",
+   "explain": "Sources can overlap. A school with tap water and another source can appear in several rows. Water availability within premises does not by itself establish drinking-water quality or continuity of supply.",
+   "extra": "",
+   "bundle": "schools-udise-student-45",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Any source of drinking water",
+     "value": 1461032,
+     "unit": "count"
+    },
+    {
+     "name": "Tap Water",
+     "value": 915401,
+     "unit": "count"
+    },
+    {
+     "name": "Packed Water",
+     "value": 25758,
+     "unit": "count"
+    },
+    {
+     "name": "Hand Pump",
+     "value": 452566,
+     "unit": "count"
+    },
+    {
+     "name": "Well",
+     "value": 21747,
+     "unit": "count"
+    },
+    {
+     "name": "Unprotected Well",
+     "value": 3186,
+     "unit": "count"
+    },
+    {
+     "name": "Other sources",
+     "value": 42374,
+     "unit": "count"
+    }
+   ],
+   "group": "Facilities and progression",
+   "unit": "count"
+  },
+  {
+   "id": "ict-labs",
+   "title": "Lab equipment and a functional lab are different milestones",
+   "sub": "Government-school ICT-lab counts, summed across states; the eligible-school total is shown separately.",
+   "explain": "The total counts government schools with the stages eligible for the measure. It is not a count of ICT labs. Functional labs are a subset of labs, and labs are a subset of the eligible institutions.",
+   "extra": "",
+   "bundle": "schools-udise-student-49",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Total",
+     "value": 394924,
+     "unit": "count"
+    },
+    {
+     "name": "ICT labs",
+     "value": 101147,
+     "unit": "count"
+    },
+    {
+     "name": "Functional ICT Labs",
+     "value": 83813,
+     "unit": "count"
+    }
+   ],
+   "group": "Facilities and progression",
+   "unit": "count"
+  },
+  {
+   "id": "management-facilities",
+   "title": "Functional facilities also have a management dimension",
+   "sub": "All-management percentage subindicators; unweighted median across states/UTs.",
+   "explain": "This view preserves the source’s operational definition of each facility, including accessibility. It does not measure the share of pupils who can use a facility. Management-specific cuts remain in the register.",
+   "extra": "",
+   "bundle": "schools-udise-student-47",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "functional CWSN friendly toilets",
+     "value": 25.8,
+     "unit": "pct"
+    },
+    {
+     "name": "Kitchen Gardens",
+     "value": 49.6,
+     "unit": "pct"
+    },
+    {
+     "name": "Solar Panels",
+     "value": 9.65,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary and Higher Secondary schools having Tinkering labs",
+     "value": 10.2,
+     "unit": "pct"
+    },
+    {
+     "name": "functional electricity",
+     "value": 96,
+     "unit": "pct"
+    },
+    {
+     "name": "functional toilets",
+     "value": 98.65,
+     "unit": "pct"
+    },
+    {
+     "name": "functional girls toilets",
+     "value": 96.80000000000001,
+     "unit": "pct"
+    },
+    {
+     "name": "functional boys toilets",
+     "value": 94.65,
+     "unit": "pct"
+    }
+   ],
+   "group": "Facilities and progression",
+   "unit": "pct"
+  },
+  {
+   "id": "dropout",
+   "title": "Leaving school is measured differently at each stage",
+   "sub": "Published national dropout rates by school stage.",
+   "explain": "Dropout is estimated from movements in enrolment between years. It is not a direct count of every child who stopped attending, and it does not establish a reason for leaving. A published zero can reflect the calculation and rounding; it should not be read as proof that no child left.",
+   "extra": "",
+   "bundle": "schools-national",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+ existing structure report, Table 1",
+   "rows": [
+    {
+     "name": "Dropout Rates - Primary",
+     "value": 0.3,
+     "unit": "pct"
+    },
+    {
+     "name": "Dropout Rates – Upper Primary",
+     "value": 3.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Dropout Rates - Secondary",
+     "value": 11.5,
+     "unit": "pct"
+    }
+   ],
+   "group": "Facilities and progression",
+   "unit": "pct"
+  },
+  {
+   "id": "state-dropout",
+   "title": "The secondary-school dropout problem varies across states",
+   "sub": "Secondary dropout rate, Total gender, each state/UT.",
+   "explain": "The same formula can give different results across states with different migration, reporting and enrolment patterns. Treat these rates as signals for further investigation, not rankings of school quality. The downloadable tables retain primary, upper-primary and gender cuts.",
+   "extra": "",
+   "bundle": "schools-udise-student-41",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Andaman & Nicobar Islands",
+     "value": 5.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Andhra Pradesh",
+     "value": 15.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Arunachal Pradesh",
+     "value": 18.3,
+     "unit": "pct"
+    },
+    {
+     "name": "Assam",
+     "value": 17.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Bihar",
+     "value": 0,
+     "unit": "pct"
+    },
+    {
+     "name": "Chandigarh",
+     "value": 2,
+     "unit": "pct"
+    },
+    {
+     "name": "Chhattisgarh",
+     "value": 15.3,
+     "unit": "pct"
+    },
+    {
+     "name": "Dadra & Nagar Haveli and Daman & Diu",
+     "value": 12.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Delhi",
+     "value": 7.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Goa",
+     "value": 9.3,
+     "unit": "pct"
+    },
+    {
+     "name": "Gujarat",
+     "value": 16.9,
+     "unit": "pct"
+    },
+    {
+     "name": "Haryana",
+     "value": 6.6,
+     "unit": "pct"
+    },
+    {
+     "name": "Himachal Pradesh",
+     "value": 6.2,
+     "unit": "pct"
+    },
+    {
+     "name": "Jammu & Kashmir",
+     "value": 12.9,
+     "unit": "pct"
+    },
+    {
+     "name": "Jharkhand",
+     "value": 3.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Karnataka",
+     "value": 18.3,
+     "unit": "pct"
+    },
+    {
+     "name": "Kerala",
+     "value": 4.8,
+     "unit": "pct"
+    },
+    {
+     "name": "Ladakh",
+     "value": 16.2,
+     "unit": "pct"
+    },
+    {
+     "name": "Lakshadweep",
+     "value": 4.1,
+     "unit": "pct"
+    },
+    {
+     "name": "Madhya Pradesh",
+     "value": 16.8,
+     "unit": "pct"
+    },
+    {
+     "name": "Maharashtra",
+     "value": 11.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Manipur",
+     "value": 9.1,
+     "unit": "pct"
+    },
+    {
+     "name": "Meghalaya",
+     "value": 17.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Mizoram",
+     "value": 17.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Nagaland",
+     "value": 12.1,
+     "unit": "pct"
+    },
+    {
+     "name": "Odisha",
+     "value": 15,
+     "unit": "pct"
+    },
+    {
+     "name": "Puducherry",
+     "value": 5.9,
+     "unit": "pct"
+    },
+    {
+     "name": "Punjab",
+     "value": 6.2,
+     "unit": "pct"
+    },
+    {
+     "name": "Rajasthan",
+     "value": 7.7,
+     "unit": "pct"
+    },
+    {
+     "name": "Sikkim",
+     "value": 11.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Tamil Nadu",
+     "value": 8.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Telangana",
+     "value": 13.2,
+     "unit": "pct"
+    },
+    {
+     "name": "Tripura",
+     "value": 11.3,
+     "unit": "pct"
+    },
+    {
+     "name": "Uttarakhand",
+     "value": 4.6,
+     "unit": "pct"
+    },
+    {
+     "name": "Uttar Pradesh",
+     "value": 7,
+     "unit": "pct"
+    },
+    {
+     "name": "West Bengal",
+     "value": 20,
+     "unit": "pct"
+    }
+   ],
+   "group": "Facilities and progression",
+   "unit": "pct"
+  },
+  {
+   "id": "promotion",
+   "title": "Promotion is a flow through the school system",
+   "sub": "Unweighted median state/UT rate by stage, Total gender.",
+   "explain": "Promotion counts progression to the next class. It is not evidence of proficiency or a learning score. The register preserves every reported gender and state value.",
+   "extra": "",
+   "bundle": "schools-udise-student-39",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Primary (1-5)",
+     "value": 98.05000000000001,
+     "unit": "pct"
+    },
+    {
+     "name": "Upper Primary (6-8)",
+     "value": 95.8,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary (9-10)",
+     "value": 85.1,
+     "unit": "pct"
+    }
+   ],
+   "group": "Facilities and progression",
+   "unit": "pct"
+  },
+  {
+   "id": "repetition",
+   "title": "Repeating a class and leaving school are separate outcomes",
+   "sub": "Unweighted median state/UT rate by stage, Total gender.",
+   "explain": "Repetition means remaining at the same class stage in the source’s flow calculation. It should not be combined with dropout as if both meant children outside school. The register preserves every reported gender and state value.",
+   "extra": "",
+   "bundle": "schools-udise-student-40",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+, via MoSPI eSankhyiki",
+   "rows": [
+    {
+     "name": "Primary (1-5)",
+     "value": 1.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Upper Primary (6-8)",
+     "value": 0.8500000000000001,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary (9-10)",
+     "value": 4.1,
+     "unit": "pct"
+    }
+   ],
+   "group": "Facilities and progression",
+   "unit": "pct"
+  },
+  {
+   "id": "transition",
+   "title": "Progression is hardest to see at the boundaries between stages",
+   "sub": "Published national transition rates between school stages.",
+   "explain": "Transition measures movement from the final class of one stage into the next stage. It differs from promotion within a stage and from retention across a whole school cycle. These ratios do not form one cohort survival curve.",
+   "extra": "",
+   "bundle": "schools-national",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+ existing structure report, Table 1",
+   "rows": [
+    {
+     "name": "Transition Rates Primary to Upper Primary",
+     "value": 92.2,
+     "unit": "pct"
+    },
+    {
+     "name": "Transition Rates Upper Primary to Secondary",
+     "value": 86.6,
+     "unit": "pct"
+    },
+    {
+     "name": "Transition Rates Secondary to Higher Secondary",
+     "value": 75.1,
+     "unit": "pct"
+    }
+   ],
+   "group": "Facilities and progression",
+   "unit": "pct"
+  },
+  {
+   "id": "retention",
+   "title": "Staying through the school cycle is a different test",
+   "sub": "Published national retention rates for successively longer school cycles.",
+   "explain": "Retention compares enrolment at the end of a cycle with its source base. It helps reveal how much of the initial enrolment persists, but still reflects transfers, population movement and the reporting instrument. It is not a direct longitudinal follow-up of individual children.",
+   "extra": "",
+   "bundle": "schools-national",
+   "period": "2024-25",
+   "date": "2024-04-01",
+   "vintage": "2026-10-10",
+   "source": "Ministry of Education, UDISE+ existing structure report, Table 1",
+   "rows": [
+    {
+     "name": "Primary (Class 1 to Class 5)",
+     "value": 92.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Elementary (Class 1 to Class 8)",
+     "value": 82.8,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary (Class 1 to Class 10)",
+     "value": 62.9,
+     "unit": "pct"
+    },
+    {
+     "name": "Higher Secondary (Class 1 to Class 12)",
+     "value": 47.2,
+     "unit": "pct"
+    }
+   ],
+   "group": "Facilities and progression",
+   "unit": "pct"
+  },
+  {
+   "id": "cmse-23",
+   "title": "The survey’s enrolment mix follows household reports",
+   "sub": "CMSE, All-India, rural and urban combined. Person (all genders). Per cent.",
+   "explain": "Shares of currently enrolled pupils by school stage. These describe the surveyed school population, not total population counts.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-23",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "Pre-primary",
+     "value": 10.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Primary",
+     "value": 41.6,
+     "unit": "pct"
+    },
+    {
+     "name": "Middle",
+     "value": 22,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary",
+     "value": 14.9,
+     "unit": "pct"
+    },
+    {
+     "name": "Higher Secondary",
+     "value": 11,
+     "unit": "pct"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "pct"
+  },
+  {
+   "id": "cmse-24",
+   "title": "Rural and urban families use different school mixes",
+   "sub": "CMSE, All-India, rural, urban and combined shown separately. Person (all genders). Per cent.",
+   "explain": "School-type shares describe where enrolled pupils study. Government and private-aided schools are separate types; administrative UDISE counts use a different instrument.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-24",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "Rural / Government",
+     "value": 66,
+     "unit": "pct"
+    },
+    {
+     "name": "Rural / Private Aided",
+     "value": 8.9,
+     "unit": "pct"
+    },
+    {
+     "name": "Rural / Private unaided",
+     "value": 24.3,
+     "unit": "pct"
+    },
+    {
+     "name": "Rural / Others",
+     "value": 0.7,
+     "unit": "pct"
+    },
+    {
+     "name": "Urban / Government",
+     "value": 30.1,
+     "unit": "pct"
+    },
+    {
+     "name": "Urban / Private Aided",
+     "value": 17.6,
+     "unit": "pct"
+    },
+    {
+     "name": "Urban / Private unaided",
+     "value": 51.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Urban / Others",
+     "value": 1,
+     "unit": "pct"
+    },
+    {
+     "name": "All / Government",
+     "value": 55.9,
+     "unit": "pct"
+    },
+    {
+     "name": "All / Private Aided",
+     "value": 11.3,
+     "unit": "pct"
+    },
+    {
+     "name": "All / Private unaided",
+     "value": 31.9,
+     "unit": "pct"
+    },
+    {
+     "name": "All / Others",
+     "value": 0.8,
+     "unit": "pct"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "pct"
+  },
+  {
+   "id": "cmse-25",
+   "title": "School type matters at each stage",
+   "sub": "CMSE, All-India, rural and urban combined. Person (all genders). Per cent.",
+   "explain": "This cross-tab shows school-type shares within stages. It adds detail to the overall school mix without creating a time series.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-25",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "Pre-primary / Government",
+     "value": 53.6,
+     "unit": "pct"
+    },
+    {
+     "name": "Pre-primary / Private Aided",
+     "value": 5.8,
+     "unit": "pct"
+    },
+    {
+     "name": "Pre-primary / Private unaided",
+     "value": 38.2,
+     "unit": "pct"
+    },
+    {
+     "name": "Pre-primary / Others",
+     "value": 2.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Primary / Government",
+     "value": 56.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Primary / Private Aided",
+     "value": 9.3,
+     "unit": "pct"
+    },
+    {
+     "name": "Primary / Private unaided",
+     "value": 33.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Primary / Others",
+     "value": 0.9,
+     "unit": "pct"
+    },
+    {
+     "name": "Middle / Government",
+     "value": 58.3,
+     "unit": "pct"
+    },
+    {
+     "name": "Middle / Private Aided",
+     "value": 12.3,
+     "unit": "pct"
+    },
+    {
+     "name": "Middle / Private unaided",
+     "value": 29.1,
+     "unit": "pct"
+    },
+    {
+     "name": "Middle / Others",
+     "value": 0.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary / Government",
+     "value": 56.3,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary / Private Aided",
+     "value": 15.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary / Private unaided",
+     "value": 28,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary / Others",
+     "value": 0.3,
+     "unit": "pct"
+    },
+    {
+     "name": "Higher Secondary / Government",
+     "value": 51.3,
+     "unit": "pct"
+    },
+    {
+     "name": "Higher Secondary / Private Aided",
+     "value": 17.1,
+     "unit": "pct"
+    },
+    {
+     "name": "Higher Secondary / Private unaided",
+     "value": 31.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Higher Secondary / Others",
+     "value": 0.3,
+     "unit": "pct"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "pct"
+  },
+  {
+   "id": "cmse-28",
+   "title": "School fees are not paid by every student",
+   "sub": "CMSE, All-India, rural and urban combined. Person (all genders). Per cent.",
+   "explain": "The fee-paying share is distinct from average expenditure. Free course fees can coexist with costs for uniforms, transport and books.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-28",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "Pre-primary",
+     "value": 46.2,
+     "unit": "pct"
+    },
+    {
+     "name": "Primary",
+     "value": 47.7,
+     "unit": "pct"
+    },
+    {
+     "name": "Middle",
+     "value": 52.6,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary",
+     "value": 76.2,
+     "unit": "pct"
+    },
+    {
+     "name": "Higher Secondary",
+     "value": 85.9,
+     "unit": "pct"
+    },
+    {
+     "name": "All Levels",
+     "value": 57.1,
+     "unit": "pct"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "pct"
+  },
+  {
+   "id": "cmse-29",
+   "title": "Fee-paying incidence differs by school type",
+   "sub": "CMSE, All-India, rural and urban combined. Person (all genders). Per cent.",
+   "explain": "This measures whether expenditure on course fees was reported, not how much was paid or the family’s total school bill.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-29",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "Government",
+     "value": 26.7,
+     "unit": "pct"
+    },
+    {
+     "name": "Private Aided",
+     "value": 89.1,
+     "unit": "pct"
+    },
+    {
+     "name": "Private unaided",
+     "value": 98.1,
+     "unit": "pct"
+    },
+    {
+     "name": "Others",
+     "value": 92.2,
+     "unit": "pct"
+    },
+    {
+     "name": "All Non-Government",
+     "value": 95.7,
+     "unit": "pct"
+    },
+    {
+     "name": "All",
+     "value": 57.1,
+     "unit": "pct"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "pct"
+  },
+  {
+   "id": "cmse-30",
+   "title": "The school bill changes across stages",
+   "sub": "CMSE, All-India, rural and urban combined. Person (all genders). Rupees, current academic year.",
+   "explain": "Average school spending per enrolled student includes the source’s relevant items for the current academic year. It is not a monthly household budget or a typical student’s median bill.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-30",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "Pre-primary",
+     "value": 9807,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Primary",
+     "value": 10662,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Middle",
+     "value": 12422,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Secondary",
+     "value": 14781,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Higher Secondary",
+     "value": 20133,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "All Levels",
+     "value": 12616,
+     "unit": "inr_per_year"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "inr_per_year"
+  },
+  {
+   "id": "cmse-31",
+   "title": "School type changes the average bill",
+   "sub": "CMSE, All-India, rural and urban combined. Person (all genders). Rupees, current academic year.",
+   "explain": "Means can be raised by a minority of expensive schools. Compare the population and expenditure definition before comparing this survey with a different education round.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-31",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "Government",
+     "value": 2863,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Private Aided",
+     "value": 15364,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Private unaided",
+     "value": 28693,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Others",
+     "value": 14315,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "All Non-Government",
+     "value": 25002,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "All",
+     "value": 12616,
+     "unit": "inr_per_year"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "inr_per_year"
+  },
+  {
+   "id": "cmse-32",
+   "title": "Stage and school type both shape expenditure",
+   "sub": "CMSE, All-India, rural and urban combined. Rupees, current academic year.",
+   "explain": "This joint view retains the combinations the survey actually publishes. It does not invent estimates for unobserved combinations.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-32",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "Pre-primary / Government",
+     "value": 627,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Pre-primary / Private Aided",
+     "value": 13933,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Pre-primary / Private unaided",
+     "value": 21899,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Pre-primary / Others",
+     "value": 11986,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Primary / Government",
+     "value": 1818,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Primary / Private Aided",
+     "value": 13847,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Primary / Private unaided",
+     "value": 24663,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Primary / Others",
+     "value": 12918,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Middle / Government",
+     "value": 2682,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Middle / Private Aided",
+     "value": 14873,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Middle / Private unaided",
+     "value": 30869,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Middle / Others",
+     "value": 15401,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Secondary / Government",
+     "value": 4581,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Secondary / Private Aided",
+     "value": 14242,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Secondary / Private unaided",
+     "value": 35426,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Secondary / Others",
+     "value": 28630,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Higher Secondary / Government",
+     "value": 7293,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Higher Secondary / Private Aided",
+     "value": 21017,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Higher Secondary / Private unaided",
+     "value": 40601,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Higher Secondary / Others",
+     "value": 23334,
+     "unit": "inr_per_year"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "inr_per_year"
+  },
+  {
+   "id": "cmse-33",
+   "title": "Course fees are only part of school spending",
+   "sub": "CMSE, All-India, rural, urban and combined shown separately. Person (all genders). Rupees, current academic year.",
+   "explain": "Average spending on course fees, books and stationery, uniforms, transport and other items is shown separately. The total is an overlapping sum and is omitted from the component chart.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-33",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "Course fee / Rural",
+     "value": 3979,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Transportation / Rural",
+     "value": 1359,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Uniform / Rural",
+     "value": 887,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Textbook/ Stationery / Rural",
+     "value": 1664,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Others / Rural",
+     "value": 494,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Course fee / Urban",
+     "value": 15143,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Transportation / Urban",
+     "value": 3082,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Uniform / Urban",
+     "value": 1540,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Textbook/ Stationery / Urban",
+     "value": 2867,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Others / Urban",
+     "value": 838,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Course fee / All",
+     "value": 7111,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Transportation / All",
+     "value": 1842,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Uniform / All",
+     "value": 1070,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Textbook/ Stationery / All",
+     "value": 2002,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Others / All",
+     "value": 590,
+     "unit": "inr_per_year"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "inr_per_year"
+  },
+  {
+   "id": "cmse-34",
+   "title": "A reported-spending average has a different base",
+   "sub": "CMSE, All-India, rural and urban combined. Person (all genders). Rupees, current academic year.",
+   "explain": "The source’s “per reported student” estimate conditions on reporting the relevant expenditure. It must not be substituted for spending per enrolled student.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-34",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "Pre-primary",
+     "value": 11896,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Primary",
+     "value": 10896,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Middle",
+     "value": 12622,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Secondary",
+     "value": 14943,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Higher Secondary",
+     "value": 20305,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "All Levels",
+     "value": 13051,
+     "unit": "inr_per_year"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "inr_per_year"
+  },
+  {
+   "id": "cmse-35",
+   "title": "Conditional spending differs across school types",
+   "sub": "CMSE, All-India, rural and urban combined. Person (all genders). Rupees, current academic year.",
+   "explain": "These means use the source’s reported-student denominator. A large conditional average can coexist with a low share reporting that expenditure.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-35",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "Government",
+     "value": 3039,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Private Aided",
+     "value": 15406,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Private unaided",
+     "value": 28741,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Others",
+     "value": 14644,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "All Non-Government",
+     "value": 25060,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "All",
+     "value": 13051,
+     "unit": "inr_per_year"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "inr_per_year"
+  },
+  {
+   "id": "cmse-36",
+   "title": "The conditional school bill also varies by stage",
+   "sub": "CMSE, All-India, rural and urban combined. Rupees, current academic year.",
+   "explain": "School stage and school type are jointly supplied by the survey. The denominator remains reported students, not every enrolled pupil.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-36",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "Pre-primary / Government",
+     "value": 928,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Pre-primary / Private Aided",
+     "value": 14197,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Pre-primary / Private unaided",
+     "value": 21908,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Pre-primary / Others",
+     "value": 12444,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Primary / Government",
+     "value": 1888,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Primary / Private Aided",
+     "value": 13879,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Primary / Private unaided",
+     "value": 24679,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Primary / Others",
+     "value": 13044,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Middle / Government",
+     "value": 2752,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Middle / Private Aided",
+     "value": 14896,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Middle / Private unaided",
+     "value": 30952,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Middle / Others",
+     "value": 15573,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Secondary / Government",
+     "value": 4655,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Secondary / Private Aided",
+     "value": 14272,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Secondary / Private unaided",
+     "value": 35589,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Secondary / Others",
+     "value": 30937,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Higher Secondary / Government",
+     "value": 7404,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Higher Secondary / Private Aided",
+     "value": 21038,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Higher Secondary / Private unaided",
+     "value": 40682,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Higher Secondary / Others",
+     "value": 23483,
+     "unit": "inr_per_year"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "inr_per_year"
+  },
+  {
+   "id": "cmse-37",
+   "title": "Item averages can have different reporting populations",
+   "sub": "CMSE, All-India, rural and urban combined. Person (all genders). Rupees, current academic year.",
+   "explain": "Per-reported-student item means should not be added to reconstruct a total. Each item can have a different set of students reporting that expense.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-37",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "Course fee",
+     "value": 12457,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Transportation",
+     "value": 5532,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Uniform",
+     "value": 1657,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Textbook/ Stationery",
+     "value": 2097,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Others",
+     "value": 879,
+     "unit": "inr_per_year"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "inr_per_year"
+  },
+  {
+   "id": "cmse-38",
+   "title": "Coaching participation is a separate question",
+   "sub": "CMSE, All-India, rural, urban and combined shown separately. Person (all genders). Per cent.",
+   "explain": "This is the share receiving private coaching during the current academic year. It is separate from school enrolment and from spending among coaching participants.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-38",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "Pre-primary / Rural",
+     "value": 10.7,
+     "unit": "pct"
+    },
+    {
+     "name": "Primary / Rural",
+     "value": 21.6,
+     "unit": "pct"
+    },
+    {
+     "name": "Middle / Rural",
+     "value": 29.1,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary / Rural",
+     "value": 36.7,
+     "unit": "pct"
+    },
+    {
+     "name": "Higher Secondary / Rural",
+     "value": 33.1,
+     "unit": "pct"
+    },
+    {
+     "name": "All Levels / Rural",
+     "value": 25.5,
+     "unit": "pct"
+    },
+    {
+     "name": "Pre-primary / Urban",
+     "value": 13.6,
+     "unit": "pct"
+    },
+    {
+     "name": "Primary / Urban",
+     "value": 26.6,
+     "unit": "pct"
+    },
+    {
+     "name": "Middle / Urban",
+     "value": 31,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary / Urban",
+     "value": 40.2,
+     "unit": "pct"
+    },
+    {
+     "name": "Higher Secondary / Urban",
+     "value": 44.6,
+     "unit": "pct"
+    },
+    {
+     "name": "All Levels / Urban",
+     "value": 30.7,
+     "unit": "pct"
+    },
+    {
+     "name": "Pre-primary / All",
+     "value": 11.6,
+     "unit": "pct"
+    },
+    {
+     "name": "Primary / All",
+     "value": 22.9,
+     "unit": "pct"
+    },
+    {
+     "name": "Middle / All",
+     "value": 29.6,
+     "unit": "pct"
+    },
+    {
+     "name": "Secondary / All",
+     "value": 37.8,
+     "unit": "pct"
+    },
+    {
+     "name": "Higher Secondary / All",
+     "value": 37,
+     "unit": "pct"
+    },
+    {
+     "name": "All Levels / All",
+     "value": 27,
+     "unit": "pct"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "pct"
+  },
+  {
+   "id": "cmse-39",
+   "title": "The average coaching bill includes students without coaching",
+   "sub": "CMSE, All-India, rural, urban and combined shown separately. Person (all genders). Rupees, current academic year.",
+   "explain": "Per-student coaching spending uses all pupils in the relevant group, including those who did not receive coaching. It differs from the participant’s bill.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-39",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "Pre-primary / Rural",
+     "value": 420,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Primary / Rural",
+     "value": 1039,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Middle / Rural",
+     "value": 1745,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Secondary / Rural",
+     "value": 3159,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Higher Secondary / Rural",
+     "value": 4548,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "All Levels / Rural",
+     "value": 1793,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Pre-primary / Urban",
+     "value": 783,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Primary / Urban",
+     "value": 2108,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Middle / Urban",
+     "value": 3326,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Secondary / Urban",
+     "value": 6585,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Higher Secondary / Urban",
+     "value": 9950,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "All Levels / Urban",
+     "value": 3988,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Pre-primary / All",
+     "value": 525,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Primary / All",
+     "value": 1313,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Middle / All",
+     "value": 2189,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Secondary / All",
+     "value": 4183,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Higher Secondary / All",
+     "value": 6384,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "All Levels / All",
+     "value": 2409,
+     "unit": "inr_per_year"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "inr_per_year"
+  },
+  {
+   "id": "cmse-40",
+   "title": "A coaching participant’s bill uses a narrower base",
+   "sub": "CMSE, All-India, rural, urban and combined shown separately. Person (all genders). Rupees, current academic year.",
+   "explain": "Spending per reported student uses the source’s coaching-reporting base. Compare it with participation and spending per student; do not label it the average school bill.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-40",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "Pre-primary / Rural",
+     "value": 3980,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Primary / Rural",
+     "value": 4825,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Middle / Rural",
+     "value": 6043,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Secondary / Rural",
+     "value": 8616,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Higher Secondary / Rural",
+     "value": 13803,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "All Levels / Rural",
+     "value": 7066,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Pre-primary / Urban",
+     "value": 5815,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Primary / Urban",
+     "value": 7947,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Middle / Urban",
+     "value": 10765,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Secondary / Urban",
+     "value": 16415,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Higher Secondary / Urban",
+     "value": 22394,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "All Levels / Urban",
+     "value": 13026,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Pre-primary / All",
+     "value": 4610,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Primary / All",
+     "value": 5753,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Middle / All",
+     "value": 7434,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Secondary / All",
+     "value": 11096,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "Higher Secondary / All",
+     "value": 17323,
+     "unit": "inr_per_year"
+    },
+    {
+     "name": "All Levels / All",
+     "value": 8973,
+     "unit": "inr_per_year"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "inr_per_year"
+  },
+  {
+   "id": "cmse-41-2-0",
+   "title": "Who funds school expenses is another part of access: students reported single major source of funding for education expenditure",
+   "sub": "CMSE, All-India, rural and urban combined. Person (all genders). Per cent.",
+   "explain": "The funding-source distribution and the share naming a single major source are different measures. The latter is not an extra funding-source category.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-41",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "students reported single major source of funding for education expenditure",
+     "value": 91.3,
+     "unit": "pct"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "pct"
+  },
+  {
+   "id": "cmse-41-2-1",
+   "title": "Who funds school expenses is another part of access: source of funding (1st major source)",
+   "sub": "CMSE, All-India, rural and urban combined. Person (all genders). Per cent.",
+   "explain": "The funding-source distribution and the share naming a single major source are different measures. The latter is not an extra funding-source category.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-41",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "Funded by other member of the household",
+     "value": 95,
+     "unit": "pct"
+    },
+    {
+     "name": "Funded by erstwhile household members",
+     "value": 2.4,
+     "unit": "pct"
+    },
+    {
+     "name": "Scholarship from Government",
+     "value": 1.2,
+     "unit": "pct"
+    },
+    {
+     "name": "Other",
+     "value": 1.3999999999999915,
+     "unit": "pct"
+    },
+    {
+     "name": "All",
+     "value": 100,
+     "unit": "pct"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "pct"
+  },
+  {
+   "id": "cmse-42-3-0",
+   "title": "Families may also pay for members who live elsewhere: households reporting erstwhile member*",
+   "sub": "CMSE, All-India, rural and urban combined. Per cent.",
+   "explain": "The source separately reports the share of households with erstwhile members attending school, spending by households reporting that expense, and the distribution by number of such members. Rupees and percentages are kept on separate plates.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-42",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "Reporting households",
+     "value": 1.3,
+     "unit": "pct"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "pct"
+  },
+  {
+   "id": "cmse-42-3-1",
+   "title": "Families may also pay for members who live elsewhere: Average expenditure (Rs.) incurred per household reporting expenditure on erstwhile member*",
+   "sub": "CMSE, All-India, rural and urban combined. Rupees, current academic year.",
+   "explain": "The source separately reports the share of households with erstwhile members attending school, spending by households reporting that expense, and the distribution by number of such members. Rupees and percentages are kept on separate plates.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-42",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "Reporting households",
+     "value": 32725,
+     "unit": "inr_per_year"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "inr_per_year"
+  },
+  {
+   "id": "cmse-42-3-2",
+   "title": "Families may also pay for members who live elsewhere: households reporting erstwhile member* by number of such erstwhile members",
+   "sub": "CMSE, All-India, rural and urban combined. Per cent.",
+   "explain": "The source separately reports the share of households with erstwhile members attending school, spending by households reporting that expense, and the distribution by number of such members. Rupees and percentages are kept on separate plates.",
+   "extra": "State, gender and other cuts remain available in the register. State survey estimates require sample-size and uncertainty checks; they are not ranked here.",
+   "bundle": "schools-cmse-42",
+   "period": "April–June 2025",
+   "date": "2025-04-01",
+   "vintage": "2026-10-10",
+   "source": "MoSPI, NSS 80 Comprehensive Modular Survey: Education",
+   "rows": [
+    {
+     "name": "1",
+     "value": 81.6,
+     "unit": "pct"
+    },
+    {
+     "name": "2",
+     "value": 13.7,
+     "unit": "pct"
+    },
+    {
+     "name": "3 or more",
+     "value": 4.7,
+     "unit": "pct"
+    },
+    {
+     "name": "All",
+     "value": 100,
+     "unit": "pct"
+    }
+   ],
+   "group": "The household bill",
+   "unit": "pct"
+  }
+ ],
+ "coverage": {
+  "bundles": 111,
+  "sourceIndicators": 64,
+  "series": 110498
+ }
+}

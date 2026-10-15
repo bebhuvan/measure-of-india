@@ -1,0 +1,2 @@
+// One current, source-addressed sheet for both energy facts entrypoints.
+export function energyFactsSheet(model){return{facts:model.facts,sources:model.factSources,plates:model.plates.map(p=>({id:p.id,bundle:p.bundle,period:p.period,provenance:p.sourceProvenance,series:p.rows.map(r=>({bundle:r.bundle,series:r.series})),values:p.rows.map(r=>r.value),observations:p.rows.map(({bundle,series,date,value,unit,name})=>({bundle,series,date,value,unit,name}))}))};}

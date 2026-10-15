@@ -1,22 +1,22 @@
 {
  "meta": {
   "dossier": "markets-listed",
-  "source": "Reserve Bank of India, DBIE, via the Reserve Bank Innovation Hub's data service",
-  "vintage": "2026-10-10",
-  "mock": false,
+  "source": "Reserve Bank of India, DBIE (official CAS and prompted statistical reports), via the local Data Bank",
+  "vintage": null,
+  "vintageStatus": "unknown",
+  "vintageNote": "The archived RBI CAS and prompted report exports do not publish a source revision timestamp. Archive capture is recorded separately and does not establish when estimates were revised.",
+  "archiveCapturedDate": "2026-10-10",
   "geo": "IND",
+  "mock": false,
+  "base": "as published",
   "releaseDate": null,
   "revisionPolicy": "Each quarter's figures come from the companies that reported in that quarter; growth rates compare the same companies a year apart and are final as printed.",
-  "base": "as published",
   "frequency": "quarterly",
-  "product": "SDMX dataset PRF_LNGNFC_QTR_RN (Performance of Listed Non-Government Non-Financial Companies Quarterly)",
-  "dsd": "PRF_LNGNFC_QTR_RN",
-  "loadedAt": "2026-09-18T15:11:55.974623Z",
-  "cut": null,
   "unit": "inr_crore",
-  "coverage": "Listed private non-financial companies, rupee levels, quarterly",
-  "note": "₹ crore. Each period is a different set of companies (those that reported in time): levels are not comparable across periods and are never read as a series. Use the growth rates for change.",
-  "latestPeriod": "2025-10"
+  "product": "Listed non-government non-financial companies",
+  "coverage": "Quarterly results of listed non-government non-financial companies: rupee totals for the companies reporting in each period.",
+  "note": "Direct RBI DBIE: CAS full history, newest prompted report restatements preferred. Growth compares common companies; period totals and ratios use changing samples. Amounts are not a comparable time series. CAS omits some zero or |rate| ≥150 cells; reports preserve meaningful numeric cells and quarantine the exact 999999999 sentinel. Zero-filled CAS amount vectors and rupee-valued growth are missing, never true zero. Historical duplicate-key ratios retain the inherited mirror selection with an ambiguity flag until official reports resolve them. See sourceByDate for each cell; full source defects and overlap in markets-rbi.source-quality.json.",
+  "latestPeriod": "2026-04"
  },
  "dates": [
   "2014-04-01",
@@ -65,12 +65,337 @@
   "2025-01-01",
   "2025-04-01",
   "2025-07-01",
-  "2025-10-01"
+  "2025-10-01",
+  "2026-01-01",
+  "2026-04-01"
  ],
  "series": {
   "deprc": {
    "label": "Depreciation, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "DEPRC",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 410,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 586,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 156,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 750,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 459,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 305,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 730,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 32,
+     "companies": 3247
+    }
+   },
    "data": [
     28196.31,
     29713.61,
@@ -118,12 +443,337 @@
     71036.99,
     71401.39,
     74841.56,
-    77461.5
+    77461.5,
+    79106.77,
+    81170.51
    ]
   },
   "ebitda": {
    "label": "EBITDA, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "EBITDA",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 367,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 267,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 138,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 407,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 612,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 524,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 75,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 188,
+     "companies": 3247
+    }
+   },
    "data": [
     126787.6,
     134818.84,
@@ -171,12 +821,337 @@
     344052.29,
     352313.73,
     346664.54,
-    358405.01
+    358405.01,
+    387443.89,
+    421649.88
    ]
   },
   "ebt_before_nop": {
    "label": "EBT (before NOP), ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "EBT_BEFORE_NOP",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 376,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 566,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 262,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 427,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 525,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 431,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 100,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 180,
+     "companies": 3247
+    }
+   },
    "data": [
     69778.13,
     72516.46,
@@ -224,65 +1199,301 @@
     227462.43,
     234844.98,
     226623.8,
-    234832.38
-   ]
-  },
-  "expd": {
-   "label": "Expenditure, ₹ crore (this period's companies)",
-   "unit": "inr_crore",
-   "data": [
-    659764.88,
-    707567.74,
-    684483.37,
-    668529.84,
-    653412.83,
-    633030.4,
-    636214.86,
-    649983.71,
-    623200.95,
-    616240.06,
-    665346.17,
-    723932.32,
-    700497.92,
-    682965.47,
-    732230.55,
-    801837.7,
-    814005.61,
-    846953.63,
-    850357.63,
-    862609.72,
-    807551.76,
-    806875.11,
-    798243.07,
-    790875.08,
-    499858.88,
-    690685.22,
-    797850.9,
-    892245.98,
-    841060.1,
-    958715.47,
-    1050794.15,
-    1173009.64,
-    1231648.46,
-    1211984.56,
-    1220423.76,
-    1271242.06,
-    1241346.24,
-    1281754.56,
-    1311013.96,
-    1363488.74,
-    1355163.34,
-    1384285.71,
-    1410194.52,
-    1528303.7,
-    1475884.96,
-    1570389.26,
-    1655242.13
+    234832.38,
+    261161.11,
+    294210.06
    ]
   },
   "expd_oth": {
-   "label": "Expenditure: Others, ₹ crore (this period's companies)",
+   "label": "Others, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "EXPD_OTH",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 3188
+    }
+   },
    "data": [
     218986.7,
     236971.34,
@@ -330,12 +1541,337 @@
     571377.92,
     547563.93,
     582859.02,
-    604796.04
+    604796.04,
+    null,
+    null
    ]
   },
   "expd_pnf": {
    "label": "Power & fuel, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "EXPD_PNF",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 150,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 450,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 384,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 278,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 667,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 573,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 273,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 386,
+     "companies": 3247
+    }
+   },
    "data": [
     27613.8,
     29670.77,
@@ -383,12 +1919,337 @@
     55088.37,
     54891.82,
     51291.29,
-    48102.23
+    48102.23,
+    50073.6,
+    67022.45
    ]
   },
   "expd_raw_matr": {
    "label": "Raw Material, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "EXPD_RAW_MATR",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 472,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 498,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 90,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 595,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 402,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 174,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 668,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 143,
+     "companies": 3247
+    }
+   },
    "data": [
     351807.96,
     376022.37,
@@ -436,12 +2297,337 @@
     719962.9,
     683155.56,
     739910.79,
-    798868.9
+    798868.9,
+    900710.66,
+    903445.09
    ]
   },
   "expd_staff_cost": {
    "label": "Staff Cost, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "EXPD_STAFF_COST",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 384,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 355,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 293,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 695,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 697,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 143,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 681,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 517,
+     "companies": 3247
+    }
+   },
    "data": [
     61356.42,
     64903.26,
@@ -489,12 +2675,715 @@
     181874.51,
     190273.65,
     196328.16,
-    203474.96
+    203474.96,
+    205748.75,
+    214882.44
+   ]
+  },
+  "expd": {
+   "label": "Expenditure, ₹ crore (this period's companies)",
+   "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "EXPD",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 727,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 96,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 141,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 184,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 132,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 594,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 202,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 16,
+     "companies": 3247
+    }
+   },
+   "data": [
+    659764.88,
+    707567.74,
+    684483.37,
+    668529.84,
+    653412.83,
+    633030.4,
+    636214.86,
+    649983.71,
+    623200.95,
+    616240.06,
+    665346.17,
+    723932.32,
+    700497.92,
+    682965.47,
+    732230.55,
+    801837.7,
+    814005.61,
+    846953.63,
+    850357.63,
+    862609.72,
+    807551.76,
+    806875.11,
+    798243.07,
+    790875.08,
+    499858.88,
+    690685.22,
+    797850.9,
+    892245.98,
+    841060.1,
+    958715.47,
+    1050794.15,
+    1173009.64,
+    1231648.46,
+    1211984.56,
+    1220423.76,
+    1271242.06,
+    1241346.24,
+    1281754.56,
+    1311013.96,
+    1363488.74,
+    1355163.34,
+    1384285.71,
+    1410194.52,
+    1528303.7,
+    1475884.96,
+    1570389.26,
+    1655242.13,
+    1830754.65,
+    1840747.56
    ]
   },
   "gross_pft_ebit": {
    "label": "Gross Profits (EBIT), ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "GROSS_PFT_EBIT",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 306,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 185,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 115,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 36,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 68,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 437,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 418,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 170,
+     "companies": 3247
+    }
+   },
    "data": [
     98591.29,
     105105.23,
@@ -542,12 +3431,337 @@
     273015.3,
     280912.34,
     271822.98,
-    280943.51
+    280943.51,
+    308337.12,
+    340479.37
    ]
   },
   "int": {
    "label": "Interest, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "INT",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 381,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 719,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 662,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 411,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 315,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 155,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 397,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 90,
+     "companies": 3247
+    }
+   },
    "data": [
     28813.16,
     32588.77,
@@ -595,12 +3809,337 @@
     45552.87,
     46067.36,
     45199.18,
-    46111.13
+    46111.13,
+    47176.01,
+    46269.31
    ]
   },
   "net_pft": {
    "label": "Net Profits, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "NET_PFT",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 607,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 650,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 14,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 751,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 124,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 348,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 234,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 93,
+     "companies": 3247
+    }
+   },
    "data": [
     51214.79,
     53746.55,
@@ -648,12 +4187,337 @@
     198261.02,
     189438.06,
     168392.14,
-    181875.71
+    181875.71,
+    257652.36,
+    227373.79
    ]
   },
   "opr_pft": {
    "label": "Operating Profits, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "OPR_PFT",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 155,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 618,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 404,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 213,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 419,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 462,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 160,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 720,
+     "companies": 3247
+    }
+   },
    "data": [
     107788.41,
     107281.24,
@@ -701,12 +4565,337 @@
     292647.5,
     288937.38,
     288671.3,
-    305594.74
+    305594.74,
+    326590.91,
+    353407.95
    ]
   },
   "oth_inc": {
    "label": "Other Income, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "OTH_INC",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 427,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 597,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 41,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 534,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 197,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 224,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 636,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 68,
+     "companies": 3247
+    }
+   },
    "data": [
     18999.19,
     27537.6,
@@ -754,12 +4943,337 @@
     51404.79,
     63376.35,
     57993.24,
-    52810.27
+    52810.27,
+    60852.98,
+    68241.93
    ]
   },
   "sales": {
    "label": "Sales, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "SALES",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 217,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 634,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 518,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 134,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 555,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 690,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 338,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 228,
+     "companies": 3247
+    }
+   },
    "data": [
     763634.54,
     810661.62,
@@ -807,12 +5321,337 @@
     1799310.1,
     1751697.83,
     1834097.95,
-    1940124.84
+    1940124.84,
+    2127114.46,
+    2157098.3
    ]
   },
   "tax_prov": {
    "label": "Tax Provision, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "TAX_PROV",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 415,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 193,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 460,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 554,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 479,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 441,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 80,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 12,
+     "companies": 3247
+    }
+   },
    "data": [
     19529.41,
     20362.93,
@@ -860,12 +5699,337 @@
     50225.45,
     51327.5,
     50605.28,
-    49964.29
+    49964.29,
+    55917.23,
+    66307.53
    ]
   },
   "val_of_prod": {
    "label": "Value of Production, ₹ crore (this period's companies)",
    "unit": "inr_crore",
+   "measure": "amount",
+   "itemCode": "VAL_OF_PROD",
+   "groupCode": null,
+   "sourceByDate": {
+    "2014-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2755
+    },
+    "2014-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2863
+    },
+    "2014-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2845
+    },
+    "2015-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2712
+    },
+    "2015-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2015-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2711
+    },
+    "2015-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2736
+    },
+    "2016-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2710
+    },
+    "2016-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2775
+    },
+    "2016-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2016-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2784
+    },
+    "2017-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2726
+    },
+    "2017-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2017-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2017-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2705
+    },
+    "2018-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2723
+    },
+    "2018-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2724
+    },
+    "2018-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2700
+    },
+    "2018-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2703
+    },
+    "2019-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2701
+    },
+    "2019-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2696
+    },
+    "2019-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2702
+    },
+    "2020-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2620
+    },
+    "2020-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2536
+    },
+    "2020-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2637
+    },
+    "2020-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2692
+    },
+    "2021-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2608
+    },
+    "2021-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2610
+    },
+    "2021-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2716
+    },
+    "2021-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2744
+    },
+    "2022-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2758
+    },
+    "2022-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2749
+    },
+    "2022-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2740
+    },
+    "2022-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2779
+    },
+    "2023-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2774
+    },
+    "2023-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2836
+    },
+    "2023-07-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2835
+    },
+    "2023-10-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2842
+    },
+    "2024-01-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2823
+    },
+    "2024-04-01": {
+     "source": "cas",
+     "artifact": "b8a98f33ababc551ccf5b12a5fd37f6424d0b48dd9f53fae88fc7d9f268caeea",
+     "dsd": "PRF_LNGNFC_QTR_RN",
+     "companies": 2934
+    },
+    "2024-07-01": {
+     "source": "report",
+     "artifact": "6858e4ca6c0c01b3a4dbacb7839d32ec59d57941be9bd0e971592b5fff79adda",
+     "report": "1067",
+     "prompt": "2025-26:Q2",
+     "provider": "DP0",
+     "row": 666,
+     "companies": 2911
+    },
+    "2024-10-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 646,
+     "companies": 2924
+    },
+    "2025-01-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 534,
+     "companies": 2936
+    },
+    "2025-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 313,
+     "companies": 3079
+    },
+    "2025-07-01": {
+     "source": "report",
+     "artifact": "13a3de033afbf8639291f517fec5584a678f8e57c41ea0d4ae80773983c13485",
+     "report": "1067",
+     "prompt": "2025-26:Q3",
+     "provider": "DP0",
+     "row": 682,
+     "companies": 3118
+    },
+    "2025-10-01": {
+     "source": "report",
+     "artifact": "f3eccb660a49db47575f3c03e8ca48787393d59807669ee8ee1769a8542a453d",
+     "report": "1067",
+     "prompt": "2025-26:Q4",
+     "provider": "DP0",
+     "row": 654,
+     "companies": 3188
+    },
+    "2026-01-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 308,
+     "companies": 3266
+    },
+    "2026-04-01": {
+     "source": "report",
+     "artifact": "5620c37eb7090c2d70f03da8e9259240755684b2d308d41273a0baa811be7a1a",
+     "report": "1067",
+     "prompt": "2026-27:Q1",
+     "provider": "DP0",
+     "row": 735,
+     "companies": 3247
+    }
+   },
    "data": [
     767553.29,
     814848.98,
@@ -913,7 +6077,9 @@
     1820951.2,
     1764822.34,
     1859060.56,
-    1960836.87
+    1960836.87,
+    2157345.56,
+    2194155.51
    ]
   }
  }

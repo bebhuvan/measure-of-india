@@ -20,6 +20,13 @@ const rawGz = {
 
 // Site search is static files under dist/search/, written from the finished pages and the
 // bundles once the build is done (scripts/search-index.mjs; budgets in docs/CONTRACT-render.md).
+const explorerIndex = {
+  name: "atlas-explorer-data",
+  hooks: { "astro:build:done": ({ dir }) => {
+    execFileSync(process.execPath, [fileURLToPath(new URL("./scripts/explore-pack.mjs", import.meta.url)), fileURLToPath(dir)], { stdio: "inherit" });
+  } },
+};
+
 const searchIndex = {
   name: "atlas-search-index",
   hooks: {
@@ -36,10 +43,14 @@ export default defineConfig({
   output: "static",
   site: "https://atlas.thisindianlife.today",
   redirects,
-  integrations: [sitemap({ filter: (page) => !page.includes("/dossiers/") }), searchIndex],
+  integrations: [sitemap({ filter: (page) => !page.includes("/dossiers/") }), explorerIndex, searchIndex],
   build: { inlineStylesheets: "auto" },
   vite: {
     plugins: [rawGz],
+    // every chart imports Plot by its package name; the site's Plot (src/charts/plot.js) is Plot
+    // plus the phone layout for categorical plates (DESIGN.md §0.4). The module imports the real
+    // package by path, so the alias does not loop.
+    resolve: { alias: [{ find: /^@observablehq\/plot$/, replacement: fileURLToPath(new URL("./src/charts/plot.js", import.meta.url)) }] },
     build: { assetsInlineLimit: 0 },
   },
 });

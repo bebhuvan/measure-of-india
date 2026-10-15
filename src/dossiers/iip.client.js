@@ -516,7 +516,7 @@ const IND_PICK = (() => {
     div.style.cssText = "border-top:1px solid #ECEEF2;padding-top:11px;min-width:0";
     div.innerHTML =
       `<div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">` +
-      `<div style="font-family:var(--sans);font-size:.58rem;color:#878D99;line-height:1.6;min-width:0">${r.label}</div>` +
+      `<div style="font-family:var(--sans);font-size:.75rem;color:#6B7180;line-height:1.6;min-width:0">${r.label}</div>` +
       `<div style="font-family:var(--serif);font-weight:300;font-size:1.3rem;font-variant-numeric:tabular-nums;white-space:nowrap;color:${ex ? "#2E4BD8" : "#161A22"}">${fmtSigned(r.last.value)}</div></div>`;
     const mini = Plot.plot({
       width: 260, height: 70, marginLeft: 2, marginRight: 8, marginTop: 6, marginBottom: 4,
@@ -567,7 +567,7 @@ const IND_PICK = (() => {
     div.style.cssText = "border-top:1px solid #ECEEF2;padding-top:11px;min-width:0";
     div.innerHTML =
       `<div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">` +
-      `<div style="font-family:var(--sans);font-size:.58rem;color:#878D99;line-height:1.6;min-width:0">${SHORT[r.k]}</div>` +
+      `<div style="font-family:var(--sans);font-size:.75rem;color:#6B7180;line-height:1.6;min-width:0">${SHORT[r.k]}</div>` +
       `<div style="font-family:var(--serif);font-weight:300;font-size:1.3rem;font-variant-numeric:tabular-nums;white-space:nowrap;color:${ex ? "#2E4BD8" : "#161A22"}">${fmtSigned(r.last.value)}</div></div>`;
     const mini = Plot.plot({
       width: 260, height: 76, marginLeft: 2, marginRight: 8, marginTop: 6, marginBottom: 4,
@@ -716,12 +716,12 @@ const IND_PICK = (() => {
         div.style.cssText = "border-top:1px solid #ECEEF2;padding-top:10px;min-width:0";
         const shortLabel = s.label.trim().replace(/\s+/g, " ");
         div.innerHTML =
-          `<div style="font-family:var(--sans);font-size:.5rem;color:#A3A9B4;margin-bottom:2px">${cluster}</div>` +
+          `<div style="font-family:var(--sans);font-size:.75rem;color:#6B7180;margin-bottom:2px">${cluster}</div>` +
           `<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">` +
-          `<div style="font-family:var(--sans);font-size:.56rem;letter-spacing:.06em;color:#5B564C;line-height:1.5;min-width:0">${shortLabel}</div></div>` +
+          `<div style="font-family:var(--sans);font-size:.75rem;color:#5B564C;line-height:1.5;min-width:0">${shortLabel}</div></div>` +
           `<div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:2px">` +
           `<div style="font-family:var(--serif);font-weight:300;font-size:1.2rem;font-variant-numeric:tabular-nums;color:#161A22">${lv.toFixed(1)}</div>` +
-          `<div style="font-family:var(--sans);font-size:.58rem;color:${yoy >= 0 ? "#5F6675" : "#2E4BD8"}">${(yoy >= 0 ? "+" : "") + yoy.toFixed(1)}%</div></div>`;
+          `<div style="font-family:var(--sans);font-size:.75rem;color:${yoy >= 0 ? "#5F6675" : "#2E4BD8"}">${(yoy >= 0 ? "+" : "") + yoy.toFixed(1)}%</div></div>`;
         const mini = Plot.plot({
           width: 210, height: 54, marginLeft: 2, marginRight: 6, marginTop: 4, marginBottom: 2,
           style: { background: "transparent" },

@@ -44,3 +44,19 @@ test("the repository's raw dumps are all gzipped", () => {
   (function walk(d) { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, e.name); if (e.isDirectory()) { if (e.name !== "http-cache") walk(p); } else if (e.name.endsWith(".json") && !/-index\.json$/.test(e.name)) plain.push(p); } })("data/raw");
   assert.deepEqual(plain, []);
 });
+
+test('capture-only changes do not create raw revisions',t=>{
+ const root=tmp();t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+ writeRaw(root,'data/raw/capture.json',{vintage:null,archiveCapturedDate:'2026-10-10',a:1});
+ const original=fs.readFileSync(path.join(root,'data/raw/capture.json.gz'));
+ writeRaw(root,'data/raw/capture.json',{vintage:null,archiveCapturedDate:'2026-10-12',a:1});
+ assert.deepEqual(fs.readFileSync(path.join(root,'data/raw/capture.json.gz')),original);
+});
+
+test('multiple revisions sharing an unknown vintage preserve every previous body',t=>{
+ const root=tmp();t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+ for(const a of [1,2,3])writeRaw(root,'data/raw/unknown.json',{vintage:null,archiveCapturedDate:'2026-10-10',a});
+ const files=fs.readdirSync(path.join(root,'data/raw/vintages')).filter(f=>f.startsWith('unknown.'));
+ const values=files.map(f=>readRaw(root,'data/raw/vintages/'+f).a).sort();
+ assert.deepEqual(values,[1,2]);assert.equal(readRaw(root,'data/raw/unknown.json').a,3);
+});

@@ -295,7 +295,7 @@ const ROWS_WHO = [
       const p = Plot.plot({
         width: 372, height: 196, marginLeft: 36, marginRight: 12, marginTop: 22, marginBottom: 26, style: baseStyle,
         x: { type: "utc", label: null, tickSize: 0, tickPadding: 8, ticks: [yr(2020), yr(2023), yr(2026)], tickFormat: (x) => String(x.getUTCFullYear()) },
-        y: { label: null, domain: [Math.floor(lo / step) * step, top], ticks: Array.from({ length: Math.round((top - Math.floor(lo / step) * step) / step) + 1 }, (_, i) => Math.floor(lo / step) * step + i * step), tickFormat: (v) => String(v), tickSize: 0, tickPadding: 6 },
+        y: { label: null, domain: [Math.floor(lo / step) * step, top], ticks: Array.from({ length: Math.floor((top - Math.floor(lo / step) * step) / step) + 1 }, (_, i) => Math.floor(lo / step) * step + i * step), tickFormat: (v) => String(v), tickSize: 0, tickPadding: 6 },
         marks: [Plot.gridY({ stroke: GRID }), Plot.ruleY([0], { stroke: ZERO }), Plot.lineY(d, { x: "date", y: "value", stroke: c, strokeWidth: 1.75, strokeLinejoin: "round" }), Plot.dot([L], { x: "date", y: "value", r: 3, fill: c, stroke: "#fff", strokeWidth: 1.5 })],
       });
       p.setAttribute("aria-hidden", "true");

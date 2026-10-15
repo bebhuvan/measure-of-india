@@ -1,0 +1,11 @@
+import {guardEnergyArchive} from './lib/energy-archive-guard.mjs';
+import {getBuffer,getText} from './lib/net.mjs';
+import fs from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {writeRaw} from './lib/util.mjs';
+import crypto from 'node:crypto';
+const url='https://mospi.gov.in/sites/default/files/publication_reports/Energy_Statistics_India_2025.pdf';
+const pdf=await getBuffer(url,{maxBytes:30e6});fs.writeFileSync('/tmp/atlas-energy-report-2025.pdf',pdf);
+guardEnergyArchive(process.cwd(),'data/raw/energy-report-2025.json',{sha256:crypto.createHash('sha256').update(pdf).digest('hex')},['sha256']);
+const text=execFileSync('pdftotext',['-layout','-','-'],{input:pdf,maxBuffer:30e6}).toString();writeRaw(process.cwd(),'data/raw/energy-report-2025.json',{vintage:'2025-03-25',url,sha256:crypto.createHash('sha256').update(pdf).digest('hex'),text});
+const html=await getText('https://www.mospi.gov.in/publications-reports/innerpage/2817',{markup:true});fs.writeFileSync('/tmp/atlas-energy-report-list.html',html);console.log([...html.matchAll(/(?:href|src)=["']([^"']+(?:pdf|xlsx)[^"']*)["']/gi)].map(x=>x[1]));

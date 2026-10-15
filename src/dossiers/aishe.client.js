@@ -452,10 +452,10 @@ const parityRule = new Date(Date.UTC(2017, 3, 1)); // unused anchor
     const color = acc ? "#2E4BD8" : "#878D99";
     const cell = document.createElement("div");
     const lab = document.createElement("div");
-    lab.style.cssText = "font-family:var(--sans);font-size:.56rem;color:" + (acc ? "#2E4BD8" : "#878D99") + ";margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
+    lab.style.cssText = "font-family:var(--sans);font-size:.75rem;color:" + (acc ? "#2E4BD8" : "#878D99") + ";margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
     lab.textContent = c.name;
     const val = document.createElement("div");
-    val.style.cssText = "font-family:var(--sans);font-size:.6rem;letter-spacing:.04em;color:#5F6675;margin-top:5px";
+    val.style.cssText = "font-family:var(--sans);font-size:.75rem;color:#5F6675;margin-top:5px";
     const g = Math.round(c.growth);
     val.textContent = countWords(c.latest) + ", " + (g === 0 ? "no change" : (g > 0 ? "+" : "−") + Math.abs(g) + "%");
     const max = Math.max(...c.data.map((d) => d.value ?? 0));

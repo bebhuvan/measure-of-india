@@ -19,9 +19,16 @@
 // only genuine glyph-strikes are flagged; the 4px white halo is meant to
 // absorb grazes.
 //
-// Usage: node scripts/lint-charts.mjs [--page /guides/cpi/]  (exit 1 on finds)
+// Usage: node scripts/lint-charts.mjs [--page /guides/cpi/] [--width 390]  (exit 1 on finds)
+//
+// --width sets the viewport the page's scripts see (window.innerWidth). Below 700 px the site's
+// Plot (src/charts/plot.js) redraws categorical plates for a phone, names above each row; the
+// gates run the lint at the default (desktop) width and again at 390, so both layouts are clean.
+// Category names on a phone sit on a white plate (atlas.css g.rowname) that a reference rule
+// passes behind: they are exempt from stroke collisions, never from text overlap or bleed.
 
 import fs from "node:fs";
+import { awaitChartJobs } from './lib/chart-ready.mjs';
 import path from "node:path";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import { JSDOM } from "jsdom";
@@ -32,6 +39,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DIST = process.env.QC_DIST ? path.resolve(process.env.QC_DIST) : path.join(ROOT, "dist");
 const ONLY = process.argv.includes("--page") ? process.argv[process.argv.indexOf("--page") + 1] : null;
 const VERBOSE = process.argv.includes("--verbose");
+const VW = process.argv.includes("--width") ? +process.argv[process.argv.indexOf("--width") + 1] : null;
 
 // every dossier from the registry, every live explainer, and the front page —
 // a page added to either registry is linted here automatically
@@ -67,7 +75,7 @@ function composePoint(el, x, y) {
 function fontSizeOf(t) {
   let node = t;
   while (node) {
-    const fs = node.getAttribute && node.getAttribute("font-size");
+    const fs = node.style?.fontSize || (node.getAttribute && node.getAttribute("font-size"));
     if (fs) return parseFloat(fs);
     node = node.parentNode;
   }
@@ -89,14 +97,18 @@ function textBox(t) {
   if (!tr) return null;
   const [ax, ay] = composePoint(t, +tr[1], +tr[2]);
   const fs = fontSizeOf(t);
-  const content = t.textContent;
-  const w = content.length * fs * MONO_ADV;
+  const spans = [...t.querySelectorAll("tspan")];
+  const w = Math.max(...(spans.length ? spans : [t]).map(line => line.textContent.length * fs * MONO_ADV));
   const anchor = anchorOf(t);
   const x0 = anchor === "end" ? ax - w : anchor === "middle" ? ax - w / 2 : ax;
   // y attribute: "0.32em" = centred on anchor, "0.71em" = baseline below anchor
   const emAttr = parseFloat(t.getAttribute("y") || "0.32em");
-  const baseline = ay + emAttr * fs;
-  return { x0, x1: x0 + w, y0: baseline - 0.82 * fs, y1: baseline + 0.22 * fs, ax, ay };
+  let baseline = emAttr * fs;
+  const baselines = spans.length ? spans.map(line => {
+    baseline = line.hasAttribute("y") ? parseFloat(line.getAttribute("y")) * fs : baseline + parseFloat(line.getAttribute("dy") || "0") * fs;
+    return ay + baseline;
+  }) : [ay + baseline];
+  return { x0, x1: x0 + w, y0: Math.min(...baselines) - 0.82 * fs, y1: Math.max(...baselines) + 0.22 * fs, ax, ay };
 }
 
 function polylineOf(el) {
@@ -151,6 +163,7 @@ for (const url of PAGES) {
   const html = fs.readFileSync(file, "utf8");
   const dom = new JSDOM(html, { url: "https://indiaatlas.in" + url, pretendToBeVisual: true });
   const { window } = dom;
+  if (VW) Object.defineProperty(window, "innerWidth", { value: VW, configurable: true });
   window.URL.createObjectURL = () => "blob:x";
   window.URL.revokeObjectURL = () => {};
   window.HTMLCanvasElement.prototype.getContext = () => null;
@@ -163,8 +176,10 @@ for (const url of PAGES) {
   try {
     // per-page query: a shared entry module runs once per page, not once per process (lb/profiles)
     for (const src of scripts) await import(pathToFileURL(path.join(DIST, src)).href + "?page=" + encodeURIComponent(url));
+    await awaitChartJobs(window.document);
   } catch (e) {
     issues.push({ url, kind: "script-error", detail: e.message.slice(0, 160) });
+    window.close();
     continue;
   }
   const doc = window.document;
@@ -210,12 +225,13 @@ for (const url of PAGES) {
 
     for (const { t, box } of boxes) {
       const b = shrink(box, 3);
+      const plated = !!t.closest("g.rowname");
       // collision with strokes; a short leader line that terminates within
       // 14px of its own label's anchor is the annotation's pointer, exempt.
       // A genuine strike has several sample hits or a deep one; a corner
       // graze (1–2 hits, all within 3px of the box edge) is halo-covered.
       const anchorPt = [box.ax, box.ay];
-      outer: for (const pts of strokeLines) {
+      outer: for (const pts of plated ? [] : strokeLines) {
         const ends = [pts[0], pts.at(-1)];
         const isLeader = pts.length <= 4 && ends.some(([ex, ey]) => Math.hypot(ex - anchorPt[0], ey - anchorPt[1]) < 14);
         if (isLeader) continue;
@@ -279,11 +295,13 @@ for (const url of PAGES) {
       });
     }
   });
+  // All geometry has been inspected; no later page needs this DOM or its timers.
+  window.close();
 }
 
 const byKind = {};
 for (const i of issues) (byKind[i.kind] ??= []).push(i);
-console.log(`chart lint: ${chartsSeen} SVGs across ${ONLY ? 1 : PAGES.length} pages`);
+console.log(`chart lint${VW ? ` at ${VW}px` : ""}: ${chartsSeen} SVGs across ${ONLY ? 1 : PAGES.length} pages`);
 if (!issues.length) {
   console.log("chart lint: clean — no collisions, overlaps, bleeds, clips or centred labels");
   process.exit(0);

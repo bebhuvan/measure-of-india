@@ -304,7 +304,6 @@ function componentChart(blockId, plotId, key, d0, d1, yTicks, extraNote) {
       Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
       Plot.ruleY([d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
       Plot.ruleY([0], { stroke: "#161A22", strokeOpacity: 0.55, strokeWidth: 1 }),
-      Plot.areaY(s.data, { x: "date", y: "value", y1: d0 <= 0 ? 0 : d0, fill: s.color, fillOpacity: 0.06 }),
       Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.lineY(s.data.slice(-5), { x: "date", y: "value", stroke: s.color, strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" }),
       Plot.dot([pk], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
@@ -392,9 +391,9 @@ componentChart("cb-gva", "plot-gva", "gva", -28, 24, [-20, -10, 0, 10, 20], "GVA
     div.innerHTML =
       `<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px">` +
       `<div style="min-width:0"><div style="font-size:1.02rem;color:#161A22;line-height:1.35">${nm}</div>` +
-      `<div style="font-family:var(--sans);font-size:.56rem;color:#878D99;margin-top:3px">${sub}</div></div>` +
+      `<div style="font-family:var(--sans);font-size:.75rem;color:#6B7180;margin-top:3px">${sub}</div></div>` +
       `<div style="text-align:right;flex-shrink:0"><div style="font-family:var(--serif);font-weight:300;font-size:1.55rem;font-variant-numeric:tabular-nums;white-space:nowrap;color:${col === "#2E4BD8" ? "#2E4BD8" : "#161A22"}">${fmtSigned(last.value)}</div>` +
-      `<div style="font-family:var(--sans);font-size:.56rem;color:#878D99;margin-top:3px">${fmtFY(last.date)}, y/y</div></div></div>`;
+      `<div style="font-family:var(--sans);font-size:.75rem;color:#6B7180;margin-top:3px">${fmtFY(last.date)}, y/y</div></div></div>`;
     const mini = Plot.plot({
       width: 340, height: 110, marginLeft: 4, marginRight: 10, marginTop: 10, marginBottom: 6,
       style: { background: "transparent" },
@@ -409,7 +408,7 @@ componentChart("cb-gva", "plot-gva", "gva", -28, 24, [-20, -10, 0, 10, 20], "GVA
     mini.style.width = "100%"; mini.style.height = "auto";
     div.append(mini);
     const foot = document.createElement("div");
-    foot.style.cssText = "display:flex;justify-content:space-between;font-family:var(--sans);font-size:.55rem;color:#B5BAC4;margin-top:2px";
+    foot.style.cssText = "display:flex;justify-content:space-between;font-family:var(--sans);font-size:.75rem;color:#6B7180;margin-top:2px";
     foot.innerHTML = `<span>${fmtFY(nn[0].date)}</span><span>${fmtFY(last.date)}</span>`;
     div.append(foot);
     grid.append(div);
@@ -439,7 +438,6 @@ componentChart("cb-gva", "plot-gva", "gva", -28, 24, [-20, -10, 0, 10, 20], "GVA
     marks: [
       Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
       Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
-      Plot.areaY(nn, { x: "date", y: "value", y1: geo.d0 <= 0 ? 0 : geo.d0, fill: "#2E4BD8", fillOpacity: 0.06 }),
       Plot.lineY(nn, { x: "date", y: "value", stroke: "#2E4BD8", strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.dot(nn, { x: "date", y: "value", fill: "#2E4BD8", r: 3, stroke: "#FFFFFF", strokeWidth: 1.25 }),
       Plot.dot([last], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
@@ -489,9 +487,9 @@ function enginesGrid(IND, SH, o) {
     div.innerHTML =
       `<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px">` +
       `<div style="min-width:0"><div style="font-size:1.02rem;color:#161A22;line-height:1.35">${s.label}</div>` +
-      `<div style="font-family:var(--sans);font-size:.56rem;color:#878D99;margin-top:3px">${SH[k].toFixed(1)}% of GVA</div></div>` +
-      `<div style="text-align:right;flex-shrink:0"><div style="font-family:var(--serif);font-weight:300;font-size:1.55rem;font-variant-numeric:tabular-nums;white-space:nowrap;color:${isExtreme ? accCol : "#161A22"}">${fmtSigned(last.value)}</div>` +
-      `<div style="font-family:var(--sans);font-size:.56rem;color:#878D99;margin-top:3px">${fmtDate(last.date)}, y/y</div></div></div>`;
+      `<div style="font-family:var(--sans);font-size:.75rem;color:#6B7180;margin-top:3px">${SH[k].toFixed(1)}% of GVA</div></div>` +
+      `<div style="text-align:right;flex-shrink:0"><div style="font-family:var(--serif);font-weight:300;font-size:1.55rem;font-variant-numeric:tabular-nums;white-space:nowrap;color:#161A22">${fmtSigned(last.value)}</div>` +
+      `<div style="font-family:var(--sans);font-size:.75rem;color:#6B7180;margin-top:3px">${fmtDate(last.date)}, y/y</div></div></div>`;
     const mini = Plot.plot({
       width: 280, height: 96, marginLeft: 4, marginRight: 10, marginTop: 10, marginBottom: 6,
       style: { background: "transparent" },
@@ -506,7 +504,7 @@ function enginesGrid(IND, SH, o) {
     mini.style.width = "100%"; mini.style.height = "auto";
     div.append(mini);
     const foot = document.createElement("div");
-    foot.style.cssText = "display:flex;justify-content:space-between;font-family:var(--sans);font-size:.55rem;color:#B5BAC4;margin-top:2px";
+    foot.style.cssText = "display:flex;justify-content:space-between;font-family:var(--sans);font-size:.75rem;color:#6B7180;margin-top:2px";
     // review-a (2026-10): each panel has its own scale and no axis, so the foot names it:
     // the panel's low and high, and the grey rule is zero
     const vMin = Math.min(...vs), vMax = Math.max(...vs);
@@ -795,9 +793,9 @@ function rulerGrid(gridId, src, panels, file) {
     div.innerHTML =
       `<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px">` +
       `<div style="min-width:0"><div style="font-size:1.02rem;color:#161A22;line-height:1.35">${nm}</div>` +
-      `<div style="font-family:var(--sans);font-size:.56rem;color:#878D99;margin-top:3px">${sub}</div></div>` +
+      `<div style="font-family:var(--sans);font-size:.75rem;color:#6B7180;margin-top:3px">${sub}</div></div>` +
       `<div style="text-align:right;flex-shrink:0"><div style="font-family:var(--serif);font-weight:300;font-size:1.55rem;font-variant-numeric:tabular-nums;white-space:nowrap;color:#161A22">${pct1(last.value)}</div>` +
-      `<div style="font-family:var(--sans);font-size:.56rem;color:#878D99;margin-top:3px">${fyL(last.date)}, ${RULERS.find(([r]) => r === newest.key)[1]}</div></div></div>`;
+      `<div style="font-family:var(--sans);font-size:.75rem;color:#6B7180;margin-top:3px">${fyL(last.date)}, ${RULERS.find(([r]) => r === newest.key)[1]}</div></div></div>`;
     const marks = [Plot.ruleY([0], { stroke: "#DADDE3", strokeWidth: 1 })];
     marks.push(...(rulers.length > 1 ? seamMarks("side", rulers.map((r, i) => ({ ...r, width: i === rulers.length - 1 ? 2 : 1.6 })), false) : [Plot.lineY(rulers[0].data, { x: "date", y: "value", stroke: rulers[0].color, strokeWidth: 1.75 })]));
     marks.push(Plot.dot([last], { x: "date", y: "value", fill: newest.color, r: 3, stroke: "#FFFFFF", strokeWidth: 1.25 }));
@@ -809,7 +807,7 @@ function rulerGrid(gridId, src, panels, file) {
     mini.style.width = "100%"; mini.style.height = "auto";
     div.append(mini);
     const foot = document.createElement("div");
-    foot.style.cssText = "display:flex;justify-content:space-between;font-family:var(--sans);font-size:.55rem;color:#B5BAC4;margin-top:2px";
+    foot.style.cssText = "display:flex;justify-content:space-between;font-family:var(--sans);font-size:.75rem;color:#6B7180;margin-top:2px";
     foot.innerHTML = `<span>${fyL(first.date)}, ${pct1(first.value)}</span><span>${fyL(last.date)}</span>`;
     div.append(foot);
     grid.append(div);

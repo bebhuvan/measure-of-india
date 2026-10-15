@@ -1,0 +1,13 @@
+// Preparation only. No custom-domain route until owner approves cutover.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "india-atlas",
+  "compatibility_date": "2026-10-13",
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "force-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}
