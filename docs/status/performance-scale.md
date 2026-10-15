@@ -232,3 +232,19 @@ On the way, qc caught a bare `addEventListener` the gates' jsdom did not have (f
 
 Raised one ceiling, with the reason recorded in `perf/budgets.json` `raised`: every-cut JS 4 → 6 KB
 gzip (streaming code, 3.6 → 4.7 KB).
+
+## 2026-10-16: search latency on a throttled phone (build 3)
+
+`npm run perf:search-browser` serves the real home page at 390 px, 4x CPU, 1.6 Mbps / 750 kbps /
+150 ms. It types each labelled query and times the first result row and the series rows. Medians
+over 14 queries (`performance-scale/build3-search-browser.json`):
+
+| | First result | Series results | Series, p90 |
+|---|---:|---:|---:|
+| cold: typed as soon as the page loads (core not yet fetched) | 0.99 s | 1.93 s | 2.57 s |
+| after 3 s idle (core warmed on idle) | 0.31 s | 1.18 s | 1.84 s |
+| warm: a second query in the same tab | 0.15 s | 0.49 s | 0.69 s |
+
+The earlier pass measured complete cold results at 4.6-5.8 s under the same throttling. Its
+harness differed (`launch-performance.md`), so the comparison is indicative. Lab numbers, not
+field p75. The slowest query is "urban female unemployment": four large postings, 2.7 s cold.
