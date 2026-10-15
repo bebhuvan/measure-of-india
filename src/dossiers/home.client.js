@@ -53,10 +53,7 @@ if (q && res) {
     if (at("files").length) html += head("Files") + at("files").map((f) => opt(f.href, f.title, f.note, "<small>File</small>")).join("");
     if (!html || (series && !series.error && !series.rows.length && !top.length && !at("guide").length && !quick.files.length && !states.length))
       html = `<li class="none">Nothing matches “${esc(q.value)}”. Try fewer words, or a broader one, such as prices, output or a state's name.</li>`;
-    if (series && !series.error && !series.rows.length) {
-      const suggested = S.suggest(q.value);
-      if (suggested) html += `<li role="option" data-suggestion="${esc(suggested)}">Search for “${esc(suggested)}”</li>`;
-    }
+    if (series?.suggestion) html += `<li role="option" data-suggestion="${esc(series.suggestion)}">Search for “${esc(series.suggestion)}”</li>`;
     res.innerHTML = html;
     options().forEach((li, i) => {
       li.id = `opt${i}`;
@@ -103,7 +100,10 @@ if (q && res) {
         if(mine===seq&&!quick.guides.length&&matches.guides.length) {
           quick.guides=matches.guides; render(quick,null,words);
         }
-      } }); } catch (e) {
+      } });
+        // a query that finds nothing may be a slip of the keyboard: offer the one-edit spelling
+        if (!series.rows.length) series.suggestion = await S.suggest(text).catch(() => null);
+      } catch (e) {
         if (e.name === 'AbortError') return;
         series = { rows: [], total: 0, error: true };
       }
@@ -111,6 +111,15 @@ if (q && res) {
     }, 120);
   }
   q.addEventListener("focus", () => { if (q.value.trim()) search(); else load().catch(() => {}); });
+  // The search box is the home page's main door: fetch the small core (about 110 KB) once the page
+  // is idle, so the first query answers at once. Not on a metered or 2G connection, where it waits
+  // for the reader to reach for the box.
+  const net = navigator.connection;
+  if (!(net?.saveData || /(^|-)2g$/.test(net?.effectiveType ?? ""))) {
+    const warm = () => load().catch(() => {});
+    if ("requestIdleCallback" in window) addEventListener("load", () => requestIdleCallback(warm, { timeout: 4000 }), { once: true });
+    else addEventListener("load", () => setTimeout(warm, 1500), { once: true });
+  }
   q.addEventListener("input", search);
   q.addEventListener("keydown", (e) => {
     if (e.key === "Escape") { close(); return; }

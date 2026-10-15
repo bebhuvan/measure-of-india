@@ -2,6 +2,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { encodeIds, decodeIds, parseQuery, tokens, createSearch } from "../src/dossiers/search-core.js";
+import { searchFixture } from "./search-fixture.mjs";
 
 test("row ids survive gap and run coding", () => {
   for (const ids of [[], [0], [0, 1, 2, 3], [5, 8, 9, 10, 11, 40, 41, 100], Array.from({ length: 500 }, (_, i) => i * 3 + (i % 7 === 0 ? 1 : 0))]) {
@@ -21,14 +22,10 @@ test("query words: the last is a prefix while typing, finished words whole with 
 });
 
 test("a tiny index finds series by label and by their file's context", async () => {
-  const rows = [["Onion", "Vegetables", "48.3%", "Aug 2026", "s0000001", []], ["Potato", "Vegetables", "2.1%", "Aug 2026", "s0000002", []], ["Gold", "", "$72 bn", "2025-26", "s0000003", []]];
-  const post = {};
-  rows.forEach((r, i) => { for (const t of new Set(tokens(r[0] + " " + r[1]))) (post[t] ??= []).push(i); });
-  const shard = Object.fromEntries(Object.entries(post).map(([t, ids]) => [t, encodeIds(ids)]));
-  const core = { guides: [["cpi", "Consumer prices", ""], ["trade", "What India buys and sells", ""]], plates: [], views: [],
-    bundles: [["cpi-items", "Items of the basket", "Item", 0, 0, 2, [[0, "/guides/cpi/"]], ""], ["trade-imports", "Imports by commodity", "Commodity", 1, 2, 1, [[0, "/guides/trade/every-cut/x/"]], ""]],
-    shards: { tokens: [""], rows: [0], frequent: [] } };
-  const S = createSearch(core, async (p) => (p.startsWith("t/") ? shard : rows));
+  const { core, load } = searchFixture({ guides: [["cpi", "Consumer prices", ""], ["trade", "What India buys and sells", ""]], bundles: [
+    { slug: "cpi-items", title: "Items of the basket", cut: "Item", guide: 0, segs: [[0, "/guides/cpi/"]], rows: [["Onion", "Vegetables", "48.3%", "Aug 2026", "s0000001", []], ["Potato", "Vegetables", "2.1%", "Aug 2026", "s0000002", []]] },
+    { slug: "trade-imports", title: "Imports by commodity", cut: "Commodity", guide: 1, segs: [[0, "/guides/trade/every-cut/x/"]], rows: [["Gold", "", "$72 bn", "2025-26", "s0000003", []]] }] });
+  const S = createSearch(core, load);
   const on = await S.series("onio");
   assert.equal(on.rows[0].label, "Onion");
   assert.equal(on.rows[0].href, "/guides/cpi/#s0000001");
@@ -42,8 +39,8 @@ test("a tiny index finds series by label and by their file's context", async () 
 test("a state's name finds its profile first, in every spelling", async () => {
   const { STATES } = await import("../src/dossiers/states-key.js");
   const profiles = STATES.map((u) => [u.slug, u.name, [...new Set([u.short, ...u.aliases].filter(Boolean))].join(" | ")]);
-  const core = { guides: [["states", "State economies", "income per person by state"]], plates: [], views: [], bundles: [], profiles, shards: { tokens: [""], rows: [0], frequent: [] } };
-  const S = createSearch(core, async () => ({}));
+  const { core, load } = searchFixture({ guides: [["states", "State economies", "income per person by state"]], profiles, bundles: [] });
+  const S = createSearch(core, load);
   for (const [q, slug] of [["Orissa", "odisha"], ["Pondicherry", "puducherry"], ["NCT of Delhi", "delhi"], ["jammu & kashmir", "jammu-kashmir"], ["Tamil Nadu ", "tamil-nadu"], ["keral", "kerala"]]) {
     const r = S.quick(q).states;
     assert.ok(r.length && r[0].lead, `${q}: no profile leads`);
@@ -83,18 +80,15 @@ test("a state and a topic: the state's own headline measure and its profile lead
     ["states-hbs-t004-rural", "Infant deaths per 1,000 births by state, rural and urban", "State x sector", 5, 0, (s) => [`${s}, rural, infant deaths`, ""]],
     ["states-hbs-t004", "Infant deaths per 1,000 births by state", "State", 5, 2, (s) => [`${s}, infant deaths`, ""]],
   ];
-  const rows = [], bundles = [], ownG = [], ownO = [];
+  const bundles = [], ownG = [], ownO = [];
+  let n = 0;
   for (const [slug, title, cut, g, w, lab] of SPEC) {
-    const start = rows.length;
-    for (const s of ST) { const id = rows.length; const [l, grp] = lab(s); rows.push([l, grp, "1", "2026", `s${id}`, []]); if (w === 3) ownG.push(id); if (w === 2) ownO.push(id); }
-    bundles.push([slug, title, cut, g, start, ST.length, [[0, `/guides/${guides[g][0]}/`]], ""]);
+    const rows = [];
+    for (const st of ST) { const id = n++; const [l, grp] = lab(st); rows.push([l, grp, "1", "2026", `s${id}`, []]); if (w === 3) ownG.push(id); if (w === 2) ownO.push(id); }
+    bundles.push({ slug, title, cut, guide: g, rows });
   }
-  const post = {};
-  rows.forEach((r, i) => { for (const t of new Set(tokens(r[0] + " " + r[1]))) if (!["a", "and", "the"].includes(t)) (post[t] ??= []).push(i); });
-  const shard = Object.fromEntries(Object.entries(post).map(([t, ids]) => [t, encodeIds(ids)]));
-  const core = { guides, plates: [], views: [], bundles, profiles, own: { glance: encodeIds(ownG), other: encodeIds(ownO) },
-    shards: { tokens: [""], rows: [0], frequent: [] } };
-  const S = createSearch(core, async (p) => (p.startsWith("t/") ? shard : rows));
+  const { core, load } = searchFixture({ guides, profiles, bundles, own: { glance: ownG, other: ownO } });
+  const S = createSearch(core, load);
   const TEN = [
     ["inflation in kerala ", "cpi-2024-states", "kerala"], ["prices bihar ", "cpi-2024-states", "bihar"], ["unemployment in punjab ", "plfs-cy25-states-ur", "punjab"],
     ["jobs tamil nadu ", "plfs-cy25-states-ur", "tamil-nadu"], ["income per person gujarat ", "states-pcnsdp-current", "gujarat"], ["spending in odisha ", "hces-states", "odisha"],
@@ -114,7 +108,8 @@ test("a state and a topic: the state's own headline measure and its profile lead
   // no state named: no boost, the narrower rows keep their place by the words alone
   assert.equal((await S.series("farm labourers inflation ")).rows[0].bundle, "cpialrl-states");
   // and the fixture does test the boost: without core.own, CPI-AL leads "inflation in kerala"
-  const bare = createSearch({ ...core, own: undefined }, async (p) => (p.startsWith("t/") ? shard : rows));
+  const plain = searchFixture({ guides, profiles, bundles });
+  const bare = createSearch(plain.core, plain.load);
   assert.equal((await bare.series("inflation in kerala ")).rows[0].bundle, "cpialrl-states");
 });
 

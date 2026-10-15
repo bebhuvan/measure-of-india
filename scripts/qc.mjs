@@ -1010,7 +1010,7 @@ for (const page of PAGES) {
 // chunk within 1 MB; and a sample of series from every guide found through the shards by their
 // own label, each result opening a page that carries the row's anchor once
 {
-  const FILE_MAX = 20e6, CORE_GZ_MAX = 500 * 1024, SHARD_MAX = 1024 * 1024, PER_GUIDE = 12;
+  const FILE_MAX = 20e6, CORE_GZ_MAX = 150 * 1024, SHARD_MAX = 1024 * 1024, PER_GUIDE = 12;
   const zlib = await import("node:zlib");
   let largest = ["", 0], over = 0, nFiles = 0;
   (function walk(dir) {
@@ -1031,12 +1031,12 @@ for (const page of PAGES) {
     const coreGz = zlib.gzipSync(fs.readFileSync(coreFile), { level: 9 }).length;
     if (coreGz > CORE_GZ_MAX) fail(`site search: core.json is ${(coreGz / 1024).toFixed(0)} KB gzipped, over its ${CORE_GZ_MAX / 1024} KB budget`);
     let bigShard = 0, nShard = 0;
-    for (const sub of ["t", "r"]) for (const f of fs.readdirSync(path.join(SD, sub))) {
+    for (const sub of ["t", "r", "b", "u"].filter((d) => fs.existsSync(path.join(SD, d)))) for (const f of fs.readdirSync(path.join(SD, sub))) {
       const sz = fs.statSync(path.join(SD, sub, f)).size; nShard++; bigShard = Math.max(bigShard, sz);
       if (sz > SHARD_MAX) fail(`site search: ${sub}/${f} is ${(sz / 1024).toFixed(0)} KB, over 1 MB`);
     }
     const core = JSON.parse(fs.readFileSync(coreFile, "utf8"));
-    const nAll = core.bundles.reduce((a, b) => a + b[5], 0);
+    const nAll = core.bundles.count.reduce((a, n) => a + n, 0);
     if (nAll !== core.nSeries) fail(`site search: bundles hold ${nAll} rows, core says ${core.nSeries}`);
     const SC = await import(pathToFileURL(path.join(ROOT, "src/dossiers/search-core.js")).href);
     const S = SC.createSearch(core, async (p) => JSON.parse(fs.readFileSync(path.join(SD, p), "utf8")));
@@ -1051,7 +1051,7 @@ for (const page of PAGES) {
       return pageCache.get(url);
     };
     for (let g = 0; g < core.guides.length; g++) {
-      const ids = core.bundles.filter((b) => b[3] === g).flatMap((b) => Array.from({ length: b[5] }, (_, k) => b[4] + k));
+      const ids = core.bundles.guide.flatMap((bg, bi) => (bg === g ? Array.from({ length: S.bundleRows(bi) }, (_, k) => S.bundleStart(bi) + k) : []));
       if (!ids.length) { fail(`site search: guide ${core.guides[g][0]} has no series in the index`); continue; }
       const pick = [...new Set(Array.from({ length: Math.min(PER_GUIDE, ids.length) }, (_, k) => ids[Math.floor((k + 0.5) * ids.length / Math.min(PER_GUIDE, ids.length))]))];
       const rows = await S.rowsAt(pick);

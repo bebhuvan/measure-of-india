@@ -8,6 +8,7 @@ import {packBundle} from '../scripts/explore-pack.mjs';
 import {createLoader} from '../src/explore/loader.js';
 import {rowAnchor} from '../src/dossiers/everycut.js';
 import {createSearch,encodeIds} from '../src/dossiers/search-core.js';
+import {searchFixture} from './search-fixture.mjs';
 
 const reason='Literal source counts are reviewed; territory and population comparability are unresolved.';
 const restricted={canInterpret:true,canCompare:false,comparisonReason:reason};
@@ -27,10 +28,8 @@ function packed(override){
 }
 const fetchFixture=({manifest,files})=>async url=>({ok:true,text:async()=>url.includes('/m/')?JSON.stringify({schemaVersion:1,bundles:{'fixture-policy':manifest}}):files.get(url.split('/').at(-1))});
 const loadFixture=fixture=>createLoader(fetchFixture(fixture),fixture.manifest.qualityRegistryVersion);
-function searchFixture(policy){
- const core={guides:[['fixture','Accounts','Literal counts']],plates:[],views:[],bundles:[['fixture-policy','Accounts','monthly',0,0,2,[[0,'/guides/fixture/']],'']],shards:{frequent:[],tokens:['accounts'],rows:[0]},quality:{version:'fixture-version',default:'fixture',policies:{fixture:{id:'fixture',...policy}},bundles:{},rowOverrides:{}}};
- const files={'t/0.json':{accounts:encodeIds([0,1])},'r/0.json':[['Accounts A','',17,'Jan 2026',rowAnchor('fixture-policy','a'),[17]],['Accounts B','',9,'Feb 2026',rowAnchor('fixture-policy','b'),[5,9]]]};
- return {core,load:async path=>files[path]};
+function policySearchFixture(policy){
+ return searchFixture({guides:[['fixture','Accounts','Literal counts']],bundles:[{slug:'fixture-policy',title:'Accounts',cut:'monthly',guide:0,segs:[[0,'/guides/fixture/']],rows:[['Accounts A','',17,'Jan 2026',rowAnchor('fixture-policy','a'),[17]],['Accounts B','',9,'Feb 2026',rowAnchor('fixture-policy','b'),[5,9]]]}],quality:{version:'fixture-version',default:'fixture',policies:{fixture:{id:'fixture',...policy}},bundles:{},rowOverrides:{}}});
 }
 
 test('restricted reviewed counts retain exact single-series values, nulls, dates and source fields',()=>{
@@ -88,7 +87,7 @@ test('registry and search reject malformed, contradictory and unexplained compar
  const policy={id:'fixture',status:'canonical',canInterpret:true,reason:'Canonical source values are checked mechanically.'};
  for(const invalid of [{...policy,canCompare:'false'},{...policy,canInterpret:false,canCompare:true},{...policy,canCompare:false,comparisonReason:'short'},{...policy,canCompare:false,reason:'short'}]){
   assert.throws(()=>validateQualityRegistry({schemaVersion:1,default:invalid,rules:[]}));
-  const {core,load}=searchFixture(invalid);assert.throws(()=>createSearch(core,load),/quality policy/);
+  const {core,load}=policySearchFixture(invalid);assert.throws(()=>createSearch(core,load),/quality policy/);
  }
  assert.doesNotThrow(()=>validateQualityRegistry({schemaVersion:1,default:{...policy,canCompare:false},rules:[]}));
 });
@@ -129,7 +128,7 @@ test('loader rejects a valid hashed shard that advertises comparisons forbidden 
 });
 
 test('search preserves reviewed literal numeric readout and identity while carrying the comparison restriction',async()=>{
- const {core,load}=searchFixture(restricted),S=createSearch(core,load,{expectedQualityVersion:'fixture-version'}),result=await S.series('accounts',{limit:2});
+ const {core,load}=policySearchFixture(restricted),S=createSearch(core,load,{expectedQualityVersion:'fixture-version'}),result=await S.series('accounts',{limit:2});
  assert.equal(result.rows.length,2);assert.equal(result.rows[0].quality.canInterpret,true);
  assert.equal(result.rows[0].quality.canCompare,false);assert.equal(canComparePolicy(result.rows[0].quality),false);
  assert.deepEqual(result.rows.map(r=>r.latest).sort((a,b)=>a-b),[9,17]);

@@ -12,11 +12,11 @@
 //             row's anchor (everycut.js rowAnchor) so a result opens on that row
 import fs from "node:fs";
 import path from "node:path";
-import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { DOSSIERS } from "../src/dossiers/registry.js";
 import { everyCutPlan, guideBundles, rowsOf, loadBundle, bundleTitle, cutOf } from "../src/dossiers/everycut.js";
-import { tokens, indexTokens, STOP, encodeIds, rankUnitGroups } from "../src/dossiers/search-core.js";
+import { indexTokens, STOP, rankUnitGroups } from "../src/dossiers/search-core.js";
+import { packSearchIndex } from "../src/dossiers/search-pack.js";
 import { getSourceQuality, qualityPublicLabel, qualityRegistryVersion } from '../src/explore/source-quality.js';
 import { discoverSearchPlates } from "./lib/search-plates.mjs";
 import { unitOf } from '../src/dossiers/units.js';
@@ -24,11 +24,7 @@ import { unitOf } from '../src/dossiers/units.js';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DIST = path.resolve(process.argv[2] ?? path.join(ROOT, "dist"));
 const OUT = path.join(DIST, "search");
-// a token whose coded posting list would pass this many bytes keeps none: it narrows rows another
-// word found (search-core.js). Postings are run-length coded, so this is a handful of words.
-const FREQUENT_BYTES = 900 * 1024;
-// shards and chunks are packed to about this many bytes of JSON (CONTRACT-render: each <= 1 MB)
-const PACK = 256 * 1024, PACK_ROWS = 128 * 1024;
+// no file over this (CONTRACT-render); the packing sizes are in src/dossiers/search-pack.js
 const MAX_FILE = 1024 * 1024;
 
 const decode = (s) => s.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n)).replace(/\s+/g, " ").trim();
@@ -36,7 +32,7 @@ const round3 = (v) => (v == null ? null : +v.toPrecision(3));
 const clip = (s, n) => (s.length > n ? s.slice(0, n - 1).replace(/\s+\S*$/, "") + "…" : s);
 
 // ----- guides and plates
-const guides = DOSSIERS.map((d) => [d.slug, d.title, clip(String(d.blurb ?? d.description ?? ""), 220)]);
+const guides = DOSSIERS.map((d) => [d.slug, d.title, clip(String(d.blurb ?? d.description ?? ""), 220), d.crumbTitle && d.crumbTitle !== d.title ? d.crumbTitle : ""]);
 const gIdx = Object.fromEntries(DOSSIERS.map((d, i) => [d.slug, i]));
 const plates = [];
 for (const d of DOSSIERS) {
@@ -87,12 +83,12 @@ const rowIdOf = new Map();   // "bundle|key" -> row id
 const post = new Map();   // token -> row ids
 const defaultQuality=getSourceQuality('',{});
 const quality={version:qualityRegistryVersion,default:defaultQuality.id,policies:{[defaultQuality.id]:defaultQuality},bundles:{},rowOverrides:{}};
-const ranking={version:1,units:{}};
+const units={};
 for (const b of order) {
   const B = loadBundle(b);
   const bQuality=getSourceQuality(b,B);
   quality.policies[bQuality.id]=bQuality;
-  if(bQuality.id!==defaultQuality.id)quality.bundles[b]=bQuality.id;
+  if(bQuality.id!==defaultQuality.id)quality.bundles[bundles.length]=bQuality.id;
   const p = place.get(b);
   const list = p ? p.rows : rowsOf(b).map((r) => [r, null]);
   const start = rows.length;
@@ -107,7 +103,7 @@ for (const b of order) {
     if(q.observationKind==='expected-schedule')recent=[];
     quality.policies[q.id]=q;
     if(q.id!==bQuality.id)(quality.rowOverrides[q.id]??=[]).push(id);
-    if(q.canInterpret)for(const group of rankUnitGroups(unitOf(B,s)))(ranking.units[group]??=[]).push(id);
+    if(q.canInterpret)for(const group of rankUnitGroups(unitOf(B,s)))(units[group]??=[]).push(id);
     rowIdOf.set(b + "|" + r.key, id);   // datafix: profile rows, below
     rows.push([r.label, r.group || "", r.latestText, r.period + (r.estimated ? ", est." : ""), r.id, recent,
       ...(!q.canInterpret?[qualityPublicLabel(q,{...s,key:r.key},b)]:[])]);
@@ -119,40 +115,21 @@ for (const b of order) {
   }
   const m = B.meta ?? {};
   const ctx = clip([m.product || m.source, m.base && m.base !== "null" ? `base ${m.base}` : null, m.frequency].filter(Boolean).join(", "), 120);
-  bundles.push([b, bundleTitle(b), list[0]?.[0].cut ?? cutOf(b), p ? gIdx[p.guide] : -1, start, list.length, segs, ctx,
-    ...(!bQuality.canInterpret&&list[0]?.[0].id?[list[0][0].id]:[])]);
+  bundles.push({ slug: b, title: bundleTitle(b), cut: list[0]?.[0].cut ?? cutOf(b), guide: p ? gIdx[p.guide] : -1, count: list.length, segs, ctx,
+    reviewAnchor: !bQuality.canInterpret && list[0]?.[0].id ? list[0][0].id : undefined });
+  void start;
 }
-
-// ----- shards
-fs.rmSync(OUT, { recursive: true, force: true });
-fs.mkdirSync(path.join(OUT, "t"), { recursive: true });
-fs.mkdirSync(path.join(OUT, "r"), { recursive: true });
-const frequent = [];
-const toks = [...post.keys()].sort();
-const tFirst = [];
-let cur = {}, curBytes = 2, n = 0;
-const flushT = () => { if (!Object.keys(cur).length) return; fs.writeFileSync(path.join(OUT, "t", `${n++}.json`), JSON.stringify(cur)); cur = {}; curBytes = 2; };
-for (const t of toks) {
-  const d = encodeIds(post.get(t));
-  const entry = JSON.stringify(t) + ":" + JSON.stringify(d) + ",";
-  if (entry.length > FREQUENT_BYTES) { frequent.push(t); continue; }
-  if (curBytes + entry.length > PACK && Object.keys(cur).length) flushT();
-  if (!Object.keys(cur).length) tFirst.push(t);
-  cur[t] = d; curBytes += entry.length;
-}
-flushT();
-const rFirst = [];
-let chunk = [], cBytes = 2, cn = 0;
-const flushR = () => { if (!chunk.length) return; fs.writeFileSync(path.join(OUT, "r", `${cn++}.json`), JSON.stringify(chunk)); chunk = []; cBytes = 2; };
-rows.forEach((r, i) => {
-  const s = JSON.stringify(r).length + 1;
-  if (cBytes + s > PACK_ROWS && chunk.length) flushR();
-  if (!chunk.length) rFirst.push(i);
-  chunk.push(r); cBytes += s;
+// what each file is about, for words that match a file rather than a row: its title, cut and
+// source, and its guide's title (search-core: a word in a row's label scores 2, in its file 1)
+const hay = (parts) => indexTokens(parts.filter(Boolean).join(" "));
+const bpost = new Map();
+bundles.forEach((b, bi) => {
+  for (const t of new Set([...hay([b.title, b.cut, b.ctx]), ...(b.guide >= 0 ? hay([guides[b.guide][1]]) : [])])) {
+    if (STOP.has(t)) continue;
+    if (!bpost.has(t)) bpost.set(t, []);
+    bpost.get(t).push(bi);
+  }
 });
-flushR();
-// the first shard must answer for any word sorting before its first token
-if (tFirst.length) tFirst[0] = "";
 
 // ---- profiles (lb/profiles): every state and UT profile, with each spelling the state key knows
 // (Orissa, Pondicherry, NCT of Delhi), so a state's name finds its profile first
@@ -173,26 +150,30 @@ for (const m of MEASURES) {
   for (const key of c.cur.values()) { const id = rowIdOf.get(m.bundle + "|" + key); if (id != null) (m.glance ? ownIds.glance : ownIds.other).add(id); }
 }
 for (const id of ownIds.glance) ownIds.other.delete(id);
-const own = { glance: encodeIds([...ownIds.glance].sort((a, b) => a - b)), other: encodeIds([...ownIds.other].sort((a, b) => a - b)) };
+const own = { glance: [...ownIds.glance].sort((a, b) => a - b), other: [...ownIds.other].sort((a, b) => a - b) };
+// what the bundles holding a state's own measures are about (search-core isTopic and the own boost)
+const ownTopics = {};
+{
+  const starts = []; let acc = 0; for (const b of bundles) { starts.push(acc); acc += b.count; }
+  const bundleOfRow = (r) => { let lo = 0, hi = starts.length - 1, ans = 0; while (lo <= hi) { const m = (lo + hi) >> 1; if (starts[m] <= r) { ans = m; lo = m + 1; } else hi = m - 1; } return ans; };
+  for (const id of [...own.glance, ...own.other]) {
+    const bi = bundleOfRow(id), b = bundles[bi];
+    ownTopics[bi] ??= [...new Set([...hay([b.title, b.cut]), ...(b.guide >= 0 ? hay([guides[b.guide][1], guides[b.guide][2]]) : [])])];
+  }
+}
 // ---- end datafix
-// Content-address each file, so a core from an already-open tab cannot silently read the
-// next release's reordered rows. An unavailable old hash is a recoverable error, never mixed data.
-const hashedFiles = dir => fs.readdirSync(path.join(OUT, dir)).sort((a,b)=>parseInt(a)-parseInt(b)).map(file => {
-  // 96-bit content names keep the core compact at thousands of chunks. Deployment audits
-  // verify every filename against SHA256; numeric IDs never identify a release by themselves.
-  const old = path.join(OUT, dir, file), hash = crypto.createHash('sha256').update(fs.readFileSync(old)).digest('hex').slice(0,24);
-  const name = `${file.slice(0,-5)}.${hash}.json`;
-  fs.renameSync(old, path.join(OUT, dir, name));
-  return name;
-});
-for(const key of Object.keys(quality.rowOverrides))quality.rowOverrides[key]=encodeIds(quality.rowOverrides[key]);
-for(const key of Object.keys(ranking.units))ranking.units[key]=encodeIds(ranking.units[key]);
-const core = { v: 1, identityVersion: 1, quality, ranking, built: new Date().toISOString().slice(0, 10), nSeries: rows.length, guides, plates, bundles, views, profiles, own,
-  shards: { tokens: tFirst, rows: rFirst, frequent: frequent.sort(), lexicon: toks, filesT: hashedFiles('t'), filesR: hashedFiles('r') } };
-fs.writeFileSync(path.join(OUT, "core.json"), JSON.stringify(core));
-
-// sizes, for the log; qc enforces the budgets
+const { core, files } = packSearchIndex({ guides, plates, views, profiles, bundles, rows, post, bpost, units, own, ownTopics, quality: { ...quality, rowOverrides: quality.rowOverrides } });
+core.built = new Date().toISOString().slice(0, 10);
+fs.rmSync(OUT, { recursive: true, force: true });
 let big = 0, tot = 0, nf = 0;
-for (const dir of ["t", "r"]) for (const f of fs.readdirSync(path.join(OUT, dir))) { const s = fs.statSync(path.join(OUT, dir, f)).size; tot += s; nf++; big = Math.max(big, s); if (s > MAX_FILE) throw new Error(`search-index: ${dir}/${f} is ${(s / 1e6).toFixed(2)} MB, over 1 MB`); }
+for (const [name, value] of Object.entries(files)) {
+  const f = path.join(OUT, name), text = JSON.stringify(value);
+  fs.mkdirSync(path.dirname(f), { recursive: true });
+  fs.writeFileSync(f, text);
+  const sz = Buffer.byteLength(text); tot += sz; nf++; big = Math.max(big, sz);
+  if (sz > MAX_FILE) throw new Error(`search-index: ${name} is ${(sz / 1e6).toFixed(2)} MB, over 1 MB`);
+}
+fs.writeFileSync(path.join(OUT, "core.json"), JSON.stringify(core));
 const coreBytes = fs.statSync(path.join(OUT, "core.json")).size;
-console.log(`search index: ${rows.length.toLocaleString("en-IN")} series, ${plates.length} plates, ${bundles.length} files; core ${(coreBytes / 1024).toFixed(0)} KB; ${tFirst.length} token shards + ${rFirst.length} row chunks (${(tot / 1e6).toFixed(1)} MB, largest ${(big / 1024).toFixed(0)} KB); ${frequent.length} frequent words without postings`);
+const nOf = (d) => Object.keys(files).filter((k) => k.startsWith(d + "/")).length;
+console.log(`search index v2: ${rows.length.toLocaleString("en-IN")} series, ${plates.length} plates, ${bundles.length} files; core ${(coreBytes / 1024).toFixed(0)} KB; ${nOf("t")} token shards, ${nOf("r")} row chunks, ${nOf("b")} bundle files (${nf} files, ${(tot / 1e6).toFixed(1)} MB, largest ${(big / 1024).toFixed(0)} KB); ${core.shards.frequent.length} frequent words without postings`);

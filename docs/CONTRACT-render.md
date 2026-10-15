@@ -69,18 +69,34 @@ build.
   the page was built from; the deployed site performs zero data requests
   beyond static assets.
 - **No file in dist over 20 MB** (Cloudflare Pages refuses any file over 25 MiB; qc fails at 20 MB).
-- **Site search scales with the series count, not the page.** It is static files the build writes
-  under `/search/` (`scripts/search-index.mjs`, run by the build hook; engine
-  `src/dossiers/search-core.js`, shared by the home page and qc):
-  - the core index, fetched when a reader first focuses the search box, **≤ 500 KB gzipped**:
-    every guide, every plate (title and finding), every bundle (title, cut, guide, where its
-    every-cut rows live) and every long-tail every-cut view;
-  - series in **token shards and row chunks of ≤ 1 MB each** (packed to about 256 KB and 128 KB),
-    fetched only when a query needs them, with the manifest in the core index;
-  - every result links to a plate (`#<figure id>`), an every-cut row (`#s…`, everycut.js
+- **Site search: a core of fixed size, everything per row fetched by need** (index v2, 2026-10-15).
+  Static files the build writes under `/search/` (`scripts/search-index.mjs`, run by the build
+  hook, packing through `src/dossiers/search-pack.js`). The engine is `src/dossiers/search-core.js`,
+  shared by the home page, the explorer, qc and `scripts/perf-search.mjs`.
+  - The core index is fetched when a reader is about to search, and is **≤ 150 KB gzipped**.
+    It holds:
+    - every guide, chart (title and finding), every-cut view and state profile;
+    - the quality policies;
+    - per bundle, only its guide and row count;
+    - the first word of each token shard.
+
+    Nothing in it is per row, so it grows with guides and charts, not with data.
+  - These files are fetched only when a query needs them, **each ≤ 1 MB**:
+    - token shards (row and bundle postings, about 32 KB);
+    - row chunks (512 rows);
+    - bundle records (64 per file);
+    - quantity-group rows;
+    - the vocabulary, fetched only to suggest a spelling.
+  - **A cold query fetches ≤ 300 KB gzipped beyond the core.** `perf-search` measures every
+    labelled query.
+  - Every result links to a plate (`#<figure id>`), an every-cut row (`#s…`, everycut.js
     `rowAnchor`, stable across releases) or a bundle's download.
-  qc fails a core over budget, a shard or chunk over 1 MB, and any of a sample of series from
-  every guide that its own label does not find, or whose link does not open on its row.
+  - **The result order is `layout()`**, rendered by the home page and judged by `perf-search`
+    against `perf/search-queries.json`. A query marked `known` there is a recorded miss. A new
+    miss, or a known one that starts passing without its mark removed, fails the gate.
+
+  qc fails a core over budget, any file over 1 MB, and any of a sample of series from every guide
+  that its own label does not find, or whose link does not open on its row.
 - Charts render at their intrinsic width; containers may scale via CSS
   (`width:100%` on the svg) but plot geometry is computed once.
 
@@ -131,14 +147,13 @@ static guide/EveryCut context. Their canonical is the common explorer entrance.
 
 The final integrated artifact must contain at most 16,000 files (20% headroom against a conservative 20,000-file hosting cap). Full post-build verification checks every series value/field, date axis, instrument metadata, identity and chunk hash against canonical source files; it fails on omissions, duplicates or budgets. Related cuts are fetched only on request, keeping initial exact-series lookup to two data requests.
 
-Search index files use content-hashed SHA-256 token/row filenames, `filesT`/`filesR`
-maps and a lexicon in the revalidated core. Hashed files cache immutably; numeric
-posting offsets are release-local. Identity interface v1 exposes both
-`explorerHref` and `guideHref` derived from bundle/anchor. Token/row caches are
-bounded to 24/48 files. Independent reads overlap, failed promises are evicted,
-and cancellation is checked before fetching rows and during large scans. Existing
-500 KiB gzipped core and 1 MiB shard budgets remain. Typo suggestions require one
-unambiguous edit and do not silently alter valid cuts. Guide charts all complete through the shared explicit readiness lifecycle; scheduling is cooperative rather than viewport-dependent.
+Search index files are named with one release hash (core `rel`), so they cache immutably and an
+open tab can never read the next release's reordered rows: a missing name is a recoverable error,
+never mixed data. Numeric posting offsets are release-local. Identity interface v1 exposes both
+`explorerHref` and `guideHref`, derived from bundle and anchor. Token, row and bundle caches are
+bounded (24/48/32 files). Independent reads overlap, failed promises are evicted, and
+cancellation is checked before fetching rows and during large scans. Typo suggestions require
+one unambiguous edit and do not silently alter valid cuts. Guide charts all complete through the shared explicit readiness lifecycle; scheduling is cooperative rather than viewport-dependent.
 
 
 ### Source quality and publication eligibility

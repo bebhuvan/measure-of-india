@@ -54,7 +54,7 @@ for (const q of queries) {
   const hit = (x) => (!q.href || re(q.href).test(x.href)) && (!q.label || re(q.label).test(x.label)) && (!q.bundle || re(q.bundle).test(x.bundle ?? ""));
   const firstSeries = series.rows[0];
   const seriesOk = !q.series || (firstSeries && re(q.series).test(firstSeries.label + " " + firstSeries.bundle));
-  const suggestOk = !q.suggest || S.suggest(q.q) === q.suggest;
+  const suggestOk = !q.suggest || (await S.suggest(q.q)) === q.suggest;
   const ok = (q.none ? list.length === 0 : q.suggest ? true : top.some(hit)) && seriesOk && suggestOk;
   if (q.known) { if (ok) failures.push(`"${q.q}": now passes; remove its known mark ("${q.known}") so it stays fixed`); else known.push(`"${q.q}": ${q.known}`); }
   else if (!ok) failures.push(`"${q.q}": expected ${JSON.stringify({ href: q.href, label: q.label, series: q.series, none: q.none })} in top ${q.top ?? 3}; got ${top.map((x) => `${x.kind}:${x.label}`).join(" | ") || "nothing"}${q.series ? `; first series ${firstSeries?.label ?? "none"} [${firstSeries?.bundle}]` : ""}`);
