@@ -3,6 +3,37 @@ import {loadPensionDownloadContract,governedDownloadPlan} from './governed-downl
 // Governed source-specific pension histories. All numeric consumers use named policies.
 import {getSourceQuality,sourceQualityRegistry,sourceRecordFingerprint} from '../explore/source-quality.js';
 import {rowAnchor} from './everycut.js';
+
+// [bundle, source record label, section, reader title, how to read]. Titles are checked against the
+// values in test/pensions-governed-reader.test.mjs; change both together.
+const SAVING='Who is saving',MONEY='How much money is in the schemes',LEAVING='Withdrawing and retiring';
+export const GUIDE_PLAN=[
+ ['pensions-m3','APY',SAVING,'Atal Pension Yojana has far more members than any other scheme','Subscribers at the end of each month. APY is open to people aged 18 to 40 who are not income-tax payers and promises a fixed monthly pension of ₹1,000 to ₹5,000 from age 60, depending on what they pay in.'],
+ ['pensions-m3','SG',SAVING,'State government employees are the largest group within the NPS','NPS subscribers employed by state governments, at the end of each month. Most state employees who joined after their state moved to the NPS are enrolled automatically.'],
+ ['pensions-m3','CG',SAVING,'Central government membership has grown more slowly than the states’','NPS subscribers employed by the central government. Central employees who joined from 2004 onwards are covered by the NPS rather than the old pension.'],
+ ['pensions-m3','CORPORATE',SAVING,'More private-sector employees save through their employer','Employees enrolled through their employer’s corporate NPS, at the end of each month.'],
+ ['pensions-a19','TOTAL NUMBER OF CORPORATES REGISTERED IN NPS AS ON THE END OF YEAR',SAVING,'More employers now offer the NPS','Companies and other employers registered to offer the NPS to their staff, at the end of each financial year.'],
+ ['pensions-m3','ALL CITIZEN',SAVING,'Individuals now join the NPS on their own in large numbers','Subscribers who opened an NPS account themselves, outside an employer scheme, at the end of each month.'],
+ ['pensions-a21-count','NUMBER OF SUBSCRIBERS TIER1 AS END OF MARCH OF THE PARTICULAR YEAR',SAVING,'Opening an account online has become common','Subscribers who opened their main (Tier I) account online through eNPS, at the end of each financial year.'],
+ ['pensions-m3','NPS LITE',SAVING,'NPS Lite, the older scheme for informal workers, has shrunk','NPS Lite subscribers at the end of each month. The scheme was wound down after APY began in 2015, so its numbers fall as members leave or move across.'],
+ ['pensions-m3','NPS VATSLYA',SAVING,'NPS Vatsalya lets parents save for their children','Accounts opened for children under NPS Vatsalya, which began in September 2024. The account becomes an ordinary NPS account at 18.'],
+ ['pensions-m2','SG',MONEY,'State government employees hold the largest pool of pension money','Assets under management at the end of each month, in ₹ crore. The value moves with contributions and with the markets the money is invested in.'],
+ ['pensions-m2','CG',MONEY,'Central government accounts hold the second-largest pool','Assets under management for central government subscribers, in ₹ crore.'],
+ ['pensions-m2','CORPORATE',MONEY,'Money in employer schemes has grown fast','Assets under management for corporate NPS subscribers, in ₹ crore.'],
+ ['pensions-m2','APY',MONEY,'APY money is small for the number of people in it','Assets under management for Atal Pension Yojana, in ₹ crore. Members are low earners and pay in small monthly amounts, so the money builds slowly.'],
+ ['pensions-a15','Purchase or construction of a residential house',LEAVING,'Buying or building a house is the main reason to withdraw early','Partial withdrawals processed for buying or building a house, each financial year. Subscribers may withdraw part of their own contributions early for a few reasons the rules allow.'],
+ ['pensions-a13','Total',LEAVING,'More people are buying an annuity when they leave','Annuity plans bought at retirement or exit, each financial year. At exit, NPS rules require most subscribers to use part of their savings to buy an annuity, a pension paid by an insurer.'],
+ ['pensions-a23','SG',LEAVING,'State government retirements under the NPS are set to rise','An expected schedule, not a count of exits: PFRDA’s estimate of state government subscribers who will reach retirement age in each coming year. The dashed line and hollow dots mark expected values.'],
+];
+// Figures the guide's prose quotes, each from one reviewed record: [bundle, label, which point].
+export const READER_FACTS={
+ apy_members:['pensions-m3','APY','last'],sg_members:['pensions-m3','SG','last'],cg_members:['pensions-m3','CG','last'],corporate_members:['pensions-m3','CORPORATE','last'],
+ all_citizen_members:['pensions-m3','ALL CITIZEN','last'],lite_peak:['pensions-m3','NPS LITE','peak'],lite_members:['pensions-m3','NPS LITE','last'],
+ sg_aum:['pensions-m2','SG','last'],cg_aum:['pensions-m2','CG','last'],apy_aum:['pensions-m2','APY','last'],
+ employers:['pensions-a19','TOTAL NUMBER OF CORPORATES REGISTERED IN NPS AS ON THE END OF YEAR','last'],
+ housing_withdrawals:['pensions-a15','Purchase or construction of a residential house','last'],withdrawals_processed:['pensions-a14','NO OF PARTIAL WITHDRAWAL REQUESTS PROCESSED','last'],
+ annuities:['pensions-a13','Total','last'],
+};
 export function governedPensionModel(bundles,{heldLedger}={}){
  const plates=[],facts={},pending=[],seen=new Set();
  for(const[bundle,B]of bundles){
@@ -30,7 +61,12 @@ export function governedPensionModel(bundles,{heldLedger}={}){
  const APY=plates.filter(p=>p.bundle==='pensions-m3'&&p.title==='APY');
  if(APY.length!==1||APY[0].sourceQuality.observationKind!=='observed-stock')throw Error('Pension draft headline source is not uniquely reviewed stock');
  const headline=structuredClone(facts[APY[0].id]);
- return {status:'GOVERNED READER DRAFT; not promoted or browser-certified',plates,facts,headline,pending,heldLedger,coverage:{publicationRecords:seen.size+pending.length,reviewedStandaloneRecords:seen.size,reviewedObservedRecords:plates.filter(p=>p.observationKind!=='expected-schedule').length,reviewedExpectedRecords:plates.filter(p=>p.observationKind==='expected-schedule').length,pendingRecords:pending.length,sourceOnlyRecords:heldLedger?.heldRecords??0,historicalMultiSeriesDesign:'The earlier 208 candidate panels remain a historical design inventory; this reader makes no completed-panel claim.'}};
+ // The guide shows one record per reader question (the lens method); every other reviewed record
+ // stays in Every Cut and the downloads. A plate is a reviewed record plate with a reader title.
+ const record=(bundle,label)=>{const r=plates.filter(p=>p.bundle===bundle&&p.title===label);if(r.length!==1)throw Error(`Pension guide plan needs one reviewed record: ${bundle} ${label}`);return r[0];};
+ const guide=GUIDE_PLAN.map(([bundle,label,group,title,explain])=>({...record(bundle,label),title,sourceTitle:label,group,explain}));
+ const readerFacts=Object.fromEntries(Object.entries(READER_FACTS).map(([name,[bundle,label,at]])=>{const r=record(bundle,label),f=facts[r.id],i=at==='peak'?f.values.reduce((m,v,j)=>Number.isFinite(v)&&v>(f.values[m]??-Infinity)?j:m,0):at==='first'?f.values.findIndex(Number.isFinite):f.values.findLastIndex(Number.isFinite);return [name,{record:r.id,value:f.values[i],unit:f.unit,date:f.dates[i],period:f.periods[i]}];}));
+ return {status:'GOVERNED READER DRAFT; not promoted or browser-certified',plates:guide,records:plates,facts,readerFacts,headline,pending,heldLedger,coverage:{publicationRecords:seen.size+pending.length,reviewedStandaloneRecords:seen.size,reviewedObservedRecords:plates.filter(p=>p.observationKind!=='expected-schedule').length,reviewedExpectedRecords:plates.filter(p=>p.observationKind==='expected-schedule').length,guidePlates:guide.length,pendingRecords:pending.length,sourceOnlyRecords:heldLedger?.heldRecords??0,historicalMultiSeriesDesign:'The earlier 208 candidate panels remain a historical design inventory; this reader makes no completed-panel claim.'}};
 }
 
 export function pensionsModel({bundles,root=process.cwd()}={}){

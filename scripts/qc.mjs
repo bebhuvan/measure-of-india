@@ -69,7 +69,7 @@ const pensionQC=guideRegistry.pensions?pensionsModel():null;
 const PAGES = [
   ...(investorQC?[{url:"/guides/investor-participation/",slug:null,minPlots:investorQC.plates.length,exactPlots:investorQC.plates.length,sourceTableSelector:'[data-investor-layout="source-table"] table',checks:[...investorQC.facts.map(f=>["n-"+f.id,()=>investorFormat(f.value,f.unit)]),...investorQC.plates.map(p=>["pv-"+p.id,()=>investorFormat(p.rows[0].value,p.unit)])]}]:[]),
   ...(pensionQC?[{url:'/guides/pensions/',slug:null,minPlots:pensionQC.plates.length,checks:[['n-pensions-apy',()=>pensionFormat(pensionQC.headline.lastSourceValue,pensionQC.headline.unit)],...pensionQC.plates.map(p=>['pv-'+p.id,()=>pensionFormat(p.rows[0].value,p.unit)]),['prov-vintage',()=> 'Source revision date: not published.']]}]:[]),
-  {url:"/guides/digital-access/",slug:null,minPlots:158,checks:[
+  {url:"/guides/digital-access/",slug:null,minPlots:digitalQC.plates.length,checks:[
     ...Object.entries(digitalQC.facts).map(([id,f])=>["n-"+id,()=>digitalFormat(f.value,f.unit)]),
     ...digitalQC.plates.map(p=>["pv-"+p.id,()=>digitalFormat(p.rows[0].value,p.rows[0].unit)]),
     ...digitalQC.plates.filter(p=>p.vary==="state").map(p=>["pm-median-"+p.id,()=>digitalFormat(digitalQC.plateFacts[p.id].median,p.unit)]),
@@ -80,7 +80,7 @@ const PAGES = [
   {url:"/guides/energy/",slug:null,checks:[...Object.entries(energyQC.facts).map(([id,f])=>["n-"+id,()=>energyFormat(f.value,f.unit)]),...energyQC.plates.map(p=>["pv-"+p.id,()=>{const r=p.kind==="history"?p.rows.filter(r=>r.value!=null).at(-1):p.rows[0];return energyFormat(r.value,p.unit)}]),["prov-vintage",()=>energyQC.plates[0].vintage]]},
   // ---- end energy expansion ----
   {url:"/guides/households/",slug:null,checks:[...Object.entries(householdsQC.facts).map(([id,f])=>["n-"+id,()=>householdFormat(f.value,f.unit)]),...householdsQC.plates.map(p=>["pv-"+p.id,()=>householdFormat(p.rows[0].value,p.rows[0].unit)]),["prov-vintage",()=>vintageText(householdsQC.plates[0])]]},
-  {url:"/guides/schools/",slug:null,checks:[...Object.entries(schoolsQC.facts).map(([id,f])=>["n-"+id,()=>schoolFormat(f.value,f.unit)]),...schoolsQC.plates.map(p=>["pv-"+p.id,()=>schoolFormat(p.rows[0].value,p.rows[0].unit)]),["prov-vintage",()=>schoolsQC.plates[0].vintage]]},
+  {url:"/guides/schools/",slug:null,checks:[...Object.entries(schoolsQC.facts).map(([id,f])=>["n-"+id,()=>schoolFormat(f.value,f.unit)]),...schoolsQC.plates.map(p=>["pv-"+p.id,()=>schoolFormat(p.rows[0].value,p.rows[0].unit)]),["prov-vintage",()=>schoolsQC.plates[0].vintageText]]},
   // titleblock and §01 lead with the 2024-base print; the 2012-base story
   // (§05 plate, core) stays below — both bundles are checked
   { url: "/guides/cpi/", slug: null, checks: [

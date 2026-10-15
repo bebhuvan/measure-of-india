@@ -29,7 +29,7 @@ function pensionHeadlineRecord(b) {
   const key='apy_ca7e68f6',s=b.series[key],q=getSourceQuality('pensions-m3',b,{...s,key}),last=s?.data.findLastIndex(Number.isFinite);
   if(!s||last<0||q.canInterpret!==true||q.observationKind!=='observed-stock'||q.binding?.records?.[key]!==sourceRecordFingerprint(b,{...s,key}))throw Error('Pension headline requires an exact reviewed observed stock');
   const date=b.dates[last];
-  return {value:s.data[last],date,period:b.meta.periodLabels?.[date]||`${MONTHS[+date.slice(5,7)-1]} ${date.slice(0,4)}`};
+  return {value:s.data[last],date,period:`${MONTHS[+date.slice(5,7)-1]} ${date.slice(0,4)}`};
 }
 
 export const HEADLINE = {

@@ -2,8 +2,12 @@ import fs from 'node:fs';
 import YAML from 'yaml';
 import {householdModel} from '../src/dossiers/households.model.js';
 const m=householdModel(),rules=[];
-for(const [slug,shown] of m.used){
- rules.push({match:[...shown].map(k=>slug+':'+k),status:'shown',bundle:slug,plate:'Household analytical plates, direct published observations'});
+// Every bundle on disk gets a decision: the cells a plate or fact uses are shown, the rest are baked
+// (in Every Cut and the downloads). Unplotted bundles are baked whole.
+const slugs=fs.readdirSync('data/series').filter(f=>/^households-aidis-.*\.json$/.test(f)).map(f=>f.slice(0,-5)).sort();
+for(const slug of slugs){
+ const shown=m.used.get(slug)??new Set();
+ if(shown.size)rules.push({match:[...shown].map(k=>slug+':'+k),status:'shown',bundle:slug,plate:'Household analytical plates, direct published observations'});
  const count=Object.keys(JSON.parse(fs.readFileSync('data/series/'+slug+'.json','utf8')).series).length;
  if(shown.size<count)rules.push({match:slug+':*',status:'baked',bundle:slug});
 }

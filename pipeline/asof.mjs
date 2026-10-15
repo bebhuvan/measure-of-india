@@ -22,7 +22,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { marketsRbiSlices } from '../src/dossiers/markets-rbi.model.js';
-import { schoolModel } from "../src/dossiers/schools.model.js";
 import { DOSSIERS } from "../src/dossiers/registry.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -53,7 +52,6 @@ function scanBlocks() {
   // markets-rbi: full-name listed-company plates use the same freshness contract.
   for (const p of marketsRbiSlices(slug => JSON.parse(fs.readFileSync(path.join(ROOT,'data/series',slug+'.json'),'utf8')))) blocks.push({id:`markets#cb-${p.id}`,stamp:"{view.f === 'a' ? fyOf(view.date) : qOf(view.date)}",dossier:'markets'});
   // Programmatic plates declare the same freshness contract as literal figures.
-  for (const p of schoolModel().plates) blocks.push({id:`schools#cb-${p.id}`, stamp:"{p.period}", dossier:"schools"});
 // ---- energy expansion ----
   for(const p of energyModel().plates)blocks.push({id:`energy#cb-${p.id}`,stamp:"{p.period}",dossier:"energy"});
   // ---- end energy expansion ----
