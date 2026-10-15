@@ -3,7 +3,7 @@ import fs from 'node:fs';import path from 'node:path';import crypto from 'node:c
 import {getSourceQuality,qualityRegistryVersion} from '../src/explore/source-quality.js';
 import {rowAnchor} from '../src/dossiers/everycut.js';
 import {canComparePolicy} from '../src/explore/model.js';
-const dist=path.resolve(process.argv[2]||'dist'),root=path.join(dist,'explore-data');
+const dist=path.resolve(process.argv[2]||process.env.QC_DIST||'dist'),root=path.join(dist,'explore-data');
 const hash=t=>crypto.createHash('sha256').update(t).digest('hex').slice(0,24);
 const cache=new Map(),published=new Set();let records=0,points=0,maxShard=0,maxManifest=0,pending=0;const qualityCounts={};
 const readShard=file=>{if(cache.has(file))return cache.get(file);assert.match(file,/^[a-f0-9]{24}\.json$/);const text=fs.readFileSync(path.join(root,'c',file),'utf8'),bytes=Buffer.byteLength(text);assert.ok(bytes<=256*1024,`Oversize shard ${file}`);assert.equal(hash(text)+'.json',file,'Shard hash mismatch');const value=JSON.parse(text);assert.equal(value.schemaVersion,1);cache.set(file,value);while(cache.size>8)cache.delete(cache.keys().next().value);maxShard=Math.max(maxShard,bytes);return value;};

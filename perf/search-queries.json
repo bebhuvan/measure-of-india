@@ -1,0 +1,216 @@
+{
+ "note": "Labelled reader queries for scripts/perf-search.mjs. href/label/bundle: a regex one of the top N results must match; series: a regex the first series result (label + bundle) must match; known: a failure we have not fixed yet, reported but not fatal; a known query that passes fails the gate until its mark is removed.",
+ "queries": [
+  {
+   "q": "inflation in Kerala",
+   "href": "^/states/kerala/$",
+   "top": 1,
+   "series": "cpi-2024-states"
+  },
+  {
+   "q": "rupee",
+   "bundle": "^external-rupee",
+   "top": 3,
+   "known": "guides whose blurbs mention \u20b9 crowd out the exchange-rate series"
+  },
+  {
+   "q": "wheat",
+   "href": "^/guides/(farms|cpi|wpi)/",
+   "top": 3
+  },
+  {
+   "q": "CPI",
+   "href": "^/guides/cpi/$",
+   "top": 1,
+   "known": "guide titles carry no abbreviations; WPI's blurb wins"
+  },
+  {
+   "q": "inflation",
+   "href": "^/guides/cpi/$",
+   "top": 2,
+   "known": "CPI guide does not say inflation in title or blurb"
+  },
+  {
+   "q": "repo rate",
+   "href": "^/guides/rates/$",
+   "top": 1,
+   "series": "^Policy repo rate"
+  },
+  {
+   "q": "GDP",
+   "href": "^/guides/gdp/$",
+   "top": 1
+  },
+  {
+   "q": "food inflation",
+   "series": "^(?!.*(CPI-RL|CPI-AL)).*food",
+   "top": 8,
+   "known": "state labour-price indices lead over all-India CPI food"
+  },
+  {
+   "q": "urban female unemployment",
+   "series": "^(?!.*previous)",
+   "top": 8,
+   "known": "previous ILO definition (ICLS13) leads over the current one"
+  },
+  {
+   "q": "unemployment rate",
+   "href": "^/guides/(jobs|ilo)/",
+   "top": 3
+  },
+  {
+   "q": "infant mortality",
+   "series": "India",
+   "top": 8,
+   "known": "state rows lead over the all-India figure"
+  },
+  {
+   "q": "Karnataka electricity capacity",
+   "href": "^/states/karnataka/$",
+   "top": 1,
+   "series": "Total|All",
+   "known": "one fuel (gas) leads over total capacity"
+  },
+  {
+   "q": "bank deposits Maharashtra",
+   "href": "^/states/maharashtra/$",
+   "top": 1
+  },
+  {
+   "q": "Orissa",
+   "href": "^/states/odisha/$",
+   "top": 1
+  },
+  {
+   "q": "Pondicherry",
+   "href": "^/states/puducherry/$",
+   "top": 1
+  },
+  {
+   "q": "GSDP Karnataka",
+   "href": "^/states/karnataka/$",
+   "top": 1,
+   "series": "GSDP"
+  },
+  {
+   "q": "exports",
+   "href": "^/guides/trade/",
+   "top": 3
+  },
+  {
+   "q": "gold imports",
+   "href": "^/guides/trade/",
+   "top": 3
+  },
+  {
+   "q": "onion prices",
+   "series": "^Onion",
+   "top": 8,
+   "known": "a farm-household price-satisfaction cell leads over CPI/WPI onion prices"
+  },
+  {
+   "q": "petrol",
+   "href": "^/guides/(energy|trade)/",
+   "top": 3
+  },
+  {
+   "q": "IIP",
+   "href": "^/guides/iip/$",
+   "top": 1,
+   "known": "guide titles carry no abbreviations"
+  },
+  {
+   "q": "manufacturing",
+   "href": "^/guides/manufacturing/$",
+   "top": 1
+  },
+  {
+   "q": "forex reserves",
+   "href": "^/guides/external/$",
+   "top": 1
+  },
+  {
+   "q": "fiscal deficit",
+   "href": "^/guides/public-finance/",
+   "top": 3
+  },
+  {
+   "q": "household debt",
+   "href": "^/guides/(debt|households)/",
+   "top": 3
+  },
+  {
+   "q": "literacy",
+   "href": "^/guides/gender/",
+   "top": 3
+  },
+  {
+   "q": "stunting",
+   "href": "^/guides/nfhs/",
+   "top": 3
+  },
+  {
+   "q": "rainfall",
+   "href": "^/guides/climate/$",
+   "top": 1
+  },
+  {
+   "q": "coal",
+   "href": "^/guides/(climate|energy)/",
+   "top": 3
+  },
+  {
+   "q": "solar capacity",
+   "href": "^/guides/(mnre|energy)/",
+   "top": 2
+  },
+  {
+   "q": "UPI",
+   "href": "^/guides/payments/$",
+   "top": 1
+  },
+  {
+   "q": "listed company sales",
+   "href": "^/guides/markets/",
+   "top": 3
+  },
+  {
+   "q": "population",
+   "href": "^/guides/population/$",
+   "top": 1
+  },
+  {
+   "q": "poverty",
+   "href": "^/guides/poverty/$",
+   "top": 1
+  },
+  {
+   "q": "school enrolment",
+   "href": "^/guides/schools/",
+   "top": 3
+  },
+  {
+   "q": "pension",
+   "href": "^/guides/pensions/$",
+   "top": 1
+  },
+  {
+   "q": "electricity generation",
+   "href": "^/guides/energy/",
+   "top": 3
+  },
+  {
+   "q": "rural wages",
+   "href": "^/guides/jobs/",
+   "top": 3
+  },
+  {
+   "q": "inflaton",
+   "suggest": "inflation"
+  },
+  {
+   "q": "zzzzimpossible",
+   "none": true
+  }
+ ]
+}
