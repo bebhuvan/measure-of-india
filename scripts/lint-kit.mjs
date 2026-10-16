@@ -103,7 +103,8 @@ export function lintHTML(html, where = "") {
   return { charts: Math.ceil(k / 3), finds: out };
 }
 
-export const kitAsHTML = (json) => Object.values(JSON.parse(json)).map((svg) => `<div class="akf-wide">${svg}</div>`).join("");
+// kit.json holds drawings (svg strings) and, beside them, hover series and CSV tables
+export const kitAsHTML = (json) => Object.values(JSON.parse(json)).filter((v) => typeof v === "string" && v.startsWith("<svg")).map((svg) => `<div class="akf-wide">${svg}</div>`).join("");
 async function read(src) {
   if (/^https?:/.test(src)) return [[src, await (await fetch(src)).text()]];
   const st = fs.statSync(src);

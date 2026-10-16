@@ -196,6 +196,7 @@ for (const url of PAGES) {
   // the page's wide and mid kit drawings, shipped beside it as kit.json
   const kitFile = path.join(DIST, url, "kit.json");
   if (!VW && fs.existsSync(kitFile)) for (const [k, svg] of Object.entries(JSON.parse(fs.readFileSync(kitFile, "utf8")))) {
+    if (typeof svg !== "string" || !svg.startsWith("<svg")) continue;   // hover series and CSV tables
     chartsSeen++;
     for (const f of lintSVG(svg)) issues.push({ url: `${url} kit.json ${k}`, kind: "kit", detail: f });
   }

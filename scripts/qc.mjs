@@ -897,13 +897,15 @@ for (const page of PAGES) {
     const name = akf?.querySelector(".akf-plot")?.getAttribute("aria-label")?.trim();
     const title = plate?.querySelector(".plate-head h3")?.textContent.trim() ?? "";
     const src = plate?.querySelector(".plotfoot .src")?.textContent.replace(/\s+/g, " ").trim() ?? "";
-    const svgs = akf ? akf.querySelectorAll(".akf-plot svg.ak").length : 0;
+    // built pages carry the phone drawing inline and the wide and mid ones as kit.json placeholders
+    const kitJ = (() => { try { return JSON.parse(fs.readFileSync(path.join(DIST, "guides/cpi/kit.json"), "utf8")); } catch { return {}; } })();
+    const svgs = akf ? akf.querySelectorAll(".akf-plot > div > svg.ak").length + [...akf.querySelectorAll(".akf-plot > [data-k]")].filter((el) => String(kitJ[el.dataset.k] ?? "").startsWith("<svg")).length : 0;
     if (!akf) fail("download card: #plot-main holds no kit figure (.akf)");
     else if (!name) fail("download card: the kit figure in #plot-main has no accessible label");
     else if (svgs !== 3) fail(`download card: #plot-main has ${svgs} drawings, expected 3 (wide, mid, phone)`);
     else if (!title.includes("cost of living")) fail("download card: plate head title missing");
     else if (!src.includes("MoSPI")) fail("download card: .plotfoot .src source line missing");
-    else if (!akf.querySelector(".akf-data")) fail("download card: the kit figure carries no CSV data");
+    else if (!akf.querySelector(".akf-data") && !kitJ[akf.dataset.csvk] && !kitJ[akf.dataset.aksk]) fail("download card: the kit figure carries no CSV data");
     else ok(`download card: kit plate named, titled and sourced (${svgs} drawings)`);
   }
   // small-multiple grid panels are decorative (aria-hidden) — their accessible

@@ -49,6 +49,15 @@ function drawing(kind, svg) {
   return `<div class="akf-${kind}" aria-hidden="true" data-k="${k}" style="aspect-ratio:${box(svg)}"></div>`;
 }
 const attrJSON = (o) => JSON.stringify(o).replace(/&/g, "&amp;").replace(/'/g, "&#39;").replace(/</g, "&lt;");
+// The hover series and the CSV table are only needed when a reader points at a chart or asks for
+// its data: in the built site they travel in kit.json too (by hash), not in the page.
+function dataAttrs(series, csv) {
+  if (!SPLIT) return { attrs: series ? ` data-aks='${attrJSON(series)}'` : "", tag: csv ? `<script type="application/json" class="akf-data">${JSON.stringify(csv).replace(/</g, "\\u003c")}</script>` : "" };
+  let attrs = "";
+  if (series) { const k = hash(JSON.stringify(series)); ALT.set(k, series); attrs += ` data-aksk="${k}"`; }
+  if (csv) { const k = hash(JSON.stringify(csv)); ALT.set(k, csv); attrs += ` data-csvk="${k}"`; }
+  return { attrs, tag: "" };
+}
 
 // bare: the drawings and their data only, for a page that already sets the title, source line and
 // download buttons around the chart (the guides' plates); enhance.js wires those buttons.
@@ -62,9 +71,9 @@ export function figure({ id, title = "", sub = "", source = "", notes = "", draw
   const aria = esc(label || title + (sub ? ". " + sub : ""));
   const plot = `<div class="akf-plot" role="img" aria-label="${aria}">` +
     out.map((svg, i) => drawing(["wide", "mid", "phone"][i], svg)).join("") + `</div>`;
-  const dataTag = csv ? `<script type="application/json" class="akf-data">${JSON.stringify(csv).replace(/</g, "\\u003c")}</script>` : "";
-  if (bare) return `<div class="akf akf-bare"${series ? ` data-aks='${attrJSON(series)}'` : ""} data-file="${esc(name)}">${plot}${dataTag}</div>`;
-  return `<figure class="akf${className ? " " + className : ""}"${id ? ` id="${esc(id)}"` : ""}${series ? ` data-aks='${attrJSON(series)}'` : ""} data-file="${esc(name)}">` +
+  const { attrs, tag: dataTag } = dataAttrs(series, csv);
+  if (bare) return `<div class="akf akf-bare"${attrs} data-file="${esc(name)}">${plot}${dataTag}</div>`;
+  return `<figure class="akf${className ? " " + className : ""}"${id ? ` id="${esc(id)}"` : ""}${attrs} data-file="${esc(name)}">` +
     (title ? `<figcaption class="akf-head"><h3 class="akf-title">${esc(title)}</h3>${sub ? `<p class="akf-sub">${esc(sub)}</p>` : ""}</figcaption>` : "") +
     plot +
     `<div class="akf-foot">${source ? `<p class="akf-src">${source}</p>` : ""}${notes ? `<p class="akf-note">${notes}</p>` : ""}` +

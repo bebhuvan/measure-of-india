@@ -1,6 +1,8 @@
 // src/kit/enhance.js: the only chart code a reader's browser runs. Charts are complete without
 // it (src/kit/figure.js draws them at build time); this adds a hover readout on lines, a tip on
-// marks that carry data-tip, and the CSV / SVG / PNG downloads. Under 3 KB; no data fetched.
+// marks that carry data-tip, and the CSV / SVG / PNG downloads. In the built site the wide and mid
+// drawings, the hover series and the CSV tables wait in <page>/kit.json, fetched once, when a
+// wide drawing is shown or a reader first points at a chart or asks for its data.
 
 const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
@@ -19,6 +21,7 @@ function show(html, ev) {
 const hide = () => { tip.style.opacity = 0; };
 
 function lineHover(fig, svg, series) {
+  if (svg.akWired) return; svg.akWired = true;
   const m = JSON.parse(svg.dataset.ak), hit = svg.querySelector(":scope > .ak-hit");
   if (m.s) series = m.s; // a panel of a composed figure carries its own series (kit panels())
   if (!hit) return;
@@ -70,12 +73,13 @@ function standalone(fig) {
   out.querySelectorAll(".ak-hit").forEach((n) => n.remove());
   return { text: new XMLSerializer().serializeToString(out), w, h: H };
 }
-function download(fig, kind) {
+async function download(fig, kind) {
   const name = fig.dataset.file || "india-atlas_chart";
   if (kind === "csv") {
-    let d = JSON.parse(fig.querySelector(".akf-data")?.textContent ?? "null");
-    if (!d && fig.dataset.aks) { // a line chart: one row per date, one column per series, blanks for gaps
-      const S = JSON.parse(fig.dataset.aks), dates = [...new Set(S.flatMap((s) => s[2].map((p) => p[0])))].sort();
+    let d = JSON.parse(fig.querySelector(".akf-data")?.textContent ?? "null") ?? (fig.dataset.csvk ? (await kit())[fig.dataset.csvk] : null);
+    const S = d ? null : await seriesOf(fig);
+    if (!d && S) { // a line chart: one row per date, one column per series, blanks for gaps
+      const dates = [...new Set(S.flatMap((s) => s[2].map((p) => p[0])))].sort();
       const at = S.map((s) => new Map(s[2].map((p) => [p[0], p[1]])));
       d = { cols: ["Date", ...S.map((s) => s[0])], rows: dates.map((t) => [t, ...at.map((m) => m.get(t) ?? null)]) };
     }
@@ -98,6 +102,8 @@ export function enhance(root = document) {
   for (const fig of root.querySelectorAll(".akf")) {
     const series = fig.dataset.aks ? JSON.parse(fig.dataset.aks) : null;
     if (series) for (const svg of fig.querySelectorAll("svg[data-ak]")) lineHover(fig, svg, series);
+    else if (fig.dataset.aksk) for (const svg of fig.querySelectorAll("svg[data-ak]")) // series fetched on first approach
+      svg.addEventListener("pointerenter", async () => { const S = await seriesOf(fig); if (S) lineHover(fig, svg, S); }, { once: true });
     // a guide plate keeps its own download buttons around a bare figure; one figure per plate
     const box = fig.closest("figure") ?? fig;
     // bound once per plate (learn port: a plate may hold two figures, the explorer redraws); the figure is found at click time
@@ -118,20 +124,24 @@ function tips(root) {
 // fetch it once, only when a placeholder is actually shown, and drop each drawing into its box.
 let kitP = null;
 const kitURL = () => { const p = location.pathname; return p.endsWith("/") ? p + "kit.json" : p.replace(/(\.html)?$/, ".kit.json"); };
+const kit = () => (kitP ??= fetch(kitURL()).then((r) => (r.ok ? r.json() : {})).catch(() => ({})));
+async function seriesOf(fig) {
+  if (fig.dataset.aks) return JSON.parse(fig.dataset.aks);
+  return fig.dataset.aksk ? (await kit())[fig.dataset.aksk] ?? null : null;
+}
 async function fill() {
   const need = [...document.querySelectorAll(".akf-plot > [data-k]:empty")].filter((el) => getComputedStyle(el).display !== "none");
   if (!need.length) return;
-  kitP ??= fetch(kitURL()).then((r) => (r.ok ? r.json() : {})).catch(() => ({}));
-  const K = await kitP;
+  const K = await kit();
   for (const el of need) {
     const svg = K[el.dataset.k]; if (!svg || el.firstChild) continue;
     el.innerHTML = svg; el.style.aspectRatio = "";
-    const fig = el.closest(".akf"), series = fig?.dataset.aks ? JSON.parse(fig.dataset.aks) : null;
+    const fig = el.closest(".akf"), series = fig ? await seriesOf(fig) : null;
     if (series) for (const s of el.querySelectorAll("svg[data-ak]")) lineHover(fig, s, series);
     tips(el);
   }
 }
-if (typeof window !== "undefined") { let t; addEventListener("resize", () => { clearTimeout(t); t = setTimeout(fill, 150); }); }
+if (typeof window !== "undefined") { let t; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(fill, 150); }); }
 
 if (typeof document !== "undefined") {
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => enhance());

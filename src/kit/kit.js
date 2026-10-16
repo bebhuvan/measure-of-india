@@ -143,10 +143,11 @@ function yAxis({ ticks, y, x0, x1, unit = {}, dp, fmt = null }) {
   return s;
 }
 function xTimeAxis({ ticks, x, y, tick = true, lo = 0, hi = Infinity }) {
-  let s = '';
+  let s = '', last = -Infinity; // a label that would touch the one before it is skipped (wide FY labels on a phone)
   for (const k of ticks) {
     const half = tw(k.label, 12) / 2;
-    if (x(k.t) - half < lo - 2 || x(k.t) + half > hi + 2) continue;
+    if (x(k.t) - half < lo - 2 || x(k.t) + half > hi + 2 || x(k.t) - half < last + 8) continue;
+    last = x(k.t) + half;
     if (tick) s += Lv(x(k.t), y, y + 5, C.base);
     s += T(x(k.t), y + 19, k.label, { size: 12, fill: C.muted, anchor: 'middle', cls: 'tab' });
   }
@@ -502,7 +503,8 @@ function _columns(spec) {
   const tt = timeTicks(t0, t1 + 0.25, W - G);
   const pos = t => { const k = P.findIndex(p => tnum(p.d) >= t - 1e-6); return k < 0 ? null : cx(k) - slot / 2; };
   // optional (profiles port): freq 'fy' labels the year ticks 2012-13 (dates at 1 April)
-  for (const k of tt) { const px = pos(k.t); if (px == null) continue; s += Lv(px, H - bottom, H - bottom + 5, C.base); s += T(px + 2, H - bottom + 19, spec.freq === 'fy' ? tlabel(Math.round(k.t) + '-04', 'fy') : k.label, { size: 12, fill: C.muted, cls: 'tab' }); }
+  let lastX = -Infinity; // a label that would touch the one before it is skipped
+  for (const k of tt) { const px = pos(k.t); if (px == null) continue; const lab = spec.freq === 'fy' ? tlabel(Math.round(k.t) + '-04', 'fy') : k.label; if (px + 2 < lastX + 8) continue; lastX = px + 2 + tw(lab, 12); s += Lv(px, H - bottom, H - bottom + 5, C.base); s += T(px + 2, H - bottom + 19, lab, { size: 12, fill: C.muted, cls: 'tab' }); }
   // optional (profiles port): spec.marks [[date, v]], a comparison value per column drawn as a sindoor tick across it,
   // named once in a key line above the plot (spec.markLabel); spec.markName prefixes its hover tip
   if (spec.marks) { const at = new Map(spec.marks.map(([d, v]) => [d, v]));
@@ -1428,6 +1430,8 @@ export function finish(svg) {
     const keep = []; let cur = lo;
     for (const [c0, c1] of cuts) { if (c0 > cur + 1) keep.push([cur, c0]); cur = Math.max(cur, c1); }
     if (hi > cur + 1) keep.push([cur, hi]);
+    // a stub left beside a label (the zero line's last few px past an end label) reads as a dash
+    for (let i = keep.length - 1; i >= 0; i--) if (keep[i][1] - keep[i][0] < 12 && keep.length > 1 && (i === 0 || i === keep.length - 1)) keep.splice(i, 1);
     return keep.map(([u, v]) => `<line${a.replace(vert ? /\sy1="[^"]*"/ : /\sx1="[^"]*"/, vert ? ` y1="${r1(u)}"` : ` x1="${r1(u)}"`).replace(vert ? /\sy2="[^"]*"/ : /\sx2="[^"]*"/, vert ? ` y2="${r1(v)}"` : ` x2="${r1(v)}"`)}/>`).join('');
   });
 }

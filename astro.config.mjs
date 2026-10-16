@@ -48,7 +48,7 @@ const kitDrawings = {
       const p = d + "/" + e.name;
       if (e.isDirectory()) walk(p);
       else if (e.name.endsWith(".html")) {
-        const keys = [...new Set([...fs.readFileSync(p, "utf8").matchAll(/data-k="([0-9a-f]{16})"/g)].map((m) => m[1]))];
+        const keys = [...new Set([...fs.readFileSync(p, "utf8").matchAll(/data-(?:k|aksk|csvk)="([0-9a-f]{16})"/g)].map((m) => m[1]))];
         if (!keys.length) continue;
         const missing = keys.filter((k) => !ALT.has(k));
         if (missing.length) throw new Error(`kit: ${p} names ${missing.length} drawings the build never made`);
@@ -57,7 +57,7 @@ const kitDrawings = {
       }
     } };
     walk(root.replace(/\/$/, ""));
-    console.log(`kit: ${drawings} drawings in ${files} kit.json files`);
+    console.log(`kit: ${drawings} drawings and data tables in ${files} kit.json files`);
   } },
 };
 
