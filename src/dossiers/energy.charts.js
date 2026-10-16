@@ -13,7 +13,10 @@ const data = (p) => ({
 });
 
 export function energyChart(p) {
-  const fmt = (v) => energyFormat(v, p.unit), unit = { suffix: TICK[p.unit] ?? "" };
+  // chart labels at a precision the eye can use (932.82 Mtoe reads as 933 Mtoe, like the headline);
+  // the page's figures keep energyFormat's published precision
+  const sig = (v) => v == null ? v : +v.toFixed(Math.abs(v) >= 100 ? 0 : Math.abs(v) >= 10 ? 1 : 2);
+  const fmt = (v) => energyFormat(sig(v), p.unit), unit = { suffix: TICK[p.unit] ?? "" };
   const fig = (draw, desc) => figure({ bare: true, file: `india-atlas_energy_${p.id}`, label: `${p.title}. ${desc}`, data: data(p), draw });
   if (p.kind === "history") {
     // the balance's financial years start in April; Ember's calendar years in January

@@ -18,7 +18,18 @@ import { tw, C } from "../src/kit/kit.js";
 
 const GRID = new Set([C.grid, "rgba(255,255,255,.55)"]);
 const attr = (tag, k) => { const m = tag.match(new RegExp(`\\s${k}="([^"]*)"`)); return m ? m[1] : null; };
-const unesc = (s) => s.replace(/&lt;/g, "<").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, "&");
+// entities as a parser re-serialises them too (jsdom writes a no-break space as &nbsp;)
+const unesc = (s) => s.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, "\u00a0")
+  .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n)).replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16))).replace(/&amp;/g, "&");
+// the top-level <svg>…</svg> elements of a string, nested panels (kit panels()) kept inside theirs
+function topSVGs(str) {
+  const out = []; let depth = 0, start = -1;
+  for (const m of str.matchAll(/<svg\b|<\/svg>/g)) {
+    if (m[0] === "<svg") { if (depth++ === 0) start = m.index; }
+    else if (--depth === 0) out.push(str.slice(start, m.index + 6));
+  }
+  return out;
+}
 
 function texts(svg) {
   const out = [];
@@ -66,10 +77,15 @@ function hits([ax, ay, bx, by], b) {
 // A composed figure (kit panels()) nests each panel as its own <svg x y>: lint each panel in its
 // own coordinates, then what is drawn outside them.
 export function lintSVG(svg) {
-  const inner = [...svg.slice(4).matchAll(/<svg\b[^>]*\sx="[^"]*"[\s\S]*?<\/svg>/g)];
-  if (!inner.length) return lintFlat(svg);
+  // the direct child <svg>s of this drawing, found by depth so panels of panels nest correctly
+  const kids = []; let depth = 0, start = -1;
+  for (const m of svg.matchAll(/<svg\b|<\/svg>/g)) {
+    if (m[0] === "<svg") { depth++; if (depth === 2) start = m.index; }
+    else { if (depth === 2) kids.push(svg.slice(start, m.index + 6)); depth--; }
+  }
+  if (!kids.length) return lintFlat(svg);
   let rest = svg; const finds = [];
-  inner.forEach((m, i) => { finds.push(...lintFlat(m[0]).map((f) => `panel ${i + 1}: ${f}`)); rest = rest.replace(m[0], ""); });
+  kids.forEach((k, i) => { finds.push(...lintSVG(k).map((f) => `panel ${i + 1}: ${f}`)); rest = rest.replace(k, ""); });
   return finds.concat(lintFlat(rest));
 }
 function lintFlat(svg) {
@@ -98,7 +114,7 @@ export function lintHTML(html, where = "") {
   // holds several in one drawing, each linted on its own
   for (const m of html.matchAll(/<div class="akf-(wide|mid|phone)"[^>]*>([\s\S]*?)<\/div>(?=<div class="akf-|<\/div>)/g)) {
     k++;
-    for (const sv of m[2].matchAll(/<svg[\s\S]*?<\/svg>/g)) for (const f of lintSVG(sv[0])) out.push(`${where} chart ${Math.ceil(k / 3)} (${m[1]}): ${f}`);
+    for (const sv of topSVGs(m[2])) for (const f of lintSVG(sv)) out.push(`${where} chart ${Math.ceil(k / 3)} (${m[1]}): ${f}`);
   }
   return { charts: Math.ceil(k / 3), finds: out };
 }
