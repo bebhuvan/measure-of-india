@@ -36,6 +36,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
 
       - name: Python for the XLSX source replays
         run: pip install -r requirements.txt
@@ -80,10 +81,15 @@ jobs:
         # failed, the QC freshness gate below fails the run. The correct
         # recovery is to fix prose and re-run, never to deploy around it.
 
-      - run: npm run build
+      # not `npm run build`, which would fetch and validate a second time
+      - name: Build
+        run: npm run og && npx astro build
 
       - name: QC (rendered numbers, charts, prose freshness)
         run: npm run qc   # qc.mjs + lint-charts.mjs — the full post-build gate
+
+      - name: Performance, static (bytes per page, files per deploy, search)
+        run: npm run perf:static
 
       - name: Open release PR
         env:

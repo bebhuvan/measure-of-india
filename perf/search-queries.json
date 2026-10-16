@@ -1,0 +1,222 @@
+{
+ "note": "Labelled reader queries for scripts/perf-search.mjs. href/label/bundle: a regex one of the top N results must match; series: a regex the first series result (label + bundle) must match; known: a failure we have not fixed yet, reported but not fatal; a known query that passes fails the gate until its mark is removed.",
+ "queries": [
+  {
+   "q": "inflation in Kerala",
+   "href": "^/states/kerala/$",
+   "top": 1,
+   "series": "cpi-2024-states"
+  },
+  {
+   "q": "rupee",
+   "href": "^/guides/external/#cb-(rate|rupee|inr|fx|usd|dollar|nominal|reer)|^/guides/external/",
+   "top": 1,
+   "label": "rupee"
+  },
+  {
+   "q": "wheat",
+   "href": "^/guides/(farms|cpi|wpi)/",
+   "top": 3
+  },
+  {
+   "q": "unemployment in punjab",
+   "href": "^/states/punjab/$",
+   "top": 1,
+   "series": "Punjab, person, rural and urban, age 15 and above"
+  },
+  {
+   "q": "jobs in tamil nadu",
+   "href": "^/states/tamil-nadu/$",
+   "top": 1,
+   "series": "Tamil Nadu, person, rural and urban, age 15 and above"
+  },
+  {
+   "q": "CPI",
+   "href": "^/guides/cpi/$",
+   "top": 1
+  },
+  {
+   "q": "inflation",
+   "href": "^/guides/cpi/$",
+   "top": 1
+  },
+  {
+   "q": "repo rate",
+   "series": "^Policy repo rate",
+   "top": 1
+  },
+  {
+   "q": "GDP",
+   "href": "^/guides/gdp/$",
+   "top": 1
+  },
+  {
+   "q": "food inflation",
+   "series": "Consumer Food Price|Food and beverages",
+   "top": 1
+  },
+  {
+   "q": "urban female unemployment",
+   "series": "^(?!.*previous).*(Unemployment).*(female|women).*",
+   "top": 1
+  },
+  {
+   "q": "unemployment rate",
+   "href": "^/guides/(jobs|ilo)/",
+   "top": 3
+  },
+  {
+   "q": "infant mortality",
+   "series": "All India|India",
+   "top": 1
+  },
+  {
+   "q": "Karnataka electricity capacity",
+   "href": "^/states/karnataka/$",
+   "top": 1
+  },
+  {
+   "q": "bank deposits Maharashtra",
+   "href": "^/states/maharashtra/$",
+   "top": 1
+  },
+  {
+   "q": "Orissa",
+   "href": "^/states/odisha/$",
+   "top": 1
+  },
+  {
+   "q": "Pondicherry",
+   "href": "^/states/puducherry/$",
+   "top": 1
+  },
+  {
+   "q": "GSDP Karnataka",
+   "href": "^/states/karnataka/$",
+   "top": 1,
+   "series": "GSDP"
+  },
+  {
+   "q": "exports",
+   "href": "^/guides/(trade|external|gdp)/",
+   "top": 3
+  },
+  {
+   "q": "gold imports",
+   "href": "^/guides/trade/",
+   "top": 3
+  },
+  {
+   "q": "onion prices",
+   "series": "^Onion",
+   "top": 1,
+   "known": "a farm-household price-satisfaction cell (long label, both words) leads over the CPI/WPI onion price"
+  },
+  {
+   "q": "petrol",
+   "href": "^/guides/(cpi|wpi|energy|trade)/",
+   "top": 1
+  },
+  {
+   "q": "IIP",
+   "href": "^/guides/iip/$",
+   "top": 1
+  },
+  {
+   "q": "manufacturing",
+   "href": "^/guides/manufacturing/$",
+   "top": 1
+  },
+  {
+   "q": "forex reserves",
+   "series": "^(?!.*([Rr]atio|[Ii]ncrease)).*[Rr]eserves",
+   "top": 1,
+   "known": "the reserves-to-debt ratio and BoP reserve changes lead over the level of reserves; no chart title says forex"
+  },
+  {
+   "q": "fiscal deficit",
+   "href": "^/guides/public-finance/",
+   "top": 3,
+   "known": "the states' gross fiscal deficit rows lead; the Centre's deficit chart title says deficit, not fiscal deficit"
+  },
+  {
+   "q": "household debt",
+   "href": "^/guides/(debt|households)/",
+   "top": 1
+  },
+  {
+   "q": "literacy",
+   "href": "^/guides/gender/",
+   "top": 3
+  },
+  {
+   "q": "stunting",
+   "href": "^/guides/nfhs/",
+   "top": 3
+  },
+  {
+   "q": "rainfall",
+   "href": "^/guides/climate/",
+   "top": 1
+  },
+  {
+   "q": "coal",
+   "href": "^/guides/(climate|energy|iip|wpi)/",
+   "top": 3
+  },
+  {
+   "q": "solar capacity",
+   "href": "^/guides/(mnre|energy)/",
+   "top": 2
+  },
+  {
+   "q": "UPI",
+   "href": "^/guides/payments/",
+   "top": 1
+  },
+  {
+   "q": "listed company sales",
+   "href": "^/guides/markets/",
+   "top": 3
+  },
+  {
+   "q": "population",
+   "href": "^/guides/population/$",
+   "top": 1
+  },
+  {
+   "q": "poverty",
+   "href": "^/guides/poverty/$",
+   "top": 1
+  },
+  {
+   "q": "school enrolment",
+   "href": "^/guides/schools/",
+   "top": 3,
+   "known": "a gender-parity index of enrolment from the state handbook leads over enrolment itself"
+  },
+  {
+   "q": "pension",
+   "href": "^/guides/pensions/$",
+   "top": 1
+  },
+  {
+   "q": "electricity generation",
+   "href": "^/guides/energy/",
+   "top": 1
+  },
+  {
+   "q": "rural wages",
+   "href": "^/guides/jobs/",
+   "top": 3
+  },
+  {
+   "q": "inflaton",
+   "suggest": "inflation"
+  },
+  {
+   "q": "zzzzimpossible",
+   "none": true
+  }
+ ]
+}

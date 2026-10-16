@@ -28,6 +28,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
 
       - name: Python for the XLSX source replays
         run: pip install -r requirements.txt
@@ -48,9 +49,16 @@ jobs:
       - name: As-of governance (hand-written paragraphs)
         run: node pipeline/asof.mjs
 
-      - name: Deploy to Cloudflare Pages
+      # Bytes per page, search quality and the file count. The site is Workers static assets
+      # (wrangler.jsonc): Workers Paid allows 100,000 files a version; perf/budgets.json caps the
+      # deploy at 90,000 to leave room for a data wave.
+      - name: Performance, static
+        run: npm run perf:static
+
+      - name: Deploy to Cloudflare Workers (static assets)
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=india-atlas
+          wranglerVersion: "4.147.0"
+          command: deploy

@@ -1,6 +1,7 @@
 ---
 import "../styles/atlas.css";
 import "../kit/kit.css";
+import FONTS from "../styles/fonts.generated.js";
 
 interface Props {
   title: string;
@@ -48,8 +49,7 @@ const canonicalUrl = canonical ?? "https://atlas.thisindianlife.today/";
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content={ogUrl}>
-<link rel="preload" href="/fonts/newsreader-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/fonts/libre-franklin-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+{FONTS.preload.map((f) => <link rel="preload" href={`/fonts/${f}`} as="font" type="font/woff2" crossorigin>)}
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>

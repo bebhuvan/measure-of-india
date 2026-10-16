@@ -1,0 +1,52 @@
+core: 2355 KB raw, 390 KB gzip, parse+init 167 ms (Node, unthrottled)
+pass  inflation in Kerala                11 files  411 KB gz   176 ms  413 rows
+know  rupee                              11 files  410 KB gz    95 ms  7,064 rows
+pass  wheat                               7 files  272 KB gz    59 ms  3,075 rows
+know  CPI                                 2 files   58 KB gz    65 ms  5,072 rows
+know  inflation                           6 files  203 KB gz    78 ms  6,706 rows
+pass  repo rate                           3 files  122 KB gz   128 ms  2,226 rows
+pass  GDP                                 3 files  120 KB gz    63 ms  6,847 rows
+know  food inflation                      8 files  291 KB gz    87 ms  573 rows
+know  urban female unemployment           8 files  231 KB gz   242 ms  518 rows
+pass  unemployment rate                   4 files  157 KB gz   156 ms  18,513 rows
+know  infant mortality                    3 files  123 KB gz    58 ms  763 rows
+know  Karnataka electricity capacity      5 files  181 KB gz    75 ms  30 rows
+pass  bank deposits Maharashtra           9 files  320 KB gz   209 ms  1,679 rows
+pass  Orissa                              8 files  277 KB gz   107 ms  40,885 rows
+pass  Pondicherry                         8 files  230 KB gz    79 ms  19,035 rows
+pass  GSDP Karnataka                      5 files  192 KB gz    65 ms  14 rows
+pass  exports                             7 files  255 KB gz    97 ms  18,718 rows
+pass  gold imports                        8 files  320 KB gz    78 ms  506 rows
+know  onion prices                       10 files  345 KB gz    80 ms  10 rows
+pass  petrol                              7 files  268 KB gz    61 ms  6,545 rows
+know  IIP                                 3 files  105 KB gz    55 ms  190 rows
+pass  manufacturing                       4 files  156 KB gz    57 ms  10,117 rows
+pass  forex reserves                      8 files  277 KB gz    73 ms  453 rows
+pass  fiscal deficit                      3 files   93 KB gz    47 ms  613 rows
+pass  household debt                      7 files  120 KB gz   351 ms  1,463 rows
+pass  literacy                            4 files   83 KB gz    54 ms  543 rows
+pass  stunting                            2 files   66 KB gz    56 ms  368 rows
+pass  rainfall                            4 files  136 KB gz    61 ms  5,622 rows
+pass  coal                                7 files  278 KB gz    56 ms  7,177 rows
+pass  solar capacity                      3 files  113 KB gz    65 ms  360 rows
+pass  UPI                                 3 files   90 KB gz    59 ms  3,185 rows
+pass  listed company sales                4 files  169 KB gz    80 ms  2,185 rows
+pass  population                          3 files   89 KB gz   170 ms  1,11,488 rows
+pass  poverty                             2 files   65 KB gz    42 ms  472 rows
+pass  school enrolment                    3 files  106 KB gz   131 ms  39,761 rows
+pass  pension                             7 files  232 KB gz    82 ms  11,170 rows
+pass  electricity generation              8 files  214 KB gz    61 ms  3,622 rows
+pass  rural wages                         4 files  133 KB gz   290 ms  30,290 rows
+pass  inflaton                            0 files    0 KB gz    39 ms  0 rows
+pass  zzzzimpossible                      0 files    0 KB gz    34 ms  0 rows
+search: 31/40 labelled queries pass; per cold query median 169 KB gz in 5 files (max 411 KB), engine median 75 ms
+known ranking issues (9):
+  "rupee": guides whose blurbs mention ₹ crowd out the exchange-rate series
+  "CPI": guide titles carry no abbreviations; WPI's blurb wins
+  "inflation": CPI guide does not say inflation in title or blurb
+  "food inflation": state labour-price indices lead over all-India CPI food
+  "urban female unemployment": previous ILO definition (ICLS13) leads over the current one
+  "infant mortality": state rows lead over the all-India figure
+  "Karnataka electricity capacity": one fuel (gas) leads over total capacity
+  "onion prices": a farm-household price-satisfaction cell leads over CPI/WPI onion prices
+  "IIP": guide titles carry no abbreviations

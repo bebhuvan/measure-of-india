@@ -24,7 +24,8 @@ npx astro build                            ④ RENDER   pages + charts from bake
 pipeline/facts.mjs ─► generate.mjs         ⑤ NARRATE  LLM prose from facts sheets only
 pipeline/verify.mjs + lint.mjs + contract.mjs  ⑥ GATE  numbers traced, tells banned
 pipeline/asof.mjs + scripts/qc.mjs + lint-charts.mjs  ⑥ GATE  rendered numbers + as-of + prose freshness
-.github/workflows/update.yml ─► release PR ⑦ PUBLISH  human merges; deploy.yml ships it
+scripts/perf-budget/search/browser.mjs   ⑥ GATE  bytes per page, search quality, phone main thread
+.github/workflows/update.yml ─► release PR ⑦ PUBLISH  human merges; deploy.yml ships it to Workers static assets (wrangler.jsonc)
 ```
 
 Hard rules — breaking any of these is a bug regardless of what else works:
@@ -57,6 +58,9 @@ Hard rules — breaking any of these is a bug regardless of what else works:
 | `node scripts/source-quality.mjs` | rewrite the households/energy/farm source-quality registers after a rebake (validate only checks them) |
 | `npm run qc` | post-build gate (numbers + chart geometry lint); run AFTER a build |
 | `npm run lint:charts` | chart geometry lint alone (collisions, overlaps, bleeds, clips) |
+| `npm run perf` | performance gates on a build: bytes per page, labelled search queries, throttled phone (part of `gates`) |
+| `npm run perf:static` | the same without the browser: font freshness, `perf-budget`, `perf-search` (seconds) |
+| `npm run fonts` | re-cut the web fonts from `fonts/source/` after editing `fonts/primary.txt` |
 
 ## Where things live
 
@@ -78,6 +82,16 @@ Hard rules — breaking any of these is a bug regardless of what else works:
   Never type a period into page copy; the claims around it still need re-reading each
   release (`pipeline/asof.mjs`).
 - `scripts/migrations/` — one-off, idempotent design migrations (2026-10 palette, chart v3).
+- `perf/budgets.json` — performance ceilings. A page's recorded ceiling only moves down
+  (`--record`); raising one needs an entry in its `raised` list saying why.
+  `perf/search-queries.json` holds the labelled search queries (a `known` mark is a recorded
+  miss). The performance log, with before/after numbers, is `docs/status/performance-scale.md`.
+- Search is index v2: `src/dossiers/search-pack.js` lays out the files and
+  `src/dossiers/search-core.js` reads them. `layout()` is the one result order.
+- Every-cut rows have one template, `src/dossiers/everycut-html.js`. A page renders its first 100
+  rows and streams the rest from its gzip pack (`/ec/…`).
+- Builds can go to a RAM disk: `ATLAS_OUT_DIR=/dev/shm/x npx astro build`, then run the gates
+  with `QC_DIST=/dev/shm/x`.
 - `src/dossiers/registry.js` — THE dossier registry: every dossier's metadata,
   current bundle, calendar, policy band, spark spec. Homepage, register, RSS,
   404, OG cards, qc and lint-charts all derive from it. Adding a dossier
@@ -105,6 +119,7 @@ Hard rules — breaking any of these is a bug regardless of what else works:
 - `docs/CONTRACT-render.md` — chart/page rules and budgets
 - `docs/CONTRACT-dossier-structure.md` — the normative dossier flow
 - `docs/RUNBOOK-sources.md` — how to add a data source (follow it exactly)
+- `docs/RUNBOOK-workers-cutover.md` — hosting on Cloudflare Workers static assets: first deploy, checks, rollback
 - `docs/RELEASE-CHECKLIST.md` — what a human reviews before merging a release
 
 ## When you finish any task here

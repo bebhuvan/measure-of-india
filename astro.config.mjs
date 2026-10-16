@@ -66,6 +66,9 @@ const redirects = Object.fromEntries(DOSSIERS.map((d) => [`/dossiers/${d.slug}`,
 
 export default defineConfig({
   output: "static",
+  // ATLAS_OUT_DIR builds somewhere other than ./dist (a RAM disk when the work disk is short);
+  // the gates read the same variable through QC_DIST or their dist argument.
+  ...(process.env.ATLAS_OUT_DIR ? { outDir: process.env.ATLAS_OUT_DIR } : {}),
   site: "https://atlas.thisindianlife.today",
   redirects,
   integrations: [sitemap({ filter: (page) => !page.includes("/dossiers/") }), kitDrawings, explorerIndex, searchIndex],

@@ -4,6 +4,12 @@ name: ci
 # regeneration, no publish. The release pipeline (update.yml) remains the
 # only path that changes data; this workflow keeps human-authored PRs from
 # landing regressions that the gates already know how to catch.
+#
+# Three jobs run side by side, so the wall time is the longest of them, not the sum
+# (measured locally, 2026-10-16: tests 255 s; validate + coverage + as-of a few minutes;
+# build 580 s, qc 516 s, chart lint 2 x 50 s, explore-verify 50 s, perf static 90 s, phone
+# gate 540 s with 3 browsers). Timeouts are about twice the expected runner time.
+# Nothing built is cached: every run builds from the committed data.
 
 on:
   pull_request:
@@ -17,40 +23,94 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  gates:
+  tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
+          cache: pip
       - name: Python for the XLSX source replays
         run: pip install -r requirements.txt
-
       - run: npm ci
-
       - name: Unit tests
         run: npm test
 
+  data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Python for the XLSX source replays
+        run: pip install -r requirements.txt
+      - run: npm ci
       - name: Validate committed data
         run: node scripts/validate.mjs
-
+      - name: Coverage ledgers
+        run: node scripts/coverage.mjs
       # AGENTS.md rule 4: nothing ships while a hand-written "As of" paragraph
       # still describes the previous print. This gate must run wherever the
       # gates run — not only in a local `npm run gates`.
       - name: As-of governance (hand-written paragraphs)
         run: node pipeline/asof.mjs
 
+  build-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Python for the XLSX source replays
+        run: pip install -r requirements.txt
+      - run: npm ci
       - name: Build
         run: npx astro build
-
       - name: QC (rendered numbers, chart geometry, prose freshness)
         run: npm run qc
+      - name: Explorer verification
+        run: npm run explore:verify
+      - name: Performance, static (fonts, bytes per page, files per deploy, search)
+        run: npm run perf:static
+      # Chromium for the phone gate, cached by Playwright version (package-lock.json)
+      - name: Playwright browser cache
+        id: pw-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - name: Install Chromium
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+      - name: Chromium system libraries
+        if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+      - name: Performance, phone (every guide and profile, 4x CPU, calibrated to this runner)
+        run: node scripts/perf-browser.mjs --json perf-browser.json
+      - name: Keep the phone numbers
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: perf-browser
+          path: perf-browser.json
+          if-no-files-found: ignore

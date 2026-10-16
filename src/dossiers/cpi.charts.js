@@ -133,7 +133,7 @@ export const rbScale = (() => {
     `<rect x="${X(2)}" y="${y - 7}" width="${X(6) - X(2)}" height="14" fill="#F6F7F9" stroke="#EEF0F3" stroke-width="1"/>` +
     `<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="#DADDE3" stroke-width="1"/>` +
     `<line x1="${X(4)}" y1="${y - 10}" x2="${X(4)}" y2="${y + 10}" stroke="#878D99" stroke-width="1" stroke-dasharray="2,3"/>` +
-    [0, 2, 4, 6, 8].map((t, i, a) => `<text x="${X(t)}" y="${H - 6}" font-family="'Golos Text',sans-serif" font-size="11" fill="#878D99" text-anchor="${i === 0 ? "start" : i === a.length - 1 ? "end" : "middle"}">${t}%</text>`).join("") +
+    [0, 2, 4, 6, 8].map((t, i, a) => `<text x="${X(t)}" y="${H - 6}" font-family="'Libre Franklin',sans-serif" font-size="11" fill="#878D99" text-anchor="${i === 0 ? "start" : i === a.length - 1 ? "end" : "middle"}">${t}%</text>`).join("") +
     `<circle cx="${X(val)}" cy="${y}" r="4.5" fill="#2E4BD8" stroke="#FFFFFF" stroke-width="1.5"/></svg>`;
 })();
 

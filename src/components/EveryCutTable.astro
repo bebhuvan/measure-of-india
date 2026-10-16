@@ -1,23 +1,23 @@
 ---
 // The every-cut table itself: rows from src/dossiers/everycut.js, sorting and filtering by
 // src/dossiers/everycut.client.js. Used by EveryCut.astro on a guide and by the long-tail
-// pages (/guides/<slug>/every-cut/<bundle>/). Server-rendered: every row is in the HTML,
-// so the table reads without script; the script only sorts, filters and folds.
-import crypto from "node:crypto";
-import { SPARK_W, SPARK_H } from "../dossiers/everycut.js";
-import { seriesURL, identity } from "../explore/model.js";
-interface Props { rows: any[]; id: string; titles: Record<string, string>; fold?: number; filterBy?: "cut" | "group"; policyNotes?: boolean }
-const { rows, id, titles, fold = 25, filterBy = "cut", policyNotes = false } = Astro.props;
-const policyNotesId=q=>id+"-policy-"+crypto.createHash("sha256").update(q.id).digest("hex").slice(0,12);
+// pages (/guides/<slug>/every-cut/<bundle>/). The first SSR_ROWS rows are in the HTML, so the
+// table reads without script; the rest of the page's rows arrive in its pack, which the script
+// streams in after first paint (then sorting, filtering and find-in-page cover every row).
+import { rowHTML, SSR_ROWS, policyNotesId as notesId } from "../dossiers/everycut-html.js";
+// pack: the rest of the rows, past SSR_ROWS, as a gzip file the client streams in (everycut-html.js)
+interface Props { rows: any[]; id: string; titles: Record<string, string>; fold?: number; filterBy?: "cut" | "group"; policyNotes?: boolean; pack?: { href: string; rows: number } | null }
+const { rows, id, titles, fold = 25, filterBy = "cut", policyNotes = false, pack = null } = Astro.props;
+const policyNotesId=q=>notesId(id,q);
+const shown = pack ? rows.slice(0, SSR_ROWS) : rows;
+if (pack && pack.rows !== rows.length - shown.length) throw new Error(`EveryCutTable ${id}: pack holds ${pack.rows} rows, ${rows.length - shown.length} expected`);
 const notes=policyNotes?[...new Map(rows.filter(r=>r.sourceQuality).map(r=>[r.sourceQuality.id,r])).values()]:[];
 const changesWithheld=rows.some(r=>r.changeMode==="none");
 const facet = (r) => (filterBy === "group" ? r.group : r.cut) || "Other";
 const facets = [...new Set(rows.map(facet))];
 const files = [...new Set(rows.map((r) => r.bundle))];
-const cap = (t) => (t ? t[0].toUpperCase() + t.slice(1) : t);
-const num = (v) => (v == null ? "" : String(Math.round(v * 1e4) / 1e4));
 ---
-<div class="ec" id={id} data-fold={fold}>
+<div class="ec" id={id} data-fold={fold} data-total={rows.length} data-pack={pack?.href}>
   {policyNotes&&<details class="ec-policy-notes"><summary>Source review definitions for this page</summary>{notes.map(r=><div id={policyNotesId(r.sourceQuality)}><p><b>{r.sourceQuality.publicTitle||r.sourceQuality.status}</b>: {r.sourceDefinition}{r.referenceBasis&&` Reference basis: ${r.referenceBasis}`}</p></div>)}</details>}
   <div class="ec-tools">
     <label class="ec-q"><span>Find</span><input type="search" placeholder="A state, an item, a sector" autocomplete="off" /></label>
@@ -42,20 +42,7 @@ const num = (v) => (v == null ? "" : String(Math.round(v * 1e4) / 1e4));
         <th scope="col" class="n">Data</th>
       </tr></thead>
       <tbody>
-        {rows.map((r, i) => (
-          <tr id={r.id} data-o={i} data-file={r.bundle} data-v={num(r.latest)} data-c={num(r.change)}>
-            <td class="w"><a href={seriesURL([identity(r.bundle,r.id)])}>{r.label}</a><small>{cap([filterBy === "group" ? r.cut : r.group, r.unitNote, r.base].filter(Boolean).join(", "))}</small></td>
-            <td class="ct">{facet(r)}{r.sourceQuality && <small>{policyNotes?<a href={"#"+policyNotesId(r.sourceQuality)}>Source review details</a>:<>{r.sourceDefinition}{r.referenceBasis && ` Reference basis: ${r.referenceBasis}`}</>}</small>}{r.expected && <small>{r.expectedWindowNote} {r.expectedMethod}</small>}</td>
-            <td class="n v" title={r.expected ? r.expectedNote || "Expected source schedule" : r.sourceQuality?.canInterpret === false ? (policyNotes?r.sourceQuality.status:r.sourceQuality.reason) : r.unavailableReason || (r.estimated ? r.estimatedNote || "An estimate, not a measurement" : undefined)}>{r.latestText}<small>{r.period}{r.expected && ` · Expected schedule; ${r.expectedAsOf}`}{r.estimated && ", est."}{r.unavailableReason && " · Not published"}{r.sourceQuality?.canInterpret === false && " · Source definition under review"}</small></td>
-            <td class="n c" title={r.changeEstimated ? "Uses an estimated value" : undefined}>{r.changeText}{r.changeEstimated && <small> est.</small>}</td>
-            <td class="sp">{r.spark && (
-              <svg width={SPARK_W} height={SPARK_H} viewBox={`0 0 ${SPARK_W} ${SPARK_H}`} aria-hidden="true">
-                {r.spark.zero != null && <line x1="0" x2={SPARK_W} y1={r.spark.zero} y2={r.spark.zero} />}
-                <path d={r.spark.d} /><circle cx={r.spark.end[0]} cy={r.spark.end[1]} r="1.75" />
-              </svg>)}</td>
-            <td class="n"><a href={seriesURL([identity(r.bundle,r.id)])}>Series data</a></td>
-          </tr>
-        ))}
+        <Fragment set:html={shown.map((r, i) => rowHTML(r, i, { filterBy, policyNotes, tableId: id })).join("")} />
       </tbody>
     </table>
   </div>

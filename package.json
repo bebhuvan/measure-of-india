@@ -10,7 +10,7 @@
     "build": "npm run data && npm run og && astro build",
     "preview": "astro preview",
     "qc": "node --max-old-space-size=6144 scripts/qc.mjs && node --max-old-space-size=6144 scripts/lint-charts.mjs && node --max-old-space-size=6144 scripts/lint-charts.mjs --width 390",
-    "gates": "node scripts/validate.mjs && node scripts/kit-specimen-lint.mjs && node scripts/coverage.mjs && node pipeline/asof.mjs && node --max-old-space-size=6144 scripts/qc.mjs && node --max-old-space-size=6144 scripts/lint-charts.mjs && node --max-old-space-size=6144 scripts/lint-charts.mjs --width 390 && npm run explore:verify",
+    "gates": "node scripts/validate.mjs && node scripts/kit-specimen-lint.mjs && node scripts/coverage.mjs && node pipeline/asof.mjs && node --max-old-space-size=6144 scripts/qc.mjs && node --max-old-space-size=6144 scripts/lint-charts.mjs && node --max-old-space-size=6144 scripts/lint-charts.mjs --width 390 && npm run explore:verify && npm run perf",
     "test": "node --test --test-concurrency=2 test/*.test.mjs",
     "facts": "node pipeline/facts.mjs --all",
     "asof": "node pipeline/asof.mjs",
@@ -24,7 +24,11 @@
     "coverage:expansion": "node scripts/expansion-audit.mjs",
     "crosscheck:idh": "node scripts/crosscheck-idh.mjs",
     "archive": "node scripts/archive.mjs",
-    "explore:verify": "node scripts/explore-verify.mjs"
+    "explore:verify": "node scripts/explore-verify.mjs",
+    "perf": "npm run perf:static && node scripts/perf-browser.mjs",
+    "perf:static": "node scripts/fonts-build.mjs --check && node scripts/perf-budget.mjs && node scripts/perf-search.mjs",
+    "fonts": "node scripts/fonts-build.mjs",
+    "perf:search-browser": "node scripts/perf-search-browser.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
@@ -43,7 +47,9 @@
     "esbuild": "0.27.7",
     "jsdom": "^29.1.1",
     "parse5": "7.3.0",
+    "playwright": "1.63.0",
     "sharp": "^0.35.3",
+    "subset-font": "2.9.0",
     "wawoff2": "^2.0.1"
   }
 }

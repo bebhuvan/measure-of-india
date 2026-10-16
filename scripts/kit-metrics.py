@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Advance widths of the chart face (Libre Franklin, self-hosted in public/fonts) for the chart
+"""Advance widths of the chart face (Libre Franklin, originals in fonts/source) for the chart
 kit's build-time text measurement: src/kit/metrics.js, {weight: {char: width in 1/1000 em}}.
 The kit lays out labels before any browser sees them, so it needs the real widths. Rerun only
 when the font files change: python3 scripts/kit-metrics.py"""
@@ -7,7 +7,7 @@ import json, pathlib
 from fontTools.ttLib import TTFont
 from fontTools.varLib import instancer
 root = pathlib.Path(__file__).resolve().parent.parent
-files = [root / "public/fonts/libre-franklin-normal-latin.woff2", root / "public/fonts/libre-franklin-normal-latin-ext.woff2"]
+files = [root / "fonts/source/libre-franklin-normal-latin.woff2", root / "fonts/source/libre-franklin-normal-latin-ext.woff2"]
 out = {}
 for w in (400, 500, 600, 700):
     table = {}

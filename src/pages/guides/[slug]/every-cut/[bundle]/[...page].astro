@@ -10,6 +10,7 @@ import EveryCutTable from "../../../../../components/EveryCutTable.astro";
 import { DOSSIERS, bySlug } from "../../../../../dossiers/registry.js";
 import {governedDownloadPlan} from "../../../../../dossiers/governed-downloads.js";
 import { bundleTitle, loadBundle, everyCutPlan } from "../../../../../dossiers/everycut.js";
+import { tailSpec, packLink } from "../../../../../dossiers/everycut-html.js";
 export function getStaticPaths() {
   // ATLAS_SKIP_EVERY_CUT=1: a local verification build of everything but these long-tail pages
   // (most of dist's 4.8 GB), for a machine short of memory. Never set in CI or a release build.
@@ -74,7 +75,7 @@ const titles = Object.fromEntries((single ? [] : [...new Set(rows.map((r) => r.b
         ? <b aria-current="page">{i + 1}</b>
         : <a href={href(i)}>{i + 1}</a>)}<span>{rows.length.toLocaleString("en-IN")} series on this page</span></nav>
     )}
-    <EveryCutTable policyNotes={d.sourcePolicyNotes==="per-page"} rows={rows} id={`ec-${id}`} titles={single ? { [id]: "" } : titles} fold={rows.length} filterBy={hasGroups ? "group" : "cut"} />
+    <EveryCutTable policyNotes={d.sourcePolicyNotes==="per-page"} rows={rows} id={`ec-${id}`} titles={single ? { [id]: "" } : titles} fold={rows.length} filterBy={hasGroups ? "group" : "cut"} pack={packLink(slug, tailSpec(d, t, n))} />
     <p class="ec-back"><a href={`/guides/${slug}/`}>Back to the guide: {d.title}</a></p>
   </div>
 </div>

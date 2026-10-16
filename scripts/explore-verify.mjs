@@ -3,7 +3,7 @@ import fs from 'node:fs';import path from 'node:path';import crypto from 'node:c
 import {getSourceQuality,qualityRegistryVersion} from '../src/explore/source-quality.js';
 import {rowAnchor} from '../src/dossiers/everycut.js';
 import {canComparePolicy} from '../src/explore/model.js';
-const dist=path.resolve(process.argv[2]||'dist'),root=path.join(dist,'explore-data');
+const dist=path.resolve(process.argv[2]||process.env.QC_DIST||'dist'),root=path.join(dist,'explore-data');
 const hash=t=>crypto.createHash('sha256').update(t).digest('hex').slice(0,24);
 const cache=new Map(),published=new Set();let records=0,points=0,maxShard=0,maxManifest=0,pending=0;const qualityCounts={};
 const readShard=file=>{if(cache.has(file))return cache.get(file);assert.match(file,/^[a-f0-9]{24}\.json$/);const text=fs.readFileSync(path.join(root,'c',file),'utf8'),bytes=Buffer.byteLength(text);assert.ok(bytes<=256*1024,`Oversize shard ${file}`);assert.equal(hash(text)+'.json',file,'Shard hash mismatch');const value=JSON.parse(text);assert.equal(value.schemaVersion,1);cache.set(file,value);while(cache.size>8)cache.delete(cache.keys().next().value);maxShard=Math.max(maxShard,bytes);return value;};
@@ -20,9 +20,8 @@ for(const bucket of fs.readdirSync(path.join(root,'m')).sort()){
  }
 }
 const sourceBundles=fs.readdirSync('data/series').filter(f=>f.endsWith('.json')).map(f=>f.slice(0,-5));assert.equal(published.size,sourceBundles.length,'Bundle omission');for(const b of sourceBundles)assert.ok(published.has(b));
-// Files per deployment: Cloudflare Pages accepts at most 20,000 files in one deployment. The
-// budget keeps 4,000 of those free for the next data wave and for _headers/_redirects/OG growth,
-// so a build that would break deploys fails here first. Raise it only with the hosting limit
-// (docs/briefs/performance-scale-2026-10-15.md owns the move off that limit).
-const walk=d=>fs.readdirSync(d,{withFileTypes:true}).reduce((n,f)=>n+(f.isDirectory()?walk(path.join(d,f.name)):1),0);const assets=walk(dist);const target=Number(process.env.ATLAS_EXPLORE_ASSET_LIMIT||16000);assert.ok(assets<=target,`Integrated asset count ${assets} exceeds headroom budget ${target}`);
+// Files per deployment: one cap for the whole site, perf/budgets.json deploy.maxFiles (90,000 under
+// the 100,000 that Workers Paid static assets allow; docs/RUNBOOK-workers-cutover.md), so a build
+// that would break deploys fails here as well as in perf-budget.mjs.
+const walk=d=>fs.readdirSync(d,{withFileTypes:true}).reduce((n,f)=>n+(f.isDirectory()?walk(path.join(d,f.name)):1),0);const assets=walk(dist);const target=Number(process.env.ATLAS_EXPLORE_ASSET_LIMIT||JSON.parse(fs.readFileSync('perf/budgets.json','utf8')).deploy.maxFiles);assert.ok(assets<=target,`Integrated asset count ${assets} exceeds headroom budget ${target}`);
 const evidence={schemaVersion:1,bundles:published.size,records,observations:points,interpretationPending:pending,interpretationEligible:records-pending,qualityCounts,qualityRegistryVersion,maxShardBytes:maxShard,maxManifestBytes:maxManifest,integratedAssets:assets,assetBudget:target,passed:true};console.log('Explorer verified:',JSON.stringify(evidence));   // a gate only reads: evidence goes to the log, never into the repo

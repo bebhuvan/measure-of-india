@@ -8,7 +8,6 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { JSDOM } from "jsdom";
-import wawoff2 from "wawoff2";
 import { DOSSIERS, bySlug, kicker } from "../src/dossiers/registry.js";
 import { headlineOf } from "../src/dossiers/headline.js";
 
@@ -20,16 +19,10 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 async function ensureFonts() {
   const dir = path.join(os.homedir(), ".local/share/fonts");
   fs.mkdirSync(dir, { recursive: true });
-  for (const f of ["source-serif-4-normal-latin", "golos-text-normal-latin"]) {
-    const out = path.join(dir, "india-atlas-" + f + ".ttf");
-    if (fs.existsSync(out)) continue;
-    const ttf = await wawoff2.decompress(fs.readFileSync(path.join(ROOT, "public/fonts", f + ".woff2")));
-    fs.writeFileSync(out, Buffer.from(ttf));
-  }
-  // v3: librsvg cannot set a variable font's optical size or weight, so the display serif is
-  // shipped as three static instances of the site's Source Serif 4 (opsz 60 at 500 and 300 for
-  // titles and figures, opsz 30 at 600 for the brand), cut with fontTools' instancer from the
-  // self-hosted latin face. Copied into the font dir and registered once.
+  // librsvg cannot set a variable font's optical size or weight, so the cards use static instances
+  // of the site's faces (v5: Newsreader at opsz 72 / 400 and 300 for titles and figures, opsz 48 /
+  // 500 for the brand, opsz 24 for text; Libre Franklin at 400 and 600), cut with fontTools'
+  // instancer from fonts/source. Copied into the font dir and registered once.
   let fresh = false;
   for (const f of fs.readdirSync(path.join(ROOT, "scripts/og-fonts"))) {
     const out = path.join(dir, f);
@@ -44,8 +37,8 @@ async function ensureFonts() {
   fs.writeFileSync(path.join(fcDir, "fonts.conf"), `<?xml version="1.0"?><!DOCTYPE fontconfig SYSTEM "fonts.dtd"><fontconfig><dir>${dir}</dir><dir>/usr/share/fonts</dir><cachedir>${path.join(fcDir, "cache")}</cachedir></fontconfig>`);
   process.env.FONTCONFIG_FILE = path.join(fcDir, "fonts.conf");
 }
-// the converted fontsource faces register under these family names
-const RENDER_FAMILY = { "Source Serif 4": "Source Serif 4", "Golos Text": "Golos Text", "Atlas OG Serif Display": "Atlas OG Serif Display", "Atlas OG Serif Light": "Atlas OG Serif Light", "Atlas OG Serif Brand": "Atlas OG Serif Brand" };
+// the site faces render through their static OG instances
+const RENDER_FAMILY = { "Newsreader": "Atlas OG5 Serif Text", "Libre Franklin": "Atlas OG5 Sans", "Atlas OG5 Serif Display": "Atlas OG5 Serif Display", "Atlas OG5 Serif Light": "Atlas OG5 Serif Light", "Atlas OG5 Serif Brand": "Atlas OG5 Serif Brand" };
 const renderFonts = (svg) =>
   svg.replace(/font-family="([^"]+)"/g, (_, fam) =>
     'font-family="' + fam.split(",").map((f) => RENDER_FAMILY[f.trim().replace(/'/g, "")] ?? f.trim()).join(",") + '"');
@@ -57,7 +50,7 @@ for (const k of ["window", "document", "Node", "Element", "HTMLElement", "SVGEle
 }
 const Plot = (await import("@observablehq/plot")).default ?? (await import("@observablehq/plot"));
 
-const mono = "'Golos Text', sans-serif";   // chart text face (name kept from v1)
+const mono = "'Libre Franklin', sans-serif";   // chart text face (name kept from v1)
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const monthOf = (b) => { const d = b.dates.at(-1); return `${MONTHS[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`; };
@@ -93,13 +86,13 @@ function plotSvg({ S, keys, d0, d1, band, trend, suffix = "%", yStep, fmt, mr })
     Plot.gridY(yTicks, { stroke: "#E8EBEF", strokeWidth: 1 }),
     band ? Plot.rectY([{ y1: band[0], y2: band[1] }], { y1: "y1", y2: "y2", x1: dates[0], x2: dates.at(-1), fill: "#F4F6FD" }) : null,
     Plot.ruleY([d0], { stroke: "#DFE2E8", strokeWidth: 1 }),
-    Plot.ruleY([0], { stroke: band ? "#B5BAC4" : "#161A22", strokeOpacity: band ? 1 : 0.55, strokeWidth: 1 }),
+    Plot.ruleY([0], { stroke: band ? "#B5BAC4" : "#15171A", strokeOpacity: band ? 1 : 0.55, strokeWidth: 1 }),
     trend != null ? Plot.ruleY([trend], { stroke: "#BFC4CD", strokeWidth: 1, strokeDasharray: "2,4" }) : null,
     ...keys.slice(1).map((k) => Plot.lineY(S[k].data, { x: "date", y: "value", stroke: S[k].color, strokeWidth: 1.5, strokeLinejoin: "round", strokeLinecap: "round", ...(S[k].dashed ? { strokeDasharray: "4 3" } : {}) })),
     Plot.lineY(S[keys[0]].data, { x: "date", y: "value", stroke: S[keys[0]].color, strokeWidth: 2.75, strokeLinejoin: "round", strokeLinecap: "round" }),
     ...keys.map((k) => Plot.dot([S[k].data.at(-1)], { x: "date", y: "value", fill: S[k].color, r: k === keys[0] ? 5 : 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
     ...dodgeEndLabels(keys.map((k) => S[k]), (d1 - d0) * 0.05).map((p) =>
-      Plot.text([{ date: p.s.data.at(-1).date, y: p.y }], { x: "date", y: "y", text: () => `${p.s.label} ${fmtV(p.value)}`, dx: 12, fill: "#161A22", fontSize: 15, fontFamily: mono, stroke: "#FFFFFF", strokeWidth: 4, paintOrder: "stroke", fontWeight: p.s.label === S[keys[0]].label ? 500 : 400, textAnchor: "start" })),
+      Plot.text([{ date: p.s.data.at(-1).date, y: p.y }], { x: "date", y: "y", text: () => `${p.s.label} ${fmtV(p.value)}`, dx: 12, fill: "#15171A", fontSize: 15, fontFamily: mono, stroke: "#FFFFFF", strokeWidth: 4, paintOrder: "stroke", fontWeight: p.s.label === S[keys[0]].label ? 500 : 400, textAnchor: "start" })),
   ].filter(Boolean);
   const plot = Plot.plot({
     // the end labels need their own room: measured from the longest one (15px Golos, ~8.4px a glyph)
@@ -120,7 +113,7 @@ import {digitalAccessOg} from "./lib/digital-access-og.mjs";
 const CARDS = [
   ...(bySlug.pensions?[{
     slug:'pensions',bundleSlug:'pensions-m3',keys:['apy_ca7e68f6'],fmt:v=>Math.round(v).toLocaleString('en-IN'),
-    prep:S=>{headlineOf(bySlug.pensions);S.apy_ca7e68f6={...S.apy_ca7e68f6,label:'APY subscribers',color:'#2E4BD8'};},
+    prep:S=>{headlineOf(bySlug.pensions);S.apy_ca7e68f6={...S.apy_ca7e68f6,label:'APY subscribers',color:'#2E4BC4'};},
     render:(_b,S)=>{const values=S.apy_ca7e68f6.data.filter(d=>d.value!=null).map(d=>d.value),ceiling=Math.max(...values)*1.15;return plotSvg({S,keys:['apy_ca7e68f6'],d0:0,d1:ceiling,band:null,trend:null,yStep:ceiling/4,fmt:v=>Math.round(v).toLocaleString('en-IN'),mr:260});},
     foot:()=>{const h=headlineOf(bySlug.pensions);return `APY subscriber stock, ${h.period}. Source: PFRDA`;}
   }]:[]),
@@ -134,7 +127,7 @@ const CARDS = [
     slug: "schools", bundleSlug: "schools-udise-student-2",
     keys: ["enrolment"], d0:20,d1:28,band:null,trend:null,
     yStep:2,fmt:v=>v.toFixed(2)+" cr",mr:240,
-    prep:(S,b)=>{S.enrolment={label:"Enrolled pupils",color:"#2E4BD8",data:b.dates.map((d,i)=>({date:new Date(d+"T00:00:00Z"),value:Object.values(b.series).reduce((a,s)=>a+(s.data[i]??0),0)/1e7}))};},
+    prep:(S,b)=>{S.enrolment={label:"Enrolled pupils",color:"#2E4BC4",data:b.dates.map((d,i)=>({date:new Date(d+"T00:00:00Z"),value:Object.values(b.series).reduce((a,s)=>a+(s.data[i]??0),0)/1e7}))};},
     foot:(b,S)=>`Enrolment including school pre-primary, ${b.meta.latestPeriod}, student-level collection. Source: Ministry of Education, UDISE+`,
   },
   {
@@ -171,7 +164,7 @@ const CARDS = [
     // external (lb/external): weekly reserves since 2001, RBI DBIE
     slug: "external", bundleSlug: "external-reserves-weekly",
     keys: ["total_usd"], d0: 0, d1: 900, band: null, trend: null, scale: 0.001, yStep: 200, fmt: (v) => "$" + v.toFixed(0) + " bn", mr: 200,
-    prep: (S) => { S.total_usd = { ...S.total_usd, label: "Reserves", color: "#2E4BD8" }; },
+    prep: (S) => { S.total_usd = { ...S.total_usd, label: "Reserves", color: "#2E4BC4" }; },
     // S is already scaled to $ bn (card.scale) when foot runs
     foot: (b, S) => { const d = b.dates.at(-1); return `Foreign exchange reserves $${S.total_usd.data.at(-1).value.toFixed(0)} bn, week of ${+d.slice(8, 10)} ${MONTHS[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}. Source: RBI DBIE`; },
   },
@@ -193,7 +186,7 @@ const CARDS = [
       const FRACS = ["f0_5", "f5_10", "f10_20", "f20_30", "f30_40", "f40_50",
         "f50_60", "f60_70", "f70_80", "f80_90", "f90_95", "f95_100"];
       const ladder = (sector) => FRACS.map((k, i) => ({ date: i, value: S[k + "_" + sector].data[1].value }));
-      S.rural_ladder = { label: "Rural", color: "#2E4BD8", data: ladder("rural") };
+      S.rural_ladder = { label: "Rural", color: "#2E4BC4", data: ladder("rural") };
       S.urban_ladder = { label: "Urban", color: "#5F6675", data: ladder("urban") };
     },
     foot: (b, S) => `MPCE by fractile class · bottom 5% rural ₹${Math.round(S.rural_ladder.data[0].value).toLocaleString("en-IN")}, top 5% urban ₹${Math.round(S.urban_ladder.data.at(-1).value).toLocaleString("en-IN")} · 2023-24 round · Source: MoSPI/NSO`,
@@ -203,7 +196,7 @@ const CARDS = [
     keys: ["factories_in_operation", "number_of_factories"], d0: 0, d1: 3.2, band: null, trend: null,
     scale: 1e-5, yStep: 1, fmt: (v) => v.toFixed(1) + " lakh", mr: 240,
     prep: (S) => {
-      S.factories_in_operation = { ...S.factories_in_operation, label: "In operation", color: "#2E4BD8" };
+      S.factories_in_operation = { ...S.factories_in_operation, label: "In operation", color: "#2E4BC4" };
       S.number_of_factories = { ...S.number_of_factories, label: "Registered", color: "#5F6675" };
     },
     foot: (b, S) => `Factories in operation ${S.factories_in_operation.data.at(-1).value.toFixed(1)} lakh, Annual Survey of Industries 2023-24. Source: MoSPI/NSO`,
@@ -215,7 +208,7 @@ const CARDS = [
     yStep: 0.2, fmt: (v) => v.toFixed(2) + " cr", mr: 230,
     prep: (S) => {
       const cr = (s) => s.data.map((d) => ({ ...d, value: d.value == null ? null : d.value / 1e7 }));
-      S.female = { ...S.enrolment_female, data: cr(S.enrolment_female), label: "Female", color: "#2E4BD8" };
+      S.female = { ...S.enrolment_female, data: cr(S.enrolment_female), label: "Female", color: "#2E4BC4" };
       S.male = { ...S.enrolment_male, data: cr(S.enrolment_male), label: "Male", color: "#5F6675" };
     },
     foot: (b, S) => `Enrolment ${S.female.data.at(-1).value.toFixed(2)} cr (F) · ${S.male.data.at(-1).value.toFixed(2)} cr (M) · AISHE 2021-22 · Source: Ministry of Education`,
@@ -225,7 +218,7 @@ const CARDS = [
     keys: ["total__all_india", "rural__all_india", "urban__all_india"], d0: 870, d1: 940, band: null, trend: null,
     yStep: 10, fmt: (v) => String(Math.round(v)), mr: 220,
     prep: (S) => {
-      S.total__all_india = { ...S.total__all_india, label: "India", color: "#2E4BD8" };
+      S.total__all_india = { ...S.total__all_india, label: "India", color: "#2E4BC4" };
       S.rural__all_india = { ...S.rural__all_india, label: "Villages", color: "#A3A9B4" };
       S.urban__all_india = { ...S.urban__all_india, label: "Towns", color: "#5F6675" };
     },
@@ -236,7 +229,7 @@ const CARDS = [
     // the domain is in GW: card.scale turns the bundle's MW into GW before plotting
     keys: ["grand_total"], d0: 50, d1: 300, band: null, trend: null,
     scale: 0.001, yStep: 50, fmt: (v) => v.toFixed(0) + " GW", mr: 200,
-    prep: (S) => { S.grand_total = { ...S.grand_total, label: "Grand Total", color: "#2E4BD8" }; },
+    prep: (S) => { S.grand_total = { ...S.grand_total, label: "Grand Total", color: "#2E4BC4" }; },
     foot: (b, S) => `Grand Total ${(S.grand_total.data.at(-1).value).toFixed(0)} GW · ${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][+b.dates.at(-1).slice(5, 7) - 1]} ${b.dates.at(-1).slice(0, 4)} · the Dec 2023 step is a classification change, not capacity · Source: MNRE`,
   },
   {
@@ -246,7 +239,7 @@ const CARDS = [
     // two survey rounds, two bundles: one point from each, drawn as a before-and-after
     prep: (S) => {
       const two = (k) => ["nfhs-4-anaemia", "nfhs-5-anaemia"].map((b) => { const x = load(b); return { date: new Date(x.dates[0] + "T00:00:00Z"), value: x.series[k].data[0] }; });
-      S.children = { label: "Children 6-59 months", color: "#2E4BD8", data: two("children_age_6_59_months_who_are_anaemic_11__all_india__total") };
+      S.children = { label: "Children 6-59 months", color: "#2E4BC4", data: two("children_age_6_59_months_who_are_anaemic_11__all_india__total") };
       S.women = { label: "Women 15-49", color: "#5F6675", data: two("all_women_age_15_49_years_who_are_anaemic__all_india__total") };
     },
     foot: (b, S) => `Anaemic, per cent, NFHS-4 (2015-16) and NFHS-5 (2019-21): children ${S.children.data[0].value.toFixed(1)} to ${S.children.data[1].value.toFixed(1)}. Source: IIPS, MoHFW, via MoSPI`,
@@ -263,7 +256,7 @@ const CARDS = [
     slug: "services", bundleSlug: "services-bop-annual",
     keys: ["s1_2_1_credit", "s1_2_1_debit"], d0: 0, d1: 450, band: null, trend: null,
     scale: 0.001, yStep: 100, fmt: (v) => "$" + v.toFixed(0) + " bn", mr: 220,
-    prep: (S) => { S.s1_2_1_credit = { ...S.s1_2_1_credit, label: "Exports", color: "#2E4BD8" }; S.s1_2_1_debit = { ...S.s1_2_1_debit, label: "Imports", color: "#C47A16" }; },
+    prep: (S) => { S.s1_2_1_credit = { ...S.s1_2_1_credit, label: "Exports", color: "#2E4BC4" }; S.s1_2_1_debit = { ...S.s1_2_1_debit, label: "Imports", color: "#C47A16" }; },
     foot: (b) => { const y = +b.dates.at(-1).slice(0, 4); return `Services exports and imports, 1950-51 to ${y}-${String((y + 1) % 100).padStart(2, "0")}. Source: RBI`; },
   },
   // --- states (state economies) ---
@@ -271,7 +264,7 @@ const CARDS = [
     slug: "states", bundleSlug: "states-spread",
     keys: ["gap_current", "gap_constant"], d0: 0, d1: 14, band: null, trend: null,
     yStep: 2, fmt: (v) => v.toFixed(1) + "×", mr: 220,
-    prep: (S) => { S.gap_current = { ...S.gap_current, label: "Current prices", color: "#2E4BD8" }; S.gap_constant = { ...S.gap_constant, label: "Constant prices", color: "#A3A9B4" }; },
+    prep: (S) => { S.gap_current = { ...S.gap_current, label: "Current prices", color: "#2E4BC4" }; S.gap_constant = { ...S.gap_constant, label: "Constant prices", color: "#A3A9B4" }; },
     foot: (b) => `Richest state's income per person ÷ poorest's, ${b.meta.panel.length} states, 2011-12 to ${(() => { const y = +b.dates.at(-1).slice(0, 4); return `${y}-${String((y + 1) % 100).padStart(2, "0")}`; })()}. Source: MoSPI`,
   },
   // --- rates (atlas-rates) ---
@@ -281,7 +274,7 @@ const CARDS = [
     yStep: 2, fmt: (v) => v.toFixed(2) + "%", mr: 200,
     prep: (S) => {
       const from = (s) => ({ ...s, data: s.data.filter((d) => d.date >= new Date(Date.UTC(2011, 4, 1))) });
-      S.repo = { ...from(S.repo), label: "Repo rate", color: "#2E4BD8" };
+      S.repo = { ...from(S.repo), label: "Repo rate", color: "#2E4BC4" };
       S.sdf = { ...from(S.sdf), label: "SDF (floor)", color: "#A3A9B4" };
     },
     foot: (b) => `RBI policy repo rate at month-end, May 2011 to ${monthOf(b)}. Source: RBI`,
@@ -291,7 +284,7 @@ const CARDS = [
     slug: "credit", bundleSlug: "credit-growth",
     keys: ["headline", "personal_loans", "industry"], d0: -5, d1: 35, band: null, trend: null,
     yStep: 5, fmt: (v) => v.toFixed(1) + "%", mr: 230,
-    prep: (S) => { S.headline = { ...S.headline, label: "Bank credit", color: "#2E4BD8" }; S.personal_loans = { ...S.personal_loans, label: "Personal loans", color: "#5F6675" }; S.industry = { ...S.industry, label: "Industry", color: "#A3A9B4" }; },
+    prep: (S) => { S.headline = { ...S.headline, label: "Bank credit", color: "#2E4BC4" }; S.personal_loans = { ...S.personal_loans, label: "Personal loans", color: "#5F6675" }; S.industry = { ...S.industry, label: "Industry", color: "#A3A9B4" }; },
     foot: (b, S) => { const d = b.dates.at(-1); return `Bank credit growth on a year earlier, ${["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}. Source: RBI, sectoral deployment of bank credit`; },
   },
   // payments (lb/payments): UPI and card payments a month, crore
@@ -300,7 +293,7 @@ const CARDS = [
     keys: ["upi_volume", "cards_volume"], d0: 0, d1: 3000,   // raise d1 when UPI passes 3,000 crore a month
     band: null, trend: null,
     scale: 1e-7, yStep: 500, fmt: (v) => v.toFixed(0) + " crore", mr: 220,
-    prep: (S) => { S.upi_volume = { ...S.upi_volume, label: "UPI", color: "#2E4BD8" }; S.cards_volume = { ...S.cards_volume, label: "Cards", color: "#A3A9B4" }; },
+    prep: (S) => { S.upi_volume = { ...S.upi_volume, label: "UPI", color: "#2E4BC4" }; S.cards_volume = { ...S.cards_volume, label: "Cards", color: "#A3A9B4" }; },
     foot: (b) => { const d = b.dates.at(-1); return `Payments a month, crore, November 2019 to ${["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}. Source: RBI, payment system indicators`; },
   },
 
@@ -319,7 +312,7 @@ const CARDS = [
     prep: (S) => {
       const from = new Date(Date.UTC(2007, 3, 1));
       // households and companies stop at the last measured quarter: BIS estimates the rest with the split frozen
-      for (const [k, label, color] of [["households", "Households", "#2E4BD8"], ["companies", "Companies", "#5F6675"], ["government", "Government", "#A3A9B4"]]) {
+      for (const [k, label, color] of [["households", "Households", "#2E4BC4"], ["companies", "Companies", "#5F6675"], ["government", "Government", "#A3A9B4"]]) {
         const est = new Set((S[k].estimated ?? []).map((d) => new Date(d + "T00:00:00Z").getTime()));
         S[k] = { ...S[k], label, color, data: S[k].data.filter((d) => d.date >= from && !est.has(d.date.getTime())) };
       }
@@ -330,7 +323,7 @@ const CARDS = [
     slug: "housing", bundleSlug: "bis-property",
     keys: ["nominal", "real"], d0: 50, d1: 400, band: null, trend: null,
     yStep: 50, fmt: (v) => v.toFixed(0), mr: 200,
-    prep: (S) => { S.nominal = { ...S.nominal, label: "Nominal", color: "#2E4BD8" }; S.real = { ...S.real, label: "Real", color: "#C47A16" }; },
+    prep: (S) => { S.nominal = { ...S.nominal, label: "Nominal", color: "#2E4BC4" }; S.real = { ...S.real, label: "Real", color: "#C47A16" }; },
     foot: (b, S) => `Residential property prices, index 2010 = 100, ${b.dates.at(-1).slice(0, 4)} Q${Math.ceil(+b.dates.at(-1).slice(5, 7) / 3)}. Source: BIS`,
   },
   // ---- end bis family ----
@@ -342,7 +335,7 @@ const CARDS = [
     yStep: 20, fmt: (v) => v.toFixed(1) + "%", mr: 260,
     prep: (S) => {
       const keep = (s) => ({ ...s, data: s.data.filter((d) => d.value != null) });
-      S.headcount_3_00 = { ...keep(S.headcount_3_00), label: "$3.00 line, estimate", color: "#2E4BD8" };
+      S.headcount_3_00 = { ...keep(S.headcount_3_00), label: "$3.00 line, estimate", color: "#2E4BC4" };
       S.headcount_4_20 = { ...keep(S.headcount_4_20), label: "$4.20 line, estimate", color: "#5F6675" };
     },
     foot: (b) => { const s = load("poverty-pip-2022"); return `Share below each line, World Bank estimates to ${b.meta.lastSurveyYear}. Survey reading, HCES ${s.meta.surveys.at(-1).period}: ${s.series.headcount_3_00.data.at(-1).toFixed(1)}% below $3.00. Source: World Bank PIP`; },
@@ -352,7 +345,7 @@ const CARDS = [
     // review-a: in crore, as the rest of the site counts people (WPP serves thousands)
     keys: ["tpopulation1july"], d0: 0, d1: 160, band: null, trend: null,
     scale: 1e-4, yStep: 40, fmt: (v) => v.toFixed(1) + " crore", mr: 220,
-    prep: (S) => { S.tpopulation1july = { ...S.tpopulation1july, label: "Population", color: "#2E4BD8" }; },
+    prep: (S) => { S.tpopulation1july = { ...S.tpopulation1july, label: "Population", color: "#2E4BC4" }; },
     foot: (b, S) => `India's population, UN estimate, ${b.dates.at(-1).slice(0, 4)}: ${S.tpopulation1july.data.at(-1).value.toFixed(1)} crore. Source: UN World Population Prospects 2024`,
   },
   // climate (lb/climate)
@@ -360,7 +353,7 @@ const CARDS = [
     slug: "climate", bundleSlug: "climate-temp-annual",
     keys: ["temperature_anomaly"], d0: -1.5, d1: 1, band: null, trend: null,
     yStep: 0.5, fmt: (v) => (v < 0 ? "−" : "+") + Math.abs(v).toFixed(1) + "°C", mr: 220,
-    prep: (S) => { S.temperature_anomaly = { ...S.temperature_anomaly, label: "Against 1991-2020", color: "#2E4BD8" }; },
+    prep: (S) => { S.temperature_anomaly = { ...S.temperature_anomaly, label: "Against 1991-2020", color: "#2E4BC4" }; },
     foot: (b) => `India's annual temperature against the 1991-2020 average, 1940 to ${b.dates.at(-1).slice(0, 4)}. Source: Copernicus ERA5, via Our World in Data`,
   },
   // ilo
@@ -370,7 +363,7 @@ const CARDS = [
     yStep: 20, fmt: (v) => v.toFixed(1) + "%", mr: 220,
     prep: (S) => {
       S.eap_2wap_sex_age_rt__sex_m__age_ythadult_yge15 = { ...S.eap_2wap_sex_age_rt__sex_m__age_ythadult_yge15, label: "Men", color: "#5F6675" };
-      S.eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15 = { ...S.eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15, label: "Women", color: "#2E4BD8" };
+      S.eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15 = { ...S.eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15, label: "Women", color: "#2E4BC4" };
     },
     foot: (b) => `Labour force participation, aged 15+, 1990 to ${b.dates.at(-1).slice(0, 4)}, ILO modelled estimates. Source: ILO, ILOSTAT`,
   },
@@ -379,7 +372,7 @@ const CARDS = [
     slug: "trade", bundleSlug: "trade-total",
     keys: ["exports", "imports"], d0: 0, d1: 90, band: null, trend: null, scale: 1 / 1000,
     yStep: 15, fmt: (v) => "$" + v.toFixed(1) + " bn", mr: 200,
-    prep: (S) => { S.exports = { ...S.exports, label: "Exports", color: "#2E4BD8" }; S.imports = { ...S.imports, label: "Imports", color: "#C47A16" }; },
+    prep: (S) => { S.exports = { ...S.exports, label: "Exports", color: "#2E4BC4" }; S.imports = { ...S.imports, label: "Imports", color: "#C47A16" }; },
     foot: (b) => { const m = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][+b.dates.at(-1).slice(5, 7) - 1]; return `India's merchandise exports and imports, monthly, US$ billion, to ${m} ${b.dates.at(-1).slice(0, 4)}. Source: Ministry of Commerce, TradeStat (DGCI&S)`; },
   },
   // --- end trade ---
@@ -388,7 +381,7 @@ const CARDS = [
     slug: "farms", bundleSlug: "farms-production",
     keys: ["foodgrains", "rice", "wheat"], d0: 0, d1: 400, band: null, trend: null, scale: 1 / 1000,
     yStep: 100, fmt: (v) => v.toFixed(1) + " mt", mr: 220,
-    prep: (S) => { S.foodgrains = { ...S.foodgrains, label: "Foodgrains", color: "#2E4BD8" }; S.rice = { ...S.rice, label: "Rice", color: "#5F6675" }; S.wheat = { ...S.wheat, label: "Wheat", color: "#C47A16" }; },
+    prep: (S) => { S.foodgrains = { ...S.foodgrains, label: "Foodgrains", color: "#2E4BC4" }; S.rice = { ...S.rice, label: "Rice", color: "#5F6675" }; S.wheat = { ...S.wheat, label: "Wheat", color: "#C47A16" }; },
     foot: (b) => { const y = +b.dates.at(-1).slice(0, 4); return `Foodgrain, rice and wheat production, million tonnes, 1950-51 to ${y}-${String((y + 1) % 100).padStart(2, "0")}, final estimates. Source: agriculture ministry, via the RBI`; },
   },
   // ---- end farms ----
@@ -397,7 +390,7 @@ const CARDS = [
     slug: "banks", bundleSlug: "banks-health",
     keys: ["psb_gnpa", "private_gnpa", "all_gnpa"], d0: 0, d1: 16, band: null, trend: null,
     yStep: 4, fmt: (v) => v.toFixed(1) + "%", mr: 230,
-    prep: (S) => { S.psb_gnpa = { ...S.psb_gnpa, label: "Public sector banks", color: "#2E4BD8" }; S.private_gnpa = { ...S.private_gnpa, label: "Private sector banks", color: "#C47A16" }; S.all_gnpa = { ...S.all_gnpa, label: "All banks", color: "#161A22" }; },
+    prep: (S) => { S.psb_gnpa = { ...S.psb_gnpa, label: "Public sector banks", color: "#2E4BC4" }; S.private_gnpa = { ...S.private_gnpa, label: "Private sector banks", color: "#C47A16" }; S.all_gnpa = { ...S.all_gnpa, label: "All banks", color: "#15171A" }; },
     foot: (b) => { const d = b.dates.at(-1); return `Banks' bad loans, gross NPAs as a share of advances, every quarter to ${["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}. Source: RBI, DBIE`; },
   },
   // --- end banks ---
@@ -408,7 +401,7 @@ const CARDS = [
     yStep: 2, fmt: (v) => v.toFixed(1) + "%", mr: 230,
     prep: (S) => {
       const acc = (s) => ({ ...s, data: s.data.filter((d) => d.value != null) });   // accounts only: the estimates are not drawn on the card
-      S.gross_fiscal_deficit = { ...acc(S.gross_fiscal_deficit), label: "Fiscal deficit", color: "#2E4BD8" };
+      S.gross_fiscal_deficit = { ...acc(S.gross_fiscal_deficit), label: "Fiscal deficit", color: "#2E4BC4" };
       S.revenue_deficit = { ...acc(S.revenue_deficit), label: "Revenue deficit", color: "#A3A9B4" };
     },
     foot: (b) => { const f = b.meta.stages.accountsTo; return `The Centre's deficits, per cent of GDP (2011-12 base), 2011-12 to ${f}, accounts. Source: RBI, Handbook of Statistics`; },
@@ -419,7 +412,7 @@ const CARDS = [
     slug: "markets", bundleSlug: "markets-hh-flows",
     keys: ["gross_financial_assets_per_cent_of_gdp_as_per_cent_to_gdp", "per_cent_of_gdp_as_per_cent_to_gdp"], d0: 0, d1: 24, band: null, trend: null,
     yStep: 4, fmt: (v) => v.toFixed(1) + "%", mr: 200,
-    prep: (S) => { S.gross_financial_assets_per_cent_of_gdp_as_per_cent_to_gdp = { ...S.gross_financial_assets_per_cent_of_gdp_as_per_cent_to_gdp, label: "Gross", color: "#5F6675" }; S.per_cent_of_gdp_as_per_cent_to_gdp = { ...S.per_cent_of_gdp_as_per_cent_to_gdp, label: "Net", color: "#2E4BD8" }; },
+    prep: (S) => { S.gross_financial_assets_per_cent_of_gdp_as_per_cent_to_gdp = { ...S.gross_financial_assets_per_cent_of_gdp_as_per_cent_to_gdp, label: "Gross", color: "#5F6675" }; S.per_cent_of_gdp_as_per_cent_to_gdp = { ...S.per_cent_of_gdp_as_per_cent_to_gdp, label: "Net", color: "#2E4BC4" }; },
     foot: (b) => { const d = b.dates.at(-1), M = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], m = +d.slice(5, 7) - 1; return `Households' financial saving, gross and net of borrowing, per cent of GDP, quarterly to ${M[m]} to ${M[m + 2]} ${d.slice(0, 4)}. Source: RBI`; },
   },
   // --- end markets ---
@@ -477,16 +470,16 @@ for (const card of CARDS) {
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">` +
     `<rect width="1200" height="630" fill="#FFFFFF"/>` +
-    `<text x="48" y="66" font-family="'Atlas OG Serif Brand', serif" font-size="24" letter-spacing="-0.2" fill="#161A22">India Atlas</text>` +
-    `<line x1="48" y1="${tl.length > 1 ? 232 : 186}" x2="268" y2="${tl.length > 1 ? 232 : 186}" stroke="#161A22"/>` +
-    `<text x="48" y="${(tl.length > 1 ? 232 : 186) + 16 + figSize}" font-family="'Atlas OG Serif Light', serif" font-size="${figSize}" letter-spacing="-1.5" fill="#161A22">${esc(fig.value)}</text>` +
-    capL.map((l, i) => `<text x="48" y="${(tl.length > 1 ? 232 : 186) + 16 + figSize + 34 + i * 22}" font-family="'Golos Text', sans-serif" font-size="16" fill="#4A5160">${esc(l)}</text>`).join("") +
-    `<text x="300" y="66" font-family="'Golos Text', sans-serif" font-size="17" fill="#6B7180">${esc(kickerText)}</text>` +
-    tl.map((l, i) => `<text x="300" y="${124 + i * 50}" font-family="'Atlas OG Serif Display', serif" font-size="48" letter-spacing="-0.9" fill="#161A22">${esc(l)}</text>`).join("") +
+    `<text x="48" y="66" font-family="'Atlas OG5 Serif Brand', serif" font-size="24" letter-spacing="-0.2" fill="#15171A">India Atlas</text>` +
+    `<line x1="48" y1="${tl.length > 1 ? 232 : 186}" x2="268" y2="${tl.length > 1 ? 232 : 186}" stroke="#15171A"/>` +
+    `<text x="48" y="${(tl.length > 1 ? 232 : 186) + 16 + figSize}" font-family="'Atlas OG5 Serif Light', serif" font-size="${figSize}" letter-spacing="-1.5" fill="#15171A">${esc(fig.value)}</text>` +
+    capL.map((l, i) => `<text x="48" y="${(tl.length > 1 ? 232 : 186) + 16 + figSize + 34 + i * 22}" font-family="'Libre Franklin', sans-serif" font-size="16" fill="#3D4148">${esc(l)}</text>`).join("") +
+    `<text x="300" y="66" font-family="'Libre Franklin', sans-serif" font-size="17" fill="#6B7078">${esc(kickerText)}</text>` +
+    tl.map((l, i) => `<text x="300" y="${124 + i * 50}" font-family="'Atlas OG5 Serif Display', serif" font-size="48" letter-spacing="-0.9" fill="#15171A">${esc(l)}</text>`).join("") +
     `<g transform="translate(300,${tl.length > 1 ? 222 : 176})">${chart.replace(/<\?xml[^>]*\?>/, "").replace(/<svg/, '<svg x="0" y="0"')}</g>` +
     `<line x1="48" y1="582" x2="1152" y2="582" stroke="#DFE2E8"/>` +
-    `<text x="48" y="608" font-family="'Golos Text', sans-serif" font-size="14" fill="#6B7180">${esc(card.foot(bundle, S).replace(/ · /g, ", "))}</text>` +
-    `<text x="1152" y="608" text-anchor="end" font-family="'Golos Text', sans-serif" font-size="14" fill="#6B7180">atlas.thisindianlife.today</text>` +
+    `<text x="48" y="608" font-family="'Libre Franklin', sans-serif" font-size="14" fill="#6B7078">${esc(card.foot(bundle, S).replace(/ · /g, ", "))}</text>` +
+    `<text x="1152" y="608" text-anchor="end" font-family="'Libre Franklin', sans-serif" font-size="14" fill="#6B7078">atlas.thisindianlife.today</text>` +
     `</svg>`;
   const png = await sharp(Buffer.from(renderFonts(svg))).png().toBuffer();
   fs.writeFileSync(path.join(ROOT, "public/og", card.slug + ".png"), png);
@@ -511,22 +504,22 @@ if (!ONLY || ONLY.has("profiles"))
     const nameSize = u.name.length > 30 ? 40 : u.name.length > 20 ? 50 : 62;
     const cellsSvg = cells.map((c, i) => {
       const x = 40 + i * 282;
-      return `<line x1="${x}" y1="330" x2="${x + 250}" y2="330" stroke="#161A22"/>` +
-        `<text x="${x}" y="362" font-family="'Golos Text', sans-serif" font-size="17" fill="#6B7180">${esc(c.label)}</text>` +
-        `<text x="${x}" y="428" font-family="'Atlas OG Serif Light', serif" font-size="50" letter-spacing="-1" fill="#161A22">${esc(c.text.replace(/ a day$/, ""))}</text>` +
-        `<text x="${x}" y="462" font-family="'Golos Text', sans-serif" font-size="16" fill="#4A5160">${esc(c.period)}</text>`;
+      return `<line x1="${x}" y1="330" x2="${x + 250}" y2="330" stroke="#15171A"/>` +
+        `<text x="${x}" y="362" font-family="'Libre Franklin', sans-serif" font-size="17" fill="#6B7078">${esc(c.label)}</text>` +
+        `<text x="${x}" y="428" font-family="'Atlas OG5 Serif Light', serif" font-size="50" letter-spacing="-1" fill="#15171A">${esc(c.text.replace(/ a day$/, ""))}</text>` +
+        `<text x="${x}" y="462" font-family="'Libre Franklin', sans-serif" font-size="16" fill="#3D4148">${esc(c.period)}</text>`;
     }).join("");
     const svg =
       `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">` +
       `<rect width="1200" height="630" fill="#FFFFFF"/>` +
-      `<text x="40" y="58" font-family="'Atlas OG Serif Brand', serif" font-size="24" letter-spacing="-0.2" fill="#161A22">India Atlas</text>` +
-      `<text x="40" y="100" font-family="'Golos Text', sans-serif" font-size="17" fill="#6B7180">${esc(`${KIND[u.kind]} profile, ${u.region}`)}</text>` +
-      `<text x="40" y="${150 + nameSize / 2}" font-family="'Atlas OG Serif Display', serif" font-size="${nameSize}" letter-spacing="-0.9" fill="#161A22">${esc(u.name)}</text>` +
-      `<text x="40" y="262" font-family="'Golos Text', sans-serif" font-size="19" fill="#4A5160">How it earns, spends, works, borrows, learns and falls ill, against India and its neighbours</text>` +
+      `<text x="40" y="58" font-family="'Atlas OG5 Serif Brand', serif" font-size="24" letter-spacing="-0.2" fill="#15171A">India Atlas</text>` +
+      `<text x="40" y="100" font-family="'Libre Franklin', sans-serif" font-size="17" fill="#6B7078">${esc(`${KIND[u.kind]} profile, ${u.region}`)}</text>` +
+      `<text x="40" y="${150 + nameSize / 2}" font-family="'Atlas OG5 Serif Display', serif" font-size="${nameSize}" letter-spacing="-0.9" fill="#15171A">${esc(u.name)}</text>` +
+      `<text x="40" y="262" font-family="'Libre Franklin', sans-serif" font-size="19" fill="#3D4148">How it earns, spends, works, borrows, learns and falls ill, against India and its neighbours</text>` +
       cellsSvg +
       `<line x1="40" y1="596" x2="1160" y2="596" stroke="#ECEEF2"/>` +
-      `<text x="40" y="618" font-family="'Golos Text', sans-serif" font-size="14" fill="#6B7180">Each figure with its own period. Sources: MoSPI, RBI, the family health survey and others, as named on the page.</text>` +
-      `<text x="1160" y="618" text-anchor="end" font-family="'Golos Text', sans-serif" font-size="14" fill="#6B7180">atlas.thisindianlife.today/states/${u.slug}/</text>` +
+      `<text x="40" y="618" font-family="'Libre Franklin', sans-serif" font-size="14" fill="#6B7078">Each figure with its own period. Sources: MoSPI, RBI, the family health survey and others, as named on the page.</text>` +
+      `<text x="1160" y="618" text-anchor="end" font-family="'Libre Franklin', sans-serif" font-size="14" fill="#6B7078">atlas.thisindianlife.today/states/${u.slug}/</text>` +
       `</svg>`;
     const png = await sharp(Buffer.from(renderFonts(svg))).png().toBuffer();
     fs.writeFileSync(path.join(dir, u.slug + ".png"), png);

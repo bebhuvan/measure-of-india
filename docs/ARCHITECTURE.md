@@ -16,7 +16,7 @@ npx astro build                            ④ RENDER   pages + charts from bake
 pipeline/facts.mjs ─► generate.mjs         ⑤ NARRATE  LLM prose from facts sheets only
 pipeline/verify.mjs / lint.mjs / contract.mjs
 scripts/qc.mjs + lint-charts.mjs           ⑥ GATE     numbers traced, tells banned
-.github/workflows/update.yml ─► release PR ⑦ PUBLISH  human merges; deploy.yml ships it
+.github/workflows/update.yml ─► release PR ⑦ PUBLISH  human merges; deploy.yml ships it to Workers static assets (wrangler.jsonc)
 ```
 
 No framework runtime, no database, no client-side data fetching. Everything is
@@ -161,3 +161,33 @@ are withheld. Scoped source audits can opt named records in only while versioned
 raw/canonical bindings still match. Compiled page/core/manifest policy versions prevent
 mixed-release safety fallback. Public source revision metadata can disclose an
 unpublished timestamp without overwriting the archived canonical metadata.
+
+## Performance and scale (16 October 2026) **[live]**
+
+The site is built to stay fast as the data grows: "more data, more cuts" mostly means more
+single-value survey cells, so a row must be cheap, not a page. The before/after evidence for
+every change is in `docs/status/performance-scale.md`; the plan, with 2x and 5x projections, is in
+`../atlas-worktrees/perf-notes/scale-plan.md`.
+
+- **Gates.** `npm run perf`, part of `gates`, has three checks.
+  - `perf-budget` measures gzip bytes per page (HTML, JS module graph, CSS, inline JSON, fonts),
+    the file count and the largest file.
+  - `perf-search` runs the labelled reader queries through the real engine and counts the bytes
+    each cold query fetches.
+  - `perf-browser` runs Playwright on every guide, every state profile and the heaviest every-cut
+    pages, at 390 px with 4x CPU, taking the median of 3 cold loads.
+  - Ceilings are in `perf/budgets.json` and only ever ratchet down.
+- **Search, index v2.** The core holds guides, charts, views, profiles and policies, plus per
+  bundle only a guide and a count. Nothing in it is per row. Bundle records, postings, row chunks
+  (512 rows), quantity groups and the vocabulary are fetched by need. One release hash names
+  every file.
+- **Every-cut packs.** Pages hold up to 5,000 rows.
+  - A page renders its first 100 rows. The rest are a gzip pack of the same markup, streamed in
+    batches after first paint, so find-in-page, sort and filter cover the page without a
+    1,000-row HTML document.
+  - Deployed every-cut bytes went from 1.3 GB to 139 MB.
+- **Fonts.** Each face is split by `scripts/fonts-build.mjs` into a primary file, which holds the
+  characters the site uses and is preloaded, and on-demand files for everything else. Every glyph
+  outline is proven identical to the original.
+- **Row derivation** (`everycut.js`) is 2.8x faster with identical output. It runs in the build,
+  the search index, the explorer pack, qc and the tests.

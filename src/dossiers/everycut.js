@@ -31,7 +31,10 @@ const M3 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"
  * kind "pct": a level; its change is a per cent change.
  * kind "diff": a level whose per cent change means little (a ratio, a coefficient); the
  *   change is the plain difference, in the unit. */
-const grp = (v, d = 0) => v.toLocaleString("en-IN", { minimumFractionDigits: d, maximumFractionDigits: d });
+// One Intl.NumberFormat per precision: toLocaleString with options builds a new formatter on every
+// call, which was half the time of deriving 1.7 million every-cut rows. Same output, by the spec.
+const GRP = new Map();
+const grp = (v, d = 0) => { let f = GRP.get(d); if (!f) GRP.set(d, (f = new Intl.NumberFormat("en-IN", { minimumFractionDigits: d, maximumFractionDigits: d }))); return f.format(v); };
 const signed = (v, s) => (v < 0 ? MINUS : v > 0 ? "+" : "") + s(Math.abs(v));
 const big = (v, unit) => {   // levels in a base unit, shown at a readable scale
   const a = Math.abs(v);
@@ -667,7 +670,17 @@ export const PERIOD_LABELS = {
   // ilo: the ILO dates each NSS round by the year it ends
   "ilo-nss-": { "1994-01-01": "NSS 1993-94", "2000-01-01": "NSS 1999-2000", "2005-01-01": "NSS 2004-05", "2010-01-01": "NSS 2009-10", "2012-01-01": "NSS 2011-12" },
 };
+// A label depends only on the bundle (its slug and meta) and the date, and every row of a bundle
+// asks for the same few dates; the PERIOD_LABELS prefix scan was a quarter of row derivation.
+const periodMemo = new WeakMap();
 export function periodLabel(slug, bundle, iso) {
+  let m = periodMemo.get(bundle);
+  if (!m) periodMemo.set(bundle, (m = new Map()));
+  const k = slug + "\0" + iso;
+  if (!m.has(k)) m.set(k, periodLabelUncached(slug, bundle, iso));
+  return m.get(k);
+}
+function periodLabelUncached(slug, bundle, iso) {
   const mode = bundle.meta?.periodLabelMode;
   if (mode !== undefined && mode !== "source-date") throw new Error(`Unknown periodLabelMode: ${mode}`);
   if (bundle.meta?.observationKind === "expected-schedule") {
@@ -752,7 +765,7 @@ const rowsMemo = new Map();
  *  and key, so a link to one series survives a release (keys are stable; row order is not) and
  *  costs a few bytes on pages of up to PAGE_ROWS rows. Site search links to it. */
 export function rowAnchor(bundle, key) {
-  const h = crypto.createHash("sha1").update(bundle + "\0" + key).digest();
+  const h = crypto.hash ? crypto.hash("sha1", bundle + "\0" + key, "buffer") : crypto.createHash("sha1").update(bundle + "\0" + key).digest();   // one-shot where Node has it (>= 21.7): same bytes, a third of the cost
   return "s" + (h.readUInt32BE(0) * 256 + h[4]).toString(36).padStart(7, "0").slice(-7);
 }
 function validateSourceQualityMode(mode) {
@@ -854,8 +867,11 @@ function rowsOfUncached(slug, opts = {}) {
 
 // a bundle with more series than this gets its own page; the guide's table links to it
 export const LONG_TAIL = 150;
-// rows per long-tail page; longer bundles are split, packing whole groups where they exist
-export const PAGE_ROWS = 1000;
+// rows per long-tail page; longer bundles are split, packing whole groups where they exist. A page
+// renders its first rows in HTML and streams the rest from a gzip pack (everycut-html.js), so a
+// page can hold far more rows than its HTML weighs; 5,000 keeps a page's table within what a
+// mid-range phone lays out comfortably, and every row findable with find-in-page.
+export const PAGE_ROWS = 5000;
 
 // the guide page inlines at most this many rows (about 450 KB of HTML); the bundles after the
 // cap, in registry order, go to a paged long-tail view. A registry entry may set

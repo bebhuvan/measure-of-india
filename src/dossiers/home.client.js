@@ -2,7 +2,7 @@
 // writes under /search/ and the engine in src/dossiers/search-core.js. The small core index
 // loads on first focus and answers for guides, charts and files at once; series come from the
 // shards the query's words need, a moment later. Every word typed must match.
-import { createSearch, parseQuery } from "./search-core.js";
+import { createSearch, parseQuery, layout } from "./search-core.js";
 
 const q = document.getElementById("q");
 const res = document.getElementById("results");
@@ -30,31 +30,30 @@ if (q && res) {
     const opt = (href, main, meta, right = "", mid = "") =>
       `<li role="option" data-href="${esc(href)}"><div class="rn">${hl(main)}<span class="rm">${esc(meta)}</span></div><div class="rs">${mid}</div><div class="rv">${right}</div></li>`;
     const head = (t) => `<li class="sec" role="presentation">${t}</li>`;
-    // series first (what the box promises), then guides and charts, then whole files
+    // the order is search-core.js layout(): a state the query names, a guide or chart every word
+    // names, the series, then guides and charts, other state profiles and whole files
     let html = "";
-    // profiles (lb/profiles): a query that is a state's name leads with its profile
-    const states = quick.states ?? [];
-    if (states.some((x) => x.lead)) html += head("State profile") + states.filter((x) => x.lead).map((x) => opt(x.href, x.title, x.note, "<small>Profile</small>")).join("");
     const clip = (t, n) => (t.length > n ? t.slice(0, n - 1).replace(/[\s,;:]+\S*$/, "") + "…" : t);
-    const top = [...quick.guides.slice(0, 1).map((g) => ({ ...g, kind: "Guide" })), ...quick.plates.slice(0, 3).map((p) => ({ ...p, kind: "Chart" }))].slice(0, 3);
+    const sections = layout(quick, series && !series.error ? series : null);
+    const at = (k) => sections.find((x) => x.kind === k).items;
+    const states = quick.states ?? [], top = at("top");
+    if (at("state").length) html += head("State profile") + at("state").map((x) => opt(x.href, x.title, x.note, "<small>Profile</small>")).join("");
+    if (at("guide").length) html += head(at("guide")[0].kind === "Chart" ? "Chart" : "Guide") + at("guide").map((x) => opt(x.href, x.title, x.note, `<small>${x.kind}</small>`)).join("");
     if (series === null) html += `<li class="wait" role="status">Searching the series…</li>`;
     else if (series.error) html += `<li class="wait" role="status">Series search could not load. Check your connection and type again to retry. If the site has updated, reload this page.</li>`;
     else if (series.rows.length) {
       html += head(`Series <span>${series.approx ? "about " : ""}${fmtN(series.total)} ${series.total === 1 ? "match" : "matches"}</span>`);
-      html += series.rows.slice(0, 6).map((r) => opt(r.explorerHref || r.href, r.label,
+      html += at("series").map((r) => opt(r.explorerHref || r.href, r.label,
         r.quality?.canInterpret===false?`Under review. Archived label: ${clip(r.originalLabel,100)}`:
           [r.group && !r.label.startsWith(r.group) ? r.group : null, `${r.guide ?? "Data file"}: ${clip(r.file, 70)}`].filter(Boolean).join(". "),
         r.quality?.canInterpret===false?'<small>Under review</small>':`${esc(r.latest)}<small>${esc(r.period)}${r.expectedSchedule?` · ${esc(r.expectedSchedule.label)} · ${esc(r.expectedSchedule.asOf)}`:''}</small>`, r.expectedSchedule?'':spark(r.recent))).join("");
     }
     if (top.length) html += head("Guides and charts") + top.map((x) => opt(x.href, x.title, x.note, `<small>${x.kind}</small>`)).join("");
-    if (states.length && !states.some((x) => x.lead)) html += head("State profiles") + states.map((x) => opt(x.href, x.title, x.note, "<small>Profile</small>")).join("");
-    if (quick.files.length) html += head("Files") + quick.files.slice(0, 3).map((f) => opt(f.href, f.title, f.note, "<small>File</small>")).join("");
-    if (!html || (series && !series.error && !series.rows.length && !top.length && !quick.files.length && !states.length))
+    if (at("states").length) html += head("State profiles") + at("states").map((x) => opt(x.href, x.title, x.note, "<small>Profile</small>")).join("");
+    if (at("files").length) html += head("Files") + at("files").map((f) => opt(f.href, f.title, f.note, "<small>File</small>")).join("");
+    if (!html || (series && !series.error && !series.rows.length && !top.length && !at("guide").length && !quick.files.length && !states.length))
       html = `<li class="none">Nothing matches “${esc(q.value)}”. Try fewer words, or a broader one, such as prices, output or a state's name.</li>`;
-    if (series && !series.error && !series.rows.length) {
-      const suggested = S.suggest(q.value);
-      if (suggested) html += `<li role="option" data-suggestion="${esc(suggested)}">Search for “${esc(suggested)}”</li>`;
-    }
+    if (series?.suggestion) html += `<li role="option" data-suggestion="${esc(series.suggestion)}">Search for “${esc(series.suggestion)}”</li>`;
     res.innerHTML = html;
     options().forEach((li, i) => {
       li.id = `opt${i}`;
@@ -101,7 +100,10 @@ if (q && res) {
         if(mine===seq&&!quick.guides.length&&matches.guides.length) {
           quick.guides=matches.guides; render(quick,null,words);
         }
-      } }); } catch (e) {
+      } });
+        // a query that finds nothing may be a slip of the keyboard: offer the one-edit spelling
+        if (!series.rows.length) series.suggestion = await S.suggest(text).catch(() => null);
+      } catch (e) {
         if (e.name === 'AbortError') return;
         series = { rows: [], total: 0, error: true };
       }
@@ -109,6 +111,15 @@ if (q && res) {
     }, 120);
   }
   q.addEventListener("focus", () => { if (q.value.trim()) search(); else load().catch(() => {}); });
+  // The search box is the home page's main door: fetch the small core (about 110 KB) once the page
+  // is idle, so the first query answers at once. Not on a metered or 2G connection, where it waits
+  // for the reader to reach for the box.
+  const net = window.navigator?.connection;
+  if (!(net?.saveData || /(^|-)2g$/.test(net?.effectiveType ?? ""))) {
+    const warm = () => load().catch(() => {});
+    if (window.requestIdleCallback) window.addEventListener("load", () => window.requestIdleCallback(warm, { timeout: 4000 }), { once: true });
+    else window.addEventListener("load", () => setTimeout(warm, 1500), { once: true });
+  }
   q.addEventListener("input", search);
   q.addEventListener("keydown", (e) => {
     if (e.key === "Escape") { close(); return; }
