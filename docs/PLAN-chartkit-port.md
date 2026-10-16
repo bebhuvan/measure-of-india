@@ -142,3 +142,14 @@ log below.
   `scripts/fonts-build.mjs`; OG cards drawn in the same faces from static instances in `scripts/og-fonts/`. git rerere is on
   in this worktree, so the merge resolutions replay. Copy fixes from the port's review list: MNRE year-ago figures compare
   the same calendar month; MNRE §03 says large hydro is in the shares; the credit mix subtitle reads its dates from the bundles.
+- 2026-10-16 combined build (launch-build 16dec093 + lb/perf cc5a70c7 + kit + v5 pages): 816 pages, 15,810 files, 3.4 GB.
+  Fixes on the way: kit.css's own Libre Franklin faces pointed at files the font split removed (dropped; perf-budget now
+  fails on a missing font file); the chart script (`src/kit/KitScript.astro`) loads only where charts are drawn
+  (Base `charts={false}` on Every Cut: JS 7.8 → 4.8 KB); table plates carry their CSV with `dataFigure()` (kit.json, not
+  inline; qc fails an inline one); qc and lint-charts harnesses expose `location` and serve fetch from dist with kit.json
+  withheld; farm net investment by land size back as a plate (negative group labelled left of its bar). Budgets
+  re-recorded for the kit's shape: HTML and CSS raises listed in `perf/budgets.json` `raised`, 216 byte ceilings and the
+  browser ceilings lowered. Phone, CPI: longest task 8,196 → 320 ms, blocking 9,075 → 543 ms; energy blocking
+  15,622 → 145 ms. `perf-browser` here runs with `ATLAS_CHROME_CHANNEL=chrome` (no Playwright browser download on this
+  machine). Search: "electricity generation" marked a known ranking issue (energy plates retitled by finding; Ember
+  series carry machine labels; fix the Ember labels, then remove the mark).

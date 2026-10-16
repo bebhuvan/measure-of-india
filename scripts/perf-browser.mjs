@@ -195,6 +195,10 @@ if (args.includes("--record")) {
     const o = (B.pages[r] ??= {});
     // in the recording machine's terms: this machine's times divided by the calibration factor
     for (const k of ["maxTask", "tbt", "cls"]) { const v = k === "cls" ? x[k] : Math.round(x[k] / factor); o[k] = o[k] == null ? v : Math.min(o[k], v); }
+    // a page well inside the phone target (under 75% of it) keeps the target as its ceiling: a record
+    // that low would only follow the luckiest run, and run-to-run noise at 100 ms is larger than the slack
+    for (const k of ["maxTask", "tbt"]) if (o[k] != null && o[k] <= 0.75 * B.default[k]) delete o[k];
+    if (!Object.keys(o).length || (Object.keys(o).length === 1 && o.cls != null && o.cls <= B.default.cls)) delete B.pages[r];
   }
   B.pages = Object.fromEntries(Object.entries(B.pages).sort(([a], [b]) => a.localeCompare(b)));
   B.calibrationMs = B.calibrationMs ?? calibrationMs;
