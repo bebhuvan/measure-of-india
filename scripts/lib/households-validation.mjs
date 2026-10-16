@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import {readRaw} from './util.mjs';
-import {keyOf,householdUnit,flowCodes,indebtedMeans} from './products/households.mjs';
+import {keyOf,householdUnit,flowCodes,indebtedMeans,noEstimateRows} from './products/households.mjs';
 const stable=d=>JSON.stringify(Object.entries(d).sort(([a],[b])=>a.localeCompare(b)));
 export function validateHouseholds(root){
  const errors=[],issues=[],stats={sourceCells:0,identities:0},bundles=new Map();
@@ -15,12 +15,14 @@ export function validateHouseholds(root){
    if(JSON.stringify(b.series)!==JSON.stringify(expected))fail('AIDIS conditional means: release body replay failed');
    stats.sourceCells+=Object.keys(expected).length;continue;
   }
-  if(raw.rows.length!==raw.indicator.expected||Object.keys(b.series).length!==raw.rows.length)fail(`${it.slug}: source row coverage mismatch`);
+  const none=noEstimateRows(raw.rows);
+  if(raw.rows.length!==raw.indicator.expected||Object.keys(b.series).length+none.size!==raw.rows.length||(it.withheld??0)!==none.size)fail(`${it.slug}: source row coverage mismatch`);
   if(b.dates[0]!== (flowCodes.has(it.code)?'2019-06-30':'2018-06-30'))fail(`${it.slug}: stock/flow reference date incorrect`);
   for(const r of raw.rows){
    const dims=Object.fromEntries(b.meta.dimensions.map(d=>[d,String(r[d]??'').trim().replace(/\s+/g,' ')])),k=keyOf(dims),s=b.series[k];
    const n=Number(String(r.value).replaceAll(',','')),v=String(r.value).trim()===''||!Number.isFinite(n)?null:n;
    if(seen.has(k))fail(`${it.slug}: duplicate source grain`);seen.add(k);
+   if(none.has(r)){if(s)fail(`${it.slug}: share of a nil amount baked as a figure ${k}`);stats.sourceCells++;continue;}
    if(!s||s.data[0]!==v||stable(s.dims)!==stable(dims)||s.unit!==householdUnit(r))fail(`${it.slug}: source replay failed ${k}`);
    if(s&&s.data[0]!=null){if(s.data[0]<0)issues.push({bundle:it.slug,series:k,dims:s.dims,value:s.data[0],issue:'Negative asset estimate published by source; retained for audit, unsuitable as literal ownership value.'});if(s.unit==='per_1000'&&s.data[0]>1000)fail(`${it.slug}: per-thousand estimate exceeds base`);}
    stats.sourceCells++;

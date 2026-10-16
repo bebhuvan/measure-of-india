@@ -60,7 +60,7 @@ import {bySlug as guideRegistry} from '../src/dossiers/registry.js';
 import {verifyInvestorSourceArtifacts} from '../src/dossiers/investor-governed-downloads.js';
 import {pensionsModel} from '../src/dossiers/pensions.model.js';
 import {pensionFormat} from '../src/dossiers/pensions.format.js';
-import {monthYearStamp} from '../src/dossiers/display.js';
+import {mastheadStamp} from '../src/dossiers/headline.js';
 // investor-participation is parked; its model throws without bundles, so load it only when registered.
 const investorMods=guideRegistry["investor-participation"]?await Promise.all([import('../src/dossiers/investor-participation.model.js'),import('../src/dossiers/investor-participation.format.js')]):null;
 const investorFormat=investorMods?.[1].investorFormat;
@@ -77,7 +77,7 @@ const PAGES = [
   ]},
   {url:"/guides/farm-households/",slug:null,checks:[...Object.entries(farmQC.facts).map(([id,f])=>["n-"+id,()=>farmFormat(f.value,f.unit)]),...farmQC.plates.map(p=>["pv-"+p.id,()=>farmFormat(p.rows[0].value,p.rows[0].unit)]),["prov-vintage",()=>farmQC.plates[0].vintageText],["prov-edition",()=>farmQC.plates[0].reportEditionDate],["prov-capture",()=>farmQC.plates[0].archiveCapturedDate]]},
   // ---- energy expansion ----
-  {url:"/guides/energy/",slug:null,checks:[...Object.entries(energyQC.facts).map(([id,f])=>["n-"+id,()=>energyFormat(f.value,f.unit)]),...energyQC.plates.map(p=>["pv-"+p.id,()=>{const r=p.kind==="history"?p.rows.filter(r=>r.value!=null).at(-1):p.rows[0];return energyFormat(r.value,p.unit)}]),["prov-vintage",()=>energyQC.plates[0].vintage]]},
+  {url:"/guides/energy/",slug:null,checks:[...Object.entries(energyQC.facts).map(([id,f])=>["n-"+id,()=>energyFormat(f.value,f.unit)]),...energyQC.plates.map(p=>["pv-"+p.id,()=>{const r=p.kind==="history"?p.rows.filter(r=>r.value!=null).at(-1):p.rows[0];return energyFormat(r.value,p.unit)}])]},
   // ---- end energy expansion ----
   {url:"/guides/households/",slug:null,checks:[...Object.entries(householdsQC.facts).map(([id,f])=>["n-"+id,()=>householdFormat(f.value,f.unit)]),...householdsQC.plates.map(p=>["pv-"+p.id,()=>householdFormat(p.rows[0].value,p.rows[0].unit)]),["prov-vintage",()=>vintageText(householdsQC.plates[0])]]},
   {url:"/guides/schools/",slug:null,checks:[...Object.entries(schoolsQC.facts).map(([id,f])=>["n-"+id,()=>schoolFormat(f.value,f.unit)]),...schoolsQC.plates.map(p=>["pv-"+p.id,()=>schoolFormat(p.rows[0].value,p.rows[0].unit)]),["prov-vintage",()=>schoolsQC.plates[0].vintageText]]},
@@ -852,13 +852,13 @@ for (const page of PAGES) {
     else ok(`${page.url} #${id} = ${want}`);
   }
 
-  // titleblock stamp and register vintage labels are DERIVED from the bundles
-  // (src/dossiers/display.js) — a hand-typed or stale stamp fails here
+  // the guide masthead names the period of its headline figure (mastheadStamp, one rule for every
+  // guide) and register vintage labels are derived from the bundles: a hand-typed stamp fails here
   if (page.url.startsWith("/guides/") && page.url !== "/guides/") {
     const d = bySlug[page.url.split("/")[2]];
     const got = doc.querySelector(".sh-date")?.textContent.trim();
-    const want = d.slug === 'pensions' ? monthYearStamp(pensionQC.headline.lastSourceDate) : display.dateStamp(d);
-    if (got !== want) fail(`${page.url}: titleblock stamp "${got}" != derived "${want}" (src/dossiers/display.js)`);
+    const want = mastheadStamp(d);
+    if (got !== want) fail(`${page.url}: titleblock stamp "${got}" != derived "${want}" (mastheadStamp, src/dossiers/headline.js)`);
   }
   if (page.url === "/") {
     // rows are ordered by release date, so match each guide's row by its slug, not its position

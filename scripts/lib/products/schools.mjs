@@ -29,7 +29,7 @@ export function schoolsUnit(label, code, row = {}, family = 'udise') {
   return /percentage|proportion|\brate\b|\bratio \(GER\)|\bGER\b|\bNER\b|\bANER\b|\bASER\b/i.test(measure) ? 'pct' : 'count';
 }
 export const GER_CEILING = 200;
-export function cube(rows, { label, code, family, vintage, base, rawFile, period = null }) {
+export function cube(rows, { label, code, family, vintage, base, rawFile, period = null, printed = null }) {
   if (!rows.length) throw Error(`${family} ${code}: no source rows`);
   const dims = [...new Set(rows.flatMap(r => Object.keys(r)))].filter(k => !OMIT.has(k)).sort();
   const dateOf = r => period ?? `${String(r.year).slice(0,4)}-04-01`;
@@ -56,6 +56,17 @@ export function cube(rows, { label, code, family, vintage, base, rawFile, period
       (s.withheld ??= {})[dateOf(r)] = r.value;
       value = null;
       s.note = `UDISE+ prints gross enrolment ratios above ${GER_CEILING}% for this group in some years. The group's population base in this state is too small for the ratio to mean anything, so those years are left blank here; the printed figures stay in the raw archive.`;
+    }
+    // The printed report is the publication; the API serves it. Where the report prints the same
+    // cell, the two must agree. An API zero against a printed figure is a blank the API filled
+    // with 0: withheld, never baked as a rate of zero.
+    const p = printed && printed.year === r.year ? printed.value(r) : undefined;
+    if (p !== undefined && value != null) {
+      if (value === 0 && p !== 0) {
+        (s.withheld ??= {})[dateOf(r)] = r.value;
+        value = null;
+        s.note = `MoSPI's API serves ${r.year} as 0, but the UDISE+ ${r.year} report prints ${p.toFixed(1)} (${printed.table}). The API figure is a blank, so the year is left empty here.`;
+      } else if (Math.abs(value - p) > 0.051) throw Error(`${family} ${code}: ${s.label} ${r.year}: API ${r.value} != report ${p} (${printed.table})`);
     }
     s.data[dates.indexOf(dateOf(r))] = value;
   }
@@ -90,11 +101,28 @@ export function nationalHighlights(text) {
   if(find(/Schools, Total Number of Schools$/)!==1471473 || find(/Enrolments, Total Number of Enrolments \(Pre-Primary to Higher Secondary\)$/)!==246932680)throw Error('UDISE report anchor failed: check the release and table layout');
   return series;
 }
+const LEVELS=['Primary (1-5)','Upper Primary (6-8)','Secondary (9-10)'],GENDERS=['Boys','Girls','Total'];
+const stateKey=t=>t.toLowerCase().replace(/&/g,'and').replace(/[^a-z]/g,'');
+/** Table 6.13 of the UDISE+ report (dropout by level and gender, every state) as a cell lookup. */
+export function reportDropout(text) {
+  const a=text.lastIndexOf('Table 6.13: Dropout Rate by level'),body=text.slice(a,text.indexOf('Table 6.14',a));
+  const year=body.match(/gender, (\d{4}-\d{2})/)?.[1],rows={};
+  for(const line of body.split('\n')){const m=line.match(/^\s*([A-Za-z][A-Za-z&.\- ]*?)\s+((?:-?\d+(?:\.\d+)?\s+){8}-?\d+(?:\.\d+)?)\s*$/);if(m)rows[stateKey(m[1])]=m[2].trim().split(/\s+/).map(Number);}
+  if(a<0||!year||Object.keys(rows).length<37)throw Error(`UDISE report: Table 6.13 has ${Object.keys(rows).length} state rows, expected 37 (check the layout)`);
+  return {year,table:'Table 6.13',value:r=>rows[stateKey(r.state)]?.[LEVELS.indexOf(r.level_of_education)*3+GENDERS.indexOf(r.gender)]};
+}
 export async function buildSchools(root,dcfg,vintage) {
   const fromRaw=process.env.SCHOOLS_FROM_RAW==='1';
   const localIndex=readRaw(root,'data/raw/profiles-mospi-index.json');
   const udiseList=fromRaw?localIndex.products.udise.indicators.map(i=>({indicator_code:i.code,description:i.label})):(await mospi('udise/getIndicatorList')).data;
   if(!fromRaw)writeRaw(root,'data/raw/schools-udise-list.json',{vintage,indicators:udiseList});
+  const reportRel='data/raw/schools-udise-report-2024.json';
+  if(!rawExists(root,reportRel)||!fromRaw){
+    const pdf=await getBuffer(REPORT_URL,{maxBytes:25e6});
+    const text=execFileSync('pdftotext',['-layout','-','-'],{input:pdf,maxBuffer:25e6}).toString();
+    writeRaw(root,reportRel,{vintage,url:REPORT_URL,sha256:crypto.createHash('sha256').update(pdf).digest('hex'),extractor:'pdftotext -layout',text});
+  }
+  const report=readRaw(root,reportRel),printedTables={41:reportDropout(report.text)};
   const items=[],manifest=[];
   const emit=(slug,b)=>{
     // Cells the source lists without a figure (or with one withheld above) are catalogued, not baked.
@@ -119,7 +147,7 @@ export async function buildSchools(root,dcfg,vintage) {
     if(raw.rows.length!==expected)throw Error(`UDISE ${code}: ${raw.rows.length} rows != expected ${expected}`);
     for(const [instrument,base,keep] of [['institution','UDISE+ institution-level collection, existing structure',r=>r.year<'2022-23'],['student','UDISE+ student-level collection, existing structure',r=>r.year>='2022-23']]) {
       const rows=raw.rows.filter(keep);if(!rows.length)continue;
-      emit(`schools-udise-${instrument}-${code}`,cube(rows,{label:ind.description??ind.desc??raw.rows[0].indicator,code,family:'udise',vintage:raw.vintage,base,rawFile:rel}));
+      emit(`schools-udise-${instrument}-${code}`,cube(rows,{label:ind.description??ind.desc??raw.rows[0].indicator,code,family:'udise',vintage:raw.vintage,base,rawFile:rel,printed:printedTables[code]}));
     }
   }
   const listRel='data/raw/schools-cmse-list.json';
@@ -135,13 +163,7 @@ export async function buildSchools(root,dcfg,vintage) {
     const raw=readRaw(root,rel);
     emit(`schools-cmse-${code}`,cube(raw.rows,{label:ind.desc,code,family:'cmse',vintage:raw.vintage,base:'CMSE April–June 2025, school spending and coaching separate',rawFile:rel,period:'2025-04-01'}));
   }
-  const reportRel='data/raw/schools-udise-report-2024.json';
-  if(!rawExists(root,reportRel)||!fromRaw){
-    const pdf=await getBuffer(REPORT_URL,{maxBytes:25e6});
-    const text=execFileSync('pdftotext',['-layout','-','-'],{input:pdf,maxBuffer:25e6}).toString();
-    writeRaw(root,reportRel,{vintage,url:REPORT_URL,sha256:crypto.createHash('sha256').update(pdf).digest('hex'),extractor:'pdftotext -layout',text});
-  }
-  const report=readRaw(root,reportRel);const series=nationalHighlights(report.text);
+  const series=nationalHighlights(report.text);
   emit('schools-national',{meta:{dossier:'schools',product:'schools-udise-report',source:'Ministry of Education, UDISE+ existing structure report, Table 1',sourceUrl:report.url,base:'UDISE+ student-level collection, existing structure',frequency:'cross-sectional',unit:'see each series',...profileVintage(report),geo:'IND',latestPeriod:'2024-25',revisionPolicy,coverage:'All national highlights in Table 1, both pages',note:'Published national figures, extracted from the report, not averages of state ratios. Existing structure; student-level collection began in 2022-23. Table 1 source text and PDF hash are archived.',indicator:{family:'udise-report',code:'table-1'}},dates:['2024-04-01'],series});
   writeCatalogue('schools',{source:'Complete observed UDISE API and CMSE cubes; source indicator listings and Ministry national highlights',generator:'scripts/lib/products/schools.mjs via scripts/fetch.mjs only schools',items});
   fs.mkdirSync(path.join(root,'data/coverage'),{recursive:true});

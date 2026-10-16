@@ -24,17 +24,28 @@ export function householdUnit(r){
 export function householdApiVintage(raw){
  return {vintage:null,vintageStatus:'unknown',vintageNote:'The archived AIDIS API rows contain no publisher revision timestamp. The survey report was released on 2021-09-10, but the current API body has not been established as that exact publication version.',archiveCapturedDate:raw.vintage,reportEditionDate:'2021-09-10',apiRevisionDate:null};
 }
+// A "per Rs. 1000 of <amount>" breakdown splits an amount into shares that add to 1,000. Where the
+// API prints every share of one state, sector and group as 0, the amount was nil or unsampled and
+// the shares do not exist (0/0): those cells are withheld, never baked as zero. A single 0 inside a
+// breakdown that adds up is a published figure that rounds to zero, and stays.
+export const SHARE_OF_AMOUNT=/per Rs\.? ?1,?000 of/i;
+export function noEstimateRows(rows){
+ const g=new Map();
+ for(const r of rows)if(SHARE_OF_AMOUNT.test(r.sub_indicator??'')){const k=[r.state,r.sector,r.sub_indicator].map(clean).join('|');(g.get(k)??g.set(k,[]).get(k)).push(r);}
+ return new Set([...g.values()].filter(rs=>rs.length>1&&rs.every(r=>parseNumber(r.value)===0)).flat());
+}
 export function householdCube(raw){
  const code=+raw.indicator.code,rows=raw.rows;
  if(!rows?.length || rows.length!==raw.indicator.expected)throw Error(`AIDIS ${code}: incomplete archived rows`);
- const dimensions=[...new Set(rows.flatMap(r=>Object.keys(r)))].filter(k=>!['indicator','value'].includes(k)).sort(),series={};
+ const dimensions=[...new Set(rows.flatMap(r=>Object.keys(r)))].filter(k=>!['indicator','value'].includes(k)).sort(),series={},withheld={},none=noEstimateRows(rows);
  for(const r of rows){
   const dims=Object.fromEntries(dimensions.map(k=>[k,clean(r[k])])),key=keyOf(dims);
-  if(series[key])throw Error(`AIDIS ${code}: duplicate/colliding cell ${key}`);
+  if(series[key]||withheld[key])throw Error(`AIDIS ${code}: duplicate/colliding cell ${key}`);
+  if(none.has(r)){withheld[key]={label:dimensions.map(k=>dims[k]).join(', '),dims,printed:r.value};continue;}
   series[key]={name:`aidis_${code}_${key}`,label:dimensions.map(k=>dims[k]).join(', '),unit:householdUnit(r),dims,state:dims.state,geo:dims.state,group:dimensions.filter(k=>!['state','sub_indicator'].includes(k)).map(k=>dims[k]).join(', '),data:[parseNumber(r.value)]};
  }
  const flow=flowCodes.has(code),date=flow?'2019-06-30':'2018-06-30';
- return {meta:{dossier:'households',product:'households-aidis',source:'MoSPI, NSS 77 All India Debt and Investment Survey',sourceUrl:REPORT_URL,base:'NSS 77 AIDIS 2019, Schedule 18.2',frequency:'cross-sectional',unit:'see each series',...householdApiVintage(raw),geo:'IND',latestPeriod:flow?'July 2018–June 2019':'30 June 2018',revisionPolicy:'Published survey estimates may be revised by MoSPI; changed source bodies are archived before rebaking.',coverage:clean(raw.indicator.label)+': all observed '+dimensions.map(d=>d.replaceAll('_',' ')).join(', '),note:'Interviewed in 2019. Stock reference: 30 June 2018; expenditure/borrowing flow reference: July 2018–June 2019. Means use all households unless the measure explicitly conditions on reporting. Source zeros are retained; dashes are null. No Cartesian expansion. State and small-group estimates need sample-size and RSE caution. Valuables are separate from the report’s physical and financial asset total. API indicator headings can conflict with cell units; sub-indicator units control.',dimensions,indicator:{code,sourceRows:rows.length},rawFile:`data/raw/profiles-mospi/nss77aidis-1-${code}.json`},dates:[date],series};
+ return {meta:{dossier:'households',product:'households-aidis',source:'MoSPI, NSS 77 All India Debt and Investment Survey',sourceUrl:REPORT_URL,base:'NSS 77 AIDIS 2019, Schedule 18.2',frequency:'cross-sectional',unit:'see each series',...householdApiVintage(raw),geo:'IND',latestPeriod:flow?'July 2018–June 2019':'30 June 2018',revisionPolicy:'Published survey estimates may be revised by MoSPI; changed source bodies are archived before rebaking.',coverage:clean(raw.indicator.label)+': all observed '+dimensions.map(d=>d.replaceAll('_',' ')).join(', '),note:'Interviewed in 2019. Stock reference: 30 June 2018; expenditure/borrowing flow reference: July 2018–June 2019. Means use all households unless the measure explicitly conditions on reporting. Source zeros are retained; dashes are null. No Cartesian expansion. State and small-group estimates need sample-size and RSE caution. Valuables are separate from the report’s physical and financial asset total. API indicator headings can conflict with cell units; sub-indicator units control.',dimensions,indicator:{code,sourceRows:rows.length},rawFile:`data/raw/profiles-mospi/nss77aidis-1-${code}.json`},dates:[date],series,withheld};
 }
 export function indebtedMeans(html){
  const text=new JSDOM(html,{virtualConsole:new VirtualConsole()}).window.document.body.textContent.replace(/\s+/g,' ');
@@ -70,9 +81,10 @@ export async function buildHouseholds(root,dcfg,vintage){
    const rows=await mospiAll('nss-77/getNss77AidisRecords',{survey_code:1,indicator_code:code});
    writeRaw(root,rel,{vintage,indicator:{code,label:ind.description??ind.label,expected:rows.length},rows});
   }
-  const raw=readRaw(root,rel),b=householdCube(raw),slug=`households-aidis-${code}`;
-  writeSeries(root,`data/series/${slug}.json`,b);bundles.push({slug,code,rows:raw.rows.length,series:Object.keys(b.series).length});
+  const raw=readRaw(root,rel),{withheld,...b}=householdCube(raw),slug=`households-aidis-${code}`;
+  writeSeries(root,`data/series/${slug}.json`,b);bundles.push({slug,code,rows:raw.rows.length,series:Object.keys(b.series).length,withheld:Object.keys(withheld).length});
   for(const [key,s] of Object.entries(b.series))items.push({id:slug+':'+key,bundle:slug,series:key});
+  for(const [key,w] of Object.entries(withheld))items.push({id:slug+':'+key,bundle:slug,series:key,label:w.label,dims:w.dims,withheld:'share of a nil amount'});
  }
  if(!rawExists(root,reportRel)){
   const pdf=await getBuffer(REPORT_URL,{maxBytes:55e6});
