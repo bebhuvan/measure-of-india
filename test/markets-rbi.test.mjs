@@ -101,20 +101,15 @@ test('all official listed bundles declare unknown source vintage and separate ag
  for(const name of names){const b=JSON.parse(fs.readFileSync(path.join(root,'data/series',name)));assert.equal(b.meta.vintage,null);assert.equal(b.meta.archiveCapturedDate,'2026-10-10');assert.equal(vintageError(b.meta,'2026-10-12'),null);assert.equal(vintageText(b.meta),'Source revision date not published');}
 });
 import {JSDOM} from 'jsdom';
+// The RBI company views are drawn at build time by src/dossiers/markets.charts.js rbiView() with
+// the kit's bars: values stay in crore (labels, tips and CSV), and only the scale's ticks read in
+// lakh crore, so they fit a phone. The same spec, checked here at the phone and desktop widths.
 test('phone money-axis tick labels fit while values and the data unit remain in crore',async()=>{
- const previousWindow=globalThis.window,previousDocument=globalThis.document;
- try{
-  const dom=new JSDOM('<figure id="money"><h3>Annual sector sales</h3><div id="money-plot"></div></figure>');globalThis.window=dom.window;globalThis.document=dom.window.document;
-  document.getElementById('money-plot').getBoundingClientRect=()=>({width:265});
-  const {rbiComparison}=await import('../src/dossiers/markets-rbi.plot.js');
-  const rows=[{label:'Manufacturing',value:5174959},{label:'Services - IT',value:754727},{label:'Services - Non IT',value:1144803}],before=structuredClone(rows);
-  const svg=rbiComparison('money','money-plot',rows,'inr_crore');assert.deepEqual(rows,before);assert.match(svg.textContent,/₹ lakh crore/);assert.match(svg.getAttribute('aria-label'),/₹51,74,959 crore/);
-  const ticks=[...svg.querySelectorAll('g[aria-label="x-axis tick label"] text')].map(t=>({text:t.textContent,x:Number(/translate\(([-\d.]+)/.exec(t.getAttribute('transform'))[1])}));assert.ok(ticks.length>=2);
-  // Twelve-pixel mono labels need about7.2px per character. This actual SVG
-  // spacing check rejects the old9-character lakh-grouped ticks at265px.
-  for(let i=1;i<ticks.length;i++)assert.ok(ticks[i].x-ticks[i-1].x>(ticks[i].text.length+ticks[i-1].text.length)*3.6+2,JSON.stringify(ticks));
-  document.getElementById('money-plot').replaceChildren();const small=rbiComparison('money','money-plot',[{label:'Small sample',value:1000}],'inr_crore');assert.match(small.textContent,/₹ crore/);assert.ok(!small.textContent.includes('₹ lakh crore'));
- }finally{globalThis.window=previousWindow;globalThis.document=previousDocument;}
+ const K=await import('../src/kit/kit.js');const {lintSVG}=await import('../scripts/lint-kit.mjs');
+ const rows=[{name:'Manufacturing',value:5174959},{name:'Services - IT',value:754727},{name:'Services - Non IT',value:1144803}],before=structuredClone(rows);
+ const vals=rows.map(r=>r.value),topTick=K.nice(0,Math.max(...vals),4).ticks.filter(t=>t<=Math.max(...vals)).at(-1);
+ const spec=w=>({width:w,rows,sort:false,fmt:v=>K.num(v,{dp:0,prefix:'₹',suffix:' crore'}),nameMax:360,tickFmt:v=>K.num(v/1e5,{dp:0,suffix:v===topTick?' lakh cr':''})});
+ for(const w of [360,720,1184]){const svg=K.bars(spec(w));assert.deepEqual(rows,before);assert.match(svg,/₹51,74,959 crore/);assert.deepEqual(lintSVG(svg),[],`width ${w}`);if(w>400)assert.match(svg,/lakh cr/);}
 });
 import {guideBundles} from '../src/dossiers/everycut.js';
 import {bySlug} from '../src/dossiers/registry.js';
@@ -122,5 +117,7 @@ import {vintageSummary} from '../scripts/lib/vintage.mjs';
 test('all-source Markets revision summary includes unknown secondary inputs',()=>{
  const metas=guideBundles(bySlug.markets).map(s=>JSON.parse(fs.readFileSync(path.join(root,'data/series',s+'.json'))).meta);
  assert.equal(metas.filter(m=>m.vintage===null).length,26);assert.equal(vintageSummary(metas),'Mixed dated and unknown revisions');
- const client=fs.readFileSync(path.join(root,'src/dossiers/markets.client.js'),'utf8');assert.ok(!/setHTML\("prov-vintage2?", flowsB\.meta\.vintage\)/.test(client));
+ // the page states the all-source summary, never one bundle's vintage
+ const page=fs.readFileSync(path.join(root,'src/pages/guides/markets.astro'),'utf8'),charts=fs.readFileSync(path.join(root,'src/dossiers/markets.charts.js'),'utf8');
+ assert.match(page,/id="prov-vintage">\{guideRevisionSummary\}/);assert.ok(!/prov-vintage2?["'][^\n]*flowsB\.meta\.vintage/.test(page+charts));
 });

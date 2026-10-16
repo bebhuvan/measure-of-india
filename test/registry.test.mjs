@@ -22,10 +22,14 @@ test("numbers are zero-padded and sequential", () => {
   DOSSIERS.forEach((d, i) => assert.equal(d.no, String(i + 1).padStart(2, "0")));
 });
 
-test("every dossier has a page, a client module and an OG card target", () => {
+test("every dossier has a page, its charts module (or a client module) and an OG card target", () => {
   for (const d of DOSSIERS) {
     assert.ok(has(`src/pages/guides/${d.slug}.astro`), `missing page: ${d.slug}`);
-    assert.ok(has(`src/dossiers/${d.slug}.client.js`), `missing client module: ${d.slug}`);
+    // charts are drawn at build time by src/dossiers/<slug>.charts.js (chart kit); a guide not yet
+    // ported still draws in the browser from <slug>.client.js
+    // gender and nfhs share src/dossiers/health-gender.charts.js
+    const charts = ["gender", "nfhs"].includes(d.slug) ? "health-gender" : d.slug;
+    assert.ok(has(`src/dossiers/${charts}.charts.js`) || has(`src/dossiers/${d.slug}.client.js`), `missing charts or client module: ${d.slug}`);
   }
 });
 
