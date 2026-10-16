@@ -29,7 +29,7 @@ test('report extraction retains complete land-class grids and distinguishes cond
 test('each plate answers its own question; values and facts trace to their canonical cells',()=>{
  const m=farmModel(),cache=new Map(),load=slug=>cache.get(slug)??(cache.set(slug,JSON.parse(fs.readFileSync('data/series/'+slug+'.json'))),cache.get(slug));
  assert.equal(m.facts.paid_income.value,10218);assert.equal(m.facts.imputed_income.value,8337);assert.equal(m.facts.debt.value,74121);assert.equal(m.facts.indebted.value,502);
- assert.equal(m.plates.length,20);assert.equal(new Set(m.plates.map(p=>p.title)).size,m.plates.length);assert.equal(new Set(m.plates.map(p=>p.id)).size,m.plates.length);
+ assert.equal(m.plates.length,21);assert.equal(new Set(m.plates.map(p=>p.title)).size,m.plates.length);assert.equal(new Set(m.plates.map(p=>p.id)).size,m.plates.length);
  for(const p of m.plates){assert.ok(p.rows.length>=2,p.id);assert.equal(new Set(p.rows.map(r=>r.unit)).size,1);assert.ok(p.rows.every(r=>Number.isFinite(r.value)&&!/^c_|Not applicable|\(hectares\)/.test(r.name)),p.id);for(const r of p.rows)assert.equal(r.value,load(r.bundle).series[r.series].data[0]);}
  for(const [id,f]of Object.entries(m.facts)){const s=m.factSources[id];
   if(s.derived){const v=s.parts.map(x=>load(x.bundle).series[x.series].data[0]);const want=id==='under_hectare_pct'?Math.round((v[0]+v[1]+v[2])/v[3]*100):id==='moneylender_debt_pct'?Math.round((v[0]+v[1])/10):Math.round(v[0]/10);assert.equal(f.value,want,id);}
