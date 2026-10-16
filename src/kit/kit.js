@@ -504,7 +504,7 @@ function _columns(spec) {
   const pos = t => { const k = P.findIndex(p => tnum(p.d) >= t - 1e-6); return k < 0 ? null : cx(k) - slot / 2; };
   // optional (profiles port): freq 'fy' labels the year ticks 2012-13 (dates at 1 April)
   let lastX = -Infinity; // a label that would touch the one before it is skipped
-  for (const k of tt) { const px = pos(k.t); if (px == null) continue; const lab = spec.freq === 'fy' ? tlabel(Math.round(k.t) + '-04', 'fy') : k.label; if (px + 2 < lastX + 8) continue; lastX = px + 2 + tw(lab, 12); s += Lv(px, H - bottom, H - bottom + 5, C.base); s += T(px + 2, H - bottom + 19, lab, { size: 12, fill: C.muted, cls: 'tab' }); }
+  for (const k of tt) { const px = pos(k.t); if (px == null) continue; const lab = spec.freq === 'fy' ? tlabel(Math.round(k.t) + '-04', 'fy') : k.label; if (px + 2 < lastX + 8 || px + 2 + tw(lab, 12) > W + 1) continue; lastX = px + 2 + tw(lab, 12); s += Lv(px, H - bottom, H - bottom + 5, C.base); s += T(px + 2, H - bottom + 19, lab, { size: 12, fill: C.muted, cls: 'tab' }); }
   // optional (profiles port): spec.marks [[date, v]], a comparison value per column drawn as a sindoor tick across it,
   // named once in a key line above the plot (spec.markLabel); spec.markName prefixes its hover tip
   if (spec.marks) { const at = new Map(spec.marks.map(([d, v]) => [d, v]));
