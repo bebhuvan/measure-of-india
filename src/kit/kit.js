@@ -114,7 +114,7 @@ function timeTicks(t0, t1, width) {
 
 // as many whole words of a name as fit a width; the first word always
 function fitWords(name, width, size = 12, weight = 400) {
-  const w = String(name).split(/\s+/); let out = w[0];
+  const w = String(name).split(/ +/); let out = w[0]; // ordinary spaces only: a no-break space keeps words together
   for (let i = 1; i < w.length; i++) { const t = out + ' ' + w[i]; if (tw(t, size, weight) > width) break; out = t; }
   return out;
 }

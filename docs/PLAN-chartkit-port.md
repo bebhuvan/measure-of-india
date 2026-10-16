@@ -101,6 +101,12 @@ log below.
 | consumption | people port | 14 of 14 | yes | register and baskets built at build time |
 | jobs | people port | 21 of 21 | yes | deep-bundle slices moved to `jobsData()` in jobs.data.js; register sparklines at build time |
 | ilo | people port | 17 of 17 | yes | |
+| households | survey port | 15 of 15 | yes | rural/urban pairs as dumbbells (values on the name line on a phone), different classes per sector as bar panels, states ranked against the all-India figure; numbers in `householdNumbers()` |
+| schools | survey port | 19 of 19 | yes | enrolment drawn as two rulers with a seam (school totals, pupil records); single-teacher panels beside the national totals; Bihar's published 0% dropout drawn and labelled "published as zero" |
+| digital-access | survey port | 18 of 18 | yes | state plates now ranked (the explain line says so); payload module and its tests retired |
+| energy | survey port | 19 of 19 | yes | flow bridge a waterfall on desktop, ranked steps below 1,000 px; payload module and its test retired |
+| farm-households | survey port | 21 of 21 | yes | |
+| pensions | survey port | 16 of 16 | yes | the governed CSV guard still runs per plate at build; the plate download is date, period and value (the full governed CSV stays in Data and downloads); expected schedule dashed, hollow dots |
 
 ## Log
 
@@ -124,3 +130,6 @@ log below.
   Multi-panel plates now one kit figure each: debt credit gap, banks shares and UCBs, payments shares/cash/clearing,
   factories long century/counts/money/sectors, mnre states and source maps, aishe composition and states, farms state
   shares and state yields. Page-only `.pm-*` and `.fx-*` styles removed. Specimen lint 0 finds.
+- 2026-10-16 (survey port: households, schools, digital-access, energy, farm-households, pensions) dumbbell
+  `nameMax` (a wider name column, default 190). Shared shaping helpers in `src/dossiers/survey-plates.js`.
+  Specimen lint 0 finds.

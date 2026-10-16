@@ -82,8 +82,16 @@ export function dumbbellDraw(rows, keys, o = {}) {
   // the right-hand value label sits past the outer dot: keep room for the widest one
   const fmt = o.fmt ?? ((v) => K.num(v, { dp: 1 }));
   const room = Math.ceil(Math.max(...rows.flatMap((r) => [r.a, r.b]).filter((v) => v != null).map((v) => K.tw(fmt(v), 12, 600)))) + 14;
-  return (width) => K.dumbbell({ width, rows, keys, fmt, unit: o.unit ?? {}, sortBy: o.sortBy ?? "none", labelAll: o.labelAll ?? true,
-    from: o.from, ref: o.ref, refs: o.refs, aColor: o.aColor, room: Math.max(40, room) });
+  const longest = Math.ceil(Math.max(...rows.map((r) => K.tw(r.name, 13, 600)))) + 14;
+  // on a phone the pair's labels crowd the dots: both values go on the name line, named by their key,
+  // when every row has room for it (o.short: shorter key words for that line)
+  const sk = o.short ?? keys, both = (r) => [r.a != null ? `${sk.a} ${fmt(r.a)}` : null, r.b != null ? `${sk.b} ${fmt(r.b)}` : null].filter(Boolean).join(" · ");
+  return (width) => {
+    const phoneText = width < 560 && rows.every((r) => K.tw(r.name, 12.5) + 14 + K.tw(both(r), 12) <= width);
+    return K.dumbbell({ width, rows, keys, fmt, unit: o.unit ?? {}, sortBy: o.sortBy ?? "none", labelAll: o.labelAll ?? true,
+      from: o.from, ref: o.ref, refs: o.refs, aColor: o.aColor, room: phoneText ? 12 : Math.max(40, room), nameMax: Math.min(Math.round(width * 0.36), Math.max(190, longest)),
+      ...(phoneText ? { endText: both } : {}) });
+  };
 }
 
 /** Several bar panels on one scale (o.own: each on its own, for panels in different units): side

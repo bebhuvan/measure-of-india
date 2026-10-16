@@ -1,8 +1,0 @@
-import {energyPlot} from './energy.plot.js';import {energyFormat} from './energy.format.js';import {a11y,downloadSVG,downloadPNG,saveBlob,queueCharts} from '../charts/plumbing.js';
-import {decodeEnergyPayload} from './energy.payload.js';
-const model=decodeEnergyPayload(JSON.parse(document.getElementById('energy-data').textContent));
-for(const [id,f] of Object.entries(model.facts)){const el=document.getElementById('n-'+id);if(el)el.textContent=energyFormat(f.value,f.unit);}
-// Measure all containers before inserting charts: avoid one full style/layout pass per plate.
-const plotWidths=new Map(model.plates.map(p=>{const el=document.getElementById('plot-'+p.id);return [p.id,el?.clientWidth || 1120];}));
-queueCharts(model.plates,p=>{const el=document.getElementById('plot-'+p.id);if(!el)return;const plot=energyPlot(p,plotWidths.get(p.id));el.append(plot);a11y(plot,p.title,p.rows.map(r=>r.name+': '+energyFormat(r.value,r.unit)).join('; '));const value=p.kind==='history'?p.rows.filter(r=>r.value!=null).at(-1):p.rows[0];document.getElementById('pv-'+p.id).textContent=energyFormat(value.value,p.unit);
- const block=document.getElementById('cb-'+p.id),meta={title:p.title,sub:p.sub,foot:p.source+'; '+p.period};block.querySelectorAll('[data-dl]').forEach(btn=>btn.addEventListener('click',()=>{const filename='india-atlas_energy_'+p.id;if(btn.dataset.dl==='svg')downloadSVG(plot,filename,meta);if(btn.dataset.dl==='png')downloadPNG(plot,filename,meta);if(btn.dataset.dl==='csv'){const csv='measure,value,unit,period,bundle,series\n'+p.rows.map(r=>[r.name,r.value??'',r.unit,r.date,r.bundle,r.series].map(v=>'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\n');saveBlob(new Blob([csv],{type:'text/csv'}),filename+'.csv');}}));});

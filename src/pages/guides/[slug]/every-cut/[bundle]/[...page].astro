@@ -11,6 +11,9 @@ import { DOSSIERS, bySlug } from "../../../../../dossiers/registry.js";
 import {governedDownloadPlan} from "../../../../../dossiers/governed-downloads.js";
 import { bundleTitle, loadBundle, everyCutPlan } from "../../../../../dossiers/everycut.js";
 export function getStaticPaths() {
+  // ATLAS_SKIP_EVERY_CUT=1: a local verification build of everything but these long-tail pages
+  // (most of dist's 4.8 GB), for a machine short of memory. Never set in CI or a release build.
+  if (process.env.ATLAS_SKIP_EVERY_CUT) return [];
   const out = [];
   for (const d of DOSSIERS) for (const t of everyCutPlan(d).tails)
     t.pages.forEach((_, i) => out.push({ params: { slug: d.slug, bundle: t.id, page: i ? String(i + 1) : undefined }, props: { n: i } }));

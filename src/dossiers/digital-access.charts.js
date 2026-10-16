@@ -5,7 +5,7 @@ import { digitalFormat } from "./digital-access.format.js";
 
 const pct = (v) => K.num(v, { dp: 1, suffix: "%" });
 const PCT = { suffix: "%" };
-const VT = { a: "Villages", b: "Towns and cities" };
+const VT = { a: "Villages", b: "Towns and cities" }, short = { a: "Villages", b: "Towns" };
 const VILL = [", villages", ", towns and cities"];
 
 // the CSV the client used to build: every published field, the state sample and sampling error kept
@@ -21,15 +21,15 @@ export function digitalChart(p, model) {
     case "home-internet": case "shopping":
       return fig(barsDraw(R.map((r, i) => ({ ...r, highlight: i === 0 })), { sort: false, fmt: pct, unit: PCT }), "Per cent of all households: all homes, villages, and towns and cities.");
     case "home-network": case "home-offline": case "phone-type": case "frequency": case "device": case "payments": case "goods":
-      return fig(dumbbellDraw(pairRows(R, ...VILL), VT, { fmt: pct, unit: PCT }), "Per cent, villages against towns and cities.");
+      return fig(dumbbellDraw(pairRows(R, ...VILL), VT, { fmt: pct, unit: PCT, short }), "Per cent, villages against towns and cities.");
     case "ladder-sector":
-      return fig(dumbbellDraw(pairRows(R, ...VILL), VT, { fmt: pct, unit: PCT }), "Per cent of people aged 15 and above, villages against towns and cities.");
+      return fig(dumbbellDraw(pairRows(R, ...VILL), VT, { fmt: pct, unit: PCT, short }), "Per cent of people aged 15 and above, villages against towns and cities.");
     case "ladder-gender": case "skills-gender":
       return fig(dumbbellDraw(pairRows(R, ", women", ", men"), { a: "Women", b: "Men" }, { fmt: pct, unit: PCT, sortBy: p.id === "skills-gender" ? "b" : "none" }), "Per cent of people aged 15 and above, women against men.");
     case "skills-sector":
-      return fig(dumbbellDraw(pairRows(R, ...VILL), VT, { fmt: pct, unit: PCT, sortBy: "b" }), "Per cent of people aged 15 and above, villages against towns and cities.");
+      return fig(dumbbellDraw(pairRows(R, ...VILL), VT, { fmt: pct, unit: PCT, sortBy: "b", short }), "Per cent of people aged 15 and above, villages against towns and cities.");
     case "skills-age":
-      return fig(dumbbellDraw(pairRows(R, ", all aged 15 and above", ", aged 15 to 24"), { a: "All aged 15 and above", b: "Aged 15 to 24" }, { fmt: pct, unit: PCT, sortBy: "b" }), "Per cent, people aged 15 to 24 against all people aged 15 and above.");
+      return fig(dumbbellDraw(pairRows(R, ", all aged 15 and above", ", aged 15 to 24"), { a: "All aged 15 and above", b: "Aged 15 to 24" }, { fmt: pct, unit: PCT, sortBy: "b", short: { a: "All", b: "15 to 24" } }), "Per cent, people aged 15 to 24 against all people aged 15 and above.");
     case "ladder-age": {
       // three overlapping age groups for each rung: one panel per rung, on one scale
       const rungs = ["Used a mobile phone, ", "Owns a mobile phone, ", "Used the internet, "];
