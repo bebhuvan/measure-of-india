@@ -1,5 +1,7 @@
 ---
 import Learn from "../layouts/Learn.astro";
+import * as CH from "./index-weights.charts.js";
+const NUM = CH.NUM;
 ---
 <Learn
   title="Why onions move inflation more than rent · India Atlas"
@@ -54,8 +56,8 @@ import Learn from "../layouts/Learn.astro";
   <section>
     <div class="sec-head"><span class="no">02</span><h2>What the survey found</h2><span class="line"></span><span class="unit">Weights, per cent, CES 2011–12</span></div>
     <div class="break basket">
-      <div class="bar" id="basket-bar"></div>
-      <div class="labels" id="basket-labels"></div>
+      <div class="bar" id="basket-bar" set:html={NUM["basket-bar"]}></div>
+      <div class="labels" id="basket-labels" set:html={NUM["basket-labels"]}></div>
       <p class="note">Six groups, frozen from the 2011–12 Consumer Expenditure Survey. Food alone is nearly half the index: the reason a bad onion crop can move the national inflation rate while rents, for most urban households the heaviest bill, move it so little.</p>
     </div>
   </section>
@@ -70,10 +72,10 @@ import Learn from "../layouts/Learn.astro";
             <h3>One hundred points of spending, divided six ways: food speaks loudest</h3>
             <div class="sub">CPI combined group weights, per cent, Consumer Expenditure Survey 2011–12</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-wt">–</div><div class="c">food &amp; beverages, share of the index</div></div>
+          <div class="plate-val"><div class="v" id="pv-wt" set:html={NUM["pv-wt"]}></div><div class="c">food &amp; beverages, share of the index</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-wt"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-wt" set:html={CH.weights()} />
           <div class="plotfoot">
             <span class="src">Source: NSO, Consumer Expenditure Survey 2011–12, weights frozen into the CPI on base 2012=100, unchanged until that base ended in December 2025</span>
             <span class="dl">
@@ -92,7 +94,7 @@ import Learn from "../layouts/Learn.astro";
           </div>
           <div class="now">
             <span class="mk">The 2019 case</span>
-            <p>In late 2019 onion prices spiked after unseasonal rain ruined the crop, and food inflation climbed to <b id="ex-f19">–</b> by December. Because food carries nearly half the index, the headline followed it to <b id="ex-h19">–</b>, well above the 4 per cent target the RBI is bound to defend.</p>
+            <p>In late 2019 onion prices spiked after unseasonal rain ruined the crop, and food inflation climbed to <b id="ex-f19" set:html={NUM["ex-f19"]}></b> by December. Because food carries nearly half the index, the headline followed it to <b id="ex-h19" set:html={NUM["ex-h19"]}></b>, well above the 4 per cent target the RBI is bound to defend.</p>
             <p>A single vegetable, weighted by a billion kitchens, moved the number that Indian monetary policy is legally organised around. That is what a weight of 45.86 means in practice.</p>
           </div>
         </div>
@@ -104,13 +106,13 @@ import Learn from "../layouts/Learn.astro";
   <section>
     <div class="sec-head"><span class="no">04</span><h2>Why your inflation is not the national inflation</h2><span class="line"></span><span class="unit">A worked example, Dec 2025</span></div>
     <div class="numbers">
-      <div class="num"><div class="l">The national print, Dec 2025</div><div class="v acc" id="n-wx-head">–</div><div class="d">headline CPI, year-on-year</div></div>
-      <div class="num"><div class="l">Food, Dec 2025</div><div class="v" id="n-wx-food">–</div><div class="d">45.86 of every 100 points</div></div>
-      <div class="num"><div class="l">Everything else, Dec 2025</div><div class="v" id="n-wx-nonfood">–</div><div class="d">the other 54.14 points, computed</div></div>
-      <div class="num"><div class="l">A food-heavy family, Dec 2025</div><div class="v" id="n-wx-fam">–</div><div class="d">60 per cent food, 40 per cent the rest</div></div>
+      <div class="num"><div class="l">The national print, Dec 2025</div><div class="v acc" id="n-wx-head" set:html={NUM["n-wx-head"]}></div><div class="d">headline CPI, year-on-year</div></div>
+      <div class="num"><div class="l">Food, Dec 2025</div><div class="v" id="n-wx-food" set:html={NUM["n-wx-food"]}></div><div class="d">45.86 of every 100 points</div></div>
+      <div class="num"><div class="l">Everything else, Dec 2025</div><div class="v" id="n-wx-nonfood" set:html={NUM["n-wx-nonfood"]}></div><div class="d">the other 54.14 points, computed</div></div>
+      <div class="num"><div class="l">A food-heavy family, Dec 2025</div><div class="v" id="n-wx-fam" set:html={NUM["n-wx-fam"]}></div><div class="d">60 per cent food, 40 per cent the rest</div></div>
     </div>
-    <p style="margin-top:40px">The national number is the average budget made flesh, and no household is average. Take a family that spends 60 per cent of its budget on food, common enough in rural India, and put the remaining 40 per cent into everything else at the national rates. In December 2025 their index rose <b id="wx-fam25">–</b> while the national print read <b id="wx-h25">–</b>: same country, same month, a gap of <b id="wx-gap25">–</b>.</p>
-    <p>A year earlier the arithmetic ran the other way. In December 2024 the same family's index rose <b id="wx-fam24">–</b> against a national print of <b id="wx-h24">–</b>, because food, their heaviest bill, was spiking while services were calm. Their inflation ran hotter than the headline in 2024 and cooler in 2025. Both years, it was theirs.</p>
+    <p style="margin-top:40px">The national number is the average budget made flesh, and no household is average. Take a family that spends 60 per cent of its budget on food, common enough in rural India, and put the remaining 40 per cent into everything else at the national rates. In December 2025 their index rose <b id="wx-fam25" set:html={NUM["wx-fam25"]}></b> while the national print read <b id="wx-h25" set:html={NUM["wx-h25"]}></b>: same country, same month, a gap of <b id="wx-gap25" set:html={NUM["wx-gap25"]}></b>.</p>
+    <p>A year earlier the arithmetic ran the other way. In December 2024 the same family's index rose <b id="wx-fam24" set:html={NUM["wx-fam24"]}></b> against a national print of <b id="wx-h24" set:html={NUM["wx-h24"]}></b>, because food, their heaviest bill, was spiking while services were calm. Their inflation ran hotter than the headline in 2024 and cooler in 2025. Both years, it was theirs.</p>
     <p>This is not a flaw in the index. An average must choose a budget, and any budget it chooses will belong to no one. The honest use of the national number is as a common yardstick, not as a description of your kitchen.</p>
   </section>
 
@@ -129,7 +131,7 @@ import Learn from "../layouts/Learn.astro";
         <span class="no">ii.</span>
         <div>
           <h3>“My inflation is the national inflation.”</h3>
-          <p>Only if your budget is the 2011–12 average, and no one's is. A family spending 60 per cent on food lived at <b id="mr2-fam">–</b> in a month when the national print read <b id="mr2-head">–</b>. The index describes the average household. You live in a specific one.</p>
+          <p>Only if your budget is the 2011–12 average, and no one's is. A family spending 60 per cent on food lived at <b id="mr2-fam" set:html={NUM["mr2-fam"]}></b> in a month when the national print read <b id="mr2-head" set:html={NUM["mr2-head"]}></b>. The index describes the average household. You live in a specific one.</p>
         </div>
       </li>
       <li>
@@ -156,7 +158,4 @@ import Learn from "../layouts/Learn.astro";
     <p>Companion guide: <a href="/guides/cpi/">Consumer Price Index</a>.</p>
   </div>
 
-<script>
-  import "./index-weights.client.js";
-</script>
 </Learn>

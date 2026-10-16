@@ -8,6 +8,9 @@ import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 import fs from "node:fs";
 const D = bySlug["public-finance"];
+import * as CH from "../../dossiers/public-finance.charts.js";
+// every number on the page, computed at build time from the bundles (was the client's setHTML)
+const N = CH.numbers();
 // every period, year and count named in this page's copy is read from the bundles at build time
 const B = (s) => JSON.parse(fs.readFileSync(`data/series/${s}.json`, "utf8"));
 const P = (s) => B("public-finance-" + s);
@@ -95,10 +98,10 @@ const ratesBorrow = B("rates-borrowing");
       <span>Unit <b>₹ crore and per cent of GDP</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">The Centre's deficit so far, share of the year's budget</div><div class="v acc" id="n-ytd">–</div><div class="d" id="d-ytd">–</div><div class="nspark" id="nspark-ytd"></div></div>
-      <div class="num"><div class="l">The Centre's deficit, budget for {ST.budgetEstimate}</div><div class="v" id="n-gfd">–</div><div class="d" id="d-gfd">–</div></div>
-      <div class="num"><div class="l">Interest, per ₹100 of the Centre's revenue</div><div class="v" id="n-int">–</div><div class="d" id="d-int">–</div></div>
-      <div class="num"><div class="l">What the Centre and states owe, share of GDP</div><div class="v" id="n-debt">–</div><div class="d" id="d-debt">–</div></div>
+      <div class="num"><div class="l">The Centre's deficit so far, share of the year's budget</div><div class="v acc" id="n-ytd" set:html={N["n-ytd"]} /><div class="d" id="d-ytd" set:html={N["d-ytd"]} /><div class="nspark" id="nspark-ytd" set:html={N["nspark-ytd"]} /></div>
+      <div class="num"><div class="l">The Centre's deficit, budget for {ST.budgetEstimate}</div><div class="v" id="n-gfd" set:html={N["n-gfd"]} /><div class="d" id="d-gfd" set:html={N["d-gfd"]} /></div>
+      <div class="num"><div class="l">Interest, per ₹100 of the Centre's revenue</div><div class="v" id="n-int" set:html={N["n-int"]} /><div class="d" id="d-int" set:html={N["d-int"]} /></div>
+      <div class="num"><div class="l">What the Centre and states owe, share of GDP</div><div class="v" id="n-debt" set:html={N["n-debt"]} /><div class="d" id="d-debt" set:html={N["d-debt"]} /></div>
     </div>
   </div>
 
@@ -106,9 +109,9 @@ const ratesBorrow = B("rates-borrowing");
   <section>
     <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">Union accounts, {ytd}</span></div>
     <div class="reading-top">
-      <div><span class="rk">The Centre's deficit, {ytd}</span><div class="big" id="rb-ytd">–</div></div>
+      <div><span class="rk">The Centre's deficit, {ytd}</span><div class="big" id="rb-ytd" set:html={N["rb-ytd"]} /></div>
       <p class="rt-cap">The gap between what the Centre spent and what it earned from April to the latest month, as a share of the gap its budget planned for the whole of {curFY}. The Controller General of Accounts publishes it at the end of each month for the month before.</p>
-      <div class="rt-side"><span class="rk">In rupees</span><div class="rt-side-v" id="rb-ytd-inr" style="font-size:1.6rem">–</div></div>
+      <div class="rt-side"><span class="rk">In rupees</span><div class="rt-side-v" id="rb-ytd-inr" style="font-size:1.6rem" set:html={N["rb-ytd-inr"]} /></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -126,8 +129,8 @@ const ratesBorrow = B("rates-borrowing");
   <section>
     <div class="sec-head"><span class="no">02</span><h2>What it means for you</h2><span class="line"></span><span class="unit">The Centre's budget for {ST.budgetEstimate}</span></div>
     <div class="prose">
-      <p>The Centre plans to spend <b id="lr-te">–</b> in {ST.budgetEstimate}, about <b id="lr-pp">–</b> for every person in India. Of every ₹100 of that, <b id="lr-int">–</b> goes to pay interest on what it has already borrowed, <b id="lr-def">–</b> to defence, <b id="lr-sub">–</b> to subsidies on food, fertiliser and fuel, and <b id="lr-cap">–</b> to building things that last, such as roads, railways and defence equipment. Interest comes first, before any new road or school: it is owed to people and institutions who lent in earlier years.</p>
-      <p>Much of that lending is close to home. When you put money in a Public Provident Fund account, a post office deposit or a Sukanya Samriddhi account for a daughter, you are lending to the government. Savers held <b id="lr-ss">–</b> in these schemes in <span id="lr-ss-when">–</span>. The government sets their interest rates each quarter: <b id="lr-ppf">–</b> on the PPF and <b id="lr-ssy">–</b> on Sukanya Samriddhi from <span id="lr-rate-when">–</span>. Your bank and your insurer lend too, by holding government bonds with your deposits and premiums.</p>
+      <p>The Centre plans to spend <b id="lr-te" set:html={N["lr-te"]} /> in {ST.budgetEstimate}, about <b id="lr-pp" set:html={N["lr-pp"]} /> for every person in India. Of every ₹100 of that, <b id="lr-int" set:html={N["lr-int"]} /> goes to pay interest on what it has already borrowed, <b id="lr-def" set:html={N["lr-def"]} /> to defence, <b id="lr-sub" set:html={N["lr-sub"]} /> to subsidies on food, fertiliser and fuel, and <b id="lr-cap" set:html={N["lr-cap"]} /> to building things that last, such as roads, railways and defence equipment. Interest comes first, before any new road or school: it is owed to people and institutions who lent in earlier years.</p>
+      <p>Much of that lending is close to home. When you put money in a Public Provident Fund account, a post office deposit or a Sukanya Samriddhi account for a daughter, you are lending to the government. Savers held <b id="lr-ss" set:html={N["lr-ss"]} /> in these schemes in <span id="lr-ss-when" set:html={N["lr-ss-when"]} />. The government sets their interest rates each quarter: <b id="lr-ppf" set:html={N["lr-ppf"]} /> on the PPF and <b id="lr-ssy" set:html={N["lr-ssy"]} /> on Sukanya Samriddhi from <span id="lr-rate-when" set:html={N["lr-rate-when"]} />. Your bank and your insurer lend too, by holding government bonds with your deposits and premiums.</p>
     </div>
   </section>
 
@@ -152,15 +155,10 @@ const ratesBorrow = B("rates-borrowing");
             <h3>The Centre budgets a deficit of {r1(gfdBE)}% of GDP for {ST.budgetEstimate}, half its pandemic peak of {r1(peak[1])}% in {peak[0]}</h3>
             <div class="sub">Gross fiscal deficit of the Centre and of all states together, per cent of GDP, {fy(back.dates[0])} to {ST.budgetEstimate}: the RBI's printed ratios, solid, on the GDP series of each period (1999-2000, 2004-05 and 2011-12 bases, never joined), accounts as lines and the revised and budget estimates as marks. Dashed grey, to 2010-11: India Atlas, computed: RBI amounts ÷ NSO back-series GDP.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-deficit">–</div><div class="c">Centre, budget estimate {ST.budgetEstimate}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-deficit" set:html={N["pv-deficit"]} /><div class="c">Centre, budget estimate {ST.budgetEstimate}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>Centre, RBI</span>
-            <span class="chip"><i style="background:#C47A16"></i>All states, RBI</span>
-            <span class="chip"><i style="background:#A3A9B4"></i>India Atlas, computed: RBI amounts ÷ NSO back-series GDP</span>
-          </div>
-          <div class="plotzone"><div id="plot-deficit" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-deficit" set:html={CH.deficit()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics, Key Deficit Indicators and Select Fiscal Indicators of the Central and State Governments (DBIE reports 713, 355, 451, 454); the dashed lines: RBI's rupee amounts (713, 451) over MoSPI's back series of GDP on the 2011-12 base, computed by India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -173,7 +171,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="now">
             <span class="mk">As of the Union Budget for {ST.budgetEstimate}</span>
-            <p>The Centre's deficit was <b id="ex-def-acc">–</b> of GDP in {ST.accountsTo} (accounts), <b id="ex-def-re">–</b> in {ST.revisedEstimate} (revised estimate) and is budgeted at <b id="ex-def-be">–</b> in {ST.budgetEstimate}. The states' budgets add up to <b id="ex-def-st">–</b> in {SS.budgetEstimate}.</p>
+            <p>The Centre's deficit was <b id="ex-def-acc" set:html={N["ex-def-acc"]} /> of GDP in {ST.accountsTo} (accounts), <b id="ex-def-re" set:html={N["ex-def-re"]} /> in {ST.revisedEstimate} (revised estimate) and is budgeted at <b id="ex-def-be" set:html={N["ex-def-be"]} /> in {ST.budgetEstimate}. The states' budgets add up to <b id="ex-def-st" set:html={N["ex-def-st"]} /> in {SS.budgetEstimate}.</p>
           </div>
         </div>
       </figure>
@@ -186,14 +184,10 @@ const ratesBorrow = B("rates-borrowing");
             <h3>By {MONTHS[+lastM.slice(5, 7) - 1]}, the Centre had used {r1(ytdNow.v)}% of its deficit budget for {curFY}, against {r1(ytdAgo)}% a year earlier</h3>
             <div class="sub">The Centre's fiscal deficit from April to each month, per cent of that year's budget estimate, {curFY} against the five years before it.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-ytd">–</div><div class="c">{ytd}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-ytd" set:html={N["pv-ytd"]} /><div class="c">{ytd}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>{curFY}</span>
-            <span class="chip"><i style="background:#A3A9B4"></i>Five earlier years</span>
-          </div>
-          <div class="plotzone"><div id="plot-ytd" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-ytd" set:html={CH.ytdPlate()} />
           <div class="plotfoot">
             <span class="src">Source: RBI Bulletin, Union Government Accounts at a Glance (DBIE report 49), from the Controller General of Accounts; unaudited. Share of the budget estimate computed by India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -206,7 +200,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="now">
             <span class="mk">As of {longMonth(lastM)}</span>
-            <p>From April to {MONTHS[+lastM.slice(5, 7) - 1]} the deficit was <b id="ex-ytd-inr">–</b>, or <b id="ex-ytd-pct">–</b> of the {curFY} budget. A year earlier it was <b id="ex-ytd-ago">–</b> of that year's budget. Tax revenue has reached <b id="ex-ytd-tax">–</b> of its budget and capital spending <b id="ex-ytd-cap">–</b>.</p>
+            <p>From April to {MONTHS[+lastM.slice(5, 7) - 1]} the deficit was <b id="ex-ytd-inr" set:html={N["ex-ytd-inr"]} />, or <b id="ex-ytd-pct" set:html={N["ex-ytd-pct"]} /> of the {curFY} budget. A year earlier it was <b id="ex-ytd-ago" set:html={N["ex-ytd-ago"]} /> of that year's budget. Tax revenue has reached <b id="ex-ytd-tax" set:html={N["ex-ytd-tax"]} /> of its budget and capital spending <b id="ex-ytd-cap" set:html={N["ex-ytd-cap"]} />.</p>
           </div>
         </div>
       </figure>
@@ -219,15 +213,10 @@ const ratesBorrow = B("rates-borrowing");
             <h3>In {nAbove} of {pathYears.length} years the Centre's deficit ended above its budget</h3>
             <div class="sub">The Centre's fiscal deficit each year as first budgeted, as revised a year later, and as the provisional accounts closed it, ₹ lakh crore, {pathYears[0][0]} to {ST.budgetEstimate}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-path">–</div><div class="c">provisional accounts {fy(path.dates.at(-2))} against budget</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-path" set:html={N["pv-path"]} /><div class="c">provisional accounts {fy(path.dates.at(-2))} against budget</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#878D99"></i>Budget estimate</span>
-            <span class="chip"><i style="background:#C47A16"></i>Revised estimate</span>
-            <span class="chip"><i style="background:#2E4BD8"></i>Provisional accounts</span>
-          </div>
-          <div class="plotzone"><div id="plot-path" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-path" set:html={CH.path()} />
           <div class="plotfoot">
             <span class="src">Source: RBI Bulletin, Union Government Accounts at a Glance (DBIE report 49): each year's budget estimate, revised estimate and March accounts. Rows of the table that do not add up are not used. Audited accounts are in the Handbook tables.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -240,7 +229,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="now">
             <span class="mk">As of the provisional accounts for {fy(path.dates.at(-2))}</span>
-            <p>In {fy(path.dates.at(-2))} the deficit was budgeted at <b id="ex-path-be">–</b>, revised to <b id="ex-path-re">–</b>, and closed at <b id="ex-path-pr">–</b> in the provisional accounts. The widest miss above budget was in <b id="ex-path-max">–</b>.</p>
+            <p>In {fy(path.dates.at(-2))} the deficit was budgeted at <b id="ex-path-be" set:html={N["ex-path-be"]} />, revised to <b id="ex-path-re" set:html={N["ex-path-re"]} />, and closed at <b id="ex-path-pr" set:html={N["ex-path-pr"]} /> in the provisional accounts. The widest miss above budget was in <b id="ex-path-max" set:html={N["ex-path-max"]} />.</p>
           </div>
         </div>
       </figure>
@@ -253,16 +242,10 @@ const ratesBorrow = B("rates-borrowing");
             <h3>Market borrowing pays for {r0(mbShare)}% of the Centre's budgeted deficit in {ST.budgetEstimate}</h3>
             <div class="sub">How the Centre's gross fiscal deficit is financed, per cent of the deficit: dated bonds sold in the market, other borrowing (small savings, provident funds, Treasury bills and the like), loans from abroad, and its own cash. {fy(cf.dates[0])} to {ST.budgetEstimate}, accounts as lines; the latest two years as estimates.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-financing">–</div><div class="c">market borrowing, budget {ST.budgetEstimate}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-financing" set:html={N["pv-financing"]} /><div class="c">market borrowing, budget {ST.budgetEstimate}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>Market borrowing</span>
-            <span class="chip"><i style="background:#C47A16"></i>Other borrowing</span>
-            <span class="chip"><i style="background:#878D99"></i>External finance</span>
-            <span class="chip"><i style="background:#C9CED6"></i>Drawdown of cash</span>
-          </div>
-          <div class="plotzone"><div id="plot-financing" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-financing" set:html={CH.financing()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics, Centre's Gross Fiscal Deficit and its Financing (DBIE report 656). Shares computed by India Atlas. Gross market borrowing by year is in the Interest rates guide (rates-borrowing).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -275,7 +258,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="now">
             <span class="mk">As of the Union Budget for {ST.budgetEstimate}</span>
-            <p>In {ST.accountsTo} market borrowing paid for <b id="ex-fin-acc">–</b> of the deficit. In {ST.budgetEstimate} it is budgeted to pay for <b id="ex-fin-be">–</b>. The Centre and the states together borrowed <b id="ex-fin-gross">–</b> from the market (gross) in {fy(ratesBorrow.dates.at(-1))}.</p>
+            <p>In {ST.accountsTo} market borrowing paid for <b id="ex-fin-acc" set:html={N["ex-fin-acc"]} /> of the deficit. In {ST.budgetEstimate} it is budgeted to pay for <b id="ex-fin-be" set:html={N["ex-fin-be"]} />. The Centre and the states together borrowed <b id="ex-fin-gross" set:html={N["ex-fin-gross"]} /> from the market (gross) in {fy(ratesBorrow.dates.at(-1))}.</p>
           </div>
         </div>
       </figure>
@@ -292,17 +275,10 @@ const ratesBorrow = B("rates-borrowing");
             <h3>{taxAcc[0][0]} is now the Centre's largest tax, {r0(100 * taxAcc[0][1] / taxNet)}% of the tax it kept in {ST.accountsTo}</h3>
             <div class="sub">Each tax's share of the Centre's net tax revenue (after the states' share), per cent, {fy(cr.dates[0])} to {ST.accountsTo}, accounts. GST from 2017-18.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-taxmix">–</div><div class="c">{taxAcc[0][0].toLowerCase()}, {ST.accountsTo}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-taxmix" set:html={N["pv-taxmix"]} /><div class="c">{taxAcc[0][0].toLowerCase()}, {ST.accountsTo}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>Income tax</span>
-            <span class="chip"><i style="background:#C47A16"></i>Corporation tax</span>
-            <span class="chip"><i style="background:#161A22"></i>GST</span>
-            <span class="chip"><i style="background:#878D99"></i>Excise duty</span>
-            <span class="chip"><i style="background:#C9CED6"></i>Customs duty</span>
-          </div>
-          <div class="plotzone"><div id="plot-taxmix" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-taxmix" set:html={CH.taxmix()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics, Central Government Receipts, Major Components (DBIE report 655). Every tax is net of the states' share; shares computed by India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -315,7 +291,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="now">
             <span class="mk">As of the accounts for {ST.accountsTo}</span>
-            <p>Of the tax the Centre kept in {ST.accountsTo}, income tax brought in <b id="ex-tax-pit">–</b>, corporation tax <b id="ex-tax-cit">–</b>, GST <b id="ex-tax-gst">–</b>, excise <b id="ex-tax-exc">–</b> and customs <b id="ex-tax-cus">–</b>.</p>
+            <p>Of the tax the Centre kept in {ST.accountsTo}, income tax brought in <b id="ex-tax-pit" set:html={N["ex-tax-pit"]} />, corporation tax <b id="ex-tax-cit" set:html={N["ex-tax-cit"]} />, GST <b id="ex-tax-gst" set:html={N["ex-tax-gst"]} />, excise <b id="ex-tax-exc" set:html={N["ex-tax-exc"]} /> and customs <b id="ex-tax-cus" set:html={N["ex-tax-cus"]} />.</p>
           </div>
         </div>
       </figure>
@@ -328,14 +304,10 @@ const ratesBorrow = B("rates-borrowing");
             <h3>Direct taxes have outweighed indirect taxes every year since {crossFY}</h3>
             <div class="sub">The Centre's gross direct taxes (income and corporation tax) and gross indirect taxes (GST, excise, customs), per cent of GDP, {dirYears[0][0]} to {ST.budgetEstimate}, on three GDP series (1999-2000 base to 2003-04, 2004-05 base to 2010-11, 2011-12 base after), never joined.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-taxgdp">–</div><div class="c">direct taxes, {ST.accountsTo}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-taxgdp" set:html={N["pv-taxgdp"]} /><div class="c">direct taxes, {ST.accountsTo}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>Direct taxes</span>
-            <span class="chip"><i style="background:#878D99"></i>Indirect taxes</span>
-          </div>
-          <div class="plotzone"><div id="plot-taxgdp" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-taxgdp" set:html={CH.taxgdp()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics, Select Fiscal Indicators of the Central Government as per cent of GDP (DBIE report 355), on the GDP series the RBI used for each year.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -348,7 +320,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="now">
             <span class="mk">As of the accounts for {ST.accountsTo}</span>
-            <p>Gross direct taxes were <b id="ex-tg-dir">–</b> of GDP and gross indirect taxes <b id="ex-tg-ind">–</b> in {ST.accountsTo}; the budget for {ST.budgetEstimate} expects <b id="ex-tg-be">–</b> together.</p>
+            <p>Gross direct taxes were <b id="ex-tg-dir" set:html={N["ex-tg-dir"]} /> of GDP and gross indirect taxes <b id="ex-tg-ind" set:html={N["ex-tg-ind"]} /> in {ST.accountsTo}; the budget for {ST.budgetEstimate} expects <b id="ex-tg-be" set:html={N["ex-tg-be"]} /> together.</p>
           </div>
         </div>
       </figure>
@@ -361,10 +333,10 @@ const ratesBorrow = B("rates-borrowing");
             <h3>The states collect {r0(stShare)}% of all the taxes India's governments raise</h3>
             <div class="sub">Taxes collected by the states (their own taxes, before any transfer) as a share of all taxes collected by the Centre (gross) and the states, per cent, {fy(ctax.dates[0])} to {SS.accountsTo}, accounts.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-taxwho">–</div><div class="c">states' share, {SS.accountsTo}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-taxwho" set:html={N["pv-taxwho"]} /><div class="c">states' share, {SS.accountsTo}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-taxwho" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-taxwho" set:html={CH.taxwho()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics, Direct and Indirect Tax Revenues of Central and State Governments (DBIE report 673). Share computed by India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -377,7 +349,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="now">
             <span class="mk">As of the accounts for {SS.accountsTo}</span>
-            <p>The states collected <b id="ex-tw-st">–</b> in taxes in {SS.accountsTo}, against the Centre's gross <b id="ex-tw-c">–</b>.</p>
+            <p>The states collected <b id="ex-tw-st" set:html={N["ex-tw-st"]} /> in taxes in {SS.accountsTo}, against the Centre's gross <b id="ex-tw-c" set:html={N["ex-tw-c"]} />.</p>
           </div>
         </div>
       </figure>
@@ -394,10 +366,10 @@ const ratesBorrow = B("rates-borrowing");
             <h3>Of every ₹100 the Centre plans to spend in {ST.budgetEstimate}, ₹{r0(int100)} goes to interest</h3>
             <div class="sub">The Centre's total expenditure split into interest, defence, subsidies, other day-to-day spending, capital outlay and loans, per ₹100, for three years: two from the accounts and the budget for {ST.budgetEstimate}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-spend">–</div><div class="c">interest per ₹100, {ST.budgetEstimate}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-spend" set:html={N["pv-spend"]} /><div class="c">interest per ₹100, {ST.budgetEstimate}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-spend" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-spend" set:html={CH.spend()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics, Major Heads of Expenditure of the Central Government (DBIE report 353). 'Other day-to-day' is revenue spending less interest, defence and subsidies (computed); 'capital outlay' excludes defence capital.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -410,7 +382,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="now">
             <span class="mk">As of the Union Budget for {ST.budgetEstimate}</span>
-            <p>Interest takes <b id="ex-sp-int">–</b> of every ₹100, defence <b id="ex-sp-def">–</b>, subsidies <b id="ex-sp-sub">–</b>, and capital outlay outside defence <b id="ex-sp-cap">–</b>.</p>
+            <p>Interest takes <b id="ex-sp-int" set:html={N["ex-sp-int"]} /> of every ₹100, defence <b id="ex-sp-def" set:html={N["ex-sp-def"]} />, subsidies <b id="ex-sp-sub" set:html={N["ex-sp-sub"]} />, and capital outlay outside defence <b id="ex-sp-cap" set:html={N["ex-sp-cap"]} />.</p>
           </div>
         </div>
       </figure>
@@ -423,14 +395,10 @@ const ratesBorrow = B("rates-borrowing");
             <h3>Interest will take ₹{r0(intRR)} of every ₹100 the Centre earns in {ST.budgetEstimate}</h3>
             <div class="sub">Interest payments per ₹100 of revenue receipts, the Centre and all states, {fy(ce.dates[0])} to the budget year; accounts as lines, revised and budget estimates as marks. Computed from the RBI's rupee figures.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-interest">–</div><div class="c">Centre, budget {ST.budgetEstimate}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-interest" set:html={N["pv-interest"]} /><div class="c">Centre, budget {ST.budgetEstimate}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>Centre</span>
-            <span class="chip"><i style="background:#C47A16"></i>All states</span>
-          </div>
-          <div class="plotzone"><div id="plot-interest" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-interest" set:html={CH.interest()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics, DBIE reports 353 and 655 (the Centre), 677 and 709 (the states). Ratios computed by India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -443,7 +411,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="now">
             <span class="mk">As of the Union Budget for {ST.budgetEstimate}</span>
-            <p>The Centre paid <b id="ex-int-acc">–</b> of its revenue in interest in {ST.accountsTo}, and budgets <b id="ex-int-be">–</b> for {ST.budgetEstimate}. The states paid <b id="ex-int-st">–</b> in {SS.accountsTo}.</p>
+            <p>The Centre paid <b id="ex-int-acc" set:html={N["ex-int-acc"]} /> of its revenue in interest in {ST.accountsTo}, and budgets <b id="ex-int-be" set:html={N["ex-int-be"]} /> for {ST.budgetEstimate}. The states paid <b id="ex-int-st" set:html={N["ex-int-st"]} /> in {SS.accountsTo}.</p>
           </div>
         </div>
       </figure>
@@ -456,14 +424,10 @@ const ratesBorrow = B("rates-borrowing");
             <h3>The Centre budgets {r1(intGdpBE)}% of GDP for interest and {r1(capBE)}% for capital spending in {ST.budgetEstimate}</h3>
             <div class="sub">The Centre's interest payments and capital expenditure, per cent of GDP (2011-12 base), {fy(g11.dates[0])} to {ST.budgetEstimate}; accounts as lines, the revised and budget estimates as marks.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-capex">–</div><div class="c">capital spending, budget {ST.budgetEstimate}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-capex" set:html={N["pv-capex"]} /><div class="c">capital spending, budget {ST.budgetEstimate}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>Capital expenditure</span>
-            <span class="chip"><i style="background:#878D99"></i>Interest payments</span>
-          </div>
-          <div class="plotzone"><div id="plot-capex" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-capex" set:html={CH.capex()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics, Select Fiscal Indicators of the Central Government as per cent of GDP (DBIE report 355).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -476,7 +440,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="now">
             <span class="mk">As of the Union Budget for {ST.budgetEstimate}</span>
-            <p>Capital spending was <b id="ex-cap-acc">–</b> of GDP in {ST.accountsTo} against interest of <b id="ex-cap-int">–</b>.</p>
+            <p>Capital spending was <b id="ex-cap-acc" set:html={N["ex-cap-acc"]} /> of GDP in {ST.accountsTo} against interest of <b id="ex-cap-int" set:html={N["ex-cap-int"]} />.</p>
           </div>
         </div>
       </figure>
@@ -493,16 +457,10 @@ const ratesBorrow = B("rates-borrowing");
             <h3>India's governments owe {r1(debtBE)}% of GDP by the budgets for {SS.budgetEstimate}</h3>
             <div class="sub">Outstanding liabilities at the end of each March, the Centre, all states and the two together (which nets out what one owes the other), per cent of GDP, {fy(back.dates.find((d, i) => back.series.combined_liabilities.data[i] != null))} to {SS.budgetEstimate}: the RBI's printed ratios, solid, on the GDP series of each period (never joined). Dashed grey, to 2010-11: India Atlas, computed: RBI amounts ÷ NSO back-series GDP.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-debt">–</div><div class="c">Centre and states, budget {SS.budgetEstimate}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-debt" set:html={N["pv-debt"]} /><div class="c">Centre and states, budget {SS.budgetEstimate}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>Centre and states, RBI</span>
-            <span class="chip"><i style="background:#161A22"></i>Centre, RBI</span>
-            <span class="chip"><i style="background:#C47A16"></i>States, RBI</span>
-            <span class="chip"><i style="background:#A3A9B4"></i>India Atlas, computed: RBI amounts ÷ NSO back-series GDP</span>
-          </div>
-          <div class="plotzone"><div id="plot-debt" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-debt" set:html={CH.debt()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics, Combined Liabilities and Select Debt Indicators of the Central and State Governments (DBIE reports 339, 342, 1399, 452); the dashed lines: RBI's rupee amounts over MoSPI's back series of GDP on the 2011-12 base, computed by India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -515,7 +473,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="now">
             <span class="mk">As of the state budgets for {SS.budgetEstimate}</span>
-            <p>The Centre and states together owed <b id="ex-debt-acc">–</b> of GDP in {SS.accountsTo} (accounts). The Centre alone owes <b id="ex-debt-c">–</b> and the states <b id="ex-debt-s">–</b> by the budgets for {SS.budgetEstimate}.</p>
+            <p>The Centre and states together owed <b id="ex-debt-acc" set:html={N["ex-debt-acc"]} /> of GDP in {SS.accountsTo} (accounts). The Centre alone owes <b id="ex-debt-c" set:html={N["ex-debt-c"]} /> and the states <b id="ex-debt-s" set:html={N["ex-debt-s"]} /> by the budgets for {SS.budgetEstimate}.</p>
           </div>
         </div>
       </figure>
@@ -528,10 +486,10 @@ const ratesBorrow = B("rates-borrowing");
             <h3>Banks hold {r0(oShare("commercial_banks"))}% of the Centre's bonds, insurers {r0(oShare("insurance_companies"))}% and the RBI {r0(oShare("rbi"))}%</h3>
             <div class="sub">Who holds the Centre's dated securities, per cent of the total outstanding at each quarter-end, {longMonth(own.dates[0])} to {longMonth(own.dates.at(-1))}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-holders">–</div><div class="c">outstanding, {longMonth(own.dates.at(-1))}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-holders" set:html={N["pv-holders"]} /><div class="c">outstanding, {longMonth(own.dates.at(-1))}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-holders" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-holders" set:html={CH.holders()} />
           <div class="plotfoot">
             <span class="src">Source: RBI Bulletin, Ownership Pattern of Government of India Dated Securities (DBIE report 1369). Pension funds are shown apart from 'others' from March 2022; before that they were inside it.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -544,7 +502,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="now">
             <span class="mk">As of {longMonth(own.dates.at(-1))}</span>
-            <p>The Centre's bonds outstanding came to <b id="ex-h-total">–</b>. Provident and pension funds held <b id="ex-h-pf">–</b> together, foreign investors <b id="ex-h-fpi">–</b>, mutual funds <b id="ex-h-mf">–</b>.</p>
+            <p>The Centre's bonds outstanding came to <b id="ex-h-total" set:html={N["ex-h-total"]} />. Provident and pension funds held <b id="ex-h-pf" set:html={N["ex-h-pf"]} /> together, foreign investors <b id="ex-h-fpi" set:html={N["ex-h-fpi"]} />, mutual funds <b id="ex-h-mf" set:html={N["ex-h-mf"]} />.</p>
           </div>
         </div>
       </figure>
@@ -557,16 +515,10 @@ const ratesBorrow = B("rates-borrowing");
             <h3>The Centre owes ₹{lakh(tbTotal)} lakh crore on Treasury bills of a year or less</h3>
             <div class="sub">Treasury bills outstanding by tenor, every Friday, ₹ lakh crore, {longMonth(tb.dates[0])} to {longMonth(tbWeek)}: 91-day, 182-day and 364-day bills and cash management bills.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-tbills">–</div><div class="c">all bills, week to {tbWeek.slice(8, 10).replace(/^0/, "")} {MONTHS[+tbWeek.slice(5, 7) - 1]} {tbWeek.slice(0, 4)}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-tbills" set:html={N["pv-tbills"]} /><div class="c">all bills, week to {tbWeek.slice(8, 10).replace(/^0/, "")} {MONTHS[+tbWeek.slice(5, 7) - 1]} {tbWeek.slice(0, 4)}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>364-day</span>
-            <span class="chip"><i style="background:#C47A16"></i>182-day</span>
-            <span class="chip"><i style="background:#161A22"></i>91-day</span>
-            <span class="chip"><i style="background:#A3A9B4"></i>Cash management bills</span>
-          </div>
-          <div class="plotzone"><div id="plot-tbills" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-tbills" set:html={CH.tbills()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Weekly Statistical Supplement table 13 and the Bulletin's Treasury Bills Ownership Pattern (DBIE reports 2 and 29). Totals add the holders printed each week (computed).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -579,7 +531,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="now">
             <span class="mk">As of {longMonth(tbWeek)}</span>
-            <p>In the week to {tbWeek.slice(8, 10).replace(/^0/, "")} {MONTHS[+tbWeek.slice(5, 7) - 1]}, 364-day bills outstanding were <b id="ex-tb-364">–</b>, 182-day <b id="ex-tb-182">–</b> and 91-day <b id="ex-tb-91">–</b>; state governments held <b id="ex-tb-st">–</b> of the 91-day bills.</p>
+            <p>In the week to {tbWeek.slice(8, 10).replace(/^0/, "")} {MONTHS[+tbWeek.slice(5, 7) - 1]}, 364-day bills outstanding were <b id="ex-tb-364" set:html={N["ex-tb-364"]} />, 182-day <b id="ex-tb-182" set:html={N["ex-tb-182"]} /> and 91-day <b id="ex-tb-91" set:html={N["ex-tb-91"]} />; state governments held <b id="ex-tb-st" set:html={N["ex-tb-st"]} /> of the 91-day bills.</p>
           </div>
         </div>
       </figure>
@@ -592,15 +544,10 @@ const ratesBorrow = B("rates-borrowing");
             <h3>{r0(over10)}% of the Centre's bonds fall due more than ten years from now</h3>
             <div class="sub">The Centre's dated securities outstanding at the end of each March by years left to maturity, per cent of the total, {fy(mat.dates[0])} to {fy(matLast)}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-maturity">–</div><div class="c">all dated securities, end-March {+matLast.slice(0, 4) + 1}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-maturity" set:html={N["pv-maturity"]} /><div class="c">all dated securities, end-March {+matLast.slice(0, 4) + 1}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>After 10 years</span>
-            <span class="chip"><i style="background:#C47A16"></i>5 to 10 years</span>
-            <span class="chip"><i style="background:#878D99"></i>Within 5 years</span>
-          </div>
-          <div class="plotzone"><div id="plot-maturity" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-maturity" set:html={CH.maturity()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Maturity Pattern of Government of India Rupee Loans (DBIE report 1362). Shares computed by India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -613,7 +560,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="now">
             <span class="mk">As of end-March {+matLast.slice(0, 4) + 1}</span>
-            <p>Of <b id="ex-mat-total">–</b> in dated securities, <b id="ex-mat-5">–</b> fall due within five years.</p>
+            <p>Of <b id="ex-mat-total" set:html={N["ex-mat-total"]} /> in dated securities, <b id="ex-mat-5" set:html={N["ex-mat-5"]} /> fall due within five years.</p>
           </div>
         </div>
       </figure>
@@ -626,14 +573,10 @@ const ratesBorrow = B("rates-borrowing");
             <h3>Savers have lent the government ₹{lakh(ssLast.v)} lakh crore through post office schemes</h3>
             <div class="sub">Small savings outstanding at each month's end by scheme, ₹ lakh crore, {longMonth(ss.dates[0])} to {longMonth(ssLast.date)}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-savings">–</div><div class="c">all schemes, {longMonth(ssLast.date)}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-savings" set:html={N["pv-savings"]} /><div class="c">all schemes, {longMonth(ssLast.date)}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>All schemes</span>
-            <span class="chip"><i style="background:#878D99"></i>Each scheme</span>
-          </div>
-          <div class="plotzone"><div id="plot-savings" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-savings" set:html={CH.savings()} />
           <div class="plotfoot">
             <span class="src">Source: RBI Bulletin, Small Savings (DBIE report 581), from the Accountant General, Posts and Telegraphs; interest rates from RBI, Small Savings Schemes (DBIE report 356).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -646,7 +589,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="now">
             <span class="mk">As of {longMonth(ssLast.date)}</span>
-            <p>The largest schemes are <b id="ex-sv-1">–</b> and <b id="ex-sv-2">–</b>. From <span id="ex-sv-when">–</span> the Senior Citizens' scheme pays <b id="ex-sv-scss">–</b> and a savings account at the post office <b id="ex-sv-posb">–</b>.</p>
+            <p>The largest schemes are <b id="ex-sv-1" set:html={N["ex-sv-1"]} /> and <b id="ex-sv-2" set:html={N["ex-sv-2"]} />. From <span id="ex-sv-when" set:html={N["ex-sv-when"]} /> the Senior Citizens' scheme pays <b id="ex-sv-scss" set:html={N["ex-sv-scss"]} /> and a savings account at the post office <b id="ex-sv-posb" set:html={N["ex-sv-posb"]} />.</p>
           </div>
         </div>
       </figure>
@@ -674,16 +617,10 @@ const ratesBorrow = B("rates-borrowing");
             <h3>{r0(fromCentre)}% of the states' revenue comes from the Centre, as tax shares and grants</h3>
             <div class="sub">All states' revenue receipts by source, per cent of the total, {fy(srx.dates[0])} to {SS.accountsTo}, accounts.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-st-receipts">–</div><div class="c">from the Centre, {SS.accountsTo}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-st-receipts" set:html={N["pv-st-receipts"]} /><div class="c">from the Centre, {SS.accountsTo}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>Own taxes</span>
-            <span class="chip"><i style="background:#C47A16"></i>Share in central taxes</span>
-            <span class="chip"><i style="background:#161A22"></i>Grants from the Centre</span>
-            <span class="chip"><i style="background:#A3A9B4"></i>Non-tax revenue</span>
-          </div>
-          <div class="plotzone"><div id="plot-st-receipts" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-st-receipts" set:html={CH.stReceipts()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics, Pattern of Receipts of the State Governments (DBIE report 709). From 2017-18, all states and union territories with legislatures. Shares computed by India Atlas; the RBI's tax receipts include the states' share in central taxes and its non-tax receipts include grants, so own taxes and own non-tax revenue are those totals less the transfers.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -696,7 +633,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="now">
             <span class="mk">As of the accounts for {SS.accountsTo}</span>
-            <p>Own taxes brought in <b id="ex-sr-own">–</b> of the states' revenue, their share of central taxes <b id="ex-sr-share">–</b>, grants <b id="ex-sr-grant">–</b>, and their own non-tax revenue (fees, royalties, interest) <b id="ex-sr-nt">–</b>.</p>
+            <p>Own taxes brought in <b id="ex-sr-own" set:html={N["ex-sr-own"]} /> of the states' revenue, their share of central taxes <b id="ex-sr-share" set:html={N["ex-sr-share"]} />, grants <b id="ex-sr-grant" set:html={N["ex-sr-grant"]} />, and their own non-tax revenue (fees, royalties, interest) <b id="ex-sr-nt" set:html={N["ex-sr-nt"]} />.</p>
           </div>
         </div>
       </figure>
@@ -709,17 +646,10 @@ const ratesBorrow = B("rates-borrowing");
             <h3>Interest and pensions take {r0(intPen)}% of what the states spend</h3>
             <div class="sub">All states' expenditure by head, per cent of total expenditure, {fy(sx.dates[0])} to {SS.accountsTo}, accounts.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-st-spend">–</div><div class="c">social services, {SS.accountsTo}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-st-spend" set:html={N["pv-st-spend"]} /><div class="c">social services, {SS.accountsTo}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>Social services</span>
-            <span class="chip"><i style="background:#C47A16"></i>Economic services</span>
-            <span class="chip"><i style="background:#161A22"></i>Interest</span>
-            <span class="chip"><i style="background:#878D99"></i>Pensions and general services</span>
-            <span class="chip"><i style="background:#C9CED6"></i>Capital outlay</span>
-          </div>
-          <div class="plotzone"><div id="plot-st-spend" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-st-spend" set:html={CH.stSpend()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics, Expenditure Pattern of the State Governments (DBIE report 677). Social and economic services are revenue spending; capital outlay is separate. Shares computed by India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -732,7 +662,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="now">
             <span class="mk">As of the accounts for {SS.accountsTo}</span>
-            <p>Social services took <b id="ex-ss-soc">–</b> of the states' spending, economic services <b id="ex-ss-eco">–</b>, interest <b id="ex-ss-int">–</b> and capital outlay <b id="ex-ss-cap">–</b>.</p>
+            <p>Social services took <b id="ex-ss-soc" set:html={N["ex-ss-soc"]} /> of the states' spending, economic services <b id="ex-ss-eco" set:html={N["ex-ss-eco"]} />, interest <b id="ex-ss-int" set:html={N["ex-ss-int"]} /> and capital outlay <b id="ex-ss-cap" set:html={N["ex-ss-cap"]} />.</p>
           </div>
         </div>
       </figure>
@@ -745,14 +675,10 @@ const ratesBorrow = B("rates-borrowing");
             <h3>{sfDebt[0].label} owes the most for the size of its economy: {r1(sfDebt[0].v)}% of its GSDP in {sfYear}</h3>
             <div class="sub">Each state's outstanding liabilities at the end of March, per cent of its gross state domestic product (GSDP), {sfYear}, accounts, with its gross fiscal deficit in that year, also per cent of GSDP.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-state-cut">–</div><div class="c">median state, {sfYear}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-state-cut" set:html={N["pv-state-cut"]} /><div class="c">median state, {sfYear}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>Debt, per cent of GSDP</span>
-            <span class="chip"><i style="background:#C47A16"></i>Fiscal deficit, per cent of GSDP</span>
-          </div>
-          <div class="plotzone"><div id="plot-state-cut" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-state-cut" set:html={CH.stateCut()} />
           <div class="plotfoot">
             <span class="src">Source: the States guide (states-finances): RBI, Handbook of Statistics on Indian States, tables 164 and 176, over MoSPI's GSDP at current prices; ratios computed by India Atlas, not the RBI's. The latest year with both accounts and GSDP for every state.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -765,7 +691,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="now">
             <span class="mk">As of the accounts for {sfYear}</span>
-            <p>In {sfYear}, <b id="ex-sc-n">–</b> states owed more than 30% of their GSDP. The lowest ratio was <b id="ex-sc-lo">–</b>.</p>
+            <p>In {sfYear}, <b id="ex-sc-n" set:html={N["ex-sc-n"]} /> states owed more than 30% of their GSDP. The lowest ratio was <b id="ex-sc-lo" set:html={N["ex-sc-lo"]} />.</p>
           </div>
         </div>
       </figure>
@@ -778,15 +704,10 @@ const ratesBorrow = B("rates-borrowing");
             <h3>{odStates} states ran an overdraft with the RBI at least once from {wma12}</h3>
             <div class="sub">Days in each month a state drew on the RBI's special drawing facility, its ways and means advances, or an overdraft beyond them, summed over the last twelve months, {wma12}. States that drew on none are left out.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-wma">–</div><div class="c">states in overdraft, {longMonth(wma.dates.at(-1))}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-wma" set:html={N["pv-wma"]} /><div class="c">states in overdraft, {longMonth(wma.dates.at(-1))}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#C9CED6"></i>Special drawing facility</span>
-            <span class="chip"><i style="background:#878D99"></i>Ways and means advances</span>
-            <span class="chip"><i style="background:#2E4BD8"></i>Overdraft</span>
-          </div>
-          <div class="plotzone"><div id="plot-wma" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-wma" set:html={CH.wma()} />
           <div class="plotfoot">
             <span class="src">Source: RBI Bulletin, Financial Accommodation Availed by State Governments under various Facilities (DBIE report 63); twelve-month totals computed by India Atlas. Every state's monthly days and amounts since September 2017 are in the data below.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -799,7 +720,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="now">
             <span class="mk">As of {longMonth(wma.dates.at(-1))}</span>
-            <p>In {longMonth(wma.dates.at(-1))}, <b id="ex-wma-od">–</b> states were in overdraft, <b id="ex-wma-wma">–</b> used ways and means advances and <b id="ex-wma-sdf">–</b> the special drawing facility. The most days in overdraft over the year were <b id="ex-wma-top">–</b>.</p>
+            <p>In {longMonth(wma.dates.at(-1))}, <b id="ex-wma-od" set:html={N["ex-wma-od"]} /> states were in overdraft, <b id="ex-wma-wma" set:html={N["ex-wma-wma"]} /> used ways and means advances and <b id="ex-wma-sdf" set:html={N["ex-wma-sdf"]} /> the special drawing facility. The most days in overdraft over the year were <b id="ex-wma-top" set:html={N["ex-wma-top"]} />.</p>
           </div>
         </div>
       </figure>
@@ -816,15 +737,10 @@ const ratesBorrow = B("rates-borrowing");
             <h3>The same deficit is {r1(a24)}% of GDP on the old series and {r1(n24)}% on the new one, for {ST.accountsTo}</h3>
             <div class="sub">The Centre's gross fiscal deficit, per cent of GDP: as the RBI publishes it, on the GDP series of each period (1999-2000, 2004-05 and 2011-12 bases), solid; and, computed by India Atlas, over the statistics office's back series of the 2011-12 base and over the new 2022-23 series, dashed. {fy(B99.dates[0])} to {ST.accountsTo}, accounts.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-gdpbase">–</div><div class="c">on the 2022-23 series, {ST.accountsTo}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-gdpbase" set:html={N["pv-gdpbase"]} /><div class="c">on the 2022-23 series, {ST.accountsTo}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#878D99"></i>RBI, GDP of the time</span>
-            <span class="chip"><i style="background:#B9C3F3"></i>Over the 2011-12 back series (India Atlas)</span>
-            <span class="chip"><i style="background:#2E4BD8"></i>Over the 2022-23 series (India Atlas)</span>
-          </div>
-          <div class="plotzone"><div id="plot-gdpbase" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-gdpbase" set:html={CH.gdpbase()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Select Fiscal Indicators of the Central Government (DBIE report 355) and Key Deficit Indicators (713); MoSPI, GDP back series (2011-12 base) and the 2022-23 series. Ratios other than the RBI's computed by India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -837,7 +753,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="now">
             <span class="mk">As of the accounts for {ST.accountsTo}</span>
-            <p>Over the 2022-23 series the Centre's deficit was <b id="ex-gb-new">–</b> of GDP in {ST.accountsTo}, against <b id="ex-gb-old">–</b> as the RBI publishes it on the 2011-12 series.</p>
+            <p>Over the 2022-23 series the Centre's deficit was <b id="ex-gb-new" set:html={N["ex-gb-new"]} /> of GDP in {ST.accountsTo}, against <b id="ex-gb-old" set:html={N["ex-gb-old"]} /> as the RBI publishes it on the 2011-12 series.</p>
           </div>
         </div>
       </figure>
@@ -876,7 +792,7 @@ const ratesBorrow = B("rates-borrowing");
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Reserve Bank of India: the Handbook of Statistics on the Indian Economy, the RBI Bulletin, the Weekly Statistical Supplement and the Database on Indian Economy (DBIE), read from India Atlas's archived copy of these RBI publications. The printed tables' notes from the RBI Innovation Hub's copy of DBIE. GDP from MoSPI, read from this site's GDP guide; state GSDP ratios from the States guide. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Reserve Bank of India: the Handbook of Statistics on the Indian Economy, the RBI Bulletin, the Weekly Statistical Supplement and the Database on Indian Economy (DBIE), read from India Atlas's archived copy of these RBI publications. The printed tables' notes from the RBI Innovation Hub's copy of DBIE. GDP from MoSPI, read from this site's GDP guide; state GSDP ratios from the States guide. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]} />.</p>
       </div>
       <div>
         <h6>Method</h6>
@@ -893,7 +809,7 @@ const ratesBorrow = B("rates-borrowing");
     </div>
     <div class="fine">
       <span>India Atlas, government budgets and debt</span>
-      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]} /></span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
@@ -901,6 +817,5 @@ const ratesBorrow = B("rates-borrowing");
 </div>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/public-finance.client.js";
 </script>
 </Base>

@@ -7,6 +7,9 @@ import Prose from "../../components/Prose.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp, bundleOf } from "../../dossiers/display.js";
 const D = bySlug["external"];
+import * as CH from "../../dossiers/external.charts.js";
+// every number on the page, computed at build time from the bundles (was the client's setHTML)
+const N = CH.numbers();
 // the periods this page names, read from the bundles at build time (never typed)
 const MS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const MF = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -41,27 +44,27 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
     </div>
     <div class="meta">
       <span>Source <b>Reserve Bank of India, DBIE</b></span>
-      <span>Balance of payments <b>Quarterly, to <span id="m-latest">–</span></b></span>
-      <span>Reserves <b>Weekly, to <span id="m-week">–</span></b></span>
+      <span>Balance of payments <b>Quarterly, to <span id="m-latest" set:html={N["m-latest"]} /></b></span>
+      <span>Reserves <b>Weekly, to <span id="m-week" set:html={N["m-week"]} /></b></span>
       <span>Rupee, flows <b>Monthly</b></span>
       <span>Units <b>US$ billion unless named</b></span>
       <span>Presentation <b>RBI's overall balance of payments</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Current account, the latest quarter</div><div class="v acc" id="n-ca">–</div><div class="d" id="d-ca">–</div><div class="nspark" id="nspark-ca"></div></div>
-      <div class="num"><div class="l">Foreign exchange reserves, latest week</div><div class="v" id="n-res">–</div><div class="d" id="d-res">–</div></div>
-      <div class="num"><div class="l">Rupees per US dollar, monthly average</div><div class="v" id="n-inr">–</div><div class="d" id="d-inr">–</div></div>
-      <div class="num"><div class="l">Real effective exchange rate, 40 currencies</div><div class="v" id="n-reer">–</div><div class="d" id="d-reer">–</div></div>
+      <div class="num"><div class="l">Current account, the latest quarter</div><div class="v acc" id="n-ca" set:html={N["n-ca"]} /><div class="d" id="d-ca" set:html={N["d-ca"]} /><div class="nspark" id="nspark-ca" set:html={N["nspark-ca"]} /></div>
+      <div class="num"><div class="l">Foreign exchange reserves, latest week</div><div class="v" id="n-res" set:html={N["n-res"]} /><div class="d" id="d-res" set:html={N["d-res"]} /></div>
+      <div class="num"><div class="l">Rupees per US dollar, monthly average</div><div class="v" id="n-inr" set:html={N["n-inr"]} /><div class="d" id="d-inr" set:html={N["d-inr"]} /></div>
+      <div class="num"><div class="l">Real effective exchange rate, 40 currencies</div><div class="v" id="n-reer" set:html={N["n-reer"]} /><div class="d" id="d-reer" set:html={N["d-reer"]} /></div>
     </div>
   </div>
 
   <!-- § 01 current reading: data inputs external-bop (all net lines), external-bop-gross, external-reserves-weekly, external-reer-2015; prose: generated slots -->
   <section>
-    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading" set:html={N["u-reading"]} /></div>
     <div class="reading-top">
-      <div><span class="rk">Current account</span><div class="big" id="rb-ca">–</div></div>
-      <p class="rt-cap" id="rb-cap">–</p>
-      <div class="rt-side"><span class="rk">Reserves, latest week</span><div class="rt-side-v" id="rb-res">–</div></div>
+      <div><span class="rk">Current account</span><div class="big" id="rb-ca" set:html={N["rb-ca"]} /></div>
+      <p class="rt-cap" id="rb-cap" set:html={N["rb-cap"]} />
+      <div class="rt-side"><span class="rk">Reserves, latest week</span><div class="rt-side-v" id="rb-res" set:html={N["rb-res"]} /></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -85,10 +88,10 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
             <h3>Most quarters India pays the world more than it earns from it</h3>
             <div class="sub">Current account balance, US$ billion a quarter, fiscal quarters since April 2010. Below zero is a deficit.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-ca">–</div><div class="c">{Q.bop}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-ca" set:html={N["pv-ca"]} /><div class="c">{Q.bop}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-ca"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-ca" set:html={CH.caPlate()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, India's overall balance of payments (DBIE report 56), net, latest revision of each quarter.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -102,7 +105,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {Q.bop}</span>
-            <p>The latest quarter, <span id="ex-ca-q">–</span>, shows a balance of <b id="ex-ca-latest">–</b>. The deepest deficit in this run was <b id="ex-ca-trough">–</b>. Only <b id="ex-ca-surplus">–</b> quarters since 2010 ended in surplus: <span id="ex-ca-surplus-why">–</span>.</p>
+            <p>The latest quarter, <span id="ex-ca-q" set:html={N["ex-ca-q"]} />, shows a balance of <b id="ex-ca-latest" set:html={N["ex-ca-latest"]} />. The deepest deficit in this run was <b id="ex-ca-trough" set:html={N["ex-ca-trough"]} />. Only <b id="ex-ca-surplus" set:html={N["ex-ca-surplus"]} /> quarters since 2010 ended in surplus: <span id="ex-ca-surplus-why" set:html={N["ex-ca-surplus-why"]} />.</p>
           </div>
         </div>
       </figure>
@@ -115,10 +118,10 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
             <h3>Measured against the economy, today's deficit is small</h3>
             <div class="sub">Current account balance as a share of GDP, fiscal years since 1970-71. The dotted line marks a deficit of 3% of GDP.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-cagdp">–</div><div class="c">{FY.ind}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-cagdp" set:html={N["pv-cagdp"]} /><div class="c">{FY.ind}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-cagdp"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-cagdp" set:html={CH.cagdp()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, balance of payments indicators (DBIE report 427), as published.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -131,7 +134,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {FY.ind}</span>
-            <p>The ratio for <span id="ex-cagdp-fy">–</span> is <b id="ex-cagdp">–</b>. The worst year on record is <b id="ex-cagdp-trough">–</b>; the deficit has gone beyond 3% of GDP in <b id="ex-cagdp-n3">–</b> fiscal years since 1970-71.</p>
+            <p>The ratio for <span id="ex-cagdp-fy" set:html={N["ex-cagdp-fy"]} /> is <b id="ex-cagdp" set:html={N["ex-cagdp"]} />. The worst year on record is <b id="ex-cagdp-trough" set:html={N["ex-cagdp-trough"]} />; the deficit has gone beyond 3% of GDP in <b id="ex-cagdp-n3" set:html={N["ex-cagdp-n3"]} /> fiscal years since 1970-71.</p>
           </div>
         </div>
       </figure>
@@ -159,10 +162,10 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
             <h3>Services and money from Indians abroad pay for most of the goods India buys</h3>
             <div class="sub">Net goods, services, remittances and income, US$ billion a quarter, since April 2011.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-parts">–</div><div class="c">goods, {Q.bop}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-parts" set:html={N["pv-parts"]} /><div class="c">goods, {Q.bop}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-parts"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-parts" set:html={CH.parts()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, overall balance of payments (DBIE report 56). Remittances are private transfers, net. Goods are on a balance-of-payments basis, not the monthly customs figures.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -176,7 +179,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {Q.bop}</span>
-            <p>Goods <b id="ex-p-goods">–</b>; services <b id="ex-p-svc">–</b>, of which software <b id="ex-p-soft">–</b>; remittances <b id="ex-p-rem">–</b>; income <b id="ex-p-inc">–</b>. Services and remittances together covered <b id="ex-p-cover">–</b> of the goods deficit.</p>
+            <p>Goods <b id="ex-p-goods" set:html={N["ex-p-goods"]} />; services <b id="ex-p-svc" set:html={N["ex-p-svc"]} />, of which software <b id="ex-p-soft" set:html={N["ex-p-soft"]} />; remittances <b id="ex-p-rem" set:html={N["ex-p-rem"]} />; income <b id="ex-p-inc" set:html={N["ex-p-inc"]} />. Services and remittances together covered <b id="ex-p-cover" set:html={N["ex-p-cover"]} /> of the goods deficit.</p>
           </div>
         </div>
       </figure>
@@ -189,10 +192,10 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
             <h3>Seventy-five years of the account: the goods gap opened, and invisibles grew to meet it</h3>
             <div class="sub">Net current account, goods and invisibles (services, transfers and income), US$ billion, fiscal years since 1950-51.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-long">–</div><div class="c">current account, {FY.ann}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-long" set:html={N["pv-long"]} /><div class="c">current account, {FY.ann}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-long"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-long" set:html={CH.long()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, key components of India's balance of payments (DBIE report 875), net, as published.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -205,7 +208,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {FY.ann}</span>
-            <p>In 1990-91, the year that ended in the 1991 payments crisis, the current account was <b id="ex-long-91">–</b>. Net invisibles first passed US$ 10 billion in <b id="ex-long-inv10">–</b>. The latest full year in this table is <span id="ex-long-fy">–</span>.</p>
+            <p>In 1990-91, the year that ended in the 1991 payments crisis, the current account was <b id="ex-long-91" set:html={N["ex-long-91"]} />. Net invisibles first passed US$ 10 billion in <b id="ex-long-inv10" set:html={N["ex-long-inv10"]} />. The latest full year in this table is <span id="ex-long-fy" set:html={N["ex-long-fy"]} />.</p>
           </div>
         </div>
       </figure>
@@ -222,10 +225,10 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
             <h3>What Indians abroad send home has grown every decade</h3>
             <div class="sub">Private transfers received, US$ billion a quarter, since April 1990. Gross receipts, before the much smaller sums sent out.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-remit">–</div><div class="c">{Q.bop}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-remit" set:html={N["pv-remit"]} /><div class="c">{Q.bop}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-remit"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-remit" set:html={CH.remit()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, overall balance of payments (DBIE report 56), private transfers, credit.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -238,7 +241,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {Q.bop}</span>
-            <p>Receipts were <b id="ex-r-q">–</b> in the latest quarter and <b id="ex-r-year">–</b> over the last four quarters.</p>
+            <p>Receipts were <b id="ex-r-q" set:html={N["ex-r-q"]} /> in the latest quarter and <b id="ex-r-year" set:html={N["ex-r-year"]} /> over the last four quarters.</p>
           </div>
         </div>
       </figure>
@@ -251,10 +254,10 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
             <h3>Most of it is wages sent home for the family</h3>
             <div class="sub">Private transfers received, by kind, US$ billion, {Q.ppl}, the latest quarter of RBI's detailed table.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-remitmix">–</div><div class="c">sent home for the family</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-remitmix" set:html={N["pv-remitmix"]} /><div class="c">sent home for the family</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-remitmix" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-remitmix" set:html={CH.remitmix()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, invisibles by category of transactions (DBIE report 1076), receipts. The detailed table ends a year before the headline account.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -267,7 +270,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {Q.ppl}</span>
-            <p>In <span id="ex-rm-q">–</span>, money sent home for families came to <b id="ex-rm-family">–</b> and withdrawals from NRI deposits to <b id="ex-rm-nri">–</b>. Indians working on foreign contracts earned another <b id="ex-rm-wages">–</b> in wages. Going the other way, private transfers paid abroad were <b id="ex-rm-out">–</b>, and Indians spent <b id="ex-rm-edu">–</b> on travel for education abroad.</p>
+            <p>In <span id="ex-rm-q" set:html={N["ex-rm-q"]} />, money sent home for families came to <b id="ex-rm-family" set:html={N["ex-rm-family"]} /> and withdrawals from NRI deposits to <b id="ex-rm-nri" set:html={N["ex-rm-nri"]} />. Indians working on foreign contracts earned another <b id="ex-rm-wages" set:html={N["ex-rm-wages"]} /> in wages. Going the other way, private transfers paid abroad were <b id="ex-rm-out" set:html={N["ex-rm-out"]} />, and Indians spent <b id="ex-rm-edu" set:html={N["ex-rm-edu"]} /> on travel for education abroad.</p>
           </div>
         </div>
       </figure>
@@ -280,11 +283,10 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
             <h3>Indians now send tens of billions of dollars abroad a year, mostly for travel</h3>
             <div class="sub">Outward remittances by resident individuals under the Liberalised Remittance Scheme, by purpose, US$ billion, fiscal years (each the sum of RBI's twelve monthly figures).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-lrs">–</div><div class="c">latest full year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-lrs" set:html={N["pv-lrs"]} /><div class="c">latest full year</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-lrs"></div>
-          <div class="plotzone" data-x="time"><div id="plot-lrs" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-lrs" set:html={CH.lrs()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, outward remittances under the LRS (DBIE report 793), monthly, summed by India Atlas into fiscal years; only complete years are drawn.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -297,7 +299,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {M.lrs}</span>
-            <p>In <span id="ex-l-fy">–</span>, Indians sent <b id="ex-l-total">–</b> abroad under the scheme; travel made up <b id="ex-l-travel">–</b> of it and studies abroad <b id="ex-l-study">–</b>. In <span id="ex-l-edum">–</span>, travel for education alone took <b id="ex-l-edu">–</b>; the latest month published is <span id="ex-l-month">–</span>.</p>
+            <p>In <span id="ex-l-fy" set:html={N["ex-l-fy"]} />, Indians sent <b id="ex-l-total" set:html={N["ex-l-total"]} /> abroad under the scheme; travel made up <b id="ex-l-travel" set:html={N["ex-l-travel"]} /> of it and studies abroad <b id="ex-l-study" set:html={N["ex-l-study"]} />. In <span id="ex-l-edum" set:html={N["ex-l-edum"]} />, travel for education alone took <b id="ex-l-edu" set:html={N["ex-l-edu"]} />; the latest month published is <span id="ex-l-month" set:html={N["ex-l-month"]} />.</p>
           </div>
         </div>
       </figure>
@@ -314,10 +316,10 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
             <h3>Direct investment is steady; portfolio money comes and goes</h3>
             <div class="sub">Net foreign direct investment and net portfolio investment, US$ billion a quarter, since April 2010.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-flows">–</div><div class="c">portfolio, {Q.bop}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-flows" set:html={N["pv-flows"]} /><div class="c">portfolio, {Q.bop}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-flows"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-flows" set:html={CH.flows()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, overall balance of payments (DBIE report 56). Net direct investment is investment into India less Indian investment abroad.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -330,7 +332,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {Q.bop}</span>
-            <p>Net direct investment was <b id="ex-f-fdi">–</b> and net portfolio investment <b id="ex-f-fpi">–</b> in the latest quarter. Over the quarters drawn, portfolio flows typically land about <b id="ex-f-sdfpi">–</b> away from their own average in a quarter, against <b id="ex-f-sdfdi">–</b> for direct investment (one standard deviation); portfolio money left on net in <b id="ex-f-negfpi">–</b> quarters, direct investment in <b id="ex-f-negfdi">–</b>.</p>
+            <p>Net direct investment was <b id="ex-f-fdi" set:html={N["ex-f-fdi"]} /> and net portfolio investment <b id="ex-f-fpi" set:html={N["ex-f-fpi"]} /> in the latest quarter. Over the quarters drawn, portfolio flows typically land about <b id="ex-f-sdfpi" set:html={N["ex-f-sdfpi"]} /> away from their own average in a quarter, against <b id="ex-f-sdfdi" set:html={N["ex-f-sdfdi"]} /> for direct investment (one standard deviation); portfolio money left on net in <b id="ex-f-negfpi" set:html={N["ex-f-negfpi"]} /> quarters, direct investment in <b id="ex-f-negfdi" set:html={N["ex-f-negfdi"]} />.</p>
           </div>
         </div>
       </figure>
@@ -343,10 +345,10 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
             <h3>Much of the direct investment that comes in also goes back out</h3>
             <div class="sub">Gross foreign direct investment into India, repatriation by foreign investors, and Indian companies' investment abroad, US$ billion, fiscal years (each the sum of RBI's monthly figures).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-fdi">–</div><div class="c">gross inflows, latest full year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-fdi" set:html={N["pv-fdi"]} /><div class="c">gross inflows, latest full year</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-fdi"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-fdi" set:html={CH.fdi()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, foreign investment inflows (DBIE report 34), monthly, summed by India Atlas into fiscal years; complete years only.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -359,7 +361,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {M.fdi}</span>
-            <p>In <span id="ex-fdi-fy">–</span> gross inflows were <b id="ex-fdi-gross">–</b>, repatriation <b id="ex-fdi-rep">–</b> (<b id="ex-fdi-share">–</b> of what came in), and Indian investment abroad <b id="ex-fdi-out">–</b>.</p>
+            <p>In <span id="ex-fdi-fy" set:html={N["ex-fdi-fy"]} /> gross inflows were <b id="ex-fdi-gross" set:html={N["ex-fdi-gross"]} />, repatriation <b id="ex-fdi-rep" set:html={N["ex-fdi-rep"]} /> (<b id="ex-fdi-share" set:html={N["ex-fdi-share"]} /> of what came in), and Indian investment abroad <b id="ex-fdi-out" set:html={N["ex-fdi-out"]} />.</p>
           </div>
         </div>
       </figure>
@@ -372,10 +374,10 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
             <h3>Foreign investors in Indian shares and bonds change their minds month to month</h3>
             <div class="sub">Net purchases by foreign portfolio investors in the Indian market, ₹ thousand crore a month, since January 2016.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-fpi">–</div><div class="c">{M.fpi}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-fpi" set:html={N["pv-fpi"]} /><div class="c">{M.fpi}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-fpi"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-fpi" set:html={CH.fpi()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, net investment by FPIs in the Indian capital market (DBIE report 136), ₹ crore, from depository data. Not the same timing or coverage as the balance-of-payments portfolio line.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -388,7 +390,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {M.fpi}</span>
-            <p>The latest month is <span id="ex-fpi-m">–</span>. Foreign portfolio investors sold more than they bought in <b id="ex-fpi-out">–</b> months since 2016; the largest month of selling on record was <b id="ex-fpi-trough">–</b>.</p>
+            <p>The latest month is <span id="ex-fpi-m" set:html={N["ex-fpi-m"]} />. Foreign portfolio investors sold more than they bought in <b id="ex-fpi-out" set:html={N["ex-fpi-out"]} /> months since 2016; the largest month of selling on record was <b id="ex-fpi-trough" set:html={N["ex-fpi-trough"]} />.</p>
           </div>
         </div>
       </figure>
@@ -405,10 +407,10 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
             <h3>Twenty-five years of building a buffer</h3>
             <div class="sub">Foreign exchange reserves, US$ billion, every week since April 2001: the total, foreign currency assets and gold.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-res">–</div><div class="c">{WK}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-res" set:html={N["pv-res"]} /><div class="c">{WK}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-res"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-res" set:html={CH.reserves()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, foreign exchange reserves, weekly (DBIE report 574, Weekly Statistical Supplement table 2). SDRs and the IMF reserve position make up the small rest.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -421,7 +423,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {WK}</span>
-            <p>Reserves stood at <b id="ex-res-total">–</b> on <span id="ex-res-week">–</span>, a change of <b id="ex-res-wk">–</b> on the week before, against a peak of <b id="ex-res-peak">–</b>. Gold is <b id="ex-res-gold">–</b> of the total. At the end of <span id="ex-res-cover-fy">–</span> the reserves covered <b id="ex-res-cover">–</b> months of imports.</p>
+            <p>Reserves stood at <b id="ex-res-total" set:html={N["ex-res-total"]} /> on <span id="ex-res-week" set:html={N["ex-res-week"]} />, a change of <b id="ex-res-wk" set:html={N["ex-res-wk"]} /> on the week before, against a peak of <b id="ex-res-peak" set:html={N["ex-res-peak"]} />. Gold is <b id="ex-res-gold" set:html={N["ex-res-gold"]} /> of the total. At the end of <span id="ex-res-cover-fy" set:html={N["ex-res-cover-fy"]} /> the reserves covered <b id="ex-res-cover" set:html={N["ex-res-cover"]} /> months of imports.</p>
           </div>
         </div>
       </figure>
@@ -432,12 +434,12 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
         <div class="plate-head">
           <div class="t">
             <h3>Reserves do not move only when the RBI buys or sells</h3>
-            <div class="sub">Month-on-month change in total reserves (bars) against the RBI's net purchases (+) or sales (−) of dollars in the same month (dots), US$ billion, since August 2023.</div>
+            <div class="sub">Month-on-month change in total reserves (bars) against the RBI's net purchases (+) or sales (−) of dollars in the same month (ticks), US$ billion, since August 2023.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-resmove">–</div><div class="c">change, {M.resm}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-resmove" set:html={N["pv-resmove"]} /><div class="c">change, {M.resm}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-resmove"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-resmove" set:html={CH.resmove()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, reserves at month end (DBIE report 184) and sale and purchase of US dollars by the RBI (DBIE report 730). The month's change is computed by India Atlas from the two month-end figures.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -450,7 +452,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {M.resm}</span>
-            <p>Reserves changed by <b id="ex-mv-chg">–</b> in <span id="ex-mv-month">–</span>. In <span id="ex-mv-netm">–</span>, the latest month with both figures, the RBI's net purchases were <b id="ex-mv-net">–</b>. Over the months drawn, the two have differed by as much as <b id="ex-mv-gapmax">–</b> in a single month.</p>
+            <p>Reserves changed by <b id="ex-mv-chg" set:html={N["ex-mv-chg"]} /> in <span id="ex-mv-month" set:html={N["ex-mv-month"]} />. In <span id="ex-mv-netm" set:html={N["ex-mv-netm"]} />, the latest month with both figures, the RBI's net purchases were <b id="ex-mv-net" set:html={N["ex-mv-net"]} />. Over the months drawn, the two have differed by as much as <b id="ex-mv-gapmax" set:html={N["ex-mv-gapmax"]} /> in a single month.</p>
           </div>
         </div>
       </figure>
@@ -467,10 +469,10 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
             <h3>A dollar costs about three times as many rupees as in 1993</h3>
             <div class="sub">Rupees per US dollar, monthly average of the reference rate, since April 1993, the first full month after the rupee was left to the market.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-rupee">–</div><div class="c">{M.rupee}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-rupee" set:html={N["pv-rupee"]} /><div class="c">{M.rupee}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-rupee"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-rupee" set:html={CH.rupee()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, monthly average exchange rates (DBIE report 719). The table runs from 1966; for March 1992 to February 1993 (the dual exchange rate) it carries the official LERMS rate (₹25.89 to ₹26.20), while the market rate (₹29.46 to ₹32.65) is in DBIE report 1374, both downloadable below. The table has no figure for May 2024, so the line breaks there.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -484,7 +486,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {M.rupee}</span>
-            <p>A dollar cost <b id="ex-ru-v">–</b> on average in <span id="ex-ru-m">–</span>, against <b id="ex-ru-y">–</b> a year earlier: <b id="ex-ru-pct">–</b> more rupees for a dollar than a year before.</p>
+            <p>A dollar cost <b id="ex-ru-v" set:html={N["ex-ru-v"]} /> on average in <span id="ex-ru-m" set:html={N["ex-ru-m"]} />, against <b id="ex-ru-y" set:html={N["ex-ru-y"]} /> a year earlier: <b id="ex-ru-pct" set:html={N["ex-ru-pct"]} /> more rupees for a dollar than a year before.</p>
           </div>
         </div>
       </figure>
@@ -497,10 +499,10 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
             <h3>After prices, the rupee has weakened far less than the dollar rate says</h3>
             <div class="sub">Real and nominal effective exchange rate of the rupee, 40-currency trade-weighted basket, index 2015-16 = 100, monthly since April 2004. A rise is a stronger rupee.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-reer">–</div><div class="c">REER, {M.reer}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-reer" set:html={N["pv-reer"]} /><div class="c">REER, {M.reer}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-reer"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-reer" set:html={CH.reerPlate()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, indices of REER and NEER (DBIE report 584), base 2015-16 = 100. Earlier bases (1985, 1993-94, 2004-05) and the 6-currency index are separate rulers, downloadable below, never joined to this one.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -514,7 +516,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {M.reer}</span>
-            <p>In <span id="ex-re-m">–</span> the real index was <b id="ex-re-reer">–</b> and the nominal index <b id="ex-re-neer">–</b>, a gap of <b id="ex-re-gap">–</b> points; a year earlier the real index stood at <b id="ex-re-reery">–</b>. Below 100 means that, after prices, the rupee is cheaper than it was in 2015-16.</p>
+            <p>In <span id="ex-re-m" set:html={N["ex-re-m"]} /> the real index was <b id="ex-re-reer" set:html={N["ex-re-reer"]} /> and the nominal index <b id="ex-re-neer" set:html={N["ex-re-neer"]} />, a gap of <b id="ex-re-gap" set:html={N["ex-re-gap"]} /> points; a year earlier the real index stood at <b id="ex-re-reery" set:html={N["ex-re-reery"]} />. Below 100 means that, after prices, the rupee is cheaper than it was in 2015-16.</p>
           </div>
         </div>
       </figure>
@@ -529,12 +531,12 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
         <div class="plate-head">
           <div class="t">
             <h3>The RBI sells dollars to slow the rupee's fall, and promises more for later</h3>
-            <div class="sub">The RBI's net purchases (+) or sales (−) of US dollars each month (bars), and its outstanding forward position at the end of each month (line), US$ billion, since April 2015.</div>
+            <div class="sub">The RBI's net purchases (+) or sales (−) of US dollars each month (grey line), and its outstanding forward position at the end of each month (blue line), US$ billion, since April 2015.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-desk">–</div><div class="c">forward book, {M.int}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-desk" set:html={N["pv-desk"]} /><div class="c">forward book, {M.int}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-desk"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-desk" set:html={CH.desk()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, sale and purchase of US dollars by the RBI (DBIE report 730). Net purchases, gross purchases and sales and the forward book as published; the forward book is a stock at the end of the month. In March 2014 the table repeats the purchase figure as the sale, so read the net for that month.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -547,7 +549,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {M.int}</span>
-            <p>In <span id="ex-d-m">–</span> the RBI's net purchases were <b id="ex-d-net">–</b>. Over the last twelve months it bought <b id="ex-d-bought12">–</b> and sold <b id="ex-d-sold12">–</b>. Its forward book stood at <b id="ex-d-fw">–</b>; the deepest point in the series is <b id="ex-d-fwt">–</b>. Of the current book, a net <b id="ex-d-1m">–</b> falls due within a month.</p>
+            <p>In <span id="ex-d-m" set:html={N["ex-d-m"]} /> the RBI's net purchases were <b id="ex-d-net" set:html={N["ex-d-net"]} />. Over the last twelve months it bought <b id="ex-d-bought12" set:html={N["ex-d-bought12"]} /> and sold <b id="ex-d-sold12" set:html={N["ex-d-sold12"]} />. Its forward book stood at <b id="ex-d-fw" set:html={N["ex-d-fw"]} />; the deepest point in the series is <b id="ex-d-fwt" set:html={N["ex-d-fwt"]} />. Of the current book, a net <b id="ex-d-1m" set:html={N["ex-d-1m"]} /> falls due within a month.</p>
           </div>
         </div>
       </figure>
@@ -564,10 +566,10 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
             <h3>India's foreign debt has grown with the economy, and most of it is long-term</h3>
             <div class="sub">External debt as on 31 March each year since 1991, US$ billion: the total and its largest parts.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-debt">–</div><div class="c">{DEBT}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-debt" set:html={N["pv-debt"]} /><div class="c">{DEBT}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-debt"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-debt" set:html={CH.debt()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, India's external debt as on end-March (DBIE report 563). Commercial borrowing includes companies' foreign loans and bonds and foreign investors' holdings of Indian debt; NRI deposits count only those maturing in over a year.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -580,7 +582,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {DEBT}</span>
-            <p>External debt was <b id="ex-debt-total">–</b> in <span id="ex-debt-y">–</span>, against <b id="ex-debt-91">–</b> in <span id="ex-debt-91y">–</span>. It is <b id="ex-debt-gdp">–</b> of GDP; short-term debt is <b id="ex-debt-st">–</b> of the total; repaying and servicing it takes <b id="ex-debt-ds">–</b> of current receipts. The latest week's reserves equal <b id="ex-debt-cover">–</b> of that debt. NRI deposits of every maturity stood at <b id="ex-nri">–</b> in <span id="ex-nri-m">–</span>, and Indian exports invoiced in rupees reached <b id="ex-inv">–</b> of the total, fiscal year to <span id="ex-inv-m">–</span>.</p>
+            <p>External debt was <b id="ex-debt-total" set:html={N["ex-debt-total"]} /> in <span id="ex-debt-y" set:html={N["ex-debt-y"]} />, against <b id="ex-debt-91" set:html={N["ex-debt-91"]} /> in <span id="ex-debt-91y" set:html={N["ex-debt-91y"]} />. It is <b id="ex-debt-gdp" set:html={N["ex-debt-gdp"]} /> of GDP; short-term debt is <b id="ex-debt-st" set:html={N["ex-debt-st"]} /> of the total; repaying and servicing it takes <b id="ex-debt-ds" set:html={N["ex-debt-ds"]} /> of current receipts. The latest week's reserves equal <b id="ex-debt-cover" set:html={N["ex-debt-cover"]} /> of that debt. NRI deposits of every maturity stood at <b id="ex-nri" set:html={N["ex-nri"]} /> in <span id="ex-nri-m" set:html={N["ex-nri-m"]} />, and Indian exports invoiced in rupees reached <b id="ex-inv" set:html={N["ex-inv"]} /> of the total, fiscal year to <span id="ex-inv-m" set:html={N["ex-inv-m"]} />.</p>
           </div>
         </div>
       </figure>
@@ -593,10 +595,10 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
             <h3>Companies and banks, not the government, owe most of it</h3>
             <div class="sub">External debt by who borrowed, share of the total, {Q.sect}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-sector">–</div><div class="c">the largest borrower</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-sector" set:html={N["pv-sector"]} /><div class="c">the largest borrower</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-sector" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-sector" set:html={CH.sector()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, external debt of India, quarterly (DBIE report 660), borrower-by-maturity layout, shares computed by India Atlas from rupee values (the same shares in any currency at one date).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -609,7 +611,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {Q.sect}</span>
-            <p>In <span id="ex-s-q">–</span> the largest borrower was <span id="ex-s-top">–</span>, with <b id="ex-s-topv">–</b> of the total; the government owed <b id="ex-s-gov">–</b>.</p>
+            <p>In <span id="ex-s-q" set:html={N["ex-s-q"]} /> the largest borrower was <span id="ex-s-top" set:html={N["ex-s-top"]} />, with <b id="ex-s-topv" set:html={N["ex-s-topv"]} /> of the total; the government owed <b id="ex-s-gov" set:html={N["ex-s-gov"]} />.</p>
           </div>
         </div>
       </figure>
@@ -622,10 +624,10 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
             <h3>India owes the world more than it owns abroad</h3>
             <div class="sub">International investment position: foreign assets owned by Indian residents, liabilities to non-residents, and the net, US$ billion, end of each quarter since December 2017.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-iip">–</div><div class="c">net, {Q.iip}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-iip" set:html={N["pv-iip"]} /><div class="c">net, {Q.iip}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-iip"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-iip" set:html={CH.iip()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, international investment position (DBIE report 982), BPM6 classification. The older BPM5 position (2006 to 2021) is a separate ruler, downloadable below.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -638,7 +640,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {Q.iip}</span>
-            <p>The net position in <span id="ex-iip-q">–</span> was <b id="ex-iip-net">–</b>. Reserves were <b id="ex-iip-res">–</b> of everything India owns abroad; direct investment was <b id="ex-iip-ldi">–</b> of what it owes.</p>
+            <p>The net position in <span id="ex-iip-q" set:html={N["ex-iip-q"]} /> was <b id="ex-iip-net" set:html={N["ex-iip-net"]} />. Reserves were <b id="ex-iip-res" set:html={N["ex-iip-res"]} /> of everything India owns abroad; direct investment was <b id="ex-iip-ldi" set:html={N["ex-iip-ldi"]} /> of what it owes.</p>
           </div>
         </div>
       </figure>
@@ -655,10 +657,10 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
             <h3>A quarter's current account can move by billions after its first release</h3>
             <div class="sub">Current account balance as first published (hollow dot) and as now published (filled dot), US$ billion, for every quarter whose earlier version DBIE still carries.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-rev">–</div><div class="c">largest revision</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-rev" set:html={N["pv-rev"]} /><div class="c">largest revision</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-rev" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-rev" set:html={CH.rev()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, overall balance of payments (DBIE report 56): DBIE keeps the provisional (or preliminary) and the partially revised version of recent quarters; older quarters are carried only in their final form.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -671,7 +673,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {Q.bop}</span>
-            <p>The largest revision among these quarters: <b id="ex-rev-big">–</b>. In <b id="ex-rev-n">–</b> of <span id="ex-rev-of">–</span> quarters the estimate moved by a billion dollars or more.</p>
+            <p>The largest revision among these quarters: <b id="ex-rev-big" set:html={N["ex-rev-big"]} />. In <b id="ex-rev-n" set:html={N["ex-rev-n"]} /> of <span id="ex-rev-of" set:html={N["ex-rev-of"]} /> quarters the estimate moved by a billion dollars or more.</p>
           </div>
         </div>
       </figure>
@@ -700,7 +702,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Reserve Bank of India, Database on Indian Economy (DBIE), read from India Atlas's archived copy of DBIE, not fetched live from the RBI. Every external-sector table DBIE publishes is either baked into a file listed above or accounted for in the coverage ledger: copies of the same table under other DBIE menus, and the few tables DBIE serves without names for their columns. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Reserve Bank of India, Database on Indian Economy (DBIE), read from India Atlas's archived copy of DBIE, not fetched live from the RBI. Every external-sector table DBIE publishes is either baked into a file listed above or accounted for in the coverage ledger: copies of the same table under other DBIE menus, and the few tables DBIE serves without names for their columns. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]} />.</p>
         <p>Checked by hand against the RBI's own figures: the latest quarter's current account, the reserves in the Weekly Statistical Supplement, and the current-account ratio to GDP in RBI's press release. The checks, and every source quirk found, are recorded in the adapters and in the guide's status notes.</p>
       </div>
       <div>
@@ -718,7 +720,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
     </div>
     <div class="fine">
       <span>India Atlas, the external account</span>
-      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]} /></span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
@@ -726,6 +728,5 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
 </div>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/external.client.js";
 </script>
 </Base>

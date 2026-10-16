@@ -11,11 +11,12 @@ import fs from "node:fs";
 import {guideBundles} from "../../dossiers/everycut.js";
 import {vintageSummary} from "../../../scripts/lib/vintage.mjs";
 import { marketsRbiSlices } from '../../dossiers/markets-rbi.model.js';
+import * as CH from "../../dossiers/markets.charts.js";
 const D = bySlug["markets"];
 // Every period, count and title figure named in this page's copy is read from the bundles at
 // build time. Heavy bundles (fortnightly CP and CD, the 51 fund houses, 45 listed industries, the
-// forecasters' rounds) are sliced here and handed to the page as baked JSON: the page makes no
-// data requests (CONTRACT-render), and the client carries only what it draws.
+// forecasters' rounds) are sliced here; the plates are drawn and every figure written at build time
+// (src/dossiers/markets.charts.js), so the page ships no data and no chart code.
 const B = (s) => JSON.parse(fs.readFileSync(`data/series/${s}.json`, "utf8"));
 const guideRevisionSummary=vintageSummary(guideBundles(D).map(s=>B(s).meta));
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -64,10 +65,8 @@ const debtTitle = `Under the Ind AS studies, public limited companies' debt fell
 const ser = (b, k, from) => { const i0 = from ? b.dates.findIndex((d) => d >= from) : 0; return b.dates.slice(i0).map((d, i) => [d, b.series[k].data[i0 + i]]); };
 const latestBy = (b, suffix, filt = () => true) => { const i = b.dates.length - 1; return Object.entries(b.series).filter(([k, s]) => k.endsWith(suffix) && filt(k, s)).map(([k, s]) => ({ k, label: s.label, group: s.group ?? null, v: s.data[i], y: s.data[i - 4] ?? null })).filter((x) => x.v != null); };
 const spfTargets = (b, re) => Object.entries(b.series).filter(([k]) => re.test(k) && k.endsWith("__median")).map(([k, s]) => ({ k, target: s.target, data: b.dates.map((d, i) => [d, s.data[i]]).filter((p) => p[1] != null) }));
-const listedSlice = b => ({meta:{frequency:b.meta.frequency},dates:b.dates,series:Object.fromEntries(Object.entries(b.series).map(([k,v])=>[k,{label:v.label,data:v.data}]))});
 const baked = {
   guideRevisionSummary,
-  listed:{lq:listedSlice(lq),lqs:listedSlice(lqs),lqr:listedSlice(lr)},
   rbiViews,
   cp: ser(cp, "outstanding", "1993-01-01"), cd: ser(cd, "outstanding", "1991-01-01"),
   houses: (() => { const i = houses.dates.length - 1; return Object.entries(houses.series).filter(([k]) => k !== "total").map(([k, s]) => ({ label: s.label, v: s.data[i] })).filter((x) => x.v != null).sort((a, b) => b.v - a.v); })(),
@@ -81,6 +80,7 @@ const baked = {
   cpiOld: spfTargets(spfIOld, /^cpi_combined_general/), cpiNew: spfTargets(spfI, /^cpi_combined_general/),
   deriv: { dates: deriv.dates, anomalies: deriv.series.nse__index_options.anomalies ?? [], index_options: deriv.series.nse__index_options.data, cash: deriv.dates.map((d) => turn.series.nse.data[turn.dates.indexOf(d)] ?? null) },
 };
+const N = CH.numbers(baked);
 ---
 <Base
   title="Savings, markets and companies · India Atlas"
@@ -108,10 +108,10 @@ const baked = {
       <span>Unit <b>₹ crore unless named</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Households' net financial saving, share of GDP</div><div class="v acc" id="n-net">–</div><div class="d" id="d-net">–</div><div class="nspark" id="nspark-net"></div></div>
-      <div class="num"><div class="l">Mutual fund assets, end-March</div><div class="v" id="n-aum">–</div><div class="d" id="d-aum">–</div></div>
-      <div class="num"><div class="l">Listed companies' sales, growth on a year earlier</div><div class="v" id="n-sales">–</div><div class="d" id="d-sales">–</div></div>
-      <div class="num"><div class="l">Forecasters' median for GDP growth, this year</div><div class="v" id="n-spf">–</div><div class="d" id="d-spf">–</div></div>
+      <div class="num"><div class="l">Households' net financial saving, share of GDP</div><div class="v acc" id="n-net" set:html={N["n-net"]} /><div class="d" id="d-net" set:html={N["d-net"]} /><div class="nspark" id="nspark-net" set:html={CH.sparkNet()} /></div>
+      <div class="num"><div class="l">Mutual fund assets, end-March</div><div class="v" id="n-aum" set:html={N["n-aum"]} /><div class="d" id="d-aum" set:html={N["d-aum"]} /></div>
+      <div class="num"><div class="l">Listed companies' sales, growth on a year earlier</div><div class="v" id="n-sales" set:html={N["n-sales"]} /><div class="d" id="d-sales" set:html={N["d-sales"]} /></div>
+      <div class="num"><div class="l">Forecasters' median for GDP growth, this year</div><div class="v" id="n-spf" set:html={N["n-spf"]} /><div class="d" id="d-spf" set:html={N["d-spf"]} /></div>
     </div>
   </div>
 
@@ -119,9 +119,9 @@ const baked = {
   <section>
     <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">{flowsLast}</span></div>
     <div class="reading-top">
-      <div><span class="rk">Net financial saving of households</span><div class="big" id="rb-net">–</div></div>
+      <div><span class="rk">Net financial saving of households</span><div class="big" id="rb-net" set:html={N["rb-net"]} /></div>
       <p class="rt-cap">What households added to their financial assets in the quarter, less what they borrowed, as a share of the quarter's GDP. It is the part of household saving that is lent on to companies and the government.</p>
-      <div class="rt-side"><span class="rk">Gross, before borrowing</span><div class="rt-side-v" id="rb-gross">–</div></div>
+      <div class="rt-side"><span class="rk">Gross, before borrowing</span><div class="rt-side-v" id="rb-gross" set:html={N["rb-gross"]} /></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -139,8 +139,8 @@ const baked = {
   <section>
     <div class="sec-head"><span class="no">02</span><h2>Where a household's hundred rupees went</h2><span class="line"></span><span class="unit">{fyA}</span></div>
     <div class="prose">
-      <p>Take every rupee Indian households put into financial assets in {fyA} and shrink the total to ₹100. About <b id="lr-dep">–</b> went into bank and other deposits, <b id="lr-pf">–</b> into provident and pension funds, <b id="lr-ins">–</b> into life insurance, <b id="lr-mf">–</b> into mutual funds and <b id="lr-cash">–</b> stayed as cash. Small savings schemes at the post office took <b id="lr-ss">–</b>. Shares bought directly took <b id="lr-eq">–</b>: a negative figure means households sold more shares than they bought.</p>
-      <p>Against that, they borrowed. For every ₹100 saved, households took <b id="lr-borrow">–</b> in new loans, mostly from banks, for homes, vehicles, businesses and gold. What is left, <b id="lr-net">–</b> of GDP in the year, is the household sector's net contribution to the money the rest of the economy can borrow. A family that puts ₹5,000 a month into a SIP and pays an EMI of ₹15,000 is, in these tables, a borrower.</p>
+      <p>Take every rupee Indian households put into financial assets in {fyA} and shrink the total to ₹100. About <b id="lr-dep" set:html={N["lr-dep"]} /> went into bank and other deposits, <b id="lr-pf" set:html={N["lr-pf"]} /> into provident and pension funds, <b id="lr-ins" set:html={N["lr-ins"]} /> into life insurance, <b id="lr-mf" set:html={N["lr-mf"]} /> into mutual funds and <b id="lr-cash" set:html={N["lr-cash"]} /> stayed as cash. Small savings schemes at the post office took <b id="lr-ss" set:html={N["lr-ss"]} />. Shares bought directly took <b id="lr-eq" set:html={N["lr-eq"]} />: a negative figure means households sold more shares than they bought.</p>
+      <p>Against that, they borrowed. For every ₹100 saved, households took <b id="lr-borrow" set:html={N["lr-borrow"]} /> in new loans, mostly from banks, for homes, vehicles, businesses and gold. What is left, <b id="lr-net" set:html={N["lr-net"]} /> of GDP in the year, is the household sector's net contribution to the money the rest of the economy can borrow. A family that puts ₹5,000 a month into a SIP and pays an EMI of ₹15,000 is, in these tables, a borrower.</p>
     </div>
   </section>
 
@@ -162,12 +162,12 @@ const baked = {
         <div class="plate-head">
           <div class="t">
             <h3>{flowsTitle}</h3>
-            <div class="sub">Households' net additions to each financial asset, ₹ lakh crore, {fyA} (bars) and {fyOf(flowsA.dates[0])} (ticks).</div>
+            <div class="sub">Households' net additions to each financial asset, ₹ lakh crore, {fyA} (bars) and {fyOf(flowsA.dates[0])} (circles).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-flows">–</div><div class="c">into financial assets, {fyA}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-flows" set:html={N["pv-flows"]} /><div class="c">into financial assets, {fyA}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-flows" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-flows" set:html={CH.flows()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, flow of financial assets and liabilities of households, instrument-wise (DBIE report 1225, fiscal-year totals). Preliminary estimates.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -180,7 +180,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {fyA}</span>
-            <p>Deposits <b id="ex-fl-dep">–</b>, provident and pension funds <b id="ex-fl-pf">–</b>, life insurance <b id="ex-fl-ins">–</b>, mutual funds <b id="ex-fl-mf">–</b>, currency <b id="ex-fl-cash">–</b>, shares <b id="ex-fl-eq">–</b>. Mutual funds took <b id="ex-fl-mf0">–</b> in {fyOf(flowsA.dates[0])}.</p>
+            <p>Deposits <b id="ex-fl-dep" set:html={N["ex-fl-dep"]} />, provident and pension funds <b id="ex-fl-pf" set:html={N["ex-fl-pf"]} />, life insurance <b id="ex-fl-ins" set:html={N["ex-fl-ins"]} />, mutual funds <b id="ex-fl-mf" set:html={N["ex-fl-mf"]} />, currency <b id="ex-fl-cash" set:html={N["ex-fl-cash"]} />, shares <b id="ex-fl-eq" set:html={N["ex-fl-eq"]} />. Mutual funds took <b id="ex-fl-mf0" set:html={N["ex-fl-mf0"]} /> in {fyOf(flowsA.dates[0])}.</p>
           </div>
         </div>
       </figure>
@@ -192,10 +192,10 @@ const baked = {
             <h3>Households save about a tenth of GDP in financial assets each quarter, and borrow back a growing part of it</h3>
             <div class="sub">Gross financial saving, borrowing and net financial saving of households, per cent of the quarter's GDP, {qSpan(flows)}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-net">–</div><div class="c">net, {flowsLast}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-net" set:html={N["pv-net"]} /><div class="c">net, {flowsLast}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-net" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-net" set:html={CH.net()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, household financial flows (DBIE report 1225), quarterly. Net = gross financial assets less financial liabilities.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -208,7 +208,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {flowsLast}</span>
-            <p>Gross financial saving <b id="ex-net-g">–</b> of GDP, borrowing <b id="ex-net-l">–</b>, net <b id="ex-net-n">–</b>. A year earlier the net figure was <b id="ex-net-y">–</b>.</p>
+            <p>Gross financial saving <b id="ex-net-g" set:html={N["ex-net-g"]} /> of GDP, borrowing <b id="ex-net-l" set:html={N["ex-net-l"]} />, net <b id="ex-net-n" set:html={N["ex-net-n"]} />. A year earlier the net figure was <b id="ex-net-y" set:html={N["ex-net-y"]} />.</p>
           </div>
         </div>
       </figure>
@@ -225,16 +225,10 @@ const baked = {
             <h3>Bank deposits take a smaller share of household saving than in the early 2010s; shares and pensions take more</h3>
             <div class="sub">Each instrument's share of households' gross financial saving, per cent, {fyOf(longB.dates[0])} to {fyL}. Computed from the RBI's rupee figures.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-long">–</div><div class="c">in bank deposits, {fyL}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-long" set:html={N["pv-long"]} /><div class="c">in bank deposits, {fyL}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Bank deposits</button>
-            <button class="chip"><i style="background:#C47A16"></i>Shares and debentures (incl. mutual funds)</button>
-            <button class="chip"><i style="background:#5F6675"></i>Provident and pension funds</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Life insurance</button>
-          </div>
-          <div class="plotzone"><div id="plot-long" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-long" set:html={CH.long()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics, changes in financial assets and liabilities of the household sector (DBIE report 246). Share = instrument / total change in financial assets.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -247,7 +241,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {fyL}</span>
-            <p>Bank deposits <b id="ex-long-dep">–</b> of the year's financial saving, shares and debentures <b id="ex-long-sh">–</b>, provident and pension funds <b id="ex-long-pf">–</b>, life insurance <b id="ex-long-ins">–</b>. In {fyOf(longB.dates[0])} bank deposits took <b id="ex-long-dep0">–</b>.</p>
+            <p>Bank deposits <b id="ex-long-dep" set:html={N["ex-long-dep"]} /> of the year's financial saving, shares and debentures <b id="ex-long-sh" set:html={N["ex-long-sh"]} />, provident and pension funds <b id="ex-long-pf" set:html={N["ex-long-pf"]} />, life insurance <b id="ex-long-ins" set:html={N["ex-long-ins"]} />. In {fyOf(longB.dates[0])} bank deposits took <b id="ex-long-dep0" set:html={N["ex-long-dep0"]} />.</p>
           </div>
         </div>
       </figure>
@@ -264,10 +258,10 @@ const baked = {
             <h3>Bank deposits are still the largest financial asset households hold; shares and mutual funds together come close</h3>
             <div class="sub">Households' financial assets by instrument at the end of {stocksLast}, ₹ lakh crore, and what they owe.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-stocks">–</div><div class="c">financial assets, % of GDP</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-stocks" set:html={N["pv-stocks"]} /><div class="c">financial assets, % of GDP</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-stocks" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-stocks" set:html={CH.stocks()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, stocks of financial assets and liabilities of households (DBIE report 1226). Equity holdings are published from December 2022.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -280,7 +274,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {stocksLast}</span>
-            <p>Financial assets <b id="ex-st-a">–</b>, <b id="ex-st-ag">–</b> of GDP; financial liabilities <b id="ex-st-l">–</b>, <b id="ex-st-lg">–</b> of GDP. Bank deposits <b id="ex-st-dep">–</b>, shares <b id="ex-st-eq">–</b>, mutual funds <b id="ex-st-mf">–</b>.</p>
+            <p>Financial assets <b id="ex-st-a" set:html={N["ex-st-a"]} />, <b id="ex-st-ag" set:html={N["ex-st-ag"]} /> of GDP; financial liabilities <b id="ex-st-l" set:html={N["ex-st-l"]} />, <b id="ex-st-lg" set:html={N["ex-st-lg"]} /> of GDP. Bank deposits <b id="ex-st-dep" set:html={N["ex-st-dep"]} />, shares <b id="ex-st-eq" set:html={N["ex-st-eq"]} />, mutual funds <b id="ex-st-mf" set:html={N["ex-st-mf"]} />.</p>
           </div>
         </div>
       </figure>
@@ -297,10 +291,10 @@ const baked = {
             <h3>{aumTitle}</h3>
             <div class="sub">Assets under management of all mutual funds, ₹ lakh crore, end-March, {PAUM.firstLong.split(" ")[1]} to {PAUM.year}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-aum">–</div><div class="c">end-March {PAUM.year}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-aum" set:html={N["pv-aum"]} /><div class="c">end-March {PAUM.year}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-aum" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-aum" set:html={CH.aum()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics, assets under management of mutual funds (DBIE report 126), from AMFI.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -313,7 +307,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of March {PAUM.year}</span>
-            <p>Mutual funds held <b id="ex-aum">–</b>, up <b id="ex-aum-y">–</b> in a year. Five years earlier the figure was <b id="ex-aum-5">–</b>.</p>
+            <p>Mutual funds held <b id="ex-aum" set:html={N["ex-aum"]} />, up <b id="ex-aum-y" set:html={N["ex-aum-y"]} /> in a year. Five years earlier the figure was <b id="ex-aum-5" set:html={N["ex-aum-5"]} />.</p>
           </div>
         </div>
       </figure>
@@ -325,10 +319,10 @@ const baked = {
             <h3>Most new money goes to a handful of large fund houses</h3>
             <div class="sub">Net money put into each fund house (sales less redemptions), {fyH}, ₹ thousand crore, the twenty largest of {baked.houses.length}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-houses">–</div><div class="c">all fund houses together (summed here), {fyH}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-houses" set:html={N["pv-houses"]} /><div class="c">all fund houses together (summed here), {fyH}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-houses" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-houses" set:html={CH.houses(baked)} />
           <div class="plotfoot">
             <span class="src">Source: RBI, net resources mobilised by mutual funds, entity-wise (DBIE report 1361). Every fund house is in the data download.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -341,7 +335,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {fyH}</span>
-            <p>The largest net inflow went to <b id="ex-h-top">–</b> (<b id="ex-h-topv">–</b>). The top five took <b id="ex-h-top5">–</b> of the net inflow into all houses; <b id="ex-h-neg">–</b> houses saw more money leave than arrive.</p>
+            <p>The largest net inflow went to <b id="ex-h-top" set:html={N["ex-h-top"]} /> (<b id="ex-h-topv" set:html={N["ex-h-topv"]} />). The top five took <b id="ex-h-top5" set:html={N["ex-h-top5"]} /> of the net inflow into all houses; <b id="ex-h-neg" set:html={N["ex-h-neg"]} /> houses saw more money leave than arrive.</p>
           </div>
         </div>
       </figure>
@@ -353,15 +347,10 @@ const baked = {
             <h3>Private fund houses took over from UTI and the bank-sponsored funds after 2000</h3>
             <div class="sub">Net resources mobilised by mutual funds by sponsor, ₹ thousand crore, 1987-88 to {fySP} (private funds from {fyOf(sponsor.dates.find((d, i) => sponsor.series.private.data[i] != null))}).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-sponsor">–</div><div class="c">private funds, {fySP}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-sponsor" set:html={N["pv-sponsor"]} /><div class="c">private funds, {fySP}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Private sector funds</button>
-            <button class="chip"><i style="background:#C47A16"></i>Bank-sponsored funds</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>UTI</button>
-          </div>
-          <div class="plotzone"><div id="plot-sponsor" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-sponsor" set:html={CH.sponsor()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics, net resources mobilised by mutual funds (DBIE report 1360). The table ends in {fySP}.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -374,7 +363,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {fySP}</span>
-            <p>Private funds took in <b id="ex-sp-p">–</b> net, bank-sponsored funds <b id="ex-sp-b">–</b>, UTI <b id="ex-sp-u">–</b>, all funds <b id="ex-sp-t">–</b>.</p>
+            <p>Private funds took in <b id="ex-sp-p" set:html={N["ex-sp-p"]} /> net, bank-sponsored funds <b id="ex-sp-b" set:html={N["ex-sp-b"]} />, UTI <b id="ex-sp-u" set:html={N["ex-sp-u"]} />, all funds <b id="ex-sp-t" set:html={N["ex-sp-t"]} />.</p>
           </div>
         </div>
       </figure>
@@ -391,14 +380,10 @@ const baked = {
             <h3>{goldTitle}</h3>
             <div class="sub">Monthly average price of standard gold in Mumbai, and the London price converted to rupees, ₹ per 10 grams, {PG.firstShort} to {PG.short}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-gold">–</div><div class="c">Mumbai, {PG.short}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-gold" set:html={N["pv-gold"]} /><div class="c">Mumbai, {PG.short}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Mumbai</button>
-            <button class="chip"><i style="background:#C47A16"></i>London, in rupees</button>
-          </div>
-          <div class="plotzone"><div id="plot-gold" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-gold" set:html={CH.gold()} />
           <div class="plotfoot">
             <span class="src">Source: RBI Bulletin, monthly average price of gold and silver (DBIE report 17). Silver and the overseas prices in dollars are in the data download.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -411,7 +396,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {PG.short}</span>
-            <p>Gold in Mumbai averaged <b id="ex-g-m">–</b> per 10 grams; silver <b id="ex-g-s">–</b> per kilogram. The latest month with a London price shows a spread of <b id="ex-g-sp">–</b>.</p>
+            <p>Gold in Mumbai averaged <b id="ex-g-m" set:html={N["ex-g-m"]} /> per 10 grams; silver <b id="ex-g-s" set:html={N["ex-g-s"]} /> per kilogram. The latest month with a London price shows a spread of <b id="ex-g-sp" set:html={N["ex-g-sp"]} />.</p>
           </div>
         </div>
       </figure>
@@ -428,14 +413,10 @@ const baked = {
             <h3>{issuesTitle}</h3>
             <div class="sub">New capital raised from the public by non-government public limited companies: equity shares (public issues and rights) since {fyOf(issuesA.dates[0])}, and public issues of bonds as the RBI's current table counts them, from 2010-11, ₹ lakh crore, to {fyIA}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-issues">–</div><div class="c">equity, {fyIA}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-issues" set:html={N["pv-issues"]} /><div class="c">equity, {fyIA}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Equity shares</button>
-            <button class="chip"><i style="background:#C47A16"></i>Bonds and debentures, public issues</button>
-          </div>
-          <div class="plotzone"><div id="plot-issues" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-issues" set:html={CH.issues()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics, new capital issues by non-government public limited companies (DBIE report 277); fiscal years. The 1970 to 1980 calendar years are a separate ruler, in the data download.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -448,7 +429,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {fyIA}</span>
-            <p>Equity raised <b id="ex-is-eq">–</b>, bonds <b id="ex-is-b">–</b>. In the latest month, {PI.long}, <b id="ex-is-mn">–</b> companies raised <b id="ex-is-mv">–</b> in shares.</p>
+            <p>Equity raised <b id="ex-is-eq" set:html={N["ex-is-eq"]} />, bonds <b id="ex-is-b" set:html={N["ex-is-b"]} />. In the latest month, {PI.long}, <b id="ex-is-mn" set:html={N["ex-is-mn"]} /> companies raised <b id="ex-is-mv" set:html={N["ex-is-mv"]} /> in shares.</p>
           </div>
         </div>
       </figure>
@@ -460,14 +441,10 @@ const baked = {
             <h3>Companies and banks each owe several lakh crore in IOUs of under a year</h3>
             <div class="sub">Commercial paper (companies' short-term borrowing) and certificates of deposit (banks'), amount outstanding, ₹ lakh crore, fortnightly, to {PCP.long}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-cp">–</div><div class="c">commercial paper, {PCP.short}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-cp" set:html={N["pv-cp"]} /><div class="c">commercial paper, {PCP.short}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Commercial paper</button>
-            <button class="chip"><i style="background:#C47A16"></i>Certificates of deposit</button>
-          </div>
-          <div class="plotzone"><div id="plot-cpcd" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-cpcd" set:html={CH.cpcd(baked)} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Weekly Statistical Supplement (DBIE reports 5 and 4), read from the bundles of the interest rates guide. Rates are in that guide.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -480,7 +457,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {PCP.long}</span>
-            <p>Commercial paper outstanding <b id="ex-cp">–</b>, certificates of deposit <b id="ex-cd">–</b>. A year earlier: <b id="ex-cp-y">–</b> and <b id="ex-cd-y">–</b>.</p>
+            <p>Commercial paper outstanding <b id="ex-cp" set:html={N["ex-cp"]} />, certificates of deposit <b id="ex-cd" set:html={N["ex-cd"]} />. A year earlier: <b id="ex-cp-y" set:html={N["ex-cp-y"]} /> and <b id="ex-cd-y" set:html={N["ex-cd-y"]} />.</p>
           </div>
         </div>
       </figure>
@@ -497,14 +474,10 @@ const baked = {
             <h3>Shares listed on the NSE were worth ₹{lakh(mcN.v)} lakh crore at the end of {MONTHS[+mcN.date.slice(5, 7) - 1]} {mcN.date.slice(0, 4)}</h3>
             <div class="sub">Market capitalisation of companies listed on the NSE and BSE, end of month, ₹ lakh crore, to {PM.long}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-mcap">–</div><div class="c">NSE, {PM.short}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-mcap" set:html={N["pv-mcap"]} /><div class="c">NSE, {PM.short}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>NSE</button>
-            <button class="chip"><i style="background:#C47A16"></i>BSE</button>
-          </div>
-          <div class="plotzone"><div id="plot-mcap" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-mcap" set:html={CH.mcap()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, market capitalisation at BSE and NSE (DBIE reports 1350, 1351), exchange data reproduced by the RBI. Most large companies list on both, so the two are not added.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -517,7 +490,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {PM.long}</span>
-            <p>NSE <b id="ex-mc-n">–</b>, BSE <b id="ex-mc-b">–</b>; a year earlier, NSE <b id="ex-mc-ny">–</b>.</p>
+            <p>NSE <b id="ex-mc-n" set:html={N["ex-mc-n"]} />, BSE <b id="ex-mc-b" set:html={N["ex-mc-b"]} />; a year earlier, NSE <b id="ex-mc-ny" set:html={N["ex-mc-ny"]} />.</p>
           </div>
         </div>
       </figure>
@@ -529,14 +502,10 @@ const baked = {
             <h3>Trading in index options now dwarfs trading in shares, by more than a hundred times</h3>
             <div class="sub">NSE: value of shares traded in the cash market, and notional value of index options traded, ₹ lakh crore a month, logarithmic scale, to {PD.long}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-turnover">–</div><div class="c">options to cash, {PD.short}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-turnover" set:html={N["pv-turnover"]} /><div class="c">options to cash, {PD.short}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Index options (notional)</button>
-            <button class="chip"><i style="background:#5F6675"></i>Shares, cash market</button>
-          </div>
-          <div class="plotzone"><div id="plot-turnover" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-turnover" set:html={CH.turnover(baked)} />
           <div class="plotfoot">
             <span class="src">Source: RBI, turnover in the equity derivatives market (DBIE report 1357) and monthly turnover at NSE (report 1352). Notional value: the value of the shares the contracts cover. March 2011 is left off: the RBI's table prints every NSE instrument at some 230 times the months either side, a misprint kept as printed in the data download.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -549,7 +518,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {PD.long}</span>
-            <p>Index options <b id="ex-to-o">–</b> notional in the month, shares <b id="ex-to-c">–</b>.</p>
+            <p>Index options <b id="ex-to-o" set:html={N["ex-to-o"]} /> notional in the month, shares <b id="ex-to-c" set:html={N["ex-to-c"]} />.</p>
           </div>
         </div>
       </figure>
@@ -566,10 +535,10 @@ const baked = {
             <h3>Listed companies' sales grew {lqS.v.toFixed(1)}% in {lqLast}</h3>
             <div class="sub">Listed private non-financial companies: growth in sales and operating profit on the same quarter a year earlier, the same companies in both, per cent, {qSpan(lq)}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-listed">–</div><div class="c">sales growth, {lqLast}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-listed" set:html={N["pv-listed"]} /><div class="c">sales growth, {lqLast}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-listed" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-listed" set:html={CH.listed()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, performance of listed non-government non-financial companies (SDMX dataset PRF_LNGNFC_QTR_RN), from official CAS and prompted report exports held in the local Data Bank.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in/DBIE/" target="_blank" rel="noopener">Source</a></span>
@@ -582,7 +551,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {lqLast}</span>
-            <p><b id="ex-ls-n">–</b> companies: sales <b id="ex-ls-s">–</b>, operating profit <b id="ex-ls-o">–</b>, net profit <b id="ex-ls-p">–</b>, staff costs <b id="ex-ls-w">–</b>.</p>
+            <p><b id="ex-ls-n" set:html={N["ex-ls-n"]} /> companies: sales <b id="ex-ls-s" set:html={N["ex-ls-s"]} />, operating profit <b id="ex-ls-o" set:html={N["ex-ls-o"]} />, net profit <b id="ex-ls-p" set:html={N["ex-ls-p"]} />, staff costs <b id="ex-ls-w" set:html={N["ex-ls-w"]} />.</p>
           </div>
         </div>
       </figure>
@@ -594,10 +563,10 @@ const baked = {
             <h3>Manufacturers, IT firms and other service companies grow at different speeds</h3>
             <div class="sub">Sales growth of listed private companies by sector, on the same quarter a year earlier, per cent, {qSpan(lq)}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-sectors">–</div><div class="c">manufacturing, {lqLast}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-sectors" set:html={N["pv-sectors"]} /><div class="c">manufacturing, {lqLast}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-sectors" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-sectors" set:html={CH.sectors()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, listed companies by sector (SDMX dataset PRF_LNGNFC_QTR_IND_RN), from official CAS and prompted report exports held in the local Data Bank.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in/DBIE/" target="_blank" rel="noopener">Source</a></span>
@@ -610,7 +579,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {lqLast}</span>
-            <p>Manufacturing <b id="ex-sec-m">–</b>, IT <b id="ex-sec-i">–</b>, services other than IT <b id="ex-sec-s">–</b>.</p>
+            <p>Manufacturing <b id="ex-sec-m" set:html={N["ex-sec-m"]} />, IT <b id="ex-sec-i" set:html={N["ex-sec-i"]} />, services other than IT <b id="ex-sec-s" set:html={N["ex-sec-s"]} />.</p>
           </div>
         </div>
       </figure>
@@ -622,10 +591,10 @@ const baked = {
             <h3>{coverTitle}</h3>
             <div class="sub">Interest coverage (earnings before interest and tax divided by interest, times), listed private non-financial companies, {qSpan(lq)}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-coverage">–</div><div class="c">interest coverage, {lqLast}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-coverage" set:html={N["pv-coverage"]} /><div class="c">interest coverage, {lqLast}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-coverage" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-coverage" set:html={CH.coverage()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, ratios of listed non-government non-financial companies (SDMX dataset RATIO_LNGNFC_QTR_RN), from official CAS and prompted report exports held in the local Data Bank.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in/DBIE/" target="_blank" rel="noopener">Source</a></span>
@@ -638,7 +607,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {lqLast}</span>
-            <p>Interest coverage <b id="ex-cv-i">–</b>; net profit <b id="ex-cv-p">–</b> of sales; interest <b id="ex-cv-is">–</b> of sales.</p>
+            <p>Interest coverage <b id="ex-cv-i" set:html={N["ex-cv-i"]} />; net profit <b id="ex-cv-p" set:html={N["ex-cv-p"]} /> of sales; interest <b id="ex-cv-is" set:html={N["ex-cv-is"]} /> of sales.</p>
           </div>
         </div>
       </figure>
@@ -648,12 +617,12 @@ const baked = {
         <div class="plate-head">
           <div class="t">
             <h3>Industry by industry, sales growth ranged widely in {qOf(baked.industriesDate)}</h3>
-            <div class="sub">Sales growth of listed private companies on the same quarter a year earlier, per cent, by industry, {qOf(baked.industriesDate)}. Dot: the quarter; each row keeps its full industry name and value.</div>
+            <div class="sub">Sales growth of listed private companies on the same quarter a year earlier, per cent, by industry, {qOf(baked.industriesDate)}. Each row keeps its full industry name and value.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-industries">–</div><div class="c">industries growing faster than 10%</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-industries" set:html={N["pv-industries"]} /><div class="c">industries growing faster than 10%</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-industries" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-industries" set:html={CH.industries(baked)} />
           <div class="plotfoot">
             <span class="src">Source: RBI, industry-wise growth rates of listed companies (SDMX dataset PRF_LNGNFC_IND_QTR_RN), from official CAS and prompted report exports held in the local Data Bank. Every industry and indicator is in the data download.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in/DBIE/" target="_blank" rel="noopener">Source</a></span>
@@ -666,7 +635,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {qOf(baked.industriesDate)}</span>
-            <p>Fastest: <b id="ex-in-hi">–</b>. Slowest: <b id="ex-in-lo">–</b>. The median industry grew <b id="ex-in-med">–</b>; <b id="ex-in-neg">–</b> of <b id="ex-in-n">–</b> industries saw sales fall.</p>
+            <p>Fastest: <b id="ex-in-hi" set:html={N["ex-in-hi"]} />. Slowest: <b id="ex-in-lo" set:html={N["ex-in-lo"]} />. The median industry grew <b id="ex-in-med" set:html={N["ex-in-med"]} />; <b id="ex-in-neg" set:html={N["ex-in-neg"]} /> of <b id="ex-in-n" set:html={N["ex-in-n"]} /> industries saw sales fall.</p>
           </div>
         </div>
       </figure>
@@ -675,9 +644,9 @@ const baked = {
     <p>Source omissions remain visible. Data Query leaves out some not-meaningful rates and contains zero-filled amount vectors. The newest statistical reports supply additional cells; their not-meaningful sentinels remain missing. <a href="/data/markets-rbi-source-quality.json">Download source defects, overlap differences and lineage</a>.</p>
     {rbiViews.map(view => <div class="break rbi-plate" style="margin-top:104px">
       <figure id={`cb-${view.id}`} style="margin:0" data-compact>
-        <div class="plate-head"><div class="t"><h3>{view.title}</h3><div class="sub">{view.f === 'a' ? 'Annual study' : 'Quarterly study'}, {view.f === 'a' ? fyOf(view.date) : qOf(view.date)}. {view.unit === 'inr_crore' ? '₹ crore; this period’s companies' : view.unit === 'times' ? 'Times' : view.unit === 'count' ? 'Reporting companies' : 'Per cent'}. {view.history ? 'Full comparable history.' : 'Every published group, including labelled parent groups.'}</div></div><div class="plate-val"><div class="v" id={`pv-${view.id}`}>–</div><div class="c">{view.history ? 'periods with published values' : 'groups with published values'}</div></div></div>
-        <div class="frame"><div class="plotzone"><div id={`plot-${view.id}`}></div></div><div class="plotfoot"><span class="src">Source: Reserve Bank of India, DBIE, official CAS and prompted statistical reports. Canonical bundle: {view.bundle}.</span><span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={` /data/${view.bundle}.json`.trim()}>All measures</a></span></div></div>
-        <div class="explain"><div class="ev"><span class="mk">How to read this</span><p>{view.explain}</p></div><div class="now"><span class="mk">As of {view.f === 'a' ? fyOf(view.date) : qOf(view.date)}</span><p><b id={`ex-${view.id}`}>–</b> {view.history ? 'periods have a published value.' : 'groups have a published value.'} An em dash means no meaningful value is available for that group in this period. Every published measure and its history are in Every Cut and downloads.</p></div></div>
+        <div class="plate-head"><div class="t"><h3>{view.title}</h3><div class="sub">{view.f === 'a' ? 'Annual study' : 'Quarterly study'}, {view.f === 'a' ? fyOf(view.date) : qOf(view.date)}. {view.unit === 'inr_crore' ? '₹ crore; this period’s companies' : view.unit === 'times' ? 'Times' : view.unit === 'count' ? 'Reporting companies' : 'Per cent'}. {view.history ? 'Full comparable history.' : 'Every published group, including labelled parent groups.'}</div></div><div class="plate-val"><div class="v" id={`pv-${view.id}`} set:html={N[`pv-${view.id}`]} /><div class="c">{view.history ? 'periods with published values' : 'groups with published values'}</div></div></div>
+        <div class="frame"><div class="plotzone" id={`plot-${view.id}`} set:html={CH.rbiView(view, B)} /><div class="plotfoot"><span class="src">Source: Reserve Bank of India, DBIE, official CAS and prompted statistical reports. Canonical bundle: {view.bundle}.</span><span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={` /data/${view.bundle}.json`.trim()}>All measures</a></span></div></div>
+        <div class="explain"><div class="ev"><span class="mk">How to read this</span><p>{view.explain}</p></div><div class="now"><span class="mk">As of {view.f === 'a' ? fyOf(view.date) : qOf(view.date)}</span><p><b id={`ex-${view.id}`} set:html={N[`ex-${view.id}`]} /> {view.history ? 'periods have a published value.' : 'groups have a published value.'} An em dash means no meaningful value is available for that group in this period. Every published measure and its history are in Every Cut and downloads.</p></div></div>
       </figure>
     </div>)}
   </section>
@@ -692,15 +661,10 @@ const baked = {
             <h3>Sales of public, private and foreign-owned companies, year by year</h3>
             <div class="sub">Growth of sales (old format) and net sales (Ind AS) on the year before, per cent, from each year's RBI study (the same companies in both years). Old reporting format to the 2018-19 study; Ind AS format from the 2020-21 study. There is no 2019-20 study.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-studies">–</div><div class="c">public limited companies, {fyCO}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-studies" set:html={N["pv-studies"]} /><div class="c">public limited companies, {fyCO}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Public limited</button>
-            <button class="chip"><i style="background:#C47A16"></i>Private limited</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Foreign direct investment companies</button>
-          </div>
-          <div class="plotzone"><div id="plot-studies" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-studies" set:html={CH.studies()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, studies of non-government non-financial public and private limited companies and of FDI companies (DBIE reports 1173, 1179, 1170), statement 1 or 2. The two formats are two rulers, drawn apart.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -709,11 +673,11 @@ const baked = {
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>These studies cover far more companies than the listed set: in the latest year <b id="ev-st-pub">–</b> public limited companies, <b id="ev-st-pvt">–</b> private limited companies and <b id="ev-st-fdi">–</b> foreign-owned ones. They come out a year or more after the year ends, so they confirm what the quarterly listed data suggested. Each point compares the same companies over two years; the companies change from one study to the next.</p>
+            <p>These studies cover far more companies than the listed set: in the latest year <b id="ev-st-pub" set:html={N["ev-st-pub"]} /> public limited companies, <b id="ev-st-pvt" set:html={N["ev-st-pvt"]} /> private limited companies and <b id="ev-st-fdi" set:html={N["ev-st-fdi"]} /> foreign-owned ones. They come out a year or more after the year ends, so they confirm what the quarterly listed data suggested. Each point compares the same companies over two years; the companies change from one study to the next.</p>
           </div>
           <div class="now">
             <span class="mk">As of the {fyCO} studies</span>
-            <p>Net sales grew <b id="ex-st-pub">–</b> for public limited companies, <b id="ex-st-pvt">–</b> for private limited companies and <b id="ex-st-fdi">–</b> for foreign-owned companies.</p>
+            <p>Net sales grew <b id="ex-st-pub" set:html={N["ex-st-pub"]} /> for public limited companies, <b id="ex-st-pvt" set:html={N["ex-st-pvt"]} /> for private limited companies and <b id="ex-st-fdi" set:html={N["ex-st-fdi"]} /> for foreign-owned companies.</p>
           </div>
         </div>
       </figure>
@@ -725,14 +689,10 @@ const baked = {
             <h3>{debtTitle}</h3>
             <div class="sub">Debt to equity, per cent, public and private limited companies, from each year's RBI study. Old format to 2018-19 and Ind AS from 2020-21, drawn apart.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-debt">–</div><div class="c">public limited companies, {fyCO}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-debt" set:html={N["pv-debt"]} /><div class="c">public limited companies, {fyCO}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Public limited</button>
-            <button class="chip"><i style="background:#C47A16"></i>Private limited</button>
-          </div>
-          <div class="plotzone"><div id="plot-debt" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-debt" set:html={CH.debt()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, select financial ratios of public and private limited companies (DBIE reports 1182, 1187), statement 2.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -745,7 +705,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of the {fyCO} studies</span>
-            <p>Public limited companies <b id="ex-dt-pub">–</b>, private limited companies <b id="ex-dt-pvt">–</b>.</p>
+            <p>Public limited companies <b id="ex-dt-pub" set:html={N["ex-dt-pub"]} />, private limited companies <b id="ex-dt-pvt" set:html={N["ex-dt-pvt"]} />.</p>
           </div>
         </div>
       </figure>
@@ -762,14 +722,10 @@ const baked = {
             <h3>Forecasters change their mind about a year's growth as the year unfolds</h3>
             <div class="sub">At each survey round, the median forecast of real GDP growth for the fiscal year in progress and for the year ahead, per cent, November 2019 to {PSPF.long}. From round 99 the forecasts are on the new GDP base, drawn apart; paler lines are the old base.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-spf">–</div><div class="c">for <span id="pv-spf-y">–</span>, {PSPF.long}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-spf" set:html={N["pv-spf"]} /><div class="c">for <span id="pv-spf-y" set:html={N["pv-spf-y"]} />, {PSPF.long}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>The year ahead</button>
-            <button class="chip"><i style="background:#5F6675"></i>The year in progress</button>
-          </div>
-          <div class="plotzone"><div id="plot-spf" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-spf" set:html={CH.spf(baked)} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Survey of Professional Forecasters, round-wise aggregate tables (DBIE report 1475), via the RBI Innovation Hub's data service. Rounds 64, 71, 75, 78, 84, 86, 94 and 100 are missing from the service's export.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
@@ -782,7 +738,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {PSPF.long}</span>
-            <p>The median forecast for <b id="ex-spf-y">–</b> is <b id="ex-spf-v">–</b>; for the year after, <b id="ex-spf-n">–</b>. The median forecast of CPI inflation for <b id="ex-spf-q">–</b> is <b id="ex-spf-c">–</b>.</p>
+            <p>The median forecast for <b id="ex-spf-y" set:html={N["ex-spf-y"]} /> is <b id="ex-spf-v" set:html={N["ex-spf-v"]} />; for the year after, <b id="ex-spf-n" set:html={N["ex-spf-n"]} />. The median forecast of CPI inflation for <b id="ex-spf-q" set:html={N["ex-spf-q"]} /> is <b id="ex-spf-c" set:html={N["ex-spf-c"]} />.</p>
           </div>
         </div>
       </figure>
@@ -848,14 +804,8 @@ const baked = {
   </footer>
 
 </div>
-<script type="application/json" id="markets-baked" set:html={JSON.stringify(baked)} />
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/markets.client.js";
 </script>
 </Base>
 
-<style>
-.rbi-plate .plotzone, #cb-industries .plotzone, #cb-listed .plotzone, #cb-sectors .plotzone, #cb-coverage .plotzone {overflow:visible;min-width:0;}
-.rbi-plate .plotzone :global(svg), #cb-industries .plotzone :global(svg), #cb-listed .plotzone :global(svg), #cb-sectors .plotzone :global(svg), #cb-coverage .plotzone :global(svg) {max-width:100%;min-width:0;height:auto;}
-</style>

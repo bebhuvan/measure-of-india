@@ -23,6 +23,11 @@
 .akf-plot > div{display:none}
 .akf-plot svg{display:block;width:100%;height:auto;overflow:visible}
 .akf-phone{display:block !important}
+/* without script the wide and mid drawings never arrive (enhance.js fetches them): show the phone one */
+:root:not(.akjs) .akf-plot > [data-k]{display:none !important}
+:root:not(.akjs) .akf-phone{display:block !important}
+.akf-mid[data-k]:empty{max-width:864px}
+.akf-wide[data-k]:empty{max-width:1184px}
 .akf-phone svg{max-width:440px}
 @container (min-width:600px){
   .akf-phone{display:none !important}
@@ -35,9 +40,16 @@
   .akf-wide svg{max-width:1184px}
 }
 
-svg.ak{font-family:var(--ak-sans);-webkit-font-smoothing:antialiased}
+svg.ak,.akf svg.ak{font-family:var(--ak-sans);-webkit-font-smoothing:antialiased}
 svg.ak text{font-kerning:normal}
 svg.ak .halo{paint-order:stroke;stroke:var(--ak-paper);stroke-width:4px;stroke-linejoin:round}
+/* the Plot-era rule in atlas.css haloes every plate text; kit text is haloed only where it asks */
+.plotzone svg.ak text:not(.halo){stroke:none}
+/* inside a guide plate (.plotzone), the Plot-era rules in atlas.css halo every text and set the page face;
+   a kit drawing keeps its own face (the labels were placed with its metrics) and halos only .halo */
+.plotzone svg.ak{font-family:var(--ak-sans)}
+.plotzone svg.ak text{stroke:none}
+.plotzone svg.ak text.halo{stroke:var(--ak-paper)}
 svg.ak [data-tip]{cursor:default}
 svg.ak .ak-hit{cursor:crosshair}
 

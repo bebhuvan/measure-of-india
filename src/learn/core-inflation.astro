@@ -1,5 +1,7 @@
 ---
 import Learn from "../layouts/Learn.astro";
+import * as CH from "./core-inflation.charts.js";
+const NUM = CH.NUM;
 ---
 <Learn
   title="Core inflation: the signal under the noise · India Atlas"
@@ -59,12 +61,12 @@ import Learn from "../layouts/Learn.astro";
             <h3>The average and its anchor: core against headline, 2016–2025</h3>
             <div class="sub">CPI combined, year-on-year, per cent, Jan 2016 to Dec 2025, core computed from group indices</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-core">–</div><div class="c">Dec 2025, core y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-core" set:html={NUM["pv-core"]}></div><div class="c">Dec 2025, core y/y</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-core"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-core" set:html={CH.core()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, CPI group indices, base 2012=100, vintage <span id="pf-core">–</span>, core computed from group indices; not an official NSO series, shaded band: RBI tolerance 2–6%, dashed: 4% target</span>
+            <span class="src">Source: MoSPI, CPI group indices, base 2012=100, vintage <span id="pf-core" set:html={NUM["pf-core"]}></span>, core computed from group indices; not an official NSO series, shaded band: RBI tolerance 2–6%, dotted: 4% target</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -76,12 +78,12 @@ import Learn from "../layouts/Learn.astro";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>The blue line is the headline, the number in the news. The dashed grey line is core: the same measure with food and fuel removed. When the two separate, the volatile half of the basket is doing the talking, and the direction of the gap tells you which way.</p>
-            <p>Core moves less, and moves late. Across this decade it stayed between <b id="ev-cmin">–</b> and <b id="ev-cmax">–</b>, never once reaching the 2 per cent floor of the band even as the headline visited both edges. India's core has a structural floor: administered prices, services and housing costs grind rather than swing.</p>
+            <p>The grey line is the headline, the number in the news. The blue line is core: the same measure with food and fuel removed. When the two separate, the volatile half of the basket is doing the talking, and the direction of the gap tells you which way.</p>
+            <p>Core moves less, and moves late. Across this decade it stayed between <b id="ev-cmin" set:html={NUM["ev-cmin"]}></b> and <b id="ev-cmax" set:html={NUM["ev-cmax"]}></b>, never once reaching the 2 per cent floor of the band even as the headline visited both edges. India's core has a structural floor: administered prices, services and housing costs grind rather than swing.</p>
           </div>
           <div class="now">
             <span class="mk">The 2025 case</span>
-            <p>Through 2025 the headline collapsed, ending the year at <b id="ex-hdec">–</b>. Core did the opposite: it climbed through the year and closed at <b id="ex-cdec">–</b>, a wedge of <b id="ex-gap">–</b> between the two lines. The average was being held down by volatile items, cheap vegetables above all, while underlying pressure climbed past the 4 per cent target and stayed there.</p>
+            <p>Through 2025 the headline collapsed, ending the year at <b id="ex-hdec" set:html={NUM["ex-hdec"]}></b>. Core did the opposite: it climbed through the year and closed at <b id="ex-cdec" set:html={NUM["ex-cdec"]}></b>, a wedge of <b id="ex-gap" set:html={NUM["ex-gap"]}></b> between the two lines. The average was being held down by volatile items, cheap vegetables above all, while underlying pressure climbed past the 4 per cent target and stayed there.</p>
             <p>Read both lines and the year looks different: not inflation beaten, but inflation rearranged. That wedge is the reason this page exists.</p>
           </div>
         </div>
@@ -123,7 +125,7 @@ import Learn from "../layouts/Learn.astro";
         <span class="no">iii.</span>
         <div>
           <h3>“A low headline means low underlying pressure.”</h3>
-          <p>December 2025 says otherwise: a headline of <b id="mr3-h">–</b> with core at <b id="mr3-c">–</b>. The calm sat in the volatile half of the basket. The pressure, <b id="mr3-gap">–</b> above it, had not gone anywhere.</p>
+          <p>December 2025 says otherwise: a headline of <b id="mr3-h" set:html={NUM["mr3-h"]}></b> with core at <b id="mr3-c" set:html={NUM["mr3-c"]}></b>. The calm sat in the volatile half of the basket. The pressure, <b id="mr3-gap" set:html={NUM["mr3-gap"]}></b> above it, had not gone anywhere.</p>
         </div>
       </li>
     </ul>
@@ -143,7 +145,4 @@ import Learn from "../layouts/Learn.astro";
     <p>Companion guide: <a href="/guides/cpi/">Consumer Price Index</a>.</p>
   </div>
 
-<script>
-  import "./core-inflation.client.js";
-</script>
 </Learn>

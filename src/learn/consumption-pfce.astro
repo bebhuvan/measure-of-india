@@ -1,5 +1,7 @@
 ---
 import Learn from "../layouts/Learn.astro";
+import * as CH from "./consumption-pfce.charts.js";
+const NUM = CH.NUM;
 ---
 <Learn
   title="Consumption: the biggest slice of GDP · India Atlas"
@@ -60,12 +62,12 @@ import Learn from "../layouts/Learn.astro";
             <h3>The quiet engine: steady, until the shops closed</h3>
             <div class="sub">Real PFCE, year-on-year, constant 2011-12 prices, Q1 FY17 to Q2 FY26</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-pfce">–</div><div class="c">Q2 FY26, PFCE y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-pfce" set:html={NUM["pv-pfce"]}></div><div class="c">Q2 FY26, PFCE y/y</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-pfce"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-pfce" set:html={CH.pfce()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, National Accounts, base 2011-12, vintage <span id="pf-pfce">–</span>, the dark rule is zero: below it, households bought less than a year earlier</span>
+            <span class="src">Source: MoSPI, National Accounts, base 2011-12, vintage <span id="pf-pfce" set:html={NUM["pf-pfce"]}></span>, the dark rule is zero: below it, households bought less than a year earlier</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -78,11 +80,11 @@ import Learn from "../layouts/Learn.astro";
           <div class="ev">
             <span class="mk">How to read this</span>
             <p>Above the zero rule, households bought more than a year earlier; below it, they bought less, and in a decade that happened in only one episode. Because the slice is so large, this line and the GDP line usually move together. When they part, ask which side is carrying the total.</p>
-            <p>The crash and the spike are one event read twice. Spending collapsed when the shops closed, then printed <b id="ht-peak">–</b> a year later against the fallen base. Neither figure describes how households felt; both describe what the arithmetic did.</p>
+            <p>The crash and the spike are one event read twice. Spending collapsed when the shops closed, then printed <b id="ht-peak" set:html={NUM["ht-peak"]}></b> a year later against the fallen base. Neither figure describes how households felt; both describe what the arithmetic did.</p>
           </div>
           <div class="now">
             <span class="mk">The FY23 case</span>
-            <p>In the second half of FY23 the engine idled. PFCE growth slipped to <b id="fy23-run">–</b>, the weakest two quarters of the post-pandemic years, even as GDP held near its trend on the strength of investment and government spending.</p>
+            <p>In the second half of FY23 the engine idled. PFCE growth slipped to <b id="fy23-run" set:html={NUM["fy23-run"]}></b>, the weakest two quarters of the post-pandemic years, even as GDP held near its trend on the strength of investment and government spending.</p>
             <p>The headline said the economy was fine. The shopping bill said households were tired. Both were true, and the shopping bill was the earlier news.</p>
           </div>
         </div>
@@ -94,12 +96,12 @@ import Learn from "../layouts/Learn.astro";
   <section>
     <div class="sec-head"><span class="no">03</span><h2>Where a slowdown shows first</h2><span class="line"></span><span class="unit">Reading the slice</span></div>
     <div class="numbers">
-      <div class="num"><div class="l">The print, Q2 FY26</div><div class="v acc" id="n-last">–</div><div class="d">real PFCE, year-on-year</div></div>
-      <div class="num"><div class="l">Share of GDP</div><div class="v" id="n-share">–</div><div class="d">the biggest slice, Q2 FY26</div></div>
-      <div class="num"><div class="l">The lockdown quarter</div><div class="v" id="n-trough">–</div><div class="d">Q1 FY21, the shops closed</div></div>
-      <div class="num"><div class="l">Pre-pandemic average</div><div class="v" id="n-trend">–</div><div class="d">FY17 to FY20</div></div>
+      <div class="num"><div class="l">The print, Q2 FY26</div><div class="v acc" id="n-last" set:html={NUM["n-last"]}></div><div class="d">real PFCE, year-on-year</div></div>
+      <div class="num"><div class="l">Share of GDP</div><div class="v" id="n-share" set:html={NUM["n-share"]}></div><div class="d">the biggest slice, Q2 FY26</div></div>
+      <div class="num"><div class="l">The lockdown quarter</div><div class="v" id="n-trough" set:html={NUM["n-trough"]}></div><div class="d">Q1 FY21, the shops closed</div></div>
+      <div class="num"><div class="l">Pre-pandemic average</div><div class="v" id="n-trend" set:html={NUM["n-trend"]}></div><div class="d">FY17 to FY20</div></div>
     </div>
-    <p style="margin-top:40px">A slowdown in ordinary lives shows here first, long before it reaches the GDP headline. Households cut back quietly: smaller brands, postponed purchases, one meal out fewer. None of it announces itself. But the sum of a hundred million such decisions is this series, and the series speaks. The last four quarters read <b id="rec-run">–</b>, close to the pre-pandemic average, which says the cutting back has eased.</p>
+    <p style="margin-top:40px">A slowdown in ordinary lives shows here first, long before it reaches the GDP headline. Households cut back quietly: smaller brands, postponed purchases, one meal out fewer. None of it announces itself. But the sum of a hundred million such decisions is this series, and the series speaks. The last four quarters read <b id="rec-run" set:html={NUM["rec-run"]}></b>, close to the pre-pandemic average, which says the cutting back has eased.</p>
     <p>One caution travels with the number. PFCE is a total, and a total of household spending says nothing about how the spending is spread. The same print can describe tight budgets in one district and easy ones in another; the accounts cannot see inside the average. For that, the household surveys are the only honest source, and they arrive years apart.</p>
   </section>
 
@@ -146,7 +148,4 @@ import Learn from "../layouts/Learn.astro";
     <p>Companion guide: <a href="/guides/gdp/">National Accounts</a>.</p>
   </div>
 
-<script>
-  import "./consumption-pfce.client.js";
-</script>
 </Learn>

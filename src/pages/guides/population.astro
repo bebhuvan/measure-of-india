@@ -8,6 +8,8 @@ import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["population"];
+import * as CH from "../../dossiers/population.charts.js";
+const TX = CH.numbers();
 
 // "Every cut": built here, at render time, from the bundles themselves (no client fetch)
 const B = (s) => JSON.parse(fs.readFileSync(`data/series/${s}.json`, "utf8"));
@@ -51,24 +53,24 @@ const varB = B("population-wpp-variants");
       <span>Instrument <b>Model estimates from censuses, surveys and registration</b></span>
       <span>Frequency <b>Annual, mid-year</b></span>
       <span>Window <b>Estimates 1950 to {estN}; projections to {projN}</b></span>
-      <span>Latest estimate <b id="m-latest">–</b></span>
+      <span>Latest estimate <b id="m-latest" set:html={TX["m-latest"]}></b></span>
       <span>Unit <b>People</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Population, UN estimate</div><div class="v acc" id="n-pop">–</div><div class="d" id="d-pop">–</div><div class="nspark" id="nspark-pop"></div></div>
-      <div class="num"><div class="l">Median age</div><div class="v" id="n-age">–</div><div class="d" id="d-age">–</div></div>
-      <div class="num"><div class="l">Children per woman</div><div class="v" id="n-tfr">–</div><div class="d" id="d-tfr">–</div></div>
-      <div class="num"><div class="l">Share aged 15 to 64</div><div class="v" id="n-wa">–</div><div class="d" id="d-wa">–</div></div>
+      <div class="num"><div class="l">Population, UN estimate</div><div class="v acc" id="n-pop" set:html={TX["n-pop"]}></div><div class="d" id="d-pop" set:html={TX["d-pop"]}></div><div class="nspark" id="nspark-pop" set:html={CH.sparkPop()} /></div>
+      <div class="num"><div class="l">Median age</div><div class="v" id="n-age" set:html={TX["n-age"]}></div><div class="d" id="d-age" set:html={TX["d-age"]}></div></div>
+      <div class="num"><div class="l">Children per woman</div><div class="v" id="n-tfr" set:html={TX["n-tfr"]}></div><div class="d" id="d-tfr" set:html={TX["d-tfr"]}></div></div>
+      <div class="num"><div class="l">Share aged 15 to 64</div><div class="v" id="n-wa" set:html={TX["n-wa"]}></div><div class="d" id="d-wa" set:html={TX["d-wa"]}></div></div>
     </div>
   </div>
 
   <!-- § 01 current reading: inputs population-wpp (all series), population-wpp-projection, population-wpp-age, population-wdi-urban; prose generated (slots population.current-reading.*) -->
   <section>
-    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading" set:html={TX["u-reading"]}></span></div>
     <div class="reading-top">
-      <div><span class="rk">People in India</span><div class="big" id="rb-pop">–</div></div>
-      <p class="rt-cap">The UN's estimate of everyone living in India on 1 July of its latest estimate year, <span id="cr-crore">–</span>. It counts residents, whatever their citizenship. It is a model built on the 2011 census and the surveys since, not a head count.</p>
-      <div class="rt-side"><span class="rk" id="rb-proj-year">–</span><div class="rt-side-v" id="rb-proj">–</div></div>
+      <div><span class="rk">People in India</span><div class="big" id="rb-pop" set:html={TX["rb-pop"]}></div></div>
+      <p class="rt-cap">The UN's estimate of everyone living in India on 1 July of its latest estimate year, <span id="cr-crore" set:html={TX["cr-crore"]}></span>. It counts residents, whatever their citizenship. It is a model built on the 2011 census and the surveys since, not a head count.</p>
+      <div class="rt-side"><span class="rk" id="rb-proj-year" set:html={TX["rb-proj-year"]}></span><div class="rt-side-v" id="rb-proj" set:html={TX["rb-proj"]}></div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -92,16 +94,10 @@ const varB = B("population-wpp-variants");
             <h3>India's population is projected to peak around 1.7 billion, then shrink</h3>
             <div class="sub">People living in India on 1 July, billion. UN estimates to {estN} (solid), the UN's medium projection after (dashed), with the ranges its probabilistic model gives 80 and 95 chances in 100 of holding.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-curve">–</div><div class="c">projected peak year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-curve" set:html={TX["pv-curve"]}></div><div class="c">projected peak year</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>UN estimate</button>
-            <button class="chip"><i style="background:#B9C3F3"></i>Medium projection</button>
-            <button class="chip"><i style="background:#E7EBFC"></i>80% range</button>
-            <button class="chip"><i style="background:#F4F6FD;border:1px solid #DFE2E8"></i>95% range</button>
-          </div>
-          <div class="plotzone"><div id="plot-curve" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-curve" set:html={CH.curve()} />
           <div class="plotfoot">
             <span class="src">Source: UN DESA Population Division, World Population Prospects 2024, medium variant and probabilistic intervals. Estimates and projections are separate series, never joined.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">Source</a></span>
@@ -115,7 +111,7 @@ const varB = B("population-wpp-variants");
           </div>
           <div class="now">
             <span class="mk">As of WPP 2024</span>
-            <p>India had <b id="ex-cu-1950">–</b> people in 1950 and is now <b id="ex-cu-x">–</b> as large. The medium projection reaches <b id="ex-cu-2050">–</b> in 2050 and peaks at <b id="ex-cu-peak">–</b> in <b id="ex-cu-peakyr">–</b>, falling to <b id="ex-cu-2100">–</b> by 2100. The 95% range for 2100 runs from <b id="ex-cu-lo">–</b> to <b id="ex-cu-hi">–</b>: the far future is genuinely unknown.</p>
+            <p>India had <b id="ex-cu-1950" set:html={TX["ex-cu-1950"]}></b> people in 1950 and is now <b id="ex-cu-x" set:html={TX["ex-cu-x"]}></b> as large. The medium projection reaches <b id="ex-cu-2050" set:html={TX["ex-cu-2050"]}></b> in 2050 and peaks at <b id="ex-cu-peak" set:html={TX["ex-cu-peak"]}></b> in <b id="ex-cu-peakyr" set:html={TX["ex-cu-peakyr"]}></b>, falling to <b id="ex-cu-2100" set:html={TX["ex-cu-2100"]}></b> by 2100. The 95% range for 2100 runs from <b id="ex-cu-lo" set:html={TX["ex-cu-lo"]}></b> to <b id="ex-cu-hi" set:html={TX["ex-cu-hi"]}></b>: the far future is genuinely unknown.</p>
           </div>
         </div>
       </figure>
@@ -130,16 +126,12 @@ const varB = B("population-wpp-variants");
         <div class="plate-head">
           <div class="t">
             <h3>The base of the pyramid has stopped widening</h3>
-            <div class="sub">People in each five-year age group, million: men to the left, women to the right. Bars are the latest UN estimate; ticks are the UN's projection for 2050.</div>
+            <div class="sub">People in each five-year age group, million: men to the left, women to the right. Bars are the latest UN estimate; the outline is the UN's projection for 2050.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-pyramid">–</div><div class="c">median age, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-pyramid" set:html={TX["pv-pyramid"]}></div><div class="c">median age, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i><span id="lg-pyr-now">Latest</span></button>
-            <button class="chip"><i style="background:#C47A16;width:3px"></i><span id="lg-pyr-then">2050, projected</span></button>
-          </div>
-          <div class="plotzone"><div id="plot-pyramid" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-pyramid" set:html={CH.pyramid()} />
           <div class="plotfoot">
             <span class="src">Source: UN DESA, World Population Prospects 2024, population by five-year age group and sex, 1 July; 2050 from the medium variant.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">Source</a></span>
@@ -148,12 +140,12 @@ const varB = B("population-wpp-variants");
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Each bar is one five-year age group. A country with many births and early deaths draws a triangle: wide at the bottom, narrow at the top. As births slow and people live longer, the bottom stops growing and the middle and top fill out. Where the marigold tick sits beyond a bar, that group is projected to be larger in 2050; where it sits inside, smaller.</p>
+            <p>Each bar is one five-year age group. A country with many births and early deaths draws a triangle: wide at the bottom, narrow at the top. As births slow and people live longer, the bottom stops growing and the middle and top fill out. Where the outline sits beyond a bar, that group is projected to be larger in 2050; where it sits inside, smaller.</p>
             <p>The median age splits the population in two: half are younger, half older. It tells you whether a country's typical person is a schoolchild, a young worker or a parent of grown children.</p>
           </div>
           <div class="now">
             <span class="mk">As of WPP 2024</span>
-            <p>The median Indian is <b id="ex-py-med">–</b> years old, and will be <b id="ex-py-med50">–</b> in 2050 on the medium projection. The largest five-year group today is aged <b id="ex-py-big">–</b>; in 2050 it is projected to be <b id="ex-py-big50">–</b>. Children under 15 are <b id="ex-py-young">–</b> of the population, against <b id="ex-py-young0">–</b> in 1950.</p>
+            <p>The median Indian is <b id="ex-py-med" set:html={TX["ex-py-med"]}></b> years old, and will be <b id="ex-py-med50" set:html={TX["ex-py-med50"]}></b> in 2050 on the medium projection. The largest five-year group today is aged <b id="ex-py-big" set:html={TX["ex-py-big"]}></b>; in 2050 it is projected to be <b id="ex-py-big50" set:html={TX["ex-py-big50"]}></b>. Children under 15 are <b id="ex-py-young" set:html={TX["ex-py-young"]}></b> of the population, against <b id="ex-py-young0" set:html={TX["ex-py-young0"]}></b> in 1950.</p>
           </div>
         </div>
       </figure>
@@ -165,10 +157,10 @@ const varB = B("population-wpp-variants");
             <h3>India got younger until the 1970s, and has been ageing since</h3>
             <div class="sub">Median age of the population, years. UN estimates (solid) and medium projection (dashed).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-median">–</div><div class="c">latest estimate</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-median" set:html={TX["pv-median"]}></div><div class="c">latest estimate</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-median" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-median" set:html={CH.median()} />
           <div class="plotfoot">
             <span class="src">Source: UN DESA, World Population Prospects 2024.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">Source</a></span>
@@ -181,7 +173,7 @@ const varB = B("population-wpp-variants");
           </div>
           <div class="now">
             <span class="mk">As of WPP 2024</span>
-            <p>The median age was lowest, <b id="ex-md-low">–</b> years, in <b id="ex-md-lowyr">–</b>. On the medium projection it reaches <b id="ex-md-2100">–</b> by 2100: half of all Indians would then be older than that.</p>
+            <p>The median age was lowest, <b id="ex-md-low" set:html={TX["ex-md-low"]}></b> years, in <b id="ex-md-lowyr" set:html={TX["ex-md-lowyr"]}></b>. On the medium projection it reaches <b id="ex-md-2100" set:html={TX["ex-md-2100"]}></b> by 2100: half of all Indians would then be older than that.</p>
           </div>
         </div>
       </figure>
@@ -198,10 +190,10 @@ const varB = B("population-wpp-variants");
             <h3>The working-age share is projected to peak in the mid-2030s</h3>
             <div class="sub">People aged 15 to 64 as a share of the population, per cent. UN estimates (solid) and medium projection (dashed).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-window">–</div><div class="c">projected peak year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-window" set:html={TX["pv-window"]}></div><div class="c">projected peak year</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-window" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-window" set:html={CH.windowPlate()} />
           <div class="plotfoot">
             <span class="src">Source: UN DESA, World Population Prospects 2024; shares computed here from the five-year age groups.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">Source</a></span>
@@ -215,7 +207,7 @@ const varB = B("population-wpp-variants");
           </div>
           <div class="now">
             <span class="mk">As of WPP 2024</span>
-            <p>People aged 15 to 64 are <b id="ex-wi-now">–</b> of Indians. The share is projected to peak at <b id="ex-wi-peak">–</b> in <b id="ex-wi-peakyr">–</b>. Their number keeps rising for longer, from <b id="ex-wi-nnow">–</b> today to a projected <b id="ex-wi-npk">–</b> in <b id="ex-wi-npkyr">–</b>, because the population itself is still growing.</p>
+            <p>People aged 15 to 64 are <b id="ex-wi-now" set:html={TX["ex-wi-now"]}></b> of Indians. The share is projected to peak at <b id="ex-wi-peak" set:html={TX["ex-wi-peak"]}></b> in <b id="ex-wi-peakyr" set:html={TX["ex-wi-peakyr"]}></b>. Their number keeps rising for longer, from <b id="ex-wi-nnow" set:html={TX["ex-wi-nnow"]}></b> today to a projected <b id="ex-wi-npk" set:html={TX["ex-wi-npk"]}></b> in <b id="ex-wi-npkyr" set:html={TX["ex-wi-npkyr"]}></b>, because the population itself is still growing.</p>
           </div>
         </div>
       </figure>
@@ -227,14 +219,10 @@ const varB = B("population-wpp-variants");
             <h3>Fewer children to support now; more old people later</h3>
             <div class="sub">Children (0 to 14) and older people (65 and over) for every 100 people aged 15 to 64. UN estimates (solid) and medium projection (dashed).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-dependency">–</div><div class="c">dependants per 100, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-dependency" set:html={TX["pv-dependency"]}></div><div class="c">dependants per 100, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Children, 0 to 14</button>
-            <button class="chip"><i style="background:#C47A16"></i>Aged 65 and over</button>
-          </div>
-          <div class="plotzone"><div id="plot-dependency" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-dependency" set:html={CH.dependency()} />
           <div class="plotfoot">
             <span class="src">Source: UN DESA, World Population Prospects 2024; ratios computed here from the five-year age groups.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">Source</a></span>
@@ -247,7 +235,7 @@ const varB = B("population-wpp-variants");
           </div>
           <div class="now">
             <span class="mk">As of WPP 2024</span>
-            <p>For every 100 people of working age there are <b id="ex-de-young">–</b> children and <b id="ex-de-old">–</b> people aged 65 or more. The older group is projected to outnumber children, per working-age person, from <b id="ex-de-cross">–</b>. People aged 65 and over are <b id="ex-de-65">–</b> of Indians today and a projected <b id="ex-de-6550">–</b> in 2050, when there will be <b id="ex-de-old50">–</b> of them for every 100 of working age.</p>
+            <p>For every 100 people of working age there are <b id="ex-de-young" set:html={TX["ex-de-young"]}></b> children and <b id="ex-de-old" set:html={TX["ex-de-old"]}></b> people aged 65 or more. The older group is projected to outnumber children, per working-age person, from <b id="ex-de-cross" set:html={TX["ex-de-cross"]}></b>. People aged 65 and over are <b id="ex-de-65" set:html={TX["ex-de-65"]}></b> of Indians today and a projected <b id="ex-de-6550" set:html={TX["ex-de-6550"]}></b> in 2050, when there will be <b id="ex-de-old50" set:html={TX["ex-de-old50"]}></b> of them for every 100 of working age.</p>
           </div>
         </div>
       </figure>
@@ -264,10 +252,10 @@ const varB = B("population-wpp-variants");
             <h3>An Indian woman now has fewer than two children on average</h3>
             <div class="sub">Total fertility rate: the children a woman would have over her life at this year's birth rates for each age. Replacement, about 2.1, keeps a population stable in the long run.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-tfr">–</div><div class="c">children per woman, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-tfr" set:html={TX["pv-tfr"]}></div><div class="c">children per woman, latest</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-tfr" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-tfr" set:html={CH.tfr()} />
           <div class="plotfoot">
             <span class="src">Source: UN DESA, World Population Prospects 2024. India's own measures are the Sample Registration System and NFHS (see the NFHS guide).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">Source</a></span>
@@ -281,7 +269,7 @@ const varB = B("population-wpp-variants");
           </div>
           <div class="now">
             <span class="mk">As of WPP 2024</span>
-            <p>At <b id="ex-tf-1950">–</b> children per woman in 1950 and <b id="ex-tf-now">–</b> now, fertility fell below replacement in <b id="ex-tf-yr">–</b>. The UN's medium projection has it at <b id="ex-tf-2100">–</b> by 2100.</p>
+            <p>At <b id="ex-tf-1950" set:html={TX["ex-tf-1950"]}></b> children per woman in 1950 and <b id="ex-tf-now" set:html={TX["ex-tf-now"]}></b> now, fertility fell below replacement in <b id="ex-tf-yr" set:html={TX["ex-tf-yr"]}></b>. The UN's medium projection has it at <b id="ex-tf-2100" set:html={TX["ex-tf-2100"]}></b> by 2100.</p>
           </div>
         </div>
       </figure>
@@ -293,14 +281,10 @@ const varB = B("population-wpp-variants");
             <h3>Births peaked at the turn of the century; deaths are rising as India ages</h3>
             <div class="sub">Births and deaths a year, million. UN estimates (solid) and medium projection (dashed).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-births">–</div><div class="c">births, latest year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-births" set:html={TX["pv-births"]}></div><div class="c">births, latest year</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Births</button>
-            <button class="chip"><i style="background:#5F6675"></i>Deaths</button>
-          </div>
-          <div class="plotzone"><div id="plot-births" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-births" set:html={CH.births()} />
           <div class="plotfoot">
             <span class="src">Source: UN DESA, World Population Prospects 2024.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">Source</a></span>
@@ -314,7 +298,7 @@ const varB = B("population-wpp-variants");
           </div>
           <div class="now">
             <span class="mk">As of WPP 2024</span>
-            <p>Births peaked at <b id="ex-bi-pk">–</b> in <b id="ex-bi-pkyr">–</b>. In the latest estimate year there were <b id="ex-bi-now">–</b> births and <b id="ex-bi-deaths">–</b> deaths. On the medium projection deaths overtake births in <b id="ex-bi-cross">–</b>.</p>
+            <p>Births peaked at <b id="ex-bi-pk" set:html={TX["ex-bi-pk"]}></b> in <b id="ex-bi-pkyr" set:html={TX["ex-bi-pkyr"]}></b>. In the latest estimate year there were <b id="ex-bi-now" set:html={TX["ex-bi-now"]}></b> births and <b id="ex-bi-deaths" set:html={TX["ex-bi-deaths"]}></b> deaths. On the medium projection deaths overtake births in <b id="ex-bi-cross" set:html={TX["ex-bi-cross"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -331,14 +315,10 @@ const varB = B("population-wpp-variants");
             <h3>Indians live three decades longer than in 1950, women longer than men</h3>
             <div class="sub">Life expectancy at birth, years, by sex. UN estimates (solid) and medium projection (dashed).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-life">–</div><div class="c">both sexes, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-life" set:html={TX["pv-life"]}></div><div class="c">both sexes, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Women</button>
-            <button class="chip"><i style="background:#5F6675"></i>Men</button>
-          </div>
-          <div class="plotzone"><div id="plot-life" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-life" set:html={CH.life()} />
           <div class="plotfoot">
             <span class="src">Source: UN DESA, World Population Prospects 2024.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">Source</a></span>
@@ -351,7 +331,7 @@ const varB = B("population-wpp-variants");
           </div>
           <div class="now">
             <span class="mk">As of WPP 2024</span>
-            <p>Life expectancy rose from <b id="ex-li-1950">–</b> years in 1950 to <b id="ex-li-now">–</b>: <b id="ex-li-f">–</b> for women and <b id="ex-li-m">–</b> for men. The sharpest fall in the record was in <b id="ex-li-dipyr">–</b>, <b id="ex-li-dip">–</b> below <b id="ex-li-dipfrom">–</b>, the pandemic year. Of every 1,000 babies born, <b id="ex-li-imr0">–</b> died before their first birthday in 1950 and <b id="ex-li-imr">–</b> now; <b id="ex-li-u50">–</b> and <b id="ex-li-u5">–</b> before their fifth.</p>
+            <p>Life expectancy rose from <b id="ex-li-1950" set:html={TX["ex-li-1950"]}></b> years in 1950 to <b id="ex-li-now" set:html={TX["ex-li-now"]}></b>: <b id="ex-li-f" set:html={TX["ex-li-f"]}></b> for women and <b id="ex-li-m" set:html={TX["ex-li-m"]}></b> for men. The sharpest fall in the record was in <b id="ex-li-dipyr" set:html={TX["ex-li-dipyr"]}></b>, <b id="ex-li-dip" set:html={TX["ex-li-dip"]}></b> below <b id="ex-li-dipfrom" set:html={TX["ex-li-dipfrom"]}></b>, the pandemic year. Of every 1,000 babies born, <b id="ex-li-imr0" set:html={TX["ex-li-imr0"]}></b> died before their first birthday in 1950 and <b id="ex-li-imr" set:html={TX["ex-li-imr"]}></b> now; <b id="ex-li-u50" set:html={TX["ex-li-u50"]}></b> and <b id="ex-li-u5" set:html={TX["ex-li-u5"]}></b> before their fifth.</p>
           </div>
         </div>
       </figure>
@@ -368,10 +348,10 @@ const varB = B("population-wpp-variants");
             <h3>About a third of Indians live in places the census calls urban</h3>
             <div class="sub">Urban population as a share of the total, per cent. UN estimates to 2018 (solid), the UN's projection after (dashed).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-urban">–</div><div class="c">urban share, latest year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-urban" set:html={TX["pv-urban"]}></div><div class="c">urban share, latest year</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-urban" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-urban" set:html={CH.urban()} />
           <div class="plotfoot">
             <span class="src">Source: World Bank WDI (SP.URB.TOTL.IN.ZS), from the UN World Urbanization Prospects 2018. Values after 2018 are projections.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS?locations=IN" target="_blank" rel="noopener">Source</a></span>
@@ -385,7 +365,7 @@ const varB = B("population-wpp-variants");
           </div>
           <div class="now">
             <span class="mk">As of WDI, October 2026</span>
-            <p>The urban share rose from <b id="ex-ur-1960">–</b> in 1960 to <b id="ex-ur-2018">–</b> in 2018, and is projected at <b id="ex-ur-last">–</b> for <b id="ex-ur-lastyr">–</b>: <b id="ex-ur-n">–</b> people in urban areas and <b id="ex-ur-rn">–</b> in rural ones. On the same projections the largest city holds <b id="ex-ur-city">–</b> people, and cities of a million or more hold <b id="ex-ur-mcty">–</b> of all Indians, against <b id="ex-ur-mcty0">–</b> in 1960.</p>
+            <p>The urban share rose from <b id="ex-ur-1960" set:html={TX["ex-ur-1960"]}></b> in 1960 to <b id="ex-ur-2018" set:html={TX["ex-ur-2018"]}></b> in 2018, and is projected at <b id="ex-ur-last" set:html={TX["ex-ur-last"]}></b> for <b id="ex-ur-lastyr" set:html={TX["ex-ur-lastyr"]}></b>: <b id="ex-ur-n" set:html={TX["ex-ur-n"]}></b> people in urban areas and <b id="ex-ur-rn" set:html={TX["ex-ur-rn"]}></b> in rural ones. On the same projections the largest city holds <b id="ex-ur-city" set:html={TX["ex-ur-city"]}></b> people, and cities of a million or more hold <b id="ex-ur-mcty" set:html={TX["ex-ur-mcty"]}></b> of all Indians, against <b id="ex-ur-mcty0" set:html={TX["ex-ur-mcty0"]}></b> in 1960.</p>
           </div>
         </div>
       </figure>
@@ -397,14 +377,10 @@ const varB = B("population-wpp-variants");
             <h3>Urban India is growing several times faster than rural India</h3>
             <div class="sub">Growth of the urban and the rural population, per cent a year.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-growth">–</div><div class="c">urban growth, latest year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-growth" set:html={TX["pv-growth"]}></div><div class="c">urban growth, latest year</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Urban</button>
-            <button class="chip"><i style="background:#5F6675"></i>Rural</button>
-          </div>
-          <div class="plotzone"><div id="plot-growth" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-growth" set:html={CH.growth()} />
           <div class="plotfoot">
             <span class="src">Source: World Bank WDI (SP.URB.GROW, SP.RUR.TOTL.ZG), from the UN World Urbanization Prospects 2018; after 2018, projections.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.worldbank.org/indicator/SP.URB.GROW?locations=IN" target="_blank" rel="noopener">Source</a></span>
@@ -417,7 +393,7 @@ const varB = B("population-wpp-variants");
           </div>
           <div class="now">
             <span class="mk">As of WDI, October 2026</span>
-            <p>In the latest year urban India grew by <b id="ex-ur-g">–</b> and rural India by <b id="ex-ur-rg">–</b>. Both figures after 2018 are the UN's projections, not measurements.</p>
+            <p>In the latest year urban India grew by <b id="ex-ur-g" set:html={TX["ex-ur-g"]}></b> and rural India by <b id="ex-ur-rg" set:html={TX["ex-ur-rg"]}></b>. Both figures after 2018 are the UN's projections, not measurements.</p>
           </div>
         </div>
       </figure>
@@ -432,16 +408,12 @@ const varB = B("population-wpp-variants");
         <div class="plate-head">
           <div class="t">
             <h3>More people leave India than arrive, though few relative to its size</h3>
-            <div class="sub">Net international migration a year, million: people arriving to live in India minus people leaving. UN estimates (dark) and medium projection to 2050 (pale).</div>
+            <div class="sub">Net international migration a year, million: people arriving to live in India minus people leaving. UN estimates (solid) and medium projection to 2050 (dashed).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-migration">–</div><div class="c">net, latest estimate year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-migration" set:html={TX["pv-migration"]}></div><div class="c">net, latest estimate year</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>UN estimate</button>
-            <button class="chip"><i style="background:#B9C3F3"></i>Projection</button>
-          </div>
-          <div class="plotzone"><div id="plot-migration" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-migration" set:html={CH.migration()} />
           <div class="plotfoot">
             <span class="src">Source: UN DESA, World Population Prospects 2024; migrant stock and refugees from World Bank WDI (UN DESA, UNHCR).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">Source</a></span>
@@ -454,7 +426,7 @@ const varB = B("population-wpp-variants");
           </div>
           <div class="now">
             <span class="mk">As of WPP 2024</span>
-            <p>In the latest estimate year about <b id="ex-mi-now">–</b> more people left India than arrived; the largest net outflow in the record was <b id="ex-mi-worst">–</b> in <b id="ex-mi-worstyr">–</b>. People born abroad and living in India numbered <b id="ex-mi-stock">–</b> in <b id="ex-mi-stockyr">–</b>, <b id="ex-mi-stockpct">–</b> of the population, down from <b id="ex-mi-stock0">–</b> in <b id="ex-mi-stock0yr">–</b>. India hosted <b id="ex-mi-refg">–</b> refugees in <b id="ex-mi-refgyr">–</b>.</p>
+            <p>In the latest estimate year about <b id="ex-mi-now" set:html={TX["ex-mi-now"]}></b> more people left India than arrived; the largest net outflow in the record was <b id="ex-mi-worst" set:html={TX["ex-mi-worst"]}></b> in <b id="ex-mi-worstyr" set:html={TX["ex-mi-worstyr"]}></b>. People born abroad and living in India numbered <b id="ex-mi-stock" set:html={TX["ex-mi-stock"]}></b> in <b id="ex-mi-stockyr" set:html={TX["ex-mi-stockyr"]}></b>, <b id="ex-mi-stockpct" set:html={TX["ex-mi-stockpct"]}></b> of the population, down from <b id="ex-mi-stock0" set:html={TX["ex-mi-stock0"]}></b> in <b id="ex-mi-stock0yr" set:html={TX["ex-mi-stock0yr"]}></b>. India hosted <b id="ex-mi-refg" set:html={TX["ex-mi-refg"]}></b> refugees in <b id="ex-mi-refgyr" set:html={TX["ex-mi-refgyr"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -469,17 +441,12 @@ const varB = B("population-wpp-variants");
         <div class="plate-head">
           <div class="t">
             <h3>Half a child per woman separates a shrinking India from a growing one</h3>
-            <div class="sub">India's population in <span id="lg-var-b">2100</span> under each UN projection variant, billion (bars), and in 2050 (rings). The dashed line is today's population.</div>
+            <div class="sub">India's population in <span id="lg-var-b" set:html={TX["lg-var-b"]}></span> under each UN projection variant, billion (bars), and in 2050 (rings). The dashed line is today's population.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-variants">–</div><div class="c">range across variants</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-variants" set:html={TX["pv-variants"]}></div><div class="c">range across variants</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Medium, end of century</button>
-            <button class="chip"><i style="background:#C9CED6"></i>Other variants, end of century</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #C47A16"></i>2050</button>
-          </div>
-          <div class="plotzone"><div id="plot-variants" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-variants" set:html={CH.variants()} />
           <div class="plotfoot">
             <span class="src">Source: UN DESA, World Population Prospects 2024, medium and other variants. Scenario variants are deterministic what-ifs; the 80% and 95% ranges come from the probabilistic projection.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">Source</a></span>
@@ -492,7 +459,7 @@ const varB = B("population-wpp-variants");
           </div>
           <div class="now">
             <span class="mk">As of WPP 2024</span>
-            <p>By 2100 the variants range from <b id="ex-va-lo">–</b> (<span id="ex-va-lon">–</span>) to <b id="ex-va-hi">–</b> (<span id="ex-va-hin">–</span>). With no migration at all, India would have <b id="ex-va-zm">–</b> people in 2100.</p>
+            <p>By 2100 the variants range from <b id="ex-va-lo" set:html={TX["ex-va-lo"]}></b> (<span id="ex-va-lon" set:html={TX["ex-va-lon"]}></span>) to <b id="ex-va-hi" set:html={TX["ex-va-hi"]}></b> (<span id="ex-va-hin" set:html={TX["ex-va-hin"]}></span>). With no migration at all, India would have <b id="ex-va-zm" set:html={TX["ex-va-zm"]}></b> people in 2100.</p>
           </div>
         </div>
       </figure>
@@ -558,7 +525,7 @@ const varB = B("population-wpp-variants");
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>UN Department of Economic and Social Affairs, Population Division, World Population Prospects 2024: the standard CSV files of demographic indicators (medium and other variants) and population by five-year age group and sex, India (location 356). Data vintage <b id="prov-vintage">–</b>. Urban, migrant-stock and refugee figures from the World Bank's World Development Indicators, vintage <b id="prov-wdi">–</b>.</p>
+        <p>UN Department of Economic and Social Affairs, Population Division, World Population Prospects 2024: the standard CSV files of demographic indicators (medium and other variants) and population by five-year age group and sex, India (location 356). Data vintage <b id="prov-vintage" set:html={TX["prov-vintage"]}></b>. Urban, migrant-stock and refugee figures from the World Bank's World Development Indicators, vintage <b id="prov-wdi" set:html={TX["prov-wdi"]}></b>.</p>
         <p>Checked by hand: India's population on 1 July 2024 is 1,450,935,791 in both WPP 2024 and WDI; the gate checks the two sources agree every year.</p>
       </div>
       <div>
@@ -576,7 +543,7 @@ const varB = B("population-wpp-variants");
     </div>
     <div class="fine">
       <span>India Atlas, population</span>
-      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Vintage <span id="prov-vintage2" set:html={TX["prov-vintage2"]}></span></span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
@@ -584,6 +551,5 @@ const varB = B("population-wpp-variants");
 </div>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/population.client.js";
 </script>
 </Base>

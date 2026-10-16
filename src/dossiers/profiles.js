@@ -715,7 +715,7 @@ export function page(slug) {
 }
 const SEAM_TEXT = (fu) => ({ "ap-2014": "June 2014", "jk-2019": "October 2019", "dnhdd-2020": "January 2020" }[fu.seam]);
 
-/* ---------- chart data (drawn by src/dossiers/profiles.client.js) ---------- */
+/* ---------- chart data (drawn at build time by src/dossiers/profiles.charts.js) ---------- */
 const series = (bundle, key, { from, filter } = {}) => {
   const b = load(bundle), s = b.series[key];
   return b.dates.map((d, i) => [d, s.data[i]]).filter(([d, v]) => v != null && (!from || d >= from) && (!filter || filter(d)));

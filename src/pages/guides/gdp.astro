@@ -10,6 +10,15 @@ const D = bySlug["gdp"];
 import { word } from "../../dossiers/periods.js";
 import nb22 from "../../../data/series/gdp-2022.json";
 import back from "../../../data/series/gdp-back.json";
+import * as CH from "../../dossiers/gdp.charts.js";
+import { roundRates } from "../../dossiers/precision.js";
+import gdpRaw from "../../../data/series/gdp.json";
+import expRaw from "../../../data/series/gdp-expenditure.json";
+import accRaw from "../../../data/series/gdp-accounts.json";
+import indRaw from "../../../data/series/gdp-industries.json";
+import nomRaw from "../../../data/series/gdp-nominal.json";
+import nbIndRaw from "../../../data/series/gdp-2022-industries.json";
+import nbExpRaw from "../../../data/series/gdp-2022-expenditure.json";
 // quarter labels and counts named in the copy, read from the bundles
 const fq = (iso) => { const y = +iso.slice(0, 4), m = +iso.slice(5, 7); const q = m === 4 ? 1 : m === 7 ? 2 : m === 10 ? 3 : 4; return `Q${q} FY${String(q === 4 ? y : y + 1).slice(2)}`; };
 const NB_FIRST = fq(nb22.dates[0]), NB_LAST = fq(nb22.dates.at(-1));
@@ -38,30 +47,9 @@ import rev22 from "../../../data/series/gdp-2022-revisions.json";
 import ind11 from "../../../data/series/gdp-annual-industries.json";
 import ind22 from "../../../data/series/gdp-2022-annual-industries.json";
 import indBack from "../../../data/series/gdp-back-industries.json";
-const pick = (b, keys) => ({ dates: b.dates, s: Object.fromEntries(keys.filter((k) => b.series[k]).map((k) => [k, b.series[k].data])) });
 const lastOf = (b, k) => { const d = b.series[k].data; for (let i = d.length - 1; i >= 0; i--) if (d[i] != null) return { v: d[i], date: b.dates[i], i }; return null; };
 const fyOf = (iso) => `${iso.slice(0, 4)}-${String((+iso.slice(0, 4) + 1) % 100).padStart(2, "0")}`;
-import back0 from "../../../data/series/gdp-back.json";
-const SPEND = ["pfce", "gfcf", "gfce", "stocks", "valuables", "net_exports", "discrepancy"];
-const INDS = ["agriculture", "mining", "manufacturing", "utilities", "construction", "trade_hotels", "transport", "finance", "realty", "public_admin", "other_services"];
-const SECTS = ["households", "private_nfc", "private_fc", "public_nfc", "public_fc", "government"];
-const secKeys = SECTS.flatMap((k) => [`saving_${k}_pct_gdp`, `gfcf_${k}_pct_gdp`]).concat(["saving_total_pct_gdp", "gfcf_total_pct_gdp"]);
-// sub-industries: compound real growth over the whole 2011-12-base span, and shares at both ends
-const subRows = Object.keys(sub11.series).filter((k) => k.endsWith("_constant")).map((k) => {
-  const key = k.replace(/_constant$/, ""), c = sub11.series[k].data, n = c.length - 1;
-  return { key, label: sub11.series[k].label.replace(/, GVA at constant prices$/, ""), group: sub11.series[k].group,
-    cagr: Math.round((Math.pow(c[n] / c[0], 1 / n) - 1) * 1000) / 10, share0: sub11.series[`${key}_share`].data[0], share1: sub11.series[`${key}_share`].data[n] };
-});
-const GD = {
-  // the back series' investment share lives in gdp-back (gfcf_rate, from 1951-52): placed on the shares axis
-  spend: { back: (() => { const b = pick(shBack, SPEND); b.s.gfcf = shBack.dates.map((d) => { const i = back0.dates.indexOf(d); return i < 0 ? null : back0.series.gfcf_rate.data[i]; }); return b; })(), b11: pick(sh11, SPEND), b22: pick(sh22, SPEND) },
-  abroad: { back: pick(shBack, ["transfers_row", "primary_income_row"]), b11: pick(sh11, ["transfers_row", "primary_income_row"]), b22: pick(sh22, ["transfers_row", "primary_income_row"]) },
-  disc: { q11: pick(qs11, ["discrepancy"]), q22: pick(qs22, ["discrepancy"]) },
-  sect: { b11: pick(sec11, secKeys), b22: pick(sec22, secKeys) },
-  sub: { rows: subRows, from: sub11.dates[0], to: sub11.dates.at(-1), newTo: sub22.dates.at(-1) },
-  rev: { b11: pick(rev11, ["fae", "sae", "pe", "fre", "sre", "tre", "final"].map((st) => `gdp_growth_${st}_real`)), b22: pick(rev22, ["pe", "fre", "final"].map((st) => `gdp_growth_${st}_real`)) },
-  make: { back: pick(indBack, INDS.map((k) => `${k}_share`)), b11: pick(ind11, INDS.map((k) => `${k}_share`)), b22: pick(ind22, INDS.map((k) => `${k}_share`)) },
-};
+const GD = CH.GD, subRows = GD.sub.rows;
 // plate titles: findings, from the data
 const pf22 = lastOf(sh22, "pfce"), pf11same = sh11.series.pfce.data[sh11.dates.indexOf(pf22.date)];
 const SPEND_T = { y: fyOf(pf22.date), new: Math.round(pf22.v), old: pf11same != null ? Math.round(pf11same) : null, back0: Math.round(shBack.series.pfce.data[0]), backY: fyOf(shBack.dates[0]), b11y: fyOf(sh11.dates[0]) };
@@ -86,6 +74,235 @@ const MAKE_T = { y0: fyOf(indBack.dates[0]), v0: Math.round(ag0), y1: fyOf(agL.d
 const NB_LAST_VAL = nb22.series.gdp.data.at(-1), NB_PREV_VAL = nb22.series.gdp.data.at(-2);
 const QMONTHS = { "04": "April to June", "07": "July to September", "10": "October to December", "01": "January to March" };
 const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.at(-1).slice(0, 4)}`;
+
+/* ---- every number the page shows, set at build time (was gdp.client.js). Rates are rounded
+ * once to the published precision (src/dossiers/precision.js); the deep accounts (GD) are
+ * read as published. T is set as text, H as html; the ids are the ones qc.mjs checks. ---- */
+const RB = {
+  gdp: roundRates(gdpRaw), exp: roundRates(expRaw), acc: roundRates(accRaw), ind: roundRates(indRaw), nom: roundRates(nomRaw),
+  nb: roundRates(nb22), nbInd: roundRates(nbIndRaw), nbExp: roundRates(nbExpRaw), back: roundRates(back),
+};
+// a hydrated series: [{ date, value }] on the bundle's dates
+const hy = (b, k) => b.series[k].data.map((v, i) => ({ date: b.dates[i], value: v }));
+const T = {}, H = {};
+const pcS = '<span class="pc">%</span>';
+const arrow = (d) => (Math.abs(d) < 0.05 ? "unchanged" : (d > 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(1) + " pt");
+const pace = (d) => (d >= 0 ? "accelerating" : "slowing");
+const f1 = (v) => v.toFixed(1) + "%";
+const fSigned = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
+const pct1 = CH.pct1, fyL = CH.fyL;
+const fmtFY = (iso) => "FY" + String(+iso.slice(0, 4) + 1).slice(2);
+const peakOf = (s) => s.reduce((p, d) => (d.value != null && (!p || d.value > p.value) ? d : p), null);
+const troughOf = (s) => s.reduce((p, d) => (d.value != null && (!p || d.value < p.value) ? d : p), null);
+const lastNN = (s) => s.filter((d) => d.value != null).at(-1);
+const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+const ALLQ = { gdp: RB.gdp, gva: RB.gdp, pfce: RB.gdp, gfcf: RB.gdp, gfce: RB.exp, exports: RB.exp, imports: RB.exp };
+const L = {}; for (const k in ALLQ) L[k] = ALLQ[k].series[k].data.at(-1);
+const nbS = (k) => RB.nb.series[k].data;
+const LNB = {}, PNB = {}; for (const k in RB.nb.series) { LNB[k] = nbS(k).at(-1); PNB[k] = nbS(k).at(-2); }
+const prevQNB = "vs " + fq(nb22.dates.at(-2)).replace(/ FY\d+$/, "");
+for (const k of ["gdp", "gva", "pfce", "gfcf"]) {
+  H[`n-${k}`] = LNB[k].toFixed(1) + pcS;
+  H[`d-${k}`] = `<b>${arrow(LNB[k] - PNB[k])}</b> ${prevQNB}, ${pace(LNB[k] - PNB[k])}`;
+}
+H["rb-big"] = LNB.gdp.toFixed(1) + pcS;
+H["rb-band"] = `vs 6% trend: <b>${(LNB.gdp - 6 >= 0 ? "+" : "") + (LNB.gdp - 6).toFixed(1)} pt</b>`;
+{
+  const W = 236, Hh = 46, min = 0, max = 10, val = LNB.gdp;
+  const X = (v) => ((v - min) / (max - min)) * W, y = 18;
+  H["rb-scale"] =
+    `<svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Scale from 0 to 10 per cent. The rough pre-pandemic trend of 6 per cent is dashed; the current reading, ${val.toFixed(1)} per cent, is marked.">` +
+    `<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="#DADDE3" stroke-width="1"/>` +
+    `<line x1="${X(6)}" y1="${y - 10}" x2="${X(6)}" y2="${y + 10}" stroke="#878D99" stroke-width="1" stroke-dasharray="2,3"/>` +
+    [0, 2, 4, 6, 8, 10].map((t, i, a) => `<text x="${X(t)}" y="${Hh - 6}" font-family="'Golos Text',sans-serif" font-size="11" fill="#878D99" text-anchor="${i === 0 ? "start" : i === a.length - 1 ? "end" : "middle"}">${t}%</text>`).join("") +
+    `<circle cx="${X(val)}" cy="${y}" r="4.5" fill="#2E4BD8" stroke="#FFFFFF" stroke-width="1.5"/>` +
+    `</svg>`;
+}
+H["nspark-gdp"] = CH.sparkOf(nb22, "gdp");
+
+// § 05 and § 07, the 2011-12 base's last print
+T["pv-main"] = f1(L.gdp);
+for (const k of ["pfce", "gfcf", "gva"]) { T[`pv-${k}`] = f1(L[k]); T[`ex-${k}`] = f1(L[k]); }
+T["ex-last4"] = RB.gdp.series.gdp.data.slice(-4).map((v) => v.toFixed(1)).join(", ");
+for (const k of ["pfce", "gfcf", "gva"]) { const pk = peakOf(hy(RB.gdp, k)); T[`pf-${k}`] = `peak: ${pk.value.toFixed(1)}%, ${fq(pk.date)}, latest: ${f1(L[k])}`; }
+T["pv-exp"] = f1(L.imports); T["ex-imp"] = f1(L.imports); T["ex-exp"] = f1(L.exports); T["ex-gfce"] = fSigned(L.gfce);
+{ const tr = troughOf(hy(RB.exp, "imports")), pk = peakOf(hy(RB.exp, "imports"));
+  T["pf-exp"] = `imports swung −${Math.abs(tr.value).toFixed(1)}% (${fq(tr.date)}) to +${pk.value.toFixed(1)}% (${fq(pk.date)}), latest: ${f1(L.imports)}`; }
+
+// § 10 annual accounts
+const accLast = (k) => lastNN(hy(RB.acc, k));
+T["pv-acc"] = f1(accLast("ndp").value);
+T["pv-acc-c"] = fmtFY(accLast("ndp").date) + ", NDP y/y";
+T["ac-ndp"] = f1(accLast("ndp").value); T["ac-gni"] = f1(accLast("gni").value); T["ac-tax"] = f1(accLast("taxes").value);
+T["ac-sub"] = fSigned(accLast("subsidies").value); T["ac-cfc"] = f1(accLast("cfc").value);
+{ const vs = RB.acc.series.cfc.data.filter((v) => v != null); T["ac-cfc-lo"] = Math.min(...vs).toFixed(1) + "%"; T["ac-cfc-hi"] = Math.max(...vs).toFixed(1) + "%"; }
+T["ac-sav"] = accLast("saving_rate").value.toFixed(1) + "%";
+T["ac-sav0"] = RB.acc.series.saving_rate.data.find((v) => v != null).toFixed(1) + "%";
+{ const sv = hy(RB.acc, "saving_rate").filter((d) => d.value != null), first = sv[0], last = sv.at(-1);
+  T["pv-sav"] = last.value.toFixed(1) + "%"; T["pv-sav-c"] = fmtFY(last.date) + ", % of nominal GDP";
+  T["sav-first"] = first.value.toFixed(1) + "%"; T["sav-drop"] = (first.value - last.value).toFixed(1) + " points"; }
+
+// § 03 the register, all on the 2022-23 base
+const SHN = nbIndRaw.shares; // sector shares of NOMINAL GVA, last four quarters
+const NBX = { ...RB.nb.series, ...RB.nbExp.series, ...RB.nbInd.series };
+const NBXB = Object.fromEntries([[RB.nb, nb22], [RB.nbExp, nbExpRaw], [RB.nbInd, nbIndRaw]].flatMap(([b, raw]) => Object.keys(b.series).map((k) => [k, raw])));
+const sp22 = GD.spend.b22;
+const spLast = (k) => { const a = sp22.s[k] ?? []; for (let i = a.length - 1; i >= 0; i--) if (a[i] != null) return a[i]; return null; };
+const regRows = [
+  ["gdp", "Real GDP", "Market prices, the headline", "s-acc", null, "#2E4BD8"],
+  ["gva", "Real GVA", "Basic prices, before net taxes", "s-g1", null, "#5F6675"],
+  ["pfce", "Consumption, PFCE", "Household spending", "s-g2", spLast("pfce"), "#A3A9B4"],
+  ["gfcf", "Investment, GFCF", "Machines, buildings, infrastructure", "s-g3", spLast("gfcf"), "#878D99"],
+  ["gfce", "Government, GFCE", "The state's own consumption", "s-g4", spLast("gfce"), "#878D99"],
+  ["exports", "Exports, goods & services", "Demand from abroad", "s-g1", null, "#5F6675"],
+  ["imports", "Imports, goods & services", "Enters with a minus sign", "s-acc", null, "#2E4BD8"],
+  // production side: the four most telling engines; shares are of GVA (see table note)
+  ["agriculture", "Agriculture, GVA", "The monsoon engine, share of GVA", "s-g1", SHN.agriculture, "#5F6675"],
+  ["manufacturing", "Manufacturing, GVA", "The tradables cycle, share of GVA", "s-g2", SHN.manufacturing, "#5F6675"],
+  ["construction", "Construction, GVA", "Where investment becomes jobs, share of GVA", "s-g3", SHN.construction, "#5F6675"],
+  ["finance_realty", "Finance & real estate, GVA", "The largest engine, share of GVA", "s-g4", SHN.finance_realty, "#5F6675"],
+];
+const fRow = (v) => (v == null ? "—" : f1(v));
+H["ledger-body"] = regRows.map(([k, nm, sub, sw, share, col]) => {
+  const d = NBX[k].data, RL = d.at(-1), RP = d.at(-2), RY = d.at(-5) ?? null;
+  return `
+  <tr>
+    <td class="name"><span class="sw ${sw}"></span>${esc(nm)}<small>${esc(sub)}</small></td>
+    <td class="wt">${share == null ? "—" : share.toFixed(1) + '<span class="wtrack"><i style="width:' + share + '%;background:' + col + '"></i></span>'}</td>
+    <td class="val">${fRow(RL)}</td>
+    <td class="chg">${arrow(RL - RP)}, ${pace(RL - RP)}</td>
+    <td class="yr">${fRow(RY)}</td>
+    <td class="spark" id="sp-${k}">${CH.sparkOf(NBXB[k], k)}</td>
+  </tr>`;
+}).join("");
+
+// § 04 expenditure composition, latest fiscal year, base 2022-23
+{
+  const groups = [
+    ["Consumption, PFCE", spLast("pfce"), "#2E4BD8"],
+    ["Investment, GFCF", spLast("gfcf"), "#5F6675"],
+    ["Government, GFCE", spLast("gfce"), "#A3A9B4"],
+    ["Stocks & valuables", (spLast("stocks") ?? 0) + (spLast("valuables") ?? 0), "#DADDE3"],
+  ];
+  H["basket-bar"] = groups.map(([n, w, c]) => `<div class="seg" style="width:${w}%;background:${c}" title="${esc(n)}: ${w.toFixed(1)}%"></div>`).join("");
+  H["basket-labels"] = groups.map(([n, w, c]) => `<div class="blab"><div class="n"><span class="sw" style="background:${c}"></span>${esc(n)}</div><div class="w">${w.toFixed(1)}% of GDP</div></div>`).join("");
+  const sgn1 = (v) => (v < 0 ? "−" : "+") + Math.abs(v).toFixed(1) + "%";
+  T["bk-nx"] = sgn1(spLast("net_exports")); T["bk-disc"] = sgn1(spLast("discrepancy")); T["bk-inv"] = spLast("gfcf").toFixed(1) + "%";
+}
+
+// § 02 and § 08 the eight engines: the fastest and slowest of the latest quarter
+function engineNums(B, raw, ids) {
+  const keys = Object.keys(B.series), latest = Object.fromEntries(keys.map((k) => [k, B.series[k].data.at(-1)]));
+  const fastest = keys.reduce((a, k) => (latest[k] > latest[a] ? k : a)), slowest = keys.reduce((a, k) => (latest[k] < latest[a] ? k : a));
+  T[ids.pv] = f1(latest[fastest]);
+  T[ids.pvc] = fq(B.dates.at(-1)) + ", fastest: " + B.series[fastest].label;
+  T[ids.fast] = fSigned(latest[fastest]) + " (" + B.series[fastest].label.toLowerCase() + ")";
+  T[ids.slow] = fSigned(latest[slowest]) + " (" + B.series[slowest].label.toLowerCase() + ")";
+  T[ids.mfg] = f1(latest.manufacturing); T[ids.agri] = f1(latest.agriculture);
+}
+engineNums(RB.ind, indRaw, { pv: "pv-ind", pvc: "pv-ind-c", fast: "ex-eng-fast", slow: "ex-eng-slow", mfg: "ex-eng-mfg", agri: "ex-eng-agri" });
+engineNums(RB.nbInd, nbIndRaw, { pv: "pv-nbind", pvc: "pv-nbind-c", fast: "nbind-fast", slow: "nbind-slow", mfg: "nbind-mfg", agri: "nbind-agri" });
+
+// § 09 the deflator wedge
+{ const Ld = RB.nom.series.deflator.data.at(-1), Ln = RB.nom.series.gdp_nominal.data.at(-1), pk = peakOf(hy(RB.nom, "deflator"));
+  T["pv-defl"] = f1(Ld); T["ex-defl-n"] = f1(Ln); T["ex-defl-r"] = f1(L.gdp); T["ex-defl-d"] = f1(Ld);
+  T["ex-defl-pk"] = pk.value.toFixed(1) + "% (" + fq(pk.date) + ")"; }
+
+// § 02 the new base
+{ const g = hy(RB.nb, "gdp"), nbL = g.at(-1).value;
+  T["pv-nb"] = f1(nbL); T["pv-nb-c"] = fq(g.at(-1).date) + ", GDP y/y, base 2022–23";
+  T["nb-q3"] = f1(g.at(-2).value); T["nb-q4"] = f1(nbL); T["nb-q3-m"] = fq(g.at(-2).date); T["nb-q4-m"] = fq(g.at(-1).date);
+  T["nb-gfcf"] = f1(nbS("gfcf").at(-1));
+  // the overlap quarter, re-scored: the old base's second-last quarter on both bases
+  const oldQ1 = hy(RB.gdp, "gdp").at(-2), newQ1 = g.find((d) => d.date === oldQ1.date);
+  T["nb-old-q1"] = f1(oldQ1.value); T["nb-new-q1"] = f1(newQ1.value); T["nb-gap"] = Math.abs(oldQ1.value - newQ1.value).toFixed(1) + " pt"; }
+
+// § 15 seventy-five years: the back series, and saving and investment on it
+{ const bk = hy(RB.back, "gdp").filter((d) => d.value != null);
+  const low = bk.reduce((a, d) => (d.value < a.value ? d : a)), high = bk.reduce((a, d) => (d.value > a.value ? d : a));
+  T["pv-lh"] = (bk.reduce((a, d) => a + d.value, 0) / bk.length).toFixed(1) + "%";
+  T["pv-lh-c"] = `average, ${fyL(bk[0].date)} to ${fyL(bk.at(-1).date)}`;
+  const dec = (from, to) => { const v = bk.filter((d) => { const y = +d.date.slice(0, 4); return y >= from && y <= to; }).map((d) => d.value); return (v.reduce((a, x) => a + x, 0) / v.length).toFixed(1) + "%"; };
+  T["lh-5079"] = dec(1951, 1979); T["lh-8090"] = dec(1980, 1990); T["lh-9111"] = dec(1991, 2011);
+  T["lh-low"] = `${low.value < 0 ? "−" : ""}${Math.abs(low.value).toFixed(1)}% in ${fyL(low.date)}`;
+  T["lh-high"] = `${high.value.toFixed(1)}% in ${fyL(high.date)}`;
+  T["lh-last-back"] = `${bk.at(-1).value.toFixed(1)}% in ${fyL(bk.at(-1).date)}`;
+  const b11First = hy(RB.acc, "gdp").find((d) => d.value != null);
+  T["lh-first-b11"] = `${b11First.value.toFixed(1)}% in ${fyL(b11First.date)}`; }
+{ const sv = hy(RB.back, "saving_rate").filter((d) => d.value != null), iv = hy(RB.back, "gfcf_rate").filter((d) => d.value != null);
+  const pk = sv.reduce((a, d) => (d.value > a.value ? d : a));
+  T["pv-si"] = sv.at(-1).value.toFixed(1) + "%"; T["pv-si-c"] = fyL(sv.at(-1).date) + ", saving, % of GDP";
+  T["si-first"] = `${sv[0].value.toFixed(1)}% in ${fyL(sv[0].date)}`; T["si-peak"] = `${pk.value.toFixed(1)}% in ${fyL(pk.date)}`;
+  T["si-inv-first"] = iv[0].value.toFixed(1) + "%"; T["si-inv-last"] = iv.at(-1).value.toFixed(1) + "%"; }
+
+// § 11 where the money goes, income from abroad, the discrepancy (the deep accounts, as published)
+const gpts = (blk, k) => CH.gp(blk, k).filter((p) => p[1] != null);
+{ const b22 = GD.spend.b22, b11 = GD.spend.b11;
+  const lastI = b22.s.pfce.map((v, i) => (v != null ? i : -1)).filter((i) => i >= 0).at(-1);
+  const y = b22.dates[lastI], v = (k) => b22.s[k][lastI];
+  const oldI = b11.dates.indexOf(y), old = oldI >= 0 ? b11.s.pfce[oldI] : null;
+  T["pv-spend"] = pct1(v("pfce")); T["pv-spend-c"] = fyL(y) + ", consumption, base 2022–23";
+  T["wm-pfce"] = pct1(v("pfce")); T["wm-gfcf"] = pct1(v("gfcf")); T["wm-gfce"] = pct1(v("gfce"));
+  T["wm-val"] = pct1(v("valuables")); T["wm-stk"] = pct1(v("stocks"));
+  T["wm-val-cmp"] = v("valuables") > v("stocks") ? "more than" : v("valuables") < v("stocks") ? "less than" : "the same as";
+  T["wm-nx"] = pct1(Math.abs(v("net_exports")));
+  T["wm-pfce-old"] = old == null ? "—" : pct1(old);
+  T["wm-gap"] = old == null ? "—" : Math.abs(old - v("pfce")).toFixed(1) + " points";
+  const p11 = b11.s.pfce.filter((x) => x != null);
+  T["wm-move"] = Math.max(...p11.slice(1).map((x, i) => Math.abs(x - p11[i]))).toFixed(1) + " points"; }
+{ const t = gpts(GD.abroad.b22, "transfers_row").at(-1), p = gpts(GD.abroad.b22, "primary_income_row").at(-1), t0 = gpts(GD.abroad.back, "transfers_row")[0];
+  T["pv-abroad"] = pct1(t[1]); T["pv-abroad-c"] = fyL(t[0]) + ", transfers, % of GDP";
+  T["ab-tr"] = pct1(t[1]); T["ab-tr0"] = pct1(t0[1]); T["ab-tr0-y"] = fyL(t0[0]); T["ab-pi"] = pct1(p[1]);
+  T["ab-gndi"] = (100 + t[1] + p[1]).toFixed(1) + "%"; }
+{ const a = gpts(GD.disc.q11, "discrepancy"), b = gpts(GD.disc.q22, "discrepancy");
+  const mean = (xs) => xs.reduce((s, d) => s + Math.abs(d[1]), 0) / xs.length;
+  T["pv-disc"] = pct1(b.at(-1)[1]); T["pv-disc-c"] = fq(b.at(-1)[0]) + ", % of GDP";
+  T["dc-last"] = pct1(b.at(-1)[1]); T["dc-n"] = String(b.length);
+  T["dc-mean"] = mean(b).toFixed(1) + "%"; T["dc-mean11"] = mean(a).toFixed(1) + "%";
+  const zero = (GD.spend.b22.s.discrepancy ?? []).map((v, i) => (v === 0 ? fyL(GD.spend.b22.dates[i]) : null)).filter(Boolean);
+  T["dc-zero"] = zero.length ? zero.join(" and ") : "none so far"; }
+
+// § 12 who saves, who invests
+{ const src = GD.sect.b22;
+  const li = src.s.saving_households_pct_gdp.map((v, i) => (v != null ? i : -1)).filter((i) => i >= 0).at(-1);
+  const year = fyL(src.dates[li]);
+  const r = (k) => ({ s: src.s[`saving_${k}_pct_gdp`][li], i: src.s[`gfcf_${k}_pct_gdp`][li] });
+  const hh = r("households"), pc = r("private_nfc"), gg = r("government");
+  T["pv-sect"] = pct1(hh.s - hh.i); T["pv-sect-c"] = year + ", households' surplus, % of GDP";
+  T["se-hh-s"] = pct1(hh.s); T["se-hh-i"] = pct1(hh.i); T["se-hh-gap"] = (hh.s - hh.i).toFixed(1) + " points";
+  T["se-pc-i"] = pct1(pc.i); T["se-pc-s"] = pct1(pc.s); T["se-gg-s"] = pct1(gg.s); T["se-gg-i"] = pct1(gg.i);
+  T["se-tot-s"] = pct1(src.s.saving_total_pct_gdp[li]); }
+{ const hh11 = gpts(GD.sect.b11, "saving_households_pct_gdp"), hh22 = gpts(GD.sect.b22, "saving_households_pct_gdp"), gg11 = gpts(GD.sect.b11, "saving_government_pct_gdp");
+  const ggLow = gg11.reduce((m, d) => (d[1] < m[1] ? d : m)), hhAt = hh11.find((d) => d[0] === ggLow[0]);
+  const before = hh11.filter((d) => d[0] < ggLow[0] && d[1] >= hhAt[1]);
+  T["pv-hh"] = pct1(hh22.at(-1)[1]); T["pv-hh-c"] = fyL(hh22.at(-1)[0]) + ", households, base 2022–23";
+  T["hh-gg-low"] = pct1(ggLow[1]); T["hh-gg-low-y"] = fyL(ggLow[0]); T["hh-2020"] = pct1(hhAt[1]);
+  T["hh-2020-since"] = before.length ? fyL(before.at(-1)[0]) : "the series began"; T["hh-new"] = pct1(hh22.at(-1)[1]); }
+
+// § 13 sub-industries, § 14 revisions, § 15 what India makes
+{ const by = Object.fromEntries(GD.sub.rows.map((r) => [r.key, r])), from = fyL(GD.sub.from), to = fyL(GD.sub.to);
+  T["pv-sub"] = by.livestock.cagr.toFixed(1) + "%"; T["pv-sub-c"] = "livestock, a year, " + from + " to " + to;
+  T["sb-crops0"] = by.crops.share0.toFixed(1) + "%"; T["sb-crops1"] = by.crops.share1.toFixed(1) + "%";
+  T["sb-live0"] = by.livestock.share0.toFixed(1) + "%"; T["sb-live1"] = by.livestock.share1.toFixed(1) + "%";
+  T["sb-food"] = by.food_products.cagr.toFixed(1) + "%"; T["sb-mach"] = by.machinery.cagr.toFixed(1) + "%";
+  T["sb-new"] = GD.sub.newTo ? fyL(GD.sub.newTo) : "—"; }
+{ const { paths, up, down } = CH.revPaths(), revs = paths.map((p) => p.last.rev);
+  const sgnPt = (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + " pt";
+  const meanAbs = revs.reduce((s, v) => s + Math.abs(v), 0) / revs.length;
+  T["pv-rev"] = meanAbs.toFixed(1) + " pt"; T["pv-rev-c"] = "average move, first print to latest";
+  T["rv-n"] = String(paths.length); T["rv-mean"] = meanAbs.toFixed(1) + " points"; T["rv-up"] = String(revs.filter((v) => v > 0).length);
+  T["rv-max"] = `${sgnPt(up.last.rev)} (${up.fy})`; T["rv-min"] = `${sgnPt(down.last.rev)} (${down.fy})`;
+  const r22 = GD.rev.b22, n22 = r22.dates.filter((d, i) => ["pe", "fre", "final"].some((k) => r22.s[`gdp_growth_${k}_real`]?.[i] != null)).length;
+  T["rv-22"] = `it holds ${n22} years, each at a single stage so far`; }
+{ const bk = (k) => gpts(GD.make.back, k), nw = (k) => gpts(GD.make.b22, k);
+  const ag0 = bk("agriculture_share")[0], ag1 = bk("agriculture_share").at(-1);
+  T["pv-make"] = pct1(nw("agriculture_share").at(-1)[1]); T["pv-make-c"] = fyL(nw("agriculture_share").at(-1)[0]) + ", agriculture, base 2022–23";
+  T["mk-ag0"] = `${pct1(ag0[1])} in ${fyL(ag0[0])}`; T["mk-ag1"] = `${pct1(ag1[1])} in ${fyL(ag1[0])}`;
+  T["mk-con0"] = pct1(bk("construction_share")[0][1]); T["mk-con1"] = pct1(bk("construction_share").at(-1)[1]);
+  T["mk-fin0"] = pct1(bk("finance_share")[0][1]); T["mk-fin1"] = pct1(bk("finance_share").at(-1)[1]);
+  const mfg = [...bk("manufacturing_share"), ...gpts(GD.make.b11, "manufacturing_share")], pk = mfg.reduce((m, d) => (d[1] > m[1] ? d : m));
+  T["mk-mfg-pk"] = `${pct1(pk[1])} in ${fyL(pk[0])}`; T["mk-mfg1"] = pct1(nw("manufacturing_share").at(-1)[1]); }
+T["prov-vintage"] = gdpRaw.meta.vintage; T["prov-vintage2"] = gdpRaw.meta.vintage;
 ---
 <Base
   title="National Accounts · India Atlas"
@@ -115,10 +332,10 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
       <span>Annual accounts <b>to {SPEND_T.y}</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">GDP, y/y</div><div class="v acc" id="n-gdp">–</div><div class="d" id="d-gdp">–</div><div class="nspark" id="nspark-gdp"></div></div>
-      <div class="num"><div class="l">GVA, y/y</div><div class="v" id="n-gva">–</div><div class="d" id="d-gva">–</div></div>
-      <div class="num"><div class="l">Consumption, PFCE y/y</div><div class="v" id="n-pfce">–</div><div class="d" id="d-pfce">–</div></div>
-      <div class="num"><div class="l">Investment, GFCF y/y</div><div class="v" id="n-gfcf">–</div><div class="d" id="d-gfcf">–</div></div>
+      <div class="num"><div class="l">GDP, y/y</div><div class="v acc" id="n-gdp" set:html={H["n-gdp"]}></div><div class="d" id="d-gdp" set:html={H["d-gdp"]}></div><div class="nspark" id="nspark-gdp" set:html={H["nspark-gdp"]}></div></div>
+      <div class="num"><div class="l">GVA, y/y</div><div class="v" id="n-gva" set:html={H["n-gva"]}></div><div class="d" id="d-gva" set:html={H["d-gva"]}></div></div>
+      <div class="num"><div class="l">Consumption, PFCE y/y</div><div class="v" id="n-pfce" set:html={H["n-pfce"]}></div><div class="d" id="d-pfce" set:html={H["d-pfce"]}></div></div>
+      <div class="num"><div class="l">Investment, GFCF y/y</div><div class="v" id="n-gfcf" set:html={H["n-gfcf"]}></div><div class="d" id="d-gfcf" set:html={H["d-gfcf"]}></div></div>
     </div>
   </div>
 
@@ -126,9 +343,9 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
   <section>
     <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">The {NB_LAST} print</span></div>
     <div class="reading-top">
-      <div><span class="rk">Current reading</span><div class="big" id="rb-big">–</div></div>
+      <div><span class="rk">Current reading</span><div class="big" id="rb-big" set:html={H["rb-big"]}></div></div>
       <p class="rt-cap">Real GDP growth, {NB_LAST_MONTHS}, on the 2022–23 base: {NB_LAST_VAL < NB_PREV_VAL ? "down" : "up"} from {NB_PREV_VAL.toFixed(1)}% the quarter before, against a rough pre-pandemic trend of 6%.</p>
-      <div><div class="band-scale" id="rb-scale"></div><div class="band-chip" id="rb-band">vs 6% trend: <b>–</b></div></div>
+      <div><div class="band-scale" id="rb-scale" set:html={H["rb-scale"]}></div><div class="band-chip" id="rb-band" set:html={H["rb-band"]}></div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -152,16 +369,10 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>Where the quarterly series continues: and what carries it</h3>
             <div class="sub">Real GDP, GVA and the consumption and investment engines on the new 2022–23 base, year-on-year, per cent, {NB_FIRST} to {NB_LAST}</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-nb">–</div><div class="c" id="pv-nb-c">–, GDP y/y, base 2022–23</div></div>
+          <div class="plate-val"><div class="v" id="pv-nb" set:text={T["pv-nb"]}></div><div class="c" id="pv-nb-c" set:text={T["pv-nb-c"]}></div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-nb">
-            <button class="chip" data-key="gdp"><i style="background:#2E4BD8"></i>GDP</button>
-            <button class="chip" data-key="gva"><i style="background:#5F6675"></i>GVA</button>
-            <button class="chip" data-key="pfce"><i style="background:#A3A9B4"></i>Consumption, PFCE</button>
-            <button class="chip" data-key="gfcf"><i style="background:#878D99"></i>Investment, GFCF</button>
-          </div>
-          <div class="plotzone" id="plot-nb"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-nb" set:html={CH.nb()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NAS releases on base 2022–23, growth computed from constant-price levels, a deliberately short axis: year-on-year growth needs a same-base year-ago level, so the new series can reach no further back than FY24</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -175,8 +386,8 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of the {NB_LAST} print</span>
-            <p>The 2011–12-base series ended with the November 2025 release; the {word(nbSince)} quarters since exist only here. The latest, <span id="nb-q4-m">–</span>, reads <b id="nb-q4">–</b>, after <b id="nb-q3">–</b> in <span id="nb-q3-m">–</span>; investment grew <b id="nb-gfcf">–</b> in the latest quarter.</p>
-            <p>The rebase also re-scored the overlap: the June 2025 quarter reads <b id="nb-old-q1">–</b> on the old base and <b id="nb-new-q1">–</b> on the new: <b id="nb-gap">–</b> apart, from the same underlying returns. That gap is the whole argument for never splicing bases.</p>
+            <p>The 2011–12-base series ended with the November 2025 release; the {word(nbSince)} quarters since exist only here. The latest, <span id="nb-q4-m" set:text={T["nb-q4-m"]}></span>, reads <b id="nb-q4" set:text={T["nb-q4"]}></b>, after <b id="nb-q3" set:text={T["nb-q3"]}></b> in <span id="nb-q3-m" set:text={T["nb-q3-m"]}></span>; investment grew <b id="nb-gfcf" set:text={T["nb-gfcf"]}></b> in the latest quarter.</p>
+            <p>The rebase also re-scored the overlap: the June 2025 quarter reads <b id="nb-old-q1" set:text={T["nb-old-q1"]}></b> on the old base and <b id="nb-new-q1" set:text={T["nb-new-q1"]}></b> on the new: <b id="nb-gap" set:text={T["nb-gap"]}></b> apart, from the same underlying returns. That gap is the whole argument for never splicing bases.</p>
           </div>
         </div>
       </figure>
@@ -189,15 +400,13 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>Eight engines on the new base</h3>
             <div class="sub">Real GVA by the 8 NAS industry groups on the 2022–23 base, year-on-year, per cent, {NB_FIRST} to {NB_LAST}, each panel on its own scale</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-nbind">–</div><div class="c" id="pv-nbind-c">–, fastest engine</div></div>
+          <div class="plate-val"><div class="v" id="pv-nbind" set:text={T["pv-nbind"]}></div><div class="c" id="pv-nbind-c" set:text={T["pv-nbind-c"]}></div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" style="padding-top:26px">
-            <div id="grid-nbind" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:34px 44px"></div>
-          </div>
+          <div class="plotzone" id="grid-nbind" set:html={CH.nbind()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NAS releases on base 2022–23, growth computed from constant-price levels, shares are of nominal GVA over the last four published quarters, blue marks the fastest and the slowest engine of the latest quarter</span>
-            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
         <div class="explain">
@@ -207,7 +416,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of the {NB_LAST} print</span>
-            <p>The fastest engine is <b id="nbind-fast">–</b>; the slowest <b id="nbind-slow">–</b>. Manufacturing grew <b id="nbind-mfg">–</b> and agriculture <b id="nbind-agri">–</b>.</p>
+            <p>The fastest engine is <b id="nbind-fast" set:text={T["nbind-fast"]}></b>; the slowest <b id="nbind-slow" set:text={T["nbind-slow"]}></b>. Manufacturing grew <b id="nbind-mfg" set:text={T["nbind-mfg"]}></b> and agriculture <b id="nbind-agri" set:text={T["nbind-agri"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -222,7 +431,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
         <thead>
           <tr><th>Series</th><th>Share of GDP</th><th>Latest y/y</th><th>vs prev. quarter</th><th>Year ago</th><th class="spark">{NB_FIRST} to {NB_LAST}</th></tr>
         </thead>
-        <tbody id="ledger-body"></tbody>
+        <tbody id="ledger-body" set:html={H["ledger-body"]}></tbody>
       </table>
       <p style="margin-top:16px;font-size:.98rem;color:var(--muted);font-style:italic;max-width:62ch">All rows are on the 2022–23 base. Two denominators share this table: expenditure components are shares of nominal GDP in {SPEND_T.y}; the four industry rows are shares of nominal GVA over the last four quarters, because that is how the production side is added up. Neither set is a share of the other.</p>
     </div>
@@ -232,9 +441,9 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
   <section>
     <div class="sec-head"><span class="no">04</span><h2>What growth is made of</h2><span class="line"></span><span class="unit">Expenditure shares, per cent of GDP, {SPEND_T.y}</span></div>
     <div class="break basket">
-      <div class="bar" id="basket-bar"></div>
-      <div class="labels" id="basket-labels"></div>
-      <p class="note">The demand side of the economy in {SPEND_T.y}, on the 2022–23 base. Net exports (<b id="bk-nx">–</b>) and the statistical discrepancy (<b id="bk-disc">–</b>) close the sum to 100. Consumption dwarfs everything: which is why a cautious consumer matters more to the headline than any single factory, and why "investment-led growth" at <b id="bk-inv">–</b> of GDP is still the junior partner. Section 10 follows each share back to 1950-51.</p>
+      <div class="bar" id="basket-bar" set:html={H["basket-bar"]}></div>
+      <div class="labels" id="basket-labels" set:html={H["basket-labels"]}></div>
+      <p class="note">The demand side of the economy in {SPEND_T.y}, on the 2022–23 base. Net exports (<b id="bk-nx" set:text={T["bk-nx"]}></b>) and the statistical discrepancy (<b id="bk-disc" set:text={T["bk-disc"]}></b>) close the sum to 100. Consumption dwarfs everything: which is why a cautious consumer matters more to the headline than any single factory, and why "investment-led growth" at <b id="bk-inv" set:text={T["bk-inv"]}></b> of GDP is still the junior partner. Section 10 follows each share back to 1950-51.</p>
     </div>
   </section>
 
@@ -248,15 +457,10 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>One crash, one rebound, and the long middle</h3>
             <div class="sub">Real GDP, GVA and consumption, year-on-year, per cent, Q1 FY17 to Q2 FY26</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-main">–</div><div class="c">Q2 FY26, GDP y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-main" set:text={T["pv-main"]}></div><div class="c">Q2 FY26, GDP y/y</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-main">
-            <button class="chip" data-key="gdp"><i style="background:#2E4BD8"></i>GDP</button>
-            <button class="chip" data-key="gva"><i style="background:#5F6675"></i>GVA</button>
-            <button class="chip" data-key="pfce"><i style="background:#A3A9B4"></i>Consumption, PFCE</button>
-          </div>
-          <div class="plotzone" id="plot-main"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-main" set:html={CH.main()} />
           <div class="plotfoot">
             <span class="src">Source: <a href="https://www.mospi.gov.in" target="_blank" rel="noopener">MoSPI</a>, NAS press release of 28 Nov 2025, growth computed from constant-price levels, dashed rule: 6%, rough pre-pandemic trend, GFCF plotted separately (it crashed to −42%)</span>
             <span class="dl">
@@ -275,7 +479,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of November 2025, the old base's last print</span>
-            <p>By the time this base closed, the base-effect years were over: its last four quarters, to Q2 FY26, read <b id="ex-last4">–</b>, the cleanest trend signal since before the pandemic, and accelerating, with consumption growing nearly as fast as the headline. The quarters since are on the 2022–23 base, in the current reading above and the new-base plate further down.</p>
+            <p>By the time this base closed, the base-effect years were over: its last four quarters, to Q2 FY26, read <b id="ex-last4" set:text={T["ex-last4"]}></b>, the cleanest trend signal since before the pandemic, and accelerating, with consumption growing nearly as fast as the headline. The quarters since are on the 2022–23 base, in the current reading above and the new-base plate further down.</p>
             <p>The caution: these are early estimates. The quarterly series leans heavily on listed-company results and government accounts; the informal sector is extrapolated. Revisions over the next three years will redraw parts of this picture.</p>
           </div>
         </div>
@@ -319,12 +523,12 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>Consumption: fifty-six per cent of everything</h3>
             <div class="sub">Private final consumption expenditure (PFCE), year-on-year, per cent, 2016–2025</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-pfce">–</div><div class="c">Q2 FY26, y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-pfce" set:text={T["pv-pfce"]}></div><div class="c">Q2 FY26, y/y</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-pfce"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-pfce" set:html={CH.pfce()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, <span id="pf-pfce">–</span></span>
+            <span class="src">Source: MoSPI, <span id="pf-pfce" set:text={T["pf-pfce"]}></span></span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
@@ -335,7 +539,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of November 2025, the old base's last print</span>
-            <p>At <b id="ex-pfce">–</b> in Q2 FY26, the last quarter on this base, consumption was growing at nearly the pace of the headline: helped by two good monsoons and by food deflation freeing up household budgets.</p>
+            <p>At <b id="ex-pfce" set:text={T["ex-pfce"]}></b> in Q2 FY26, the last quarter on this base, consumption was growing at nearly the pace of the headline: helped by two good monsoons and by food deflation freeing up household budgets.</p>
           </div>
         </div>
       </figure>
@@ -348,12 +552,12 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>Investment: the swingiest number in the accounts</h3>
             <div class="sub">Gross fixed capital formation (GFCF), year-on-year, per cent, 2016–2025</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-gfcf">–</div><div class="c">Q2 FY26, y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-gfcf" set:text={T["pv-gfcf"]}></div><div class="c">Q2 FY26, y/y</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-gfcf"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-gfcf" set:html={CH.gfcf()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, <span id="pf-gfcf">–</span></span>
+            <span class="src">Source: MoSPI, <span id="pf-gfcf" set:text={T["pf-gfcf"]}></span></span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
@@ -364,7 +568,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of November 2025, the old base's last print</span>
-            <p>At <b id="ex-gfcf">–</b> in Q2 FY26, the last quarter on this base, investment was steady rather than surging, with public capex doing the heavy lifting. The new base carries the line on; read its latest quarter in the current reading, never against this one.</p>
+            <p>At <b id="ex-gfcf" set:text={T["ex-gfcf"]}></b> in Q2 FY26, the last quarter on this base, investment was steady rather than surging, with public capex doing the heavy lifting. The new base carries the line on; read its latest quarter in the current reading, never against this one.</p>
           </div>
         </div>
       </figure>
@@ -377,12 +581,12 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>GVA: production before the taxman</h3>
             <div class="sub">Gross value added, basic prices, year-on-year, per cent, 2016–2025</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-gva">–</div><div class="c">Q2 FY26, y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-gva" set:text={T["pv-gva"]}></div><div class="c">Q2 FY26, y/y</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-gva"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-gva" set:html={CH.gva()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, <span id="pf-gva">–</span></span>
+            <span class="src">Source: MoSPI, <span id="pf-gva" set:text={T["pf-gva"]}></span></span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
@@ -393,7 +597,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of November 2025, the old base's last print</span>
-            <p>At <b id="ex-gva">–</b> in Q2 FY26, GVA trailed GDP only slightly: subsidy arithmetic, not weak production.</p>
+            <p>At <b id="ex-gva" set:text={T["ex-gva"]}></b> in Q2 FY26, GVA trailed GDP only slightly: subsidy arithmetic, not weak production.</p>
           </div>
         </div>
       </figure>
@@ -406,17 +610,12 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>The rest of demand: the state and the border</h3>
             <div class="sub">Government consumption, exports and imports, year-on-year, per cent, 2016–2025</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-exp">–</div><div class="c">Q2 FY26, imports y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-exp" set:text={T["pv-exp"]}></div><div class="c">Q2 FY26, imports y/y</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-exp">
-            <button class="chip" data-key="imports"><i style="background:#2E4BD8"></i>Imports</button>
-            <button class="chip" data-key="exports"><i style="background:#5F6675"></i>Exports</button>
-            <button class="chip" data-key="gfce"><i style="background:#878D99"></i>Government, GFCE</button>
-          </div>
-          <div class="plotzone" id="plot-exp"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-exp" set:html={CH.exp()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, <span id="pf-exp">–</span>, imports enter the accounts with a minus sign: the blue line subtracts from GDP</span>
+            <span class="src">Source: MoSPI, <span id="pf-exp" set:text={T["pf-exp"]}></span>, imports enter the accounts with a minus sign: the blue line subtracts from GDP</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
@@ -428,7 +627,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of November 2025, the old base's last print</span>
-            <p>Imports grew <b id="ex-imp">–</b> in the September 2025 quarter against <b id="ex-exp">–</b> for exports, so net trade subtracted from the print. Government consumption read <b id="ex-gfce">–</b>. That quarter belonged to households and builders, not to the state or the border.</p>
+            <p>Imports grew <b id="ex-imp" set:text={T["ex-imp"]}></b> in the September 2025 quarter against <b id="ex-exp" set:text={T["ex-exp"]}></b> for exports, so net trade subtracted from the print. Government consumption read <b id="ex-gfce" set:text={T["ex-gfce"]}></b>. That quarter belonged to households and builders, not to the state or the border.</p>
           </div>
         </div>
       </figure>
@@ -445,15 +644,13 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>The production side, one engine per panel</h3>
             <div class="sub">Real GVA by the 8 NAS industry groups, year-on-year, per cent, Q1 FY17 to Q2 FY26, each panel on its own scale</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-ind">–</div><div class="c" id="pv-ind-c">–, fastest engine</div></div>
+          <div class="plate-val"><div class="v" id="pv-ind" set:text={T["pv-ind"]}></div><div class="c" id="pv-ind-c" set:text={T["pv-ind-c"]}></div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" style="padding-top:26px">
-            <div id="grid-ind" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:34px 44px"></div>
-          </div>
+          <div class="plotzone" id="grid-ind" set:html={CH.ind()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NAS quarterly releases, growth computed from constant-price levels, shares under each name are of nominal GVA, last four quarters, blue marks the fastest and the slowest engine of the latest quarter</span>
-            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
         <div class="explain">
@@ -464,8 +661,8 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of November 2025, the old base's last print</span>
-            <p>In Q2 FY26, this base's last quarter, the spread ran from <b id="ex-eng-slow">–</b> to <b id="ex-eng-fast">–</b>. Finance and real estate was the largest engine and the fastest; manufacturing, at <b id="ex-eng-mfg">–</b>, was having its best run in over a year. Mining was the one engine in the red: a monsoon story as much as a commodity one.</p>
-            <p>Agriculture grew <b id="ex-eng-agri">–</b>: its second good year in a row, and one reason food prices, and with them the CPI, were so quiet through 2025. The eight engines on the new base are in the plate further down.</p>
+            <p>In Q2 FY26, this base's last quarter, the spread ran from <b id="ex-eng-slow" set:text={T["ex-eng-slow"]}></b> to <b id="ex-eng-fast" set:text={T["ex-eng-fast"]}></b>. Finance and real estate was the largest engine and the fastest; manufacturing, at <b id="ex-eng-mfg" set:text={T["ex-eng-mfg"]}></b>, was having its best run in over a year. Mining was the one engine in the red: a monsoon story as much as a commodity one.</p>
+            <p>Agriculture grew <b id="ex-eng-agri" set:text={T["ex-eng-agri"]}></b>: its second good year in a row, and one reason food prices, and with them the CPI, were so quiet through 2025. The eight engines on the new base are in the plate further down.</p>
           </div>
         </div>
       </figure>
@@ -482,15 +679,10 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>Nominal minus real: the inflation the economy pays</h3>
             <div class="sub">Nominal GDP, real GDP and the implied deflator, year-on-year, per cent, Q1 FY17 to Q2 FY26</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-defl">–</div><div class="c">Q2 FY26, deflator y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-defl" set:text={T["pv-defl"]}></div><div class="c">Q2 FY26, deflator y/y</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-defl">
-            <button class="chip" data-key="gdp_nominal"><i style="background:#2E4BD8"></i>Nominal GDP</button>
-            <button class="chip" data-key="gdp_real"><i style="background:#5F6675"></i>Real GDP</button>
-            <button class="chip" data-key="deflator"><i style="background:#A3A9B4"></i>Implied deflator</button>
-          </div>
-          <div class="plotzone" id="plot-defl"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-defl" set:html={CH.defl()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, nominal series at current prices, clearly a different animal from the real headline, deflator = current-price level ÷ constant-price level, computed, not published</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -504,7 +696,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of November 2025, the old base's last print</span>
-            <p>In Q2 FY26 the wedge had nearly closed: nominal GDP grew <b id="ex-defl-n">–</b> against <b id="ex-defl-r">–</b> real, an implied deflator of <b id="ex-defl-d">–</b>, because wholesale prices had stalled. Three years earlier the deflator peaked at <b id="ex-defl-pk">–</b> and nominal growth flattered every ratio it touched.</p>
+            <p>In Q2 FY26 the wedge had nearly closed: nominal GDP grew <b id="ex-defl-n" set:text={T["ex-defl-n"]}></b> against <b id="ex-defl-r" set:text={T["ex-defl-r"]}></b> real, an implied deflator of <b id="ex-defl-d" set:text={T["ex-defl-d"]}></b>, because wholesale prices had stalled. Three years earlier the deflator peaked at <b id="ex-defl-pk" set:text={T["ex-defl-pk"]}></b> and nominal growth flattered every ratio it touched.</p>
             <p>A near-zero deflator cuts the other way: real growth looks fast while tax collections and nominal incomes grow no faster than the headline. The current reading at the top of the page gives the deflator on the new base.</p>
           </div>
         </div>
@@ -522,15 +714,13 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>Gross, net, and the taxman's wedge</h3>
             <div class="sub">Six annual accounts, year-on-year, per cent, constant prices, FY13 to FY26, each panel on its own scale</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-acc">–</div><div class="c" id="pv-acc-c">–, NDP y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-acc" set:text={T["pv-acc"]}></div><div class="c" id="pv-acc-c" set:text={T["pv-acc-c"]}></div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" style="padding-top:26px">
-            <div id="grid-acc" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:34px 44px"></div>
-          </div>
+          <div class="plotzone" id="grid-acc" set:html={CH.acc()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NAS annual accounts, each panel on its own y-scale, zero rule shown, the detailed accounts, taxes, subsidies, capital, run two years behind the headline and stop at FY24</span>
-            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
         <div class="explain">
@@ -541,8 +731,8 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of the January 2026 accounts</span>
-            <p>The FY26 advance estimates put NDP growth at <b id="ac-ndp">–</b> and GNI at <b id="ac-gni">–</b>. The detailed ledger stops at FY24: product taxes grew <b id="ac-tax">–</b> while subsidies printed <b id="ac-sub">–</b>: a wedge that flattered GDP against GVA that year. Capital consumption grew <b id="ac-cfc">–</b>, and it has run between <b id="ac-cfc-lo">–</b> and <b id="ac-cfc-hi">–</b> in every year of this ledger, boom, bust or lockdown. Depreciation does not do cycles.</p>
-            <p>One account is missing from the panels because it only exists in rupees of the day: gross saving, published at current prices alone. As a share of nominal GDP it was <b id="ac-sav">–</b> in FY24, down from <b id="ac-sav0">–</b> at the start of this ledger: the country invests more than it saves at home, and the difference is the current account.</p>
+            <p>The FY26 advance estimates put NDP growth at <b id="ac-ndp" set:text={T["ac-ndp"]}></b> and GNI at <b id="ac-gni" set:text={T["ac-gni"]}></b>. The detailed ledger stops at FY24: product taxes grew <b id="ac-tax" set:text={T["ac-tax"]}></b> while subsidies printed <b id="ac-sub" set:text={T["ac-sub"]}></b>: a wedge that flattered GDP against GVA that year. Capital consumption grew <b id="ac-cfc" set:text={T["ac-cfc"]}></b>, and it has run between <b id="ac-cfc-lo" set:text={T["ac-cfc-lo"]}></b> and <b id="ac-cfc-hi" set:text={T["ac-cfc-hi"]}></b> in every year of this ledger, boom, bust or lockdown. Depreciation does not do cycles.</p>
+            <p>One account is missing from the panels because it only exists in rupees of the day: gross saving, published at current prices alone. As a share of nominal GDP it was <b id="ac-sav" set:text={T["ac-sav"]}></b> in FY24, down from <b id="ac-sav0" set:text={T["ac-sav0"]}></b> at the start of this ledger: the country invests more than it saves at home, and the difference is the current account.</p>
           </div>
         </div>
       </figure>
@@ -555,10 +745,10 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>The saving rate: what the country keeps of what it earns</h3>
             <div class="sub">Gross saving, share of nominal GDP, current prices, FY13 to FY24, the one accounts series published only in rupees of the day</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-sav">–</div><div class="c" id="pv-sav-c">–, % of GDP</div></div>
+          <div class="plate-val"><div class="v" id="pv-sav" set:text={T["pv-sav"]}></div><div class="c" id="pv-sav-c" set:text={T["pv-sav-c"]}></div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-sav"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-sav" set:html={CH.sav()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NAS annual accounts, saving is published at current prices only, so it is shown as a share of nominal GDP, not a real growth rate, the gap between saving and investment is the current account</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -571,7 +761,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of the FY24 accounts</span>
-            <p>The saving rate has slid from <b id="sav-first">–</b> at the start of this ledger to under a third of GDP: a fall of <b id="sav-drop">–</b>. The investment rate has held higher, so the gap is borrowed from overseas. Whether the slide means households are consuming more or simply earning less is a question the aggregate cannot answer.</p>
+            <p>The saving rate has slid from <b id="sav-first" set:text={T["sav-first"]}></b> at the start of this ledger to under a third of GDP: a fall of <b id="sav-drop" set:text={T["sav-drop"]}></b>. The investment rate has held higher, so the gap is borrowed from overseas. Whether the slide means households are consuming more or simply earning less is a question the aggregate cannot answer.</p>
           </div>
         </div>
       </figure>
@@ -588,16 +778,13 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>Of every ₹100 of GDP, households spend about ₹{SPEND_T.new}; in {SPEND_T.backY} it was ₹{SPEND_T.back0}</h3>
             <div class="sub">Each spending line as a share of nominal GDP: the NSO back series ({SPEND_T.backY} to {BACK_LAST}), the 2011–12 base and the 2022–23 base, three separate series, each panel on its own scale</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-spend">–</div><div class="c" id="pv-spend-c">–</div></div>
+          <div class="plate-val"><div class="v" id="pv-spend" set:text={T["pv-spend"]}></div><div class="c" id="pv-spend-c" set:text={T["pv-spend-c"]}></div></div>
         </div>
         <div class="frame">
-          <div class="legend"><span class="chip"><i style="background:#2E4BD8"></i>NSO back series</span><span class="chip"><i style="background:#A3A9B4"></i>Base 2011–12</span><span class="chip"><i style="background:#161A22"></i>Base 2022–23</span></div>
-          <div class="plotzone" style="padding-top:26px">
-            <div id="grid-spend" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:34px 44px"></div>
-          </div>
+          <div class="plotzone" id="grid-spend" set:html={CH.spend()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NAS, every share is current prices over current prices, valuables are published only from 1998-99 on the back series, each panel on its own scale, the three rulers are never joined</span>
-            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
         <div class="explain">
@@ -609,8 +796,8 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of the {SPEND_T.y} accounts</span>
-            <p>On the new base, consumption took <b id="wm-pfce">–</b> of GDP in {SPEND_T.y}, fixed investment <b id="wm-gfcf">–</b> and government consumption <b id="wm-gfce">–</b>. Valuables, mostly gold, took <b id="wm-val">–</b>, <span id="wm-val-cmp">–</span> the change in stocks (<b id="wm-stk">–</b>). Net exports subtracted <b id="wm-nx">–</b>: India bought more from the world than it sold.</p>
-            <p>The same year on the old base put consumption at <b id="wm-pfce-old">–</b>. The gap between the two rulers, <b id="wm-gap">–</b>, compares with a largest year-to-year move of <b id="wm-move">–</b> on the old base since {SPEND_T.b11y}.</p>
+            <p>On the new base, consumption took <b id="wm-pfce" set:text={T["wm-pfce"]}></b> of GDP in {SPEND_T.y}, fixed investment <b id="wm-gfcf" set:text={T["wm-gfcf"]}></b> and government consumption <b id="wm-gfce" set:text={T["wm-gfce"]}></b>. Valuables, mostly gold, took <b id="wm-val" set:text={T["wm-val"]}></b>, <span id="wm-val-cmp" set:text={T["wm-val-cmp"]}></span> the change in stocks (<b id="wm-stk" set:text={T["wm-stk"]}></b>). Net exports subtracted <b id="wm-nx" set:text={T["wm-nx"]}></b>: India bought more from the world than it sold.</p>
+            <p>The same year on the old base put consumption at <b id="wm-pfce-old" set:text={T["wm-pfce-old"]}></b>. The gap between the two rulers, <b id="wm-gap" set:text={T["wm-gap"]}></b>, compares with a largest year-to-year move of <b id="wm-move" set:text={T["wm-move"]}></b> on the old base since {SPEND_T.b11y}.</p>
           </div>
         </div>
       </figure>
@@ -623,16 +810,13 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>Money sent home adds {ABROAD_T.tr}% of GDP to what Indians can spend; profits and interest paid abroad take {ABROAD_T.pi}%</h3>
             <div class="sub">Net current transfers from abroad and net primary income from abroad, shares of nominal GDP, NSO back series and both current bases, fiscal years</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-abroad">–</div><div class="c" id="pv-abroad-c">–</div></div>
+          <div class="plate-val"><div class="v" id="pv-abroad" set:text={T["pv-abroad"]}></div><div class="c" id="pv-abroad-c" set:text={T["pv-abroad-c"]}></div></div>
         </div>
         <div class="frame">
-          <div class="legend"><span class="chip"><i style="background:#2E4BD8"></i>NSO back series</span><span class="chip"><i style="background:#A3A9B4"></i>Base 2011–12</span><span class="chip"><i style="background:#161A22"></i>Base 2022–23</span></div>
-          <div class="plotzone" style="padding-top:26px">
-            <div id="grid-abroad" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:34px 44px"></div>
-          </div>
+          <div class="plotzone" id="grid-abroad" set:html={CH.abroad()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NAS, net primary income and net other current transfers from the rest of the world, current prices over nominal GDP, the three rulers are never joined</span>
-            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
         <div class="explain">
@@ -643,7 +827,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of the {ABROAD_T.y} accounts</span>
-            <p>Net transfers came to <b id="ab-tr">–</b> of GDP in {ABROAD_T.y} on the new base, up from <b id="ab-tr0">–</b> in <span id="ab-tr0-y">–</span> on the back series. Net primary income was <b id="ab-pi">–</b>. Together they make gross national disposable income <b id="ab-gndi">–</b> of GDP: India's residents have slightly more to spend than the country produces.</p>
+            <p>Net transfers came to <b id="ab-tr" set:text={T["ab-tr"]}></b> of GDP in {ABROAD_T.y} on the new base, up from <b id="ab-tr0" set:text={T["ab-tr0"]}></b> in <span id="ab-tr0-y" set:text={T["ab-tr0-y"]}></span> on the back series. Net primary income was <b id="ab-pi" set:text={T["ab-pi"]}></b>. Together they make gross national disposable income <b id="ab-gndi" set:text={T["ab-gndi"]}></b> of GDP: India's residents have slightly more to spend than the country produces.</p>
           </div>
         </div>
       </figure>
@@ -656,11 +840,10 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>The two ways of adding up GDP disagree by up to {DISC_T.q11}% in a quarter on the old base, and {DISC_T.q22}% on the new</h3>
             <div class="sub">The discrepancy: GDP less the sum of its spending components, share of nominal GDP, quarterly, both bases, computed from published levels</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-disc">–</div><div class="c" id="pv-disc-c">–</div></div>
+          <div class="plate-val"><div class="v" id="pv-disc" set:text={T["pv-disc"]}></div><div class="c" id="pv-disc-c" set:text={T["pv-disc-c"]}></div></div>
         </div>
         <div class="frame">
-          <div class="legend"><span class="chip"><i style="background:#A3A9B4"></i>Base 2011–12</span><span class="chip"><i style="background:#2E4BD8"></i>Base 2022–23</span></div>
-          <div class="plotzone" id="plot-disc"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-disc" set:html={CH.disc()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NAS quarterly estimates, discrepancy computed as GDP less private and government consumption, fixed investment, change in stocks, valuables and net exports, at current prices</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -674,7 +857,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of the {NB_LAST} print</span>
-            <p>The latest quarter's discrepancy is <b id="dc-last">–</b> of GDP. Across the <b id="dc-n">–</b> quarters on the new base the gap averaged <b id="dc-mean">–</b> in absolute size, against <b id="dc-mean11">–</b> on the old base. The new base's final years, <span id="dc-zero">–</span>, are balanced to zero at current prices: they are the years for which MoSPI has published supply and use tables, which reconcile the two sides.</p>
+            <p>The latest quarter's discrepancy is <b id="dc-last" set:text={T["dc-last"]}></b> of GDP. Across the <b id="dc-n" set:text={T["dc-n"]}></b> quarters on the new base the gap averaged <b id="dc-mean" set:text={T["dc-mean"]}></b> in absolute size, against <b id="dc-mean11" set:text={T["dc-mean11"]}></b> on the old base. The new base's final years, <span id="dc-zero" set:text={T["dc-zero"]}></span>, are balanced to zero at current prices: they are the years for which MoSPI has published supply and use tables, which reconcile the two sides.</p>
           </div>
         </div>
       </figure>
@@ -691,11 +874,10 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>Households save {SECT_T.s}% of GDP and invest {SECT_T.i}%: the rest funds companies and the government</h3>
             <div class="sub">Gross saving and gross fixed capital formation by institutional sector, share of nominal GDP, {SECT_T.y}, base 2022–23</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-sect">–</div><div class="c" id="pv-sect-c">–</div></div>
+          <div class="plate-val"><div class="v" id="pv-sect" set:text={T["pv-sect"]}></div><div class="c" id="pv-sect-c" set:text={T["pv-sect-c"]}></div></div>
         </div>
         <div class="frame">
-          <div class="legend"><span class="chip"><i style="background:#2E4BD8"></i>Gross saving</span><span class="chip"><i style="background:#C47A16"></i>Fixed investment</span></div>
-          <div class="plotzone" id="plot-sect"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-sect" set:html={CH.sect()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NAS institutional-sector accounts, current prices, households include non-profit institutions serving households, financial and non-financial companies shown separately</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -710,7 +892,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of the {SECT_T.y} accounts</span>
-            <p>Households saved <b id="se-hh-s">–</b> of GDP and invested <b id="se-hh-i">–</b>, a surplus of <b id="se-hh-gap">–</b>. Private non-financial companies invested <b id="se-pc-i">–</b> against saving of <b id="se-pc-s">–</b>. General government saved <b id="se-gg-s">–</b> and invested <b id="se-gg-i">–</b>. The whole economy saved <b id="se-tot-s">–</b> of GDP.</p>
+            <p>Households saved <b id="se-hh-s" set:text={T["se-hh-s"]}></b> of GDP and invested <b id="se-hh-i" set:text={T["se-hh-i"]}></b>, a surplus of <b id="se-hh-gap" set:text={T["se-hh-gap"]}></b>. Private non-financial companies invested <b id="se-pc-i" set:text={T["se-pc-i"]}></b> against saving of <b id="se-pc-s" set:text={T["se-pc-s"]}></b>. General government saved <b id="se-gg-s" set:text={T["se-gg-s"]}></b> and invested <b id="se-gg-i" set:text={T["se-gg-i"]}></b>. The whole economy saved <b id="se-tot-s" set:text={T["se-tot-s"]}></b> of GDP.</p>
           </div>
         </div>
       </figure>
@@ -723,11 +905,10 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>Household saving fell from {HH_T.v0}% of GDP in {HH_T.y0} to {HH_T.v1}% in {HH_T.y1} on the old base</h3>
             <div class="sub">Gross saving of households and of general government, share of nominal GDP, base 2011–12 ({HH_T.y0} to {HH_T.y1}, faint) and base 2022–23, two separate series</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-hh">–</div><div class="c" id="pv-hh-c">–</div></div>
+          <div class="plate-val"><div class="v" id="pv-hh" set:text={T["pv-hh"]}></div><div class="c" id="pv-hh-c" set:text={T["pv-hh-c"]}></div></div>
         </div>
         <div class="frame">
-          <div class="legend"><span class="chip"><i style="background:#2E4BD8"></i>Households</span><span class="chip"><i style="background:#C47A16"></i>General government</span></div>
-          <div class="plotzone" id="plot-hh"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-hh" set:html={CH.hh()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NAS institutional-sector accounts, saving at current prices only, the faint lines are the 2011–12 base, never joined to the 2022–23 base</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -740,7 +921,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of the {SECT_T.y} accounts</span>
-            <p>Government saving fell to <b id="hh-gg-low">–</b> of GDP in <span id="hh-gg-low-y">–</span>, when revenue collapsed and relief spending rose; households saved <b id="hh-2020">–</b> that year, more than in any year since <span id="hh-2020-since">–</span>, because there was little to spend on. On the new base household saving reads <b id="hh-new">–</b> for {SECT_T.y}.</p>
+            <p>Government saving fell to <b id="hh-gg-low" set:text={T["hh-gg-low"]}></b> of GDP in <span id="hh-gg-low-y" set:text={T["hh-gg-low-y"]}></span>, when revenue collapsed and relief spending rose; households saved <b id="hh-2020" set:text={T["hh-2020"]}></b> that year, more than in any year since <span id="hh-2020-since" set:text={T["hh-2020-since"]}></span>, because there was little to spend on. On the new base household saving reads <b id="hh-new" set:text={T["hh-new"]}></b> for {SECT_T.y}.</p>
           </div>
         </div>
       </figure>
@@ -757,10 +938,10 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>Crops grew {SUB_T.crops}% a year; livestock {SUB_T.livestock}% and fishing {SUB_T.fishing}%</h3>
             <div class="sub">Average annual real growth of GVA by sub-industry, {SUB_T.from} to {SUB_T.to}, base 2011–12, with each sub-industry's share of nominal GVA in {SUB_T.to}</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-sub">–</div><div class="c" id="pv-sub-c">–</div></div>
+          <div class="plate-val"><div class="v" id="pv-sub" set:text={T["pv-sub"]}></div><div class="c" id="pv-sub-c" set:text={T["pv-sub-c"]}></div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-sub"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-sub" set:html={CH.sub()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NAS annual estimates, base 2011–12, compound average real growth from constant-price GVA, shares are of nominal total GVA</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -774,7 +955,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of the {SUB_T.to} accounts</span>
-            <p>Crops' share of the economy fell from <b id="sb-crops0">–</b> to <b id="sb-crops1">–</b> while livestock's rose from <b id="sb-live0">–</b> to <b id="sb-live1">–</b>: milk, eggs and meat now carry more of farm growth than grain. In manufacturing, food processing grew slowest, <b id="sb-food">–</b> a year, and machinery fastest, <b id="sb-mach">–</b>. Sub-industries come only with the revised estimates, so they end at {SUB_T.to}; the new base publishes them to <span id="sb-new">–</span>, in the data table below.</p>
+            <p>Crops' share of the economy fell from <b id="sb-crops0" set:text={T["sb-crops0"]}></b> to <b id="sb-crops1" set:text={T["sb-crops1"]}></b> while livestock's rose from <b id="sb-live0" set:text={T["sb-live0"]}></b> to <b id="sb-live1" set:text={T["sb-live1"]}></b>: milk, eggs and meat now carry more of farm growth than grain. In manufacturing, food processing grew slowest, <b id="sb-food" set:text={T["sb-food"]}></b> a year, and machinery fastest, <b id="sb-mach" set:text={T["sb-mach"]}></b>. Sub-industries come only with the revised estimates, so they end at {SUB_T.to}; the new base publishes them to <span id="sb-new" set:text={T["sb-new"]}></span>, in the data table below.</p>
           </div>
         </div>
       </figure>
@@ -791,10 +972,10 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>{REV_T.y} was first put at {REV_T.first}% and now stands at {REV_T.latest}%</h3>
             <div class="sub">Each year's real GDP growth at every estimate, as a change from its first advance estimate, percentage points, {REV_T.n} years on the 2011–12 base, computed from the published levels at each stage; the two years that moved most are in blue, the other {REV_T.n - 2} in grey</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-rev">–</div><div class="c" id="pv-rev-c">–</div></div>
+          <div class="plate-val"><div class="v" id="pv-rev" set:text={T["pv-rev"]}></div><div class="c" id="pv-rev-c" set:text={T["pv-rev-c"]}></div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-rev"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-rev" set:html={CH.rev()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NAS annual estimates at each stage, growth computed from levels against the previous year in the same release, the highlighted years are the largest moves up and down</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -809,7 +990,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of the {SPEND_T.y} accounts</span>
-            <p>Across the <b id="rv-n">–</b> years that have been revised, the average move from the first print to the latest was <b id="rv-mean">–</b> in either direction; <b id="rv-up">–</b> of them were revised up. The biggest upward move was <b id="rv-max">–</b>; the biggest downward, <b id="rv-min">–</b>. The 2022–23 base is too young to have a path of its own: <span id="rv-22">–</span>.</p>
+            <p>Across the <b id="rv-n" set:text={T["rv-n"]}></b> years that have been revised, the average move from the first print to the latest was <b id="rv-mean" set:text={T["rv-mean"]}></b> in either direction; <b id="rv-up" set:text={T["rv-up"]}></b> of them were revised up. The biggest upward move was <b id="rv-max" set:text={T["rv-max"]}></b>; the biggest downward, <b id="rv-min" set:text={T["rv-min"]}></b>. The 2022–23 base is too young to have a path of its own: <span id="rv-22" set:text={T["rv-22"]}></span>.</p>
           </div>
         </div>
       </figure>
@@ -826,15 +1007,10 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>From three and a half per cent to six: India's growth, decade by decade</h3>
             <div class="sub">Real GDP growth by fiscal year: the NSO back series at 2011–12 prices ({BACK_FIRST} to {BACK_LAST}), the 2011–12 base and the 2022–23 base, three separate series, never joined</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-lh">–</div><div class="c" id="pv-lh-c">–</div></div>
+          <div class="plate-val"><div class="v" id="pv-lh" set:text={T["pv-lh"]}></div><div class="c" id="pv-lh-c" set:text={T["pv-lh-c"]}></div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-lh">
-            <button class="chip" data-key="lh_back"><i style="background:#2E4BD8"></i>NSO back series, 2011–12 prices</button>
-            <button class="chip" data-key="lh_b11"><i style="background:#878D99"></i>Base 2011–12</button>
-            <button class="chip" data-key="lh_b22"><i style="background:#5F6675"></i>Base 2022–23</button>
-          </div>
-          <div class="plotzone" id="plot-lh"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-lh" set:html={CH.lh()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NAS, the back series is the NSO's own back-cast of the accounts onto the 2011–12 base (series=Back), growth computed from constant-price levels; its 2011–12 GDP level equals the current series' to within ₹3 crore, but the three lines are never joined</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -848,7 +1024,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of the {BACK_LAST} back series</span>
-            <p>On the back series, growth averaged <b id="lh-5079">–</b> a year from 1951-52 to 1979-80, <b id="lh-8090">–</b> through the 1980s and <b id="lh-9111">–</b> from 1991-92 to 2011-12. The economy shrank in {word(backNeg.length)} years, {list(backNeg)}; the deepest fall was <b id="lh-low">–</b>, and the best year <b id="lh-high">–</b>. The back series closes at <b id="lh-last-back">–</b>; the 2011–12 base opens at <b id="lh-first-b11">–</b>.</p>
+            <p>On the back series, growth averaged <b id="lh-5079" set:text={T["lh-5079"]}></b> a year from 1951-52 to 1979-80, <b id="lh-8090" set:text={T["lh-8090"]}></b> through the 1980s and <b id="lh-9111" set:text={T["lh-9111"]}></b> from 1991-92 to 2011-12. The economy shrank in {word(backNeg.length)} years, {list(backNeg)}; the deepest fall was <b id="lh-low" set:text={T["lh-low"]}></b>, and the best year <b id="lh-high" set:text={T["lh-high"]}></b>. The back series closes at <b id="lh-last-back" set:text={T["lh-last-back"]}></b>; the 2011–12 base opens at <b id="lh-first-b11" set:text={T["lh-first-b11"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -861,14 +1037,10 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>Saving caught up with investment, and both tripled</h3>
             <div class="sub">Gross saving and gross fixed capital formation, share of nominal GDP, current prices, NSO back series, {BACK_FIRST} to {BACK_LAST}</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-si">–</div><div class="c" id="pv-si-c">–</div></div>
+          <div class="plate-val"><div class="v" id="pv-si" set:text={T["pv-si"]}></div><div class="c" id="pv-si-c" set:text={T["pv-si-c"]}></div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-si">
-            <button class="chip" data-key="si_sav"><i style="background:#2E4BD8"></i>Gross saving</button>
-            <button class="chip" data-key="si_inv"><i style="background:#C47A16"></i>Fixed investment</button>
-          </div>
-          <div class="plotzone" id="plot-si"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-si" set:html={CH.si()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NAS back series, both are shares of nominal GDP: saving is published at current prices only; fixed investment excludes changes in stocks and valuables</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -881,7 +1053,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of the {BACK_LAST} back series</span>
-            <p>As a share of GDP, saving rose from <b id="si-first">–</b> to a peak of <b id="si-peak">–</b>; fixed investment from <b id="si-inv-first">–</b> to <b id="si-inv-last">–</b>. Investment ran above saving in {invAbove} of these {siYears} years.</p>
+            <p>As a share of GDP, saving rose from <b id="si-first" set:text={T["si-first"]}></b> to a peak of <b id="si-peak" set:text={T["si-peak"]}></b>; fixed investment from <b id="si-inv-first" set:text={T["si-inv-first"]}></b> to <b id="si-inv-last" set:text={T["si-inv-last"]}></b>. Investment ran above saving in {invAbove} of these {siYears} years.</p>
           </div>
         </div>
       </figure>
@@ -894,16 +1066,13 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <h3>Farming was {MAKE_T.v0}% of the economy in {MAKE_T.y0}; by {MAKE_T.y1} it was {MAKE_T.v1}%</h3>
             <div class="sub">Each industry's share of nominal GVA: the NSO back series ({MAKE_T.y0} to {BACK_LAST}), the 2011–12 base and the 2022–23 base, three separate series, each panel on its own scale</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-make">–</div><div class="c" id="pv-make-c">–</div></div>
+          <div class="plate-val"><div class="v" id="pv-make" set:text={T["pv-make"]}></div><div class="c" id="pv-make-c" set:text={T["pv-make-c"]}></div></div>
         </div>
         <div class="frame">
-          <div class="legend"><span class="chip"><i style="background:#2E4BD8"></i>NSO back series</span><span class="chip"><i style="background:#A3A9B4"></i>Base 2011–12</span><span class="chip"><i style="background:#161A22"></i>Base 2022–23</span></div>
-          <div class="plotzone" style="padding-top:26px">
-            <div id="grid-make" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:34px 44px"></div>
-          </div>
+          <div class="plotzone" id="grid-make" set:html={CH.make()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NAS, GVA by industry at current prices over total GVA; before 2004-05 the back series' industries do not add up exactly to its published total, so its shares need not sum to 100; the three rulers are never joined</span>
-            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
         <div class="explain">
@@ -914,7 +1083,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           </div>
           <div class="now">
             <span class="mk">As of the {MAKE_T.y1} accounts</span>
-            <p>Agriculture's share fell from <b id="mk-ag0">–</b> to <b id="mk-ag1">–</b> on the back series. Construction rose from <b id="mk-con0">–</b> to <b id="mk-con1">–</b>, and finance from <b id="mk-fin0">–</b> to <b id="mk-fin1">–</b>. Manufacturing peaked at <b id="mk-mfg-pk">–</b> and stood at <b id="mk-mfg1">–</b> in {MAKE_T.y1} on the new base: India's growth came from services and construction more than from factories.</p>
+            <p>Agriculture's share fell from <b id="mk-ag0" set:text={T["mk-ag0"]}></b> to <b id="mk-ag1" set:text={T["mk-ag1"]}></b> on the back series. Construction rose from <b id="mk-con0" set:text={T["mk-con0"]}></b> to <b id="mk-con1" set:text={T["mk-con1"]}></b>, and finance from <b id="mk-fin0" set:text={T["mk-fin0"]}></b> to <b id="mk-fin1" set:text={T["mk-fin1"]}></b>. Manufacturing peaked at <b id="mk-mfg-pk" set:text={T["mk-mfg-pk"]}></b> and stood at <b id="mk-mfg1" set:text={T["mk-mfg1"]}></b> in {MAKE_T.y1} on the new base: India's growth came from services and construction more than from factories.</p>
           </div>
         </div>
       </figure>
@@ -1007,7 +1176,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. "Estimates of Gross Domestic Product for the Second Quarter (July–September) of 2025–26." Press release, 28 November 2025. Constant-price levels retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>; growth rates are computed from levels, not taken from the rounded published rates.</p>
+        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. "Estimates of Gross Domestic Product for the Second Quarter (July–September) of 2025–26." Press release, 28 November 2025. Constant-price levels retrieved via the eSankhyiki API, vintage <b id="prov-vintage" set:text={T["prov-vintage"]}></b>; growth rates are computed from levels, not taken from the rounded published rates.</p>
         <p>The expenditure-side series, government consumption, exports, imports, and the annual accounts (NDP, GNI, taxes and subsidies on products, capital consumption, capital formation) are drawn from the same NAS releases, same vintage. The annual income-side accounts are not published quarterly; their detailed lines end two fiscal years behind the headline, and that gap is shown, not filled.</p>
         <p>Version 1.9 (October 2026) takes in every row the API serves for the national account: every indicator on both bases at constant and current prices, every estimate stage of every year, GVA by 15 industry rows and 18 sub-industries, capital formation by industry of use, saving, investment, value added and depreciation by institutional sector, quarterly levels, and the NSO back series' full accounts from 1950-51. Shares, growth, net national income and the discrepancy are computed from published levels. Base 2022–23 levels were checked by hand against MoSPI's press release of 31 August 2026 (National Accounts Statistics 2026): real GDP of ₹3,01,15,428 crore for 2024-25 and ₹3,24,70,100 crore for 2025-26, exact. That release restated every new-base year for the new producer price and industrial production indices; the API holds the restated figure under the old stage label. Three source defects are worked around and disclosed: taxes and subsidies labelled ₹ lakh but published in ₹ crore; MoSPI's growth rates in the API sometimes cut rather than rounded; and an approach cut the data endpoint ignores.</p>
         <p>Version 1.8 widened the intake to the rest of what the NAS tables serve: industry-wise real GVA for the eight sector groups (quarterly, with the release's own rounded growth rates kept as a cross-check), nominal GDP and the implied deflator (current-price over constant-price levels), the gross saving rate (saving is published at current prices only, so it appears as a share of nominal GDP), and the new 2022–23-base quarterly series as its own bundle: the two bases are never spliced. Q3 and Q4 of FY26, from the 27 February and 29 May 2026 releases, exist only on the new base. Not covered because the source does not serve it: national per-capita income: the API's per-capita indicators exist state-wise only, and this guide will not derive one from a population guess.</p>
@@ -1024,15 +1193,13 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
     </div>
     <div class="fine">
       <span>India Atlas, National Accounts</span>
-      <span>Vintage <span id="prov-vintage2">–</span>, Bases 2011–12 &amp; 2022–23</span>
+      <span>Vintage <span id="prov-vintage2" set:text={T["prov-vintage2"]}></span>, Bases 2011–12 &amp; 2022–23</span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
 
 </div>
-<script type="application/json" id="gdp-deep" set:html={JSON.stringify(GD).replace(/</g, "\\u003c")}></script>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/gdp.client.js";
 </script>
 </Base>

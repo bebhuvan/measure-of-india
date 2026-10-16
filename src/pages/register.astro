@@ -5,6 +5,7 @@ import fs from "node:fs";
 import { DOSSIERS } from "../dossiers/registry.js";
 import { dateStamp } from "../dossiers/display.js";
 import { fillPeriods } from "../dossiers/periods.js";
+import { BODY } from "../dossiers/register.charts.js";
 
 // same computed counts as the front page — the two must never disagree
 const SERIES_FILES = fs.readdirSync("data/series").filter((f) => f.endsWith(".json"));
@@ -34,7 +35,7 @@ const N_DOSSIERS = DOSSIERS.length;
       <div class="break ledger">
         <table>
           <thead><tr><th>Series</th><th>Code</th><th>{d.register.latestCol ?? "Latest"}</th><th>{d.register.agoCol ?? "Year ago"}</th><th>Vintage</th><th class="spark">{fillPeriods(d.register.historyCol, d.currentBundle)}</th></tr></thead>
-          <tbody id={d.register.id}></tbody>
+          <tbody id={d.register.id} set:html={BODY[d.register.id] ?? ""} />
         </table>
       </div>
     </section>
@@ -49,7 +50,4 @@ const N_DOSSIERS = DOSSIERS.length;
   </footer>
 
 </div>
-<script>
-  import "../dossiers/register.client.js";
-</script>
 </Base>

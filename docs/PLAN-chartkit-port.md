@@ -94,10 +94,28 @@ log below.
 
 | Guide | Owner | Plates ported | Client JS removed | Notes |
 |---|---|---|---|---|
-| cpi | | 1 of 24 (§02) | no | reference |
+| cpi | cpi port | 27 of 27 kit figures (every Plot plate, both grids) | yes | numbers, ledgers, tables in cpi.charts.js `NUM` at build time; table plates link the whole bundle CSV |
+| housing | people port | 8 of 8 | yes | `numbers()` in housing.charts.js |
+| poverty | people port | 7 of 7 | yes | spells drawn as separate dotted series, never joined |
+| population | people port | 12 of 12 | yes | estimates and projections separate series with a seam; pyramid in millions |
+| consumption | people port | 14 of 14 | yes | register and baskets built at build time |
+| jobs | people port | 21 of 21 | yes | deep-bundle slices moved to `jobsData()` in jobs.data.js; register sparklines at build time |
+| ilo | people port | 17 of 17 | yes | |
 
 ## Log
 
 - 2026-10-16 kit in `src/kit/`; build-time metrics; three-width figures; hover data on the
   figure; `finish()` pass; segment-aware label placement with a key fallback; lint-kit;
   specimen lint 0 finds; qc counts a kit figure once; lint-charts runs lint-kit.
+- 2026-10-16 (cpi port) bars and dumbbell `band`; multiples `band`, `boldHighlight`; line `inside:false`;
+  line's phone inside end label tested against line segments, not only points; strip label rows tested
+  at the height they are drawn. Specimen lint 0 finds.
+- 2026-10-16 (people port: housing, poverty, population, consumption, jobs, ilo) bars `sign`, `row.note`,
+  `refFill:false`, label stepped clear of a mark ring; line `series.dots` (true/'open'), `series.line:false`,
+  `series.endLabel`, notes keep clear of every label already drawn (seam, event, shade); dumbbell `refs`
+  (several rules, sided labels), `r.a0/r.b0` (earlier-round pale dots, labels step past them), `r.bColor`,
+  `from`, `endCol`; pyramid `counts` (values as given, `unit`, `tipUnit`); heatmap `fillAt(v, j)` (a scale
+  per column); multiples `seamAt`, `panel.domain`. Specimen lint 0 finds.
+- 2026-10-16 (industry port: factories, iip, manufacturing) kit additions: multiples `domain:{lo,hi,ticks}`
+  (a fixed shared scale, values clipped on both sides and said so); scatter `medians:false`,
+  `diag:{label}` (the y = x line), `point.color`. Specimen lint 0 finds.

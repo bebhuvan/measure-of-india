@@ -1,5 +1,7 @@
 ---
 import Learn from "../layouts/Learn.astro";
+import * as CH from "./yoy-and-mom.charts.js";
+const NUM = CH.NUM;
 ---
 <Learn
   title="Year-on-year, month-on-month · India Atlas"
@@ -64,12 +66,12 @@ import Learn from "../layouts/Learn.astro";
             <h3>The signal and the noise: one index, two measures of change</h3>
             <div class="sub">CPI combined, year-on-year and month-on-month, per cent, Jan 2021 to Dec 2025, m/m computed from the published index</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-ym">–</div><div class="c">Dec 2025, y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-ym" set:html={NUM["pv-ym"]}></div><div class="c">Dec 2025, y/y</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-ym"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-ym" set:html={CH.ym()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, CPI combined index, base 2012=100, vintage <span id="pf-ym">–</span>, m/m computed from published levels; not seasonally adjusted</span>
+            <span class="src">Source: MoSPI, CPI combined index, base 2012=100, vintage <span id="pf-ym" set:html={NUM["pf-ym"]}></span>, m/m computed from published levels; not seasonally adjusted</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -81,12 +83,12 @@ import Learn from "../layouts/Learn.astro";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>The blue line is the year-on-year rate; the thin grey line is the month-on-month change, computed from the same index. Watch how differently they behave. The grey line changes sign <b id="ev-flips">–</b> times in five years. The blue line never crosses zero once.</p>
+            <p>The blue line is the year-on-year rate; the thin grey line is the month-on-month change, computed from the same index. Watch how differently they behave. The grey line changes sign <b id="ev-flips" set:html={NUM["ev-flips"]}></b> times in five years. The blue line never crosses zero once.</p>
             <p>That is the seasons leaving the grey line and cancelling from the blue one. Vegetables flood the winter market and the grey line dips; the summer heat lifts them and it jumps. The blue line compares each month with its twin a year back, so the calendar cancels and only real change remains.</p>
           </div>
           <div class="now">
             <span class="mk">The July 2023 case</span>
-            <p>In July 2023 a tomato shock hit: the grey line jumped <b id="ex-mjump">–</b> in a single month, the largest monthly move in the window. A reader of the fast measure knew within weeks that something had happened. A reader of the slow measure watched the year-on-year line climb to <b id="ex-yjul">–</b> and learned, a few months later, how large the something was.</p>
+            <p>In July 2023 a tomato shock hit: the grey line jumped <b id="ex-mjump" set:html={NUM["ex-mjump"]}></b> in a single month, the largest monthly move in the window. A reader of the fast measure knew within weeks that something had happened. A reader of the slow measure watched the year-on-year line climb to <b id="ex-yjul" set:html={NUM["ex-yjul"]}></b> and learned, a few months later, how large the something was.</p>
             <p>Neither reader was wrong. The fast measure caught the event; the slow measure sized it. The mistake is asking one line to do the other's job.</p>
           </div>
         </div>
@@ -98,12 +100,12 @@ import Learn from "../layouts/Learn.astro";
   <section>
     <div class="sec-head"><span class="no">03</span><h2>The minimum unit of meaning</h2><span class="line"></span><span class="unit">A working rule, three months</span></div>
     <div class="numbers">
-      <div class="num"><div class="l">m/m, Dec 2025</div><div class="v" id="n-ym-mom">–</div><div class="d">one ordinary month</div></div>
-      <div class="num"><div class="l">y/y, Dec 2025</div><div class="v acc" id="n-ym-yoy">–</div><div class="d">the same month, measured slowly</div></div>
-      <div class="num"><div class="l">Largest monthly move, 2021–25</div><div class="v" id="n-ym-max">–</div><div class="d">Jul 2023, the tomato shock</div></div>
-      <div class="num"><div class="l">Sign changes in the m/m line</div><div class="v" id="n-ym-flips">–</div><div class="d">of 59 month-to-month transitions</div></div>
+      <div class="num"><div class="l">m/m, Dec 2025</div><div class="v" id="n-ym-mom" set:html={NUM["n-ym-mom"]}></div><div class="d">one ordinary month</div></div>
+      <div class="num"><div class="l">y/y, Dec 2025</div><div class="v acc" id="n-ym-yoy" set:html={NUM["n-ym-yoy"]}></div><div class="d">the same month, measured slowly</div></div>
+      <div class="num"><div class="l">Largest monthly move, 2021–25</div><div class="v" id="n-ym-max" set:html={NUM["n-ym-max"]}></div><div class="d">Jul 2023, the tomato shock</div></div>
+      <div class="num"><div class="l">Sign changes in the m/m line</div><div class="v" id="n-ym-flips" set:html={NUM["n-ym-flips"]}></div><div class="d">of 59 month-to-month transitions</div></div>
     </div>
-    <p style="margin-top:40px">So how much speed can you trust? A working rule: one monthly print is weather, and three consecutive prints pointing the same way are the beginning of a climate. The rule exists because of what the numbers block shows. In five years the fast line flips direction <b id="ar-flips">–</b> times; treating any single flip as news would have meant crying turn, on average, once a quarter.</p>
+    <p style="margin-top:40px">So how much speed can you trust? A working rule: one monthly print is weather, and three consecutive prints pointing the same way are the beginning of a climate. The rule exists because of what the numbers block shows. In five years the fast line flips direction <b id="ar-flips" set:html={NUM["ar-flips"]}></b> times; treating any single flip as news would have meant crying turn, on average, once a quarter.</p>
     <p>Used together, the two measures are a sequence, not a contest. The monthly line is the smoke alarm: quick to sound, often wrong, worth hearing. The yearly line is the verdict: slow, calm, and the only number the RBI's target actually applies to.</p>
   </section>
 
@@ -115,7 +117,7 @@ import Learn from "../layouts/Learn.astro";
         <span class="no">i.</span>
         <div>
           <h3>“One month tells a story.”</h3>
-          <p>One month tells an event. The monthly line in this window dips below zero in <b id="mr1-neg">–</b> of sixty months, and in every one of those months the basket still cost more than a year earlier. A story needs three consecutive months, minimum.</p>
+          <p>One month tells an event. The monthly line in this window dips below zero in <b id="mr1-neg" set:html={NUM["mr1-neg"]}></b> of sixty months, and in every one of those months the basket still cost more than a year earlier. A story needs three consecutive months, minimum.</p>
         </div>
       </li>
       <li>
@@ -149,7 +151,4 @@ import Learn from "../layouts/Learn.astro";
     <p>Companion guide: <a href="/guides/cpi/">Consumer Price Index</a>.</p>
   </div>
 
-<script>
-  import "./yoy-and-mom.client.js";
-</script>
 </Learn>

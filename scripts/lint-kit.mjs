@@ -63,7 +63,16 @@ function hits([ax, ay, bx, by], b) {
   return true;
 }
 
+// A composed figure (kit panels()) nests each panel as its own <svg x y>: lint each panel in its
+// own coordinates, then what is drawn outside them.
 export function lintSVG(svg) {
+  const inner = [...svg.slice(4).matchAll(/<svg\b[^>]*\sx="[^"]*"[\s\S]*?<\/svg>/g)];
+  if (!inner.length) return lintFlat(svg);
+  let rest = svg; const finds = [];
+  inner.forEach((m, i) => { finds.push(...lintFlat(m[0]).map((f) => `panel ${i + 1}: ${f}`)); rest = rest.replace(m[0], ""); });
+  return finds.concat(lintFlat(rest));
+}
+function lintFlat(svg) {
   const W = +attr(svg.slice(0, 400), "width"), H = +attr(svg.slice(0, 400), "height");
   const T = texts(svg), S = strokes(svg), finds = [];
   const D = [...svg.matchAll(/<circle\b([^>]*)\/>/g)].map((m) => ({ x: +attr(m[1], "cx"), y: +attr(m[1], "cy"), r: +attr(m[1], "r") }));
@@ -85,22 +94,26 @@ export function lintSVG(svg) {
 export function lintHTML(html, where = "") {
   const out = [];
   let k = 0;
-  for (const m of html.matchAll(/<div class="akf-(wide|mid|phone)"[^>]*>(<svg[\s\S]*?<\/svg>)<\/div>/g)) {
+  // a drawing is usually one svg; a plate that sets two charts side by side (payments' pairs)
+  // holds several in one drawing, each linted on its own
+  for (const m of html.matchAll(/<div class="akf-(wide|mid|phone)"[^>]*>([\s\S]*?)<\/div>(?=<div class="akf-|<\/div>)/g)) {
     k++;
-    for (const f of lintSVG(m[2])) out.push(`${where} chart ${Math.ceil(k / 3)} (${m[1]}): ${f}`);
+    for (const sv of m[2].matchAll(/<svg[\s\S]*?<\/svg>/g)) for (const f of lintSVG(sv[0])) out.push(`${where} chart ${Math.ceil(k / 3)} (${m[1]}): ${f}`);
   }
   return { charts: Math.ceil(k / 3), finds: out };
 }
 
+export const kitAsHTML = (json) => Object.values(JSON.parse(json)).map((svg) => `<div class="akf-wide">${svg}</div>`).join("");
 async function read(src) {
   if (/^https?:/.test(src)) return [[src, await (await fetch(src)).text()]];
   const st = fs.statSync(src);
   if (st.isFile()) return [[src, fs.readFileSync(src, "utf8")]];
-  const files = []; const walk = (d) => { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, e.name); if (e.isDirectory()) walk(p); else if (p.endsWith(".html")) files.push(p); } }; walk(src);
-  return files.map((f) => [f, fs.readFileSync(f, "utf8")]);
+  const files = []; const walk = (d) => { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, e.name); if (e.isDirectory()) walk(p); else if (p.endsWith(".html") || p.endsWith("kit.json")) files.push(p); } }; walk(src);
+  // a built page's wide and mid drawings live in kit.json beside it (src/kit/figure.js)
+  return files.map((f) => [f, f.endsWith("kit.json") ? kitAsHTML(fs.readFileSync(f, "utf8")) : fs.readFileSync(f, "utf8")]);
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const srcs = process.argv.slice(2);
   if (!srcs.length) { console.error("usage: lint-kit.mjs <file|url|dir> ..."); process.exit(2); }
   let charts = 0, bad = 0;

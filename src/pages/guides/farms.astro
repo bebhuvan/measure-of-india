@@ -1,6 +1,5 @@
 ---
 import { mastheadStamp } from "../../dossiers/headline.js";
-import fs from "node:fs";
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
 import GuideData from "../../components/GuideData.astro";
@@ -8,39 +7,10 @@ import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["farms"];
-const load = (slug) => JSON.parse(fs.readFileSync(`data/series/${slug}.json`, "utf8"));
-// The state tables, the long state series and the climate guide's monthly rainfall are large;
-// the page carries build-time picks of what the plates draw. The whole files are in the
-// downloads and the every-series table below (CONTRACT-render: page JS budget).
-const lastIdx = (a) => { for (let i = a.length - 1; i >= 0; i--) if (a[i] != null) return i; return -1; };
-const stateName = (label) => label.split(":")[0].trim();
-// the states guide's Handbook of Statistics on Indian States tables (read only): output by crop
-// and yield, the latest year every table shares
-const HBS = { rice: "t058", wheat: "t059", coarse_cereals: "t060", pulses: "t061", foodgrains: "t062", oilseeds: "t063", cotton: "t064", sugarcane: "t065", jute_mesta: "t066" };
-const hbsLatest = (t) => {
-  const b = load(`states-hbs-${t}`), i = b.dates.length - 1;
-  return { year: b.dates[i], unit: b.meta.unit, ai: b.series.all_india?.data[i] ?? null,
-    rows: Object.entries(b.series).filter(([k, s]) => k !== "all_india" && s.data[i] != null).map(([k, s]) => ({ k, name: stateName(s.label), v: s.data[i] })) };
-};
-const SP = load("farms-states-production");
-const LONG_KEYS = ["all_india__wheat", "punjab__wheat", "haryana__wheat", "uttar_pradesh__wheat", "uttar_pradesh_undivided__wheat", "madhya_pradesh__wheat", "madhya_pradesh_undivided__wheat", "rajasthan__wheat",
-  "all_india__rice", "punjab__rice", "west_bengal__rice", "uttar_pradesh__rice", "uttar_pradesh_undivided__rice", "andhra_pradesh__rice", "andhra_pradesh_undivided__rice", "telangana__rice", "odisha__rice", "chhattisgarh__rice", "madhya_pradesh_undivided__rice"];
-const FERT = load("farms-states-fertiliser");
-const fi = FERT.dates.length - 1;
-const CRU = load("climate-cru-monthly");
-const jjas = {};
-CRU.dates.forEach((d, i) => { const m = +d.slice(5, 7), y = d.slice(0, 4); if (m >= 6 && m <= 9) { (jjas[y] ??= []).push(CRU.series.pr.data[i]); } });
-const CPIAL = load("cpialrl-1986");
-const PICK = {
-  states: Object.fromEntries(Object.entries(HBS).map(([k, t]) => [k, hbsLatest(t)])),
-  yields: { rice: hbsLatest("t080"), wheat: hbsLatest("t081") },
-  long: { dates: SP.dates, series: Object.fromEntries(LONG_KEYS.filter((k) => SP.series[k]).map((k) => [k, { label: SP.series[k].label, data: SP.series[k].data }])) },
-  fert: { year: FERT.dates[fi], dates: FERT.dates, rows: Object.entries(FERT.series).map(([k, s]) => ({ k, name: (s.state ?? stateName(s.label)).replace(/ \(average\)$/, ""), v: s.data[fi], first: s.data[0] })),
-    ai: Object.entries(FERT.series).find(([k]) => /all_india/.test(k))?.[1].data ?? [] },
-  monsoon: Object.entries(jjas).filter(([, v]) => v.length === 4 && v.every((x) => x != null)).map(([y, v]) => ({ y: +y, mm: Math.round(v.reduce((a, b) => a + b, 0) * 10) / 10 })),
-  cpial: { dates: CPIAL.dates, al: CPIAL.series.al.data },
-};
-const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
+// The plates are drawn at build time (src/dossiers/farms.charts.js) and every number id is set
+// here from the same computations, so the page carries no bundle JSON and no chart code.
+import * as CH from "../../dossiers/farms.charts.js";
+const N = CH.numbers();
 ---
 <Base
   title="Farms and food · India Atlas"
@@ -52,7 +22,6 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
   canonical="https://atlas.thisindianlife.today/guides/farms/"
   ogImage={`/og/${D.slug}.png`}
 >
-<script type="application/json" id="farms-data" set:html={pickJson}></script>
 <div class="page">
 
   <div class="titleblock break">
@@ -65,23 +34,23 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
       <span>Source <b>Agriculture and food ministries' statistics, as the RBI publishes them (DBIE)</b></span>
       <span>Frequency <b>Annual, crop years (July to June)</b></span>
       <span>Rulers <b>Final estimates and the latest advance estimate, never joined</b></span>
-      <span>Latest <b id="m-latest">–</b></span>
+      <span>Latest <b id="m-latest" set:html={N["m-latest"]}></b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Foodgrains harvested, final estimate</div><div class="v acc" id="n-fg">–</div><div class="d" id="d-fg">–</div><div class="nspark" id="nspark-fg"></div></div>
-      <div class="num"><div class="l">Wheat from one hectare</div><div class="v" id="n-yield">–</div><div class="d" id="d-yield">–</div></div>
-      <div class="num"><div class="l">Support price for paddy, a quintal</div><div class="v" id="n-msp">–</div><div class="d" id="d-msp">–</div></div>
-      <div class="num"><div class="l">Grain in the central pool, 1 April</div><div class="v" id="n-stock">–</div><div class="d" id="d-stock">–</div></div>
+      <div class="num"><div class="l">Foodgrains harvested, final estimate</div><div class="v acc" id="n-fg" set:html={N["n-fg"]}></div><div class="d" id="d-fg" set:html={N["d-fg"]}></div><div class="nspark" id="nspark-fg" set:html={N["nspark-fg"]}></div></div>
+      <div class="num"><div class="l">Wheat from one hectare</div><div class="v" id="n-yield" set:html={N["n-yield"]}></div><div class="d" id="d-yield" set:html={N["d-yield"]}></div></div>
+      <div class="num"><div class="l">Support price for paddy, a quintal</div><div class="v" id="n-msp" set:html={N["n-msp"]}></div><div class="d" id="d-msp" set:html={N["d-msp"]}></div></div>
+      <div class="num"><div class="l">Grain in the central pool, 1 April</div><div class="v" id="n-stock" set:html={N["n-stock"]}></div><div class="d" id="d-stock" set:html={N["d-stock"]}></div></div>
     </div>
   </div>
 
   <!-- § 01 the current reading: generated prose (pipeline/slots.yml, farms). Inputs: farms-production (current), farms-yield, farms-area; facts cross.farms (farms-advance, farms-msp, farms-pds, farms-pds-latest) -->
   <section>
-    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading" set:html={N["u-reading"]}></span></div>
     <div class="reading-top">
-      <div><span class="rk">Foodgrains, final estimate</span><div class="big" id="rb-fg">–</div></div>
-      <p class="rt-cap">Rice, wheat, coarse cereals and pulses harvested in the crop year <span id="rt-fy">–</span>, in million tonnes, on the agriculture ministry's final estimates.</p>
-      <div class="rt-side"><span class="rk" id="rb-side-l">–</span><div class="rt-side-v" id="rb-side">–</div></div>
+      <div><span class="rk">Foodgrains, final estimate</span><div class="big" id="rb-fg" set:html={N["rb-fg"]}></div></div>
+      <p class="rt-cap">Rice, wheat, coarse cereals and pulses harvested in the crop year <span id="rt-fy" set:html={N["rt-fy"]}></span>, in million tonnes, on the agriculture ministry's final estimates.</p>
+      <div class="rt-side"><span class="rk" id="rb-side-l" set:html={N["rb-side-l"]}></span><div class="rt-side-v" id="rb-side" set:html={N["rb-side"]}></div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -99,7 +68,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
   <section>
     <div class="sec-head"><span class="no">02</span><h2>From one hectare to the plate</h2><span class="line"></span><span class="unit">Wheat, yield times the support price, rupees a hectare</span></div>
     <div class="prose">
-      <p>A hectare is a square a hundred metres on each side, about two and a half acres. Most Indian farms are smaller than that. On it, a wheat farmer in an average year now harvests about <b id="lr-yield">–</b> of grain. If every kilo were sold to the government at the minimum support price, that hectare would bring in <b id="lr-gross">–</b> before a rupee is spent on seed, fertiliser, diesel, water, labour or rent.</p>
+      <p>A hectare is a square a hundred metres on each side, about two and a half acres. Most Indian farms are smaller than that. On it, a wheat farmer in an average year now harvests about <b id="lr-yield" set:html={N["lr-yield"]}></b> of grain. If every kilo were sold to the government at the minimum support price, that hectare would bring in <b id="lr-gross" set:html={N["lr-gross"]}></b> before a rupee is spent on seed, fertiliser, diesel, water, labour or rent.</p>
       <p>That is the gross figure, and it is generous. Only some farmers sell to the government at all: procurement is concentrated in a few states, and elsewhere wheat often sells below the support price. The costs come out of it. A family with half a hectare and one crop of wheat lives on a fraction of this. The chart shows how the gross figure has grown since 1975-76, in the rupees of each year.</p>
     </div>
     <div class="break">
@@ -109,10 +78,10 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
             <h3>A hectare of wheat sold at the support price brings in far more rupees than it used to</h3>
             <div class="sub">All India wheat yield (kg per hectare) times the wheat minimum support price (rupees a kg), by crop year: what one average hectare would fetch at the support price, before costs, in the rupees of each year (not adjusted for inflation). Computed by India Atlas.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-hectare">–</div><div class="c" id="pc-hectare">–</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-hectare" set:html={N["pv-hectare"]}></div><div class="c" id="pc-hectare" set:html={N["pc-hectare"]}></div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-hectare" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-hectare" set:html={CH.hectare()} />
           <div class="plotfoot">
             <span class="src">Source: Agriculture ministry, yield per hectare and minimum support prices, as published by the RBI (DBIE reports 886 and 461). Product computed by India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -125,7 +94,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
           </div>
           <div class="now">
             <span class="mk">As of the 2024-25 crop</span>
-            <p>In <span id="ex-ha-fy">–</span>, an average hectare gave <b id="ex-ha-yield">–</b> of wheat. At the support price of <b id="ex-ha-msp">–</b> a quintal, that is <b id="ex-ha-gross">–</b>. In <span id="ex-ha-fy0">–</span>, the first year in the table, the same sum was <b id="ex-ha-gross0">–</b>.</p>
+            <p>In <span id="ex-ha-fy" set:html={N["ex-ha-fy"]}></span>, an average hectare gave <b id="ex-ha-yield" set:html={N["ex-ha-yield"]}></b> of wheat. At the support price of <b id="ex-ha-msp" set:html={N["ex-ha-msp"]}></b> a quintal, that is <b id="ex-ha-gross" set:html={N["ex-ha-gross"]}></b>. In <span id="ex-ha-fy0" set:html={N["ex-ha-fy0"]}></span>, the first year in the table, the same sum was <b id="ex-ha-gross0" set:html={N["ex-ha-gross0"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -151,17 +120,13 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
       <figure id="cb-harvest" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>India grows <span id="tt-harvest">–</span> times the grain it grew in 1950-51</h3>
+            <h3>India grows <span id="tt-harvest" set:html={N["tt-harvest"]}></span> times the grain it grew in 1950-51</h3>
             <div class="sub">Foodgrain production, million tonnes, crop years. The line is the agriculture ministry's final estimates; the open circle is the latest advance estimate, a separate ruler that will be revised.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-harvest">–</div><div class="c" id="pc-harvest">–</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-harvest" set:html={N["pv-harvest"]}></div><div class="c" id="pc-harvest" set:html={N["pc-harvest"]}></div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Final estimates</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #2E4BD8"></i><span id="lg-ae">–</span></button>
-          </div>
-          <div class="plotzone"><div id="plot-harvest" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-harvest" set:html={CH.harvest()} />
           <div class="plotfoot">
             <span class="src">Source: Agriculture ministry, as published by the RBI (DBIE report 623; Handbook of Statistics on the Indian Economy).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -174,7 +139,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
           </div>
           <div class="now">
             <span class="mk">As of the 2025-26 advance estimate</span>
-            <p>The final estimate for <span id="ex-hv-fy">–</span> is <b id="ex-hv-fg">–</b>, against <b id="ex-hv-fg0">–</b> in <span id="ex-hv-fy0">–</span>. The ministry's <span id="ex-hv-stage">–</span> for <span id="ex-hv-aey">–</span> put the harvest at <b id="ex-hv-ae">–</b>, a figure that will be revised.</p>
+            <p>The final estimate for <span id="ex-hv-fy" set:html={N["ex-hv-fy"]}></span> is <b id="ex-hv-fg" set:html={N["ex-hv-fg"]}></b>, against <b id="ex-hv-fg0" set:html={N["ex-hv-fg0"]}></b> in <span id="ex-hv-fy0" set:html={N["ex-hv-fy0"]}></span>. The ministry's <span id="ex-hv-stage" set:html={N["ex-hv-stage"]}></span> for <span id="ex-hv-aey" set:html={N["ex-hv-aey"]}></span> put the harvest at <b id="ex-hv-ae" set:html={N["ex-hv-ae"]}></b>, a figure that will be revised.</p>
           </div>
         </div>
       </figure>
@@ -187,10 +152,10 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
             <h3>Wheat and rice carried the rise; coarse cereals and pulses lagged</h3>
             <div class="sub">Production of each foodgrain, million tonnes, final estimates, with the latest advance estimate as an open circle. Coarse cereals are jowar, bajra, maize, ragi, barley and the small millets.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-grains">–</div><div class="c">rice, latest final year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-grains" set:html={N["pv-grains"]}></div><div class="c">rice, latest final year</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-grains" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-grains" set:html={CH.grains()} />
           <div class="plotfoot">
             <span class="src">Source: Agriculture ministry, as published by the RBI (DBIE report 623).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -203,7 +168,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
           </div>
           <div class="now">
             <span class="mk">As of the 2024-25 crop</span>
-            <p>In <span id="ex-gr-fy">–</span>: rice <b id="ex-gr-rice">–</b>, wheat <b id="ex-gr-wheat">–</b>, coarse cereals <b id="ex-gr-coarse">–</b> and pulses <b id="ex-gr-pulses">–</b>.</p>
+            <p>In <span id="ex-gr-fy" set:html={N["ex-gr-fy"]}></span>: rice <b id="ex-gr-rice" set:html={N["ex-gr-rice"]}></b>, wheat <b id="ex-gr-wheat" set:html={N["ex-gr-wheat"]}></b>, coarse cereals <b id="ex-gr-coarse" set:html={N["ex-gr-coarse"]}></b> and pulses <b id="ex-gr-pulses" set:html={N["ex-gr-pulses"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -216,10 +181,10 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
             <h3>Most of the gain came from each hectare giving more</h3>
             <div class="sub">Yield per hectare, kg, final estimates, crop years, 1950-51 on. Rice yield is milled rice.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-yield">–</div><div class="c">wheat yield, times its 1950-51 level</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-yield" set:html={N["pv-yield"]}></div><div class="c">wheat yield, times its 1950-51 level</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-yield" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-yield" set:html={CH.yields()} />
           <div class="plotfoot">
             <span class="src">Source: Agriculture ministry, as published by the RBI (DBIE report 886).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -232,7 +197,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
           </div>
           <div class="now">
             <span class="mk">As of the 2024-25 crop</span>
-            <p>An average hectare gave <b id="ex-yl-wheat">–</b> of wheat, <b id="ex-yl-rice">–</b> of rice and <b id="ex-yl-pulses">–</b> of pulses in <span id="ex-yl-fy">–</span>. In 1950-51 the figures were <b id="ex-yl-wheat0">–</b>, <b id="ex-yl-rice0">–</b> and <b id="ex-yl-pulses0">–</b>.</p>
+            <p>An average hectare gave <b id="ex-yl-wheat" set:html={N["ex-yl-wheat"]}></b> of wheat, <b id="ex-yl-rice" set:html={N["ex-yl-rice"]}></b> of rice and <b id="ex-yl-pulses" set:html={N["ex-yl-pulses"]}></b> of pulses in <span id="ex-yl-fy" set:html={N["ex-yl-fy"]}></span>. In 1950-51 the figures were <b id="ex-yl-wheat0" set:html={N["ex-yl-wheat0"]}></b>, <b id="ex-yl-rice0" set:html={N["ex-yl-rice0"]}></b> and <b id="ex-yl-pulses0" set:html={N["ex-yl-pulses0"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -242,13 +207,13 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
       <figure id="cb-area" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>Land under grain has grown little since the 1960s, and coarse cereals lost <span id="tt-area">–</span> of theirs</h3>
+            <h3>Land under grain has grown little since the 1960s, and coarse cereals lost <span id="tt-area" set:html={N["tt-area"]}></span> of theirs</h3>
             <div class="sub">Area under each foodgrain, million hectares, final estimates, crop years.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-area">–</div><div class="c">million hectares under foodgrains, latest final year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-area" set:html={N["pv-area"]}></div><div class="c">million hectares under foodgrains, latest final year</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-area" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-area" set:html={CH.area()} />
           <div class="plotfoot">
             <span class="src">Source: Agriculture ministry, as published by the RBI (DBIE report 625).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -261,7 +226,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
           </div>
           <div class="now">
             <span class="mk">As of the 2024-25 crop</span>
-            <p>In <span id="ex-ar-fy">–</span>, rice covered <b id="ex-ar-rice">–</b>, wheat <b id="ex-ar-wheat">–</b>, coarse cereals <b id="ex-ar-coarse">–</b> and pulses <b id="ex-ar-pulses">–</b> million hectares. Coarse cereals covered <b id="ex-ar-coarse0">–</b> million hectares in 1950-51.</p>
+            <p>In <span id="ex-ar-fy" set:html={N["ex-ar-fy"]}></span>, rice covered <b id="ex-ar-rice" set:html={N["ex-ar-rice"]}></b>, wheat <b id="ex-ar-wheat" set:html={N["ex-ar-wheat"]}></b>, coarse cereals <b id="ex-ar-coarse" set:html={N["ex-ar-coarse"]}></b> and pulses <b id="ex-ar-pulses" set:html={N["ex-ar-pulses"]}></b> million hectares. Coarse cereals covered <b id="ex-ar-coarse0" set:html={N["ex-ar-coarse0"]}></b> million hectares in 1950-51.</p>
           </div>
         </div>
       </figure>
@@ -278,10 +243,10 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
             <h3>Soyabean grew from almost nothing, cotton leapt after 2002, and jute has stood still for decades</h3>
             <div class="sub">Production of each commercial crop, final estimates, crop years, each panel on its own scale and in its own unit. Open circles: the latest advance estimate.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-crops">–</div><div class="c">million tonnes of sugarcane, latest final year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-crops" set:html={N["pv-crops"]}></div><div class="c">million tonnes of sugarcane, latest final year</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-crops" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-crops" set:html={CH.crops()} />
           <div class="plotfoot">
             <span class="src">Source: Agriculture ministry, Tea Board and Coffee Board, as published by the RBI (DBIE report 624).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -294,7 +259,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
           </div>
           <div class="now">
             <span class="mk">As of the 2024-25 crop</span>
-            <p>In <span id="ex-cr-fy">–</span> India grew <b id="ex-cr-sugar">–</b> of sugarcane, <b id="ex-cr-oil">–</b> of oilseeds, <b id="ex-cr-cotton">–</b> of cotton and <b id="ex-cr-tea">–</b> of tea.</p>
+            <p>In <span id="ex-cr-fy" set:html={N["ex-cr-fy"]}></span> India grew <b id="ex-cr-sugar" set:html={N["ex-cr-sugar"]}></b> of sugarcane, <b id="ex-cr-oil" set:html={N["ex-cr-oil"]}></b> of oilseeds, <b id="ex-cr-cotton" set:html={N["ex-cr-cotton"]}></b> of cotton and <b id="ex-cr-tea" set:html={N["ex-cr-tea"]}></b> of tea.</p>
           </div>
         </div>
       </figure>
@@ -307,16 +272,10 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
             <h3>Three rulers for one harvest: the index of all crops on each base</h3>
             <div class="sub">Index of agricultural production, all crops, crop years, on three bases (triennium ending 1981-82, 1993-94 and 2007-08 = 100). Drawn side by side and never joined: each base weights crops by their value in its own years.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-index">–</div><div class="c" id="pc-index">–</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-index" set:html={N["pv-index"]}></div><div class="c" id="pc-index" set:html={N["pc-index"]}></div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#ABB7EF"></i>TE 1981-82 = 100</button>
-            <button class="chip"><i style="background:#778AE6"></i>TE 1993-94 = 100</button>
-            <button class="chip"><i style="background:#2E4BD8"></i>TE 2007-08 = 100</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #2E4BD8"></i>Advance estimate</button>
-          </div>
-          <div class="plotzone"><div id="plot-index" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-index" set:html={CH.index()} />
           <div class="plotfoot">
             <span class="src">Source: Agriculture ministry, index numbers of agricultural production, as published by the RBI (DBIE reports 459 and 460).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -329,7 +288,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
           </div>
           <div class="now">
             <span class="mk">As of the 2024-25 crop</span>
-            <p>On the 2007-08 base, the all-crops production index stood at <b id="ex-ix-all">–</b> in <span id="ex-ix-fy">–</span>, foodgrains at <b id="ex-ix-fg">–</b> and non-foodgrains at <b id="ex-ix-nfg">–</b>.</p>
+            <p>On the 2007-08 base, the all-crops production index stood at <b id="ex-ix-all" set:html={N["ex-ix-all"]}></b> in <span id="ex-ix-fy" set:html={N["ex-ix-fy"]}></span>, foodgrains at <b id="ex-ix-fg" set:html={N["ex-ix-fg"]}></b> and non-foodgrains at <b id="ex-ix-nfg" set:html={N["ex-ix-nfg"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -346,10 +305,10 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
             <h3>The farmed area stopped growing long ago; irrigation and double cropping kept rising</h3>
             <div class="sub">Net sown area (land sown at least once in the year), gross sown area (counting each season's crop), and gross irrigated area, million hectares, 1950-51 on.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-land">–</div><div class="c">of gross sown area irrigated, latest year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-land" set:html={N["pv-land"]}></div><div class="c">of gross sown area irrigated, latest year</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-land" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-land" set:html={CH.land()} />
           <div class="plotfoot">
             <span class="src">Source: Agriculture ministry, land use statistics, as published by the RBI (DBIE report 463). Irrigated share computed by India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -362,7 +321,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
           </div>
           <div class="now">
             <span class="mk">As of 2024-25</span>
-            <p>India sowed <b id="ex-ld-net">–</b> million hectares at least once and <b id="ex-ld-gross">–</b> counting every season, a cropping intensity of <b id="ex-ld-ci">–</b>. Of the gross area, <b id="ex-ld-irr">–</b> was irrigated, against <b id="ex-ld-irr0">–</b> in 1950-51.</p>
+            <p>India sowed <b id="ex-ld-net" set:html={N["ex-ld-net"]}></b> million hectares at least once and <b id="ex-ld-gross" set:html={N["ex-ld-gross"]}></b> counting every season, a cropping intensity of <b id="ex-ld-ci" set:html={N["ex-ld-ci"]}></b>. Of the gross area, <b id="ex-ld-irr" set:html={N["ex-ld-irr"]}></b> was irrigated, against <b id="ex-ld-irr0" set:html={N["ex-ld-irr0"]}></b> in 1950-51.</p>
           </div>
         </div>
       </figure>
@@ -375,10 +334,10 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
             <h3>Fertiliser per hectare climbed steeply after the Green Revolution, then levelled off</h3>
             <div class="sub">Fertiliser used (nitrogen, phosphate and potash, nutrient tonnes) per hectare of gross sown area, kg, 1950-51 on. Computed by India Atlas from RBI's land-use table.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-fert">–</div><div class="c">kg per hectare, latest year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-fert" set:html={N["pv-fert"]}></div><div class="c">kg per hectare, latest year</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-fert" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-fert" set:html={CH.fert()} />
           <div class="plotfoot">
             <span class="src">Source: Agriculture ministry, as published by the RBI (DBIE report 463). Per hectare computed by India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -391,7 +350,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
           </div>
           <div class="now">
             <span class="mk">As of 2024-25</span>
-            <p>India used <b id="ex-ft-tot">–</b> lakh tonnes of nutrients in <span id="ex-ft-fy">–</span>, about <b id="ex-ft-ha">–</b> per hectare sown, and <b id="ex-ft-pest">–</b> thousand tonnes of pesticides in <span id="ex-ft-pfy">–</span>, the latest year printed.</p>
+            <p>India used <b id="ex-ft-tot" set:html={N["ex-ft-tot"]}></b> lakh tonnes of nutrients in <span id="ex-ft-fy" set:html={N["ex-ft-fy"]}></span>, about <b id="ex-ft-ha" set:html={N["ex-ft-ha"]}></b> per hectare sown, and <b id="ex-ft-pest" set:html={N["ex-ft-pest"]}></b> thousand tonnes of pesticides in <span id="ex-ft-pfy" set:html={N["ex-ft-pfy"]}></span>, the latest year printed.</p>
           </div>
         </div>
       </figure>
@@ -405,17 +364,13 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
       <figure id="cb-msp" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>The support price for paddy is <span id="tt-msp">–</span> times what it was in 1975-76</h3>
+            <h3>The support price for paddy is <span id="tt-msp" set:html={N["tt-msp"]}></span> times what it was in 1975-76</h3>
             <div class="sub">Minimum support price, rupees a quintal (100 kg), fair average quality, by crop year: common paddy (kharif) and wheat (rabi).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-msp">–</div><div class="c" id="pc-msp">–</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-msp" set:html={N["pv-msp"]}></div><div class="c" id="pc-msp" set:html={N["pc-msp"]}></div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Paddy (common)</button>
-            <button class="chip"><i style="background:#C47A16"></i>Wheat</button>
-          </div>
-          <div class="plotzone"><div id="plot-msp" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-msp" set:html={CH.msp()} />
           <div class="plotfoot">
             <span class="src">Source: Commission for Agricultural Costs and Prices and the agriculture ministry, as published by the RBI (DBIE reports 461 and 462).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -428,7 +383,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
           </div>
           <div class="now">
             <span class="mk">As of the 2026-27 kharif prices</span>
-            <p>The paddy price for <span id="ex-ms-py">–</span> is <b id="ex-ms-p">–</b> a quintal, up <b id="ex-ms-pr">–</b> on the year before. Wheat for <span id="ex-ms-wy">–</span> is <b id="ex-ms-w">–</b>, up <b id="ex-ms-wr">–</b>.</p>
+            <p>The paddy price for <span id="ex-ms-py" set:html={N["ex-ms-py"]}></span> is <b id="ex-ms-p" set:html={N["ex-ms-p"]}></b> a quintal, up <b id="ex-ms-pr" set:html={N["ex-ms-pr"]}></b> on the year before. Wheat for <span id="ex-ms-wy" set:html={N["ex-ms-wy"]}></span> is <b id="ex-ms-w" set:html={N["ex-ms-w"]}></b>, up <b id="ex-ms-wr" set:html={N["ex-ms-wr"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -439,17 +394,12 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
         <div class="plate-head">
           <div class="t">
             <h3>Support prices rose faster than farm labourers' cost of living in fewer than half the years</h3>
-            <div class="sub">Rise in the paddy and wheat support price on the year before, per cent (bars), and inflation in the consumer price index for agricultural labourers, the average of the twelve monthly year-on-year rates over the crop year July to June (line), 1986-87 = 100 base, crop years <span id="sb-mi-span">–</span>.</div>
+            <div class="sub">Rise in the paddy and wheat support price on the year before, per cent (solid line, one panel each), and inflation in the consumer price index for agricultural labourers, the average of the twelve monthly year-on-year rates over the crop year July to June (dashed line), 1986-87 = 100 base, crop years <span id="sb-mi-span" set:html={N["sb-mi-span"]}></span>.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-mspinfl">–</div><div class="c">years paddy's rise beat that inflation</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-mspinfl" set:html={N["pv-mspinfl"]}></div><div class="c">years paddy's rise beat that inflation</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Paddy price rise</button>
-            <button class="chip"><i style="background:#C47A16"></i>Wheat price rise</button>
-            <button class="chip"><i style="background:#161A22;height:2px"></i>Farm labourers' inflation</button>
-          </div>
-          <div class="plotzone"><div id="plot-mspinfl" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-mspinfl" set:html={CH.mspinfl()} />
           <div class="plotfoot">
             <span class="src">Source: Support prices as published by the RBI (DBIE 461); CPI for agricultural labourers, Labour Bureau (the prices guide's bundle cpialrl-1986). Rises and averages computed by India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -462,7 +412,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
           </div>
           <div class="now">
             <span class="mk">As of the 2023-24 crop</span>
-            <p>Of the <b id="ex-mi-n">–</b> crop years compared, the paddy price rose faster than farm labourers' inflation in <b id="ex-mi-p">–</b> and wheat in <b id="ex-mi-w">–</b>. In <span id="ex-mi-fy">–</span> paddy rose <b id="ex-mi-pl">–</b>, wheat <b id="ex-mi-wl">–</b>, and the labourers' index <b id="ex-mi-cl">–</b>.</p>
+            <p>Of the <b id="ex-mi-n" set:html={N["ex-mi-n"]}></b> crop years compared, the paddy price rose faster than farm labourers' inflation in <b id="ex-mi-p" set:html={N["ex-mi-p"]}></b> and wheat in <b id="ex-mi-w" set:html={N["ex-mi-w"]}></b>. In <span id="ex-mi-fy" set:html={N["ex-mi-fy"]}></span> paddy rose <b id="ex-mi-pl" set:html={N["ex-mi-pl"]}></b>, wheat <b id="ex-mi-wl" set:html={N["ex-mi-wl"]}></b>, and the labourers' index <b id="ex-mi-cl" set:html={N["ex-mi-cl"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -475,10 +425,10 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
             <h3>Over ten years, oilseeds and cotton were given the biggest increases</h3>
             <div class="sub">Rise in each crop's minimum support price over its latest ten crop years, per cent, with the latest price in rupees a quintal. Crops no longer priced (soyabean black, last priced in 2016-17) are left out.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-mspall">–</div><div class="c" id="pc-mspall">–</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-mspall" set:html={N["pv-mspall"]}></div><div class="c" id="pc-mspall" set:html={N["pc-mspall"]}></div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-mspall" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-mspall" set:html={CH.mspall()} />
           <div class="plotfoot">
             <span class="src">Source: Support prices as published by the RBI (DBIE reports 461 and 462). Ten-year rise computed by India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -491,7 +441,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
           </div>
           <div class="now">
             <span class="mk">As of the 2026-27 prices</span>
-            <p>The largest ten-year rise was for <span id="ex-ma-top">–</span>, the smallest for <span id="ex-ma-bot">–</span>; paddy rose <b id="ex-ma-p">–</b> and wheat <b id="ex-ma-w">–</b>.</p>
+            <p>The largest ten-year rise was for <span id="ex-ma-top" set:html={N["ex-ma-top"]}></span>, the smallest for <span id="ex-ma-bot" set:html={N["ex-ma-bot"]}></span>; paddy rose <b id="ex-ma-p" set:html={N["ex-ma-p"]}></b> and wheat <b id="ex-ma-w" set:html={N["ex-ma-w"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -505,18 +455,13 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
       <figure id="cb-proc" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>The government buys about <span id="tt-proc">–</span> of India's rice and wheat</h3>
+            <h3>The government buys about <span id="tt-proc" set:html={N["tt-proc"]}></span> of India's rice and wheat</h3>
             <div class="sub">Rice and wheat procured by the Food Corporation of India and state agencies, and total grain issued from the central pool (off-take), million tonnes, by year, 1972-73 on.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-proc">–</div><div class="c" id="pc-proc">–</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-proc" set:html={N["pv-proc"]}></div><div class="c" id="pc-proc" set:html={N["pc-proc"]}></div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Rice procured</button>
-            <button class="chip"><i style="background:#C47A16"></i>Wheat procured</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Issued (off-take, all grain)</button>
-          </div>
-          <div class="plotzone"><div id="plot-proc" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-proc" set:html={CH.proc()} />
           <div class="plotfoot">
             <span class="src">Source: Food ministry, as published by the RBI (DBIE report 464; Handbook table on the public distribution system).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -529,7 +474,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
           </div>
           <div class="now">
             <span class="mk">As of 2025-26</span>
-            <p>In <span id="ex-pr-fy">–</span>, agencies bought <b id="ex-pr-rice">–</b> of rice and <b id="ex-pr-wheat">–</b> of wheat, and issued <b id="ex-pr-off">–</b> of grain.</p>
+            <p>In <span id="ex-pr-fy" set:html={N["ex-pr-fy"]}></span>, agencies bought <b id="ex-pr-rice" set:html={N["ex-pr-rice"]}></b> of rice and <b id="ex-pr-wheat" set:html={N["ex-pr-wheat"]}></b> of wheat, and issued <b id="ex-pr-off" set:html={N["ex-pr-off"]}></b> of grain.</p>
           </div>
         </div>
       </figure>
@@ -542,16 +487,10 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
             <h3>The granaries hold several times what the buffer norm asks for</h3>
             <div class="sub">Rice and wheat in the central pool at the end of each year (1 April), million tonnes, 1972-73 on, against the 1 April buffer norm set in 2015. The open circle is the latest position the RBI prints, a date just after the wheat harvest, when stocks are near their yearly peak.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-stocks">–</div><div class="c" id="pc-stocks">–</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-stocks" set:html={N["pv-stocks"]}></div><div class="c" id="pc-stocks" set:html={N["pc-stocks"]}></div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Total stocks, 1 April</button>
-            <button class="chip"><i style="background:#878D99"></i>Rice</button>
-            <button class="chip"><i style="background:#C47A16"></i>Wheat</button>
-            <button class="chip"><i style="background:none;border-top:1.5px dashed #161A22;height:0;width:16px"></i>1 April buffer norm, 21.04 million tonnes</button>
-          </div>
-          <div class="plotzone"><div id="plot-stocks" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-stocks" set:html={CH.stocks()} />
           <div class="plotfoot">
             <span class="src">Source: Food ministry, as published by the RBI (DBIE report 464). Buffer norm: Department of Food and Public Distribution, operational buffer and strategic reserve for 1 April, January 2015 (21.04 million tonnes).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -564,7 +503,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
           </div>
           <div class="now">
             <span class="mk">As of 31 May 2026</span>
-            <p>On <span id="ex-st-date">–</span> the pool held <b id="ex-st-tot">–</b>: <b id="ex-st-rice">–</b> of rice and <b id="ex-st-wheat">–</b> of wheat, <b id="ex-st-x">–</b> the 1 April norm. The latest position the RBI prints, <span id="ex-st-ld">–</span>, was <b id="ex-st-lv">–</b>.</p>
+            <p>On <span id="ex-st-date" set:html={N["ex-st-date"]}></span> the pool held <b id="ex-st-tot" set:html={N["ex-st-tot"]}></b>: <b id="ex-st-rice" set:html={N["ex-st-rice"]}></b> of rice and <b id="ex-st-wheat" set:html={N["ex-st-wheat"]}></b> of wheat, <b id="ex-st-x" set:html={N["ex-st-x"]}></b> the 1 April norm. The latest position the RBI prints, <span id="ex-st-ld" set:html={N["ex-st-ld"]}></span>, was <b id="ex-st-lv" set:html={N["ex-st-lv"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -579,12 +518,12 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
         <div class="plate-head">
           <div class="t">
             <h3>A handful of states grow most of each crop</h3>
-            <div class="sub">Each state's share of India's production, per cent, crop year <span id="sb-states-fy">–</span>. States ordered by their share of foodgrains; the darker the cell, the larger the share; a tinted cell with no number is under 0.5 per cent, a white cell no output. Cotton and jute are shares of bales.</div>
+            <div class="sub">Each state's share of India's production, per cent, crop year <span id="sb-states-fy" set:html={N["sb-states-fy"]}></span>. States ordered by their share of foodgrains; the darker the cell, the larger the share; a tinted cell with no number is under 0.5 per cent, a white cell no output. Cotton and jute are shares of bales.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-states">–</div><div class="c" id="pc-states">–</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-states" set:html={N["pv-states"]}></div><div class="c" id="pc-states" set:html={N["pc-states"]}></div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-states" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-states" set:html={CH.states()} />
           <div class="plotfoot">
             <span class="src">Source: Agriculture ministry, as published in the RBI's Handbook of Statistics on Indian States, tables 58 to 66 (the states guide's bundles). Shares computed by India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in/Scripts/AnnualPublications.aspx?head=Handbook+of+Statistics+on+Indian+States" target="_blank" rel="noopener">Source</a></span>
@@ -597,7 +536,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
           </div>
           <div class="now">
             <span class="mk">As of the 2024-25 crop</span>
-            <p>Uttar Pradesh grew the largest share of foodgrains, <b id="ex-sg-up">–</b>. The top three states grew <b id="ex-sg-wheat3">–</b> of the wheat, <b id="ex-sg-cotton3">–</b> of the cotton and <b id="ex-sg-sugar3">–</b> of the sugarcane.</p>
+            <p>Uttar Pradesh grew the largest share of foodgrains, <b id="ex-sg-up" set:html={N["ex-sg-up"]}></b>. The top three states grew <b id="ex-sg-wheat3" set:html={N["ex-sg-wheat3"]}></b> of the wheat, <b id="ex-sg-cotton3" set:html={N["ex-sg-cotton3"]}></b> of the cotton and <b id="ex-sg-sugar3" set:html={N["ex-sg-sugar3"]}></b> of the sugarcane.</p>
           </div>
         </div>
       </figure>
@@ -608,12 +547,12 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
         <div class="plate-head">
           <div class="t">
             <h3>Madhya Pradesh's share of India's wheat tripled while Punjab's slipped</h3>
-            <div class="sub">Each state's share of India's wheat (left) and rice (right) production, per cent, final estimates, 1980-81 to <span id="sb-long-fy">–</span>. States that split are drawn as two rulers: the undivided state (pale) to 1999-2000 (Madhya Pradesh, Uttar Pradesh) or 2014-15 (Andhra Pradesh), and the state after the split.</div>
+            <div class="sub">Each state's share of India's wheat (left) and rice (right) production, per cent, final estimates, 1980-81 to <span id="sb-long-fy" set:html={N["sb-long-fy"]}></span>. States that split are drawn as two rulers: the undivided state (pale) to 1999-2000 (Madhya Pradesh, Uttar Pradesh) or 2014-15 (Andhra Pradesh), and the state after the split.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-statelong">–</div><div class="c">Madhya Pradesh's share of wheat, latest final year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-statelong" set:html={N["pv-statelong"]}></div><div class="c">Madhya Pradesh's share of wheat, latest final year</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-statelong" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-statelong" set:html={CH.statelong()} />
           <div class="plotfoot">
             <span class="src">Source: Agriculture ministry, state-wise production, as published by the RBI (DBIE report 465). Shares computed by India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -626,7 +565,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
           </div>
           <div class="now">
             <span class="mk">As of the 2021-22 crop</span>
-            <p>In <span id="ex-sl-fy">–</span>, the last final year in the state table, Uttar Pradesh grew <b id="ex-sl-upw">–</b> of India's wheat, Madhya Pradesh <b id="ex-sl-mpw">–</b> and Punjab <b id="ex-sl-pbw">–</b>. Punjab grew <b id="ex-sl-pbw0">–</b> in 1980-81.</p>
+            <p>In <span id="ex-sl-fy" set:html={N["ex-sl-fy"]}></span>, the last final year in the state table, Uttar Pradesh grew <b id="ex-sl-upw" set:html={N["ex-sl-upw"]}></b> of India's wheat, Madhya Pradesh <b id="ex-sl-mpw" set:html={N["ex-sl-mpw"]}></b> and Punjab <b id="ex-sl-pbw" set:html={N["ex-sl-pbw"]}></b>. Punjab grew <b id="ex-sl-pbw0" set:html={N["ex-sl-pbw0"]}></b> in 1980-81.</p>
           </div>
         </div>
       </figure>
@@ -637,12 +576,12 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
         <div class="plate-head">
           <div class="t">
             <h3>A hectare in Punjab gives far more wheat and rice than one in the east</h3>
-            <div class="sub">Yield of rice and wheat by state, kg per hectare, crop year <span id="sb-sy-fy">–</span>, with the All India average as a rule. States growing less than a tenth of a per cent of the crop are left out.</div>
+            <div class="sub">Yield of rice and wheat by state, kg per hectare, crop year <span id="sb-sy-fy" set:html={N["sb-sy-fy"]}></span>, with the All India average as a rule. States growing less than a tenth of a per cent of the crop are left out.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-stateyield">–</div><div class="c" id="pc-stateyield">–</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-stateyield" set:html={N["pv-stateyield"]}></div><div class="c" id="pc-stateyield" set:html={N["pc-stateyield"]}></div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-stateyield" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-stateyield" set:html={CH.stateyield()} />
           <div class="plotfoot">
             <span class="src">Source: Agriculture ministry, as published in the RBI's Handbook of Statistics on Indian States, tables 80 and 81 (the states guide's bundles).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in/Scripts/AnnualPublications.aspx?head=Handbook+of+Statistics+on+Indian+States" target="_blank" rel="noopener">Source</a></span>
@@ -655,7 +594,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
           </div>
           <div class="now">
             <span class="mk">As of the 2024-25 crop</span>
-            <p>The highest wheat yield was <span id="ex-sy-wt">–</span>'s, <b id="ex-sy-wv">–</b>; the highest rice yield <span id="ex-sy-rt">–</span>'s, <b id="ex-sy-rv">–</b>. All India: <b id="ex-sy-wai">–</b> for wheat and <b id="ex-sy-rai">–</b> for rice.</p>
+            <p>The highest wheat yield was <span id="ex-sy-wt" set:html={N["ex-sy-wt"]}></span>'s, <b id="ex-sy-wv" set:html={N["ex-sy-wv"]}></b>; the highest rice yield <span id="ex-sy-rt" set:html={N["ex-sy-rt"]}></span>'s, <b id="ex-sy-rv" set:html={N["ex-sy-rv"]}></b>. All India: <b id="ex-sy-wai" set:html={N["ex-sy-wai"]}></b> for wheat and <b id="ex-sy-rai" set:html={N["ex-sy-rai"]}></b> for rice.</p>
           </div>
         </div>
       </figure>
@@ -666,12 +605,12 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
         <div class="plate-head">
           <div class="t">
             <h3>Some states use several times as much fertiliser per hectare as others</h3>
-            <div class="sub">Fertiliser (nitrogen, phosphate and potash) used per hectare, kg, by state, <span id="sb-sf-fy">–</span>, the latest year in RBI's table, with the All India average as a rule.</div>
+            <div class="sub">Fertiliser (nitrogen, phosphate and potash) used per hectare, kg, by state, <span id="sb-sf-fy" set:html={N["sb-sf-fy"]}></span>, the latest year in RBI's table, with the All India average as a rule.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-statefert">–</div><div class="c" id="pc-statefert">–</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-statefert" set:html={N["pv-statefert"]}></div><div class="c" id="pc-statefert" set:html={N["pc-statefert"]}></div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-statefert" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-statefert" set:html={CH.statefert()} />
           <div class="plotfoot">
             <span class="src">Source: Agriculture ministry, Agricultural Statistics at a Glance, as published in the RBI's Handbook of Statistics on Indian States (table 94; DBIE SDMX dataset AGG_STAT_IS_RN, via the RBI Innovation Hub service).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -684,7 +623,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
           </div>
           <div class="now">
             <span class="mk">As of 2020-21</span>
-            <p>In <span id="ex-sf-fy">–</span>, <span id="ex-sf-top">–</span> used the most, <b id="ex-sf-topv">–</b> per hectare, against an All India average of <b id="ex-sf-ai">–</b>.</p>
+            <p>In <span id="ex-sf-fy" set:html={N["ex-sf-fy"]}></span>, <span id="ex-sf-top" set:html={N["ex-sf-top"]}></span> used the most, <b id="ex-sf-topv" set:html={N["ex-sf-topv"]}></b> per hectare, against an All India average of <b id="ex-sf-ai" set:html={N["ex-sf-ai"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -695,7 +634,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
   <section>
     <div class="sec-head"><span class="no">10</span><h2>The monsoon and the harvest</h2><span class="line"></span><span class="unit">June to September rainfall and the year's foodgrain output</span></div>
     <div class="prose">
-      <p>About <span id="mn-unirr">–</span> of India's gross sown area has no irrigation, and even irrigated land depends on the rain that refills wells and reservoirs. The four monsoon months, June to September, bring most of the year's rain. A weak monsoon cuts the kharif crop at once and the rabi crop through dry soil and empty tanks. For the full picture of rain and heat, see the <a href="/guides/climate/">climate guide</a>.</p>
+      <p>About <span id="mn-unirr" set:html={N["mn-unirr"]}></span> of India's gross sown area has no irrigation, and even irrigated land depends on the rain that refills wells and reservoirs. The four monsoon months, June to September, bring most of the year's rain. A weak monsoon cuts the kharif crop at once and the rabi crop through dry soil and empty tanks. For the full picture of rain and heat, see the <a href="/guides/climate/">climate guide</a>.</p>
     </div>
     <div class="break">
       <figure id="cb-monsoon" style="margin:0">
@@ -704,14 +643,10 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
             <h3>The worst harvests followed dry monsoons, but not every dry monsoon cut the harvest</h3>
             <div class="sub">Each dot is a crop year since 1951-52: across, June to September rainfall over India, per cent above or below its 1951-2000 average; up, the change in foodgrain production on the year before, per cent, final estimates. Rainfall: CRU gridded observations, as in the climate guide; not the India Meteorological Department's own monsoon figure.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-monsoon">–</div><div class="c">of the ten driest monsoons were followed by a smaller harvest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-monsoon" set:html={N["pv-monsoon"]}></div><div class="c">of the ten driest monsoons were followed by a smaller harvest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#B9C3F3"></i>1951-52 to 1999-2000</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>2000-01 on</button>
-          </div>
-          <div class="plotzone"><div id="plot-monsoon" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-monsoon" set:html={CH.monsoon()} />
           <div class="plotfoot">
             <span class="src">Source: Foodgrain production, agriculture ministry via the RBI (DBIE 623); rainfall, CRU TS 4.10, University of East Anglia, via the World Bank Climate Change Knowledge Portal (the climate guide's bundle climate-cru-monthly). Departures and changes computed by India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org" target="_blank" rel="noopener">Source</a></span>
@@ -724,7 +659,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
           </div>
           <div class="now">
             <span class="mk">As of the 2024 monsoon</span>
-            <p>The driest monsoon in the record was <span id="ex-mn-dy">–</span>, <b id="ex-mn-dv">–</b> below average; foodgrain output that crop year changed by <b id="ex-mn-dc">–</b>. In <span id="ex-mn-ly">–</span>, rainfall was <b id="ex-mn-lv">–</b> the average and output changed by <b id="ex-mn-lc">–</b>.</p>
+            <p>The driest monsoon in the record was <span id="ex-mn-dy" set:html={N["ex-mn-dy"]}></span>, <b id="ex-mn-dv" set:html={N["ex-mn-dv"]}></b> below average; foodgrain output that crop year changed by <b id="ex-mn-dc" set:html={N["ex-mn-dc"]}></b>. In <span id="ex-mn-ly" set:html={N["ex-mn-ly"]}></span>, rainfall was <b id="ex-mn-lv" set:html={N["ex-mn-lv"]}></b> the average and output changed by <b id="ex-mn-lc" set:html={N["ex-mn-lc"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -754,7 +689,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
     <div class="cols">
       <div>
         <h6>Sources of record</h6>
-        <p>Ministry of Agriculture and Farmers Welfare (crop area, production and yield, index numbers, land use, inputs, state-wise production, minimum support prices), the Tea Board and the Coffee Board, and the Ministry of Consumer Affairs, Food and Public Distribution (procurement, off-take and stocks), as the Reserve Bank of India publishes them in its Database on Indian Economy and its Handbooks. Read from the Atlas's local, read-only mirror of DBIE; report 190 (commercial-crop area), the Handbook's printed tables and two SDMX datasets from the Reserve Bank Innovation Hub's DBIE service. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Ministry of Agriculture and Farmers Welfare (crop area, production and yield, index numbers, land use, inputs, state-wise production, minimum support prices), the Tea Board and the Coffee Board, and the Ministry of Consumer Affairs, Food and Public Distribution (procurement, off-take and stocks), as the Reserve Bank of India publishes them in its Database on Indian Economy and its Handbooks. Read from the Atlas's local, read-only mirror of DBIE; report 190 (commercial-crop area), the Handbook's printed tables and two SDMX datasets from the Reserve Bank Innovation Hub's DBIE service. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]}></b>.</p>
         <p>Every cell the Data Bank holds was checked against the RBI's own printed table at its printed precision: 16,800 cells across twelve tables, all equal. Checked by hand: rice 2024-25, 150,184 thousand tonnes (the Handbook prints 1,502 lakh tonnes); cotton 2023-24, 325.22 lakh bales, the ministry's final figure; paddy MSP 2024-25 ₹2,300 and wheat 2025-26 ₹2,585, the government's announced prices; wheat stocks on 1 April 2025, 11.8 million tonnes, as the food ministry reported.</p>
       </div>
       <div>
@@ -772,7 +707,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
     </div>
     <div class="fine">
       <span>India Atlas, farms and food</span>
-      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]}></span></span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
@@ -780,6 +715,5 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
 </div>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/farms.client.js";
 </script>
 </Base>

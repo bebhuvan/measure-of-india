@@ -8,6 +8,8 @@ import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 import { period } from "../../dossiers/periods.js";
 import fs from "node:fs";
+import * as CH from "../../dossiers/rates.charts.js";
+import * as fmt from "../../charts/format.js";
 const D = bySlug["rates"];
 // every period, date and count named in this page's copy is read from the bundles at build time
 const B = (s) => JSON.parse(fs.readFileSync(`data/series/${s}.json`, "utf8"));
@@ -49,16 +51,110 @@ const externalAgainst = againstBy(extKeys) / Math.max(1, againstBy(votes.meta.me
 const bl = borrow.dates.length - 1, lakh = (v) => (v / 1e5).toFixed(1);
 const borrowTitle = `The centre and the states borrowed ₹${lakh(borrow.series.centre_gross.data[bl] + borrow.series.states_gross.data[bl])} lakh crore from the market in ${fy(borrow.dates[bl])}, the states ${Math.round(100 * borrow.series.states_gross.data[bl] / (borrow.series.centre_gross.data[bl] + borrow.series.states_gross.data[bl]))}% of it`;
 
-// heavy bundles are sliced here, at build time, and handed to the page as baked JSON: the page
-// performs no data requests (CONTRACT-render), and the client carries only what it draws
-const sliceSeries = (b, keys, from) => { const i0 = from ? b.dates.findIndex((d) => d >= from) : 0; return { dates: b.dates.slice(i0), series: Object.fromEntries(keys.map((k) => [k, b.series[k].data.slice(i0)])) }; };
+// every bank's latest 1-year MCLR, for the table under the MCLR plate
 const baked = {
-  wss: sliceSeries(wss, ["repo", "msf", "sdf", "reverse_repo", "call", "term_deposit_min", "term_deposit_max", "savings_min", "savings_max"]),
-  t91: sliceSeries(t91, ["cutoff_yield"]),
-  curve: { dates: curve.dates, series: Object.fromEntries([...Array(30)].map((_, i) => [`y${i + 1}`, curve.series[`y${i + 1}`].data])), spread: curve.series.spread_10_1.data },
   banks: banks.meta.banks.map((x) => { const s = banks.series[x.key].data; let i = s.length - 1; while (i >= 0 && s[i] == null) i--; return i < 0 ? null : { k: x.key, bank: x.bank, group: x.group, v: s[i], at: banks.dates[i], y: s[i - 12] ?? null }; }).filter(Boolean),
-  banksDate: banks.dates.at(-1),
 };
+
+// the numbers in the title block and the plates' readouts and "as of" notes, set at build time
+// (each id keeps the exact text the page used to fill in the browser; scripts/qc.mjs checks many)
+const monthly = B("rates-monthly");
+const pc = (u) => `<span class="pc">${u}</span>`;
+const p2 = fmt.pct2, pt2 = (v) => (v < 0 ? "−" : "+") + Math.abs(v).toFixed(2) + " pt";
+const sp = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";       // a signed rate (real rates): one decimal, as CPI inflation is published
+const lastOf = (b, k) => { const d = b.series[k].data; for (let i = d.length - 1; i >= 0; i--) if (d[i] != null) return { v: d[i], i, date: b.dates[i] }; return null; };
+const atD = (b, k, iso) => { const i = b.dates.indexOf(iso); return i < 0 ? null : b.series[k].data[i]; };
+const STANCE = { accommodative: "Accommodative", neutral: "Neutral", calibrated_tightening: "Calibrated tightening", withdrawal_of_accommodation: "Withdrawal of accommodation", accommodative_focus_on_withdrawal: "Accommodative, focused on withdrawal" };
+const chgBps = mpc.series.change_bps.data.at(-1);
+const bpsTxt = (b) => (b === 0 ? "no change" : `${b > 0 ? "+" : "−"}${Math.abs(b)} bp`);   // bp: hundredths of a percentage point
+const N = {};
+{ // title block, § 01, § 02
+  const repo = lastOf(monthly, "repo").v, wf = lastOf(lend, "walr_fresh_all"), df = lastOf(lend, "wadtdr_fresh_all");
+  const lmonth = shortMonth(wf.date), rr = lastOf(real, "repo"), cpiNow = lastOf(real, "cpi");
+  N["m-decided"] = longDay(lastM.date);
+  N["n-repo"] = repo.toFixed(2) + pc("%");
+  N["d-repo"] = `<b>${bpsTxt(chgBps)}</b> on ${longDay(lastM.date)}`;
+  N["n-walr"] = wf.v.toFixed(2) + pc("%");
+  N["d-walr"] = `<b>${pt2(wf.v - lend.series.walr_fresh_all.data[wf.i - 12])}</b> on a year earlier, ${lmonth}`;
+  N["n-fd"] = df.v.toFixed(2) + pc("%");
+  N["d-fd"] = `<b>${pt2(df.v - lend.series.wadtdr_fresh_all.data[df.i - 12])}</b> on a year earlier, ${lmonth}`;
+  N["n-real"] = sp(rr.v).replace("%", pc("%"));
+  N["d-real"] = `repo minus CPI inflation of <b>${fmt.pct1(cpiNow.v)}</b>, ${shortMonth(rr.date)}`;
+  N["rb-repo"] = repo.toFixed(2) + pc("%");
+  N["rb-stance"] = STANCE[lastM.stance] ?? "Not recorded";
+  const house = lastOf(sect, "fresh_housing").v;
+  const emi = (r) => { const m = r / 1200, n = 240, P = 3000000; return (P * m * (1 + m) ** n) / ((1 + m) ** n - 1); };
+  N["lr-emi"] = fmt.inrR(emi(house + 1) - emi(house));
+  N["lr-house"] = p2(house);
+  N["lr-fd"] = p2(df.v);
+  N["lr-cpi"] = fmt.pct1(atD(real, "cpi", wf.date));
+  N["lr-realfd"] = sp(atD(real, "fd_fresh", wf.date));
+  // § 04
+  const rs = pol.series.repo.data.filter((v) => v != null);
+  N["pv-long"] = p2(repo); N["ex-long-repo"] = p2(repo); N["ex-long-chg"] = bpsTxt(chgBps);
+  N["ex-long-bank"] = p2(pol.series.bank_rate.data.at(-1)); N["ex-long-min"] = p2(Math.min(...rs)); N["ex-long-max"] = p2(Math.max(...rs));
+  const W = wss.series;
+  N["pv-corr"] = p2(W.call.data.at(-1)); N["ex-corr-call"] = p2(W.call.data.at(-1)); N["ex-corr-repo"] = p2(W.repo.data.at(-1)); N["ex-corr-floor"] = p2(W.sdf.data.at(-1));
+  let peak = 0; pol.dates.forEach((d, i) => { const s = (pol.series.crr.data[i] ?? 0) + (pol.series.slr.data[i] ?? 0); if (s > peak) peak = s; });
+  N["pv-res"] = fmt.pct2(pol.series.crr.data.at(-1) + pol.series.slr.data.at(-1));
+  N["ex-res-crr"] = fmt.pct2(pol.series.crr.data.at(-1)); N["ex-res-slr"] = fmt.pct2(pol.series.slr.data.at(-1)); N["ex-res-peak"] = fmt.pct1(peak);
+  // § 05
+  N["pv-mpc"] = (chgBps > 0 ? "+" : chgBps < 0 ? "−" : "") + Math.abs(chgBps) + pc(" bp");
+  N["ex-mpc-n"] = String(meetings.length); N["ex-mpc-hold"] = String(counts.hold); N["ex-mpc-cut"] = String(counts.cut); N["ex-mpc-hike"] = String(counts.hike);
+  N["ex-mpc-last"] = bpsTxt(chgBps); N["ex-mpc-stance"] = (STANCE[lastM.stance] ?? "not recorded").toLowerCase();
+  const against = votes.series.votes_against.data.reduce((a, b) => a + b, 0);
+  N["pv-votes"] = String(against); N["ex-votes-n"] = String(votes.dates.length); N["ex-votes-against"] = String(against);
+  N["ex-votes-last"] = `${votes.series.votes_for.data.at(-1)} to ${votes.series.votes_against.data.at(-1)}`;
+  // § 06
+  const L = lend, i = L.dates.length - 1, j = i - 12, mi = monthly.dates.indexOf(L.dates[i]), mj = monthly.dates.indexOf(L.dates[j]);
+  N["pv-pass"] = p2(wf.v); N["ex-pass-wf"] = p2(wf.v); N["ex-pass-wo"] = p2(lastOf(L, "walr_outstanding_all").v);
+  N["ex-pass-df"] = p2(df.v); N["ex-pass-do"] = p2(lastOf(L, "wadtdr_outstanding_all").v);
+  N["ex-pass-dwf"] = pt2(L.series.walr_fresh_all.data[i] - L.series.walr_fresh_all.data[j]);
+  N["ex-pass-ddf"] = pt2(L.series.wadtdr_fresh_all.data[i] - L.series.wadtdr_fresh_all.data[j]);
+  N["ex-pass-drepo"] = pt2(monthly.series.repo.data[mi] - monthly.series.repo.data[mj]);
+  const bl = (k) => fmt.pct1(lastOf(bench, k).v);   // shares of the loan book: one decimal
+  N["pv-bench"] = bl("all_eblr"); N["ex-bench-eblr"] = bl("all_eblr"); N["ex-bench-mclr"] = bl("all_mclr"); N["ex-bench-base"] = bl("all_base_rate");
+  N["ex-bench-psb"] = bl("public_eblr"); N["ex-bench-pvt"] = bl("private_eblr");
+  const si = sect.dates.length - 1, g = (k) => p2(sect.series["fresh_" + k].data[si]);
+  N["pv-loans"] = g("housing"); N["ex-loans-house"] = g("housing"); N["ex-loans-veh"] = g("vehicle"); N["ex-loans-edu"] = g("education"); N["ex-loans-pers"] = g("other_personal_loans"); N["ex-loans-msme"] = g("msmes");
+  const oi = occ.dates.length - 1, go = (k) => p2(occ.series[k].data[oi]);
+  N["pv-cards"] = go("personal_credit_cards"); N["ex-cards-card"] = go("personal_credit_cards"); N["ex-cards-dur"] = go("consumer_durables"); N["ex-cards-house"] = go("housing"); N["ex-cards-all"] = go("total_credit");
+  const allMed = lastOf(mclr, "all_median").v;
+  N["pv-mclr"] = p2(allMed); N["ex-mclr-med"] = p2(allMed);
+  N["ex-mclr-psb"] = p2(lastOf(mclr, "public_median").v); N["ex-mclr-pvt"] = p2(lastOf(mclr, "private_median").v); N["ex-mclr-frn"] = p2(lastOf(mclr, "foreign_median").v);
+  N["pv-savers"] = p2(W.term_deposit_max.data.at(-1)); N["ex-sav-min"] = p2(W.term_deposit_min.data.at(-1)); N["ex-sav-max"] = p2(W.term_deposit_max.data.at(-1));
+  N["ex-sav-sb"] = W.savings_min.data.at(-1) === W.savings_max.data.at(-1) ? p2(W.savings_max.data.at(-1)) : `${p2(W.savings_min.data.at(-1))} to ${p2(W.savings_max.data.at(-1))}`;
+  N["ex-sav-fd"] = p2(df.v);
+  // § 07
+  const rl = (k) => sp(lastOf(real, k).v);
+  N["pv-real"] = rl("fd_fresh"); N["ex-real-cpi"] = fmt.pct1(cpiNow.v); N["ex-real-fdf"] = rl("fd_fresh"); N["ex-real-fdo"] = rl("fd_outstanding"); N["ex-real-repo"] = rl("repo");
+  // § 08
+  const n = curve.dates.length - 1; let c0 = n; while (c0 >= 0 && curve.series.y10.data[c0] == null) c0--;
+  const cv = (k) => p2(curve.series[k].data[c0]);
+  N["pv-curve"] = cv("y10"); N["ex-curve-1"] = cv("y1"); N["ex-curve-10"] = cv("y10"); N["ex-curve-30"] = cv("y30");
+  N["ex-curve-spread"] = fmt.pt2(curve.series.spread_10_1.data[c0]).replace(" pt", " percentage points");
+  const lt = lastOf(t91, "cutoff_yield"), l10 = lastOf(curve, "y10");
+  N["pv-tbill"] = p2(lt.v); N["ex-tbill-91"] = p2(lt.v); N["ex-tbill-10"] = p2(l10.v);
+  const la = lastOf(callm, "average"), lh = lastOf(callm, "high");
+  N["pv-call"] = p2(la.v); N["ex-call-avg"] = p2(la.v); N["ex-call-high"] = p2(lh.v);
+  // § 09
+  const lc = (v) => v / 1e5, bc = lc(borrow.series.centre_gross.data.at(-1)), bs = lc(borrow.series.states_gross.data.at(-1));
+  N["pv-borrow"] = fmt.lc1(bc + bs); N["ex-bor-c"] = fmt.lc1(bc); N["ex-bor-s"] = fmt.lc1(bs);
+  const drows = dev.dates.map((d, k) => ({ v: dev.series.devolved_pd.data[k], n: dev.series.auctions_devolved.data[k] }));
+  const dtop = drows.slice().sort((a, b) => b.v - a.v)[0], dnow = drows.at(-1);
+  N["pv-dev"] = "₹" + fmt.inr(dtop.v) + pc(" crore"); N["ex-dev-max"] = "₹" + fmt.inr(dtop.v) + " crore"; N["ex-dev-n"] = String(dtop.n);
+  N["ex-dev-now"] = dnow.v > 0 ? `₹${fmt.inr(dnow.v)} crore on ${dnow.n} auction days` : "nothing has devolved";
+  const si2 = sdl.dates.indexOf(sdlFY);
+  const srows = Object.entries(sdl.series).filter(([k]) => k.endsWith("_yield") && !k.endsWith("_wavg_yield") && k !== "all_yield")
+    .map(([, s]) => ({ name: s.label.split(":")[0], v: s.data[si2] })).filter((r) => r.v != null).sort((a, b) => b.v - a.v);
+  const savg = sdl.series.all_yield.data[si2];
+  N["pv-states"] = p2(savg); N["ex-st-all"] = p2(savg); N["ex-st-lo"] = `${srows.at(-1).name}, ${p2(srows.at(-1).v)}`; N["ex-st-hi"] = `${srows[0].name}, ${p2(srows[0].v)}`;
+  // § 10
+  const sb = structure.dates.map((d, k) => ({ lo: structure.series.fmb_dep_1_3_low.data[k], hi: structure.series.fmb_dep_1_3_high.data[k] })).filter((p) => p.lo != null && p.hi != null).at(-1);
+  let speak = 0; for (const v of structure.series.cb_dep_1_3_high.data) if (v != null && v > speak) speak = v;
+  N["pv-struct"] = p2(sb.hi); N["ex-struct-lo"] = p2(sb.lo); N["ex-struct-hi"] = p2(sb.hi); N["ex-struct-peak"] = p2(speak);
+  N["prov-vintage"] = monthly.meta.vintage; N["prov-vintage2"] = monthly.meta.vintage;
+}
 ---
 <Base
   title="Interest rates · India Atlas"
@@ -80,16 +176,16 @@ const baked = {
     </div>
     <div class="meta">
       <span>Source <b>Reserve Bank of India</b></span>
-      <span>Latest decision <b id="m-decided">–</b></span>
+      <span>Latest decision <b id="m-decided" set:html={N["m-decided"]}></b></span>
       <span>Lending and deposit rates <b>to {PL.long}</b></span>
       <span>History <b>policy rates since 1935, MPC votes since 2016</b></span>
       <span>Unit <b>per cent a year</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Policy repo rate</div><div class="v acc" id="n-repo">–</div><div class="d" id="d-repo">–</div><div class="nspark" id="nspark-repo"></div></div>
-      <div class="num"><div class="l">New loans, average rate</div><div class="v" id="n-walr">–</div><div class="d" id="d-walr">–</div></div>
-      <div class="num"><div class="l">New fixed deposits, average rate</div><div class="v" id="n-fd">–</div><div class="d" id="d-fd">–</div></div>
-      <div class="num"><div class="l">Repo rate after inflation</div><div class="v" id="n-real">–</div><div class="d" id="d-real">–</div></div>
+      <div class="num"><div class="l">Policy repo rate</div><div class="v acc" id="n-repo" set:html={N["n-repo"]}></div><div class="d" id="d-repo" set:html={N["d-repo"]}></div><div class="nspark" id="nspark-repo" set:html={CH.sparkRepo()} /></div>
+      <div class="num"><div class="l">New loans, average rate</div><div class="v" id="n-walr" set:html={N["n-walr"]}></div><div class="d" id="d-walr" set:html={N["d-walr"]}></div></div>
+      <div class="num"><div class="l">New fixed deposits, average rate</div><div class="v" id="n-fd" set:html={N["n-fd"]}></div><div class="d" id="d-fd" set:html={N["d-fd"]}></div></div>
+      <div class="num"><div class="l">Repo rate after inflation</div><div class="v" id="n-real" set:html={N["n-real"]}></div><div class="d" id="d-real" set:html={N["d-real"]}></div></div>
     </div>
   </div>
 
@@ -97,9 +193,9 @@ const baked = {
   <section>
     <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">Decided {decided}</span></div>
     <div class="reading-top">
-      <div><span class="rk">Policy repo rate</span><div class="big" id="rb-repo">–</div></div>
+      <div><span class="rk">Policy repo rate</span><div class="big" id="rb-repo" set:html={N["rb-repo"]}></div></div>
       <p class="rt-cap">The rate at which the RBI lends to banks overnight, set by the Monetary Policy Committee at its meeting that ended on {decided}. Every other rate on this page takes its cue from it.</p>
-      <div class="rt-side"><span class="rk">Stance</span><div class="rt-side-v" id="rb-stance" style="font-size:1.6rem">–</div></div>
+      <div class="rt-side"><span class="rk">Stance</span><div class="rt-side-v" id="rb-stance" style="font-size:1.6rem" set:html={N["rb-stance"]}></div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -117,8 +213,8 @@ const baked = {
   <section>
     <div class="sec-head"><span class="no">02</span><h2>What it means for your money</h2><span class="line"></span><span class="unit">Loans and deposits, {PL.long}</span></div>
     <div class="prose">
-      <p>A home loan of ₹30 lakh over 20 years costs <b id="lr-emi">–</b> more a month for every percentage point added to its rate, at the average rate on new home loans in {PS.long}. That is why a change in the repo rate matters to a family long before it matters to a bond trader. A loan priced off the repo rate resets within three months of a change; a loan priced off the bank's own MCLR, usually once a year.</p>
-      <p>Savers sit on the other side. A fixed deposit is locked at the rate of the day it was opened, so a rise in rates reaches savers only as old deposits mature and are renewed. The average new home loan in {PS.long} was priced at <b id="lr-house">–</b>, and the average new fixed deposit earned <b id="lr-fd">–</b>. After consumer price inflation of <b id="lr-cpi">–</b> a year, that deposit was left with <b id="lr-realfd">–</b> in real terms, before tax.</p>
+      <p>A home loan of ₹30 lakh over 20 years costs <b id="lr-emi" set:html={N["lr-emi"]}></b> more a month for every percentage point added to its rate, at the average rate on new home loans in {PS.long}. That is why a change in the repo rate matters to a family long before it matters to a bond trader. A loan priced off the repo rate resets within three months of a change; a loan priced off the bank's own MCLR, usually once a year.</p>
+      <p>Savers sit on the other side. A fixed deposit is locked at the rate of the day it was opened, so a rise in rates reaches savers only as old deposits mature and are renewed. The average new home loan in {PS.long} was priced at <b id="lr-house" set:html={N["lr-house"]}></b>, and the average new fixed deposit earned <b id="lr-fd" set:html={N["lr-fd"]}></b>. After consumer price inflation of <b id="lr-cpi" set:html={N["lr-cpi"]}></b> a year, that deposit was left with <b id="lr-realfd" set:html={N["lr-realfd"]}></b> in real terms, before tax.</p>
     </div>
   </section>
 
@@ -142,14 +238,10 @@ const baked = {
             <h3>Ninety years of the price of money</h3>
             <div class="sub">The Bank Rate from July 1935 and the repo rate from April 2001, the level in force on each day, per cent a year. The operating rate changed from one to the other; they are drawn as two lines, never joined.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-long">–</div><div class="c">repo rate now</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-long" set:html={N["pv-long"]}></div><div class="c">repo rate now</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#C47A16"></i>Bank Rate</span>
-            <span class="chip"><i style="background:#2E4BD8"></i>Repo rate</span>
-          </div>
-          <div class="plotzone"><div id="plot-long" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-long" set:html={CH.long()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics, Major Monetary Policy Rates and Reserve Requirements, and MPC resolutions.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -163,7 +255,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {decided}</span>
-            <p>The repo rate stands at <b id="ex-long-repo">–</b> after the meeting that ended on {decided}, a change of <b id="ex-long-chg">–</b>. The Bank Rate, now tied to the MSF, is <b id="ex-long-bank">–</b>. The repo rate has ranged from <b id="ex-long-min">–</b> to <b id="ex-long-max">–</b> since 2001.</p>
+            <p>The repo rate stands at <b id="ex-long-repo" set:html={N["ex-long-repo"]}></b> after the meeting that ended on {decided}, a change of <b id="ex-long-chg" set:html={N["ex-long-chg"]}></b>. The Bank Rate, now tied to the MSF, is <b id="ex-long-bank" set:html={N["ex-long-bank"]}></b>. The repo rate has ranged from <b id="ex-long-min" set:html={N["ex-long-min"]}></b> to <b id="ex-long-max" set:html={N["ex-long-max"]}></b> since 2001.</p>
           </div>
         </div>
       </figure>
@@ -176,15 +268,10 @@ const baked = {
             <h3>The overnight rate lives inside a corridor the RBI sets</h3>
             <div class="sub">Weighted average call money rate for each week, against the repo rate, the ceiling (MSF) and the floor (reverse repo to April 2022, SDF from April 2022), per cent, April 2011 to {PW.long}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-corr">–</div><div class="c">call rate, latest week</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-corr" set:html={N["pv-corr"]}></div><div class="c">call rate, latest week</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>Call money rate</span>
-            <span class="chip"><i style="background:#161A22"></i>Repo rate</span>
-            <span class="chip"><i style="background:#A3A9B4"></i>Ceiling and floor</span>
-          </div>
-          <div class="plotzone"><div id="plot-corridor" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-corridor" set:html={CH.corridor()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Weekly Statistical Supplement, Table 4 'Ratios and Rates' (DBIE report 10).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -197,7 +284,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {PW.long}</span>
-            <p>In the week to {longDay(wss.dates.at(-1))} the call rate averaged <b id="ex-corr-call">–</b>, against a repo rate of <b id="ex-corr-repo">–</b> and a floor of <b id="ex-corr-floor">–</b>.{wss.dates.at(-1) < lastM.date ? ` This weekly table has not yet caught up with the decision of ${decided}.` : ""}</p>
+            <p>In the week to {longDay(wss.dates.at(-1))} the call rate averaged <b id="ex-corr-call" set:html={N["ex-corr-call"]}></b>, against a repo rate of <b id="ex-corr-repo" set:html={N["ex-corr-repo"]}></b> and a floor of <b id="ex-corr-floor" set:html={N["ex-corr-floor"]}></b>.{wss.dates.at(-1) < lastM.date ? ` This weekly table has not yet caught up with the decision of ${decided}.` : ""}</p>
           </div>
         </div>
       </figure>
@@ -210,14 +297,10 @@ const baked = {
             <h3>Banks once had to hold more than half of their deposits as cash and government bonds</h3>
             <div class="sub">Cash reserve ratio (CRR, cash kept with the RBI) and statutory liquidity ratio (SLR, mostly government bonds), per cent of deposits, the level in force on each day, 1935 to {longMonth(pol.dates.at(-1))}. The SLR begins in 1949; the CRR is drawn from 1962.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-res">–</div><div class="c">CRR plus SLR now</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-res" set:html={N["pv-res"]}></div><div class="c">CRR plus SLR now</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>CRR</span>
-            <span class="chip"><i style="background:#878D99"></i>SLR</span>
-          </div>
-          <div class="plotzone"><div id="plot-reserve" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-reserve" set:html={CH.reserve()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics. The CRR before 1962 was set as two separate ratios on demand and time liabilities and is not drawn.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -230,7 +313,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {longMonth(pol.dates.at(-1))}</span>
-            <p>The CRR is <b id="ex-res-crr">–</b> and the SLR <b id="ex-res-slr">–</b> of deposits. At their peak, in September 1990, they summed to <b id="ex-res-peak">–</b>.</p>
+            <p>The CRR is <b id="ex-res-crr" set:html={N["ex-res-crr"]}></b> and the SLR <b id="ex-res-slr" set:html={N["ex-res-slr"]}></b> of deposits. At their peak, in September 1990, they summed to <b id="ex-res-peak" set:html={N["ex-res-peak"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -247,15 +330,10 @@ const baked = {
             <h3>{counts.hold} holds, {counts.cut} cuts and {counts.hike} hikes</h3>
             <div class="sub">Every decision of the Monetary Policy Committee: the change in the repo rate at each meeting, basis points (100 basis points = 1 percentage point), and the repo rate that followed, October 2016 to {longMonth(lastM.date)}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-mpc">–</div><div class="c">latest change</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-mpc" set:html={N["pv-mpc"]}></div><div class="c">latest change</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>Cut</span>
-            <span class="chip"><i style="background:#C47A16"></i>Hike</span>
-            <span class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>Hold</span>
-          </div>
-          <div class="plotzone"><div id="plot-mpc" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-mpc" set:html={CH.mpc()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, MPC resolutions. Meeting 39 (November 2022, the report to the government on missing the inflation target) took no rate decision.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in/Scripts/Annualpolicy.aspx" target="_blank" rel="noopener">Source</a></span>
@@ -269,7 +347,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {decided}</span>
-            <p>The committee has met <b id="ex-mpc-n">–</b> times; it held the rate <b id="ex-mpc-hold">–</b> times, cut <b id="ex-mpc-cut">–</b> times and raised it <b id="ex-mpc-hike">–</b> times. At its latest meeting it moved the repo rate by <b id="ex-mpc-last">–</b> and set its stance to <b id="ex-mpc-stance">–</b>.</p>
+            <p>The committee has met <b id="ex-mpc-n" set:html={N["ex-mpc-n"]}></b> times; it held the rate <b id="ex-mpc-hold" set:html={N["ex-mpc-hold"]}></b> times, cut <b id="ex-mpc-cut" set:html={N["ex-mpc-cut"]}></b> times and raised it <b id="ex-mpc-hike" set:html={N["ex-mpc-hike"]}></b> times. At its latest meeting it moved the repo rate by <b id="ex-mpc-last" set:html={N["ex-mpc-last"]}></b> and set its stance to <b id="ex-mpc-stance" set:html={N["ex-mpc-stance"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -280,16 +358,12 @@ const baked = {
         <div class="plate-head">
           <div class="t">
             <h3>{unanimous} of {votes.dates.length} decisions were unanimous; {externalAgainst > 0.5 ? "most dissents came from the three members appointed from outside the RBI" : "the dissents came from inside and outside the RBI"}</h3>
-            <div class="sub">How each member voted on the repo-rate resolution at every meeting whose minutes are published, October 2016 to {longMonth(lastVotes)}. A filled dot is a vote against the decision taken.</div>
+            <div class="sub">How each member voted on the repo-rate resolution at every meeting whose minutes are published, October 2016 to {longMonth(lastVotes)}. An indigo cell is a vote against the decision taken.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-votes">–</div><div class="c">votes against, all meetings</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-votes" set:html={N["pv-votes"]}></div><div class="c">votes against, all meetings</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>Voted against the decision</span>
-            <span class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#C9CED6"></i>Voted with it</span>
-          </div>
-          <div class="plotzone"><div id="plot-votes" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-votes" set:html={CH.votes()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Minutes of the MPC meetings, 'Voting on the Resolution'; roles as the RBI's DBIE table labels them (report 1491).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in/Scripts/Annualpolicy.aspx" target="_blank" rel="noopener">Source</a></span>
@@ -302,7 +376,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {longMonth(lastVotes)}</span>
-            <p>Across <b id="ex-votes-n">–</b> meetings, members cast <b id="ex-votes-against">–</b> votes against the decision. The latest published vote, at the meeting ending {longDay(lastVotes)}, was <b id="ex-votes-last">–</b>.{minutesPending ? ` The minutes of the meeting that ended on ${decided}, which record each member's vote and reasons, are due about two weeks after it; this chart adds that meeting when they are out.` : ""}</p>
+            <p>Across <b id="ex-votes-n" set:html={N["ex-votes-n"]}></b> meetings, members cast <b id="ex-votes-against" set:html={N["ex-votes-against"]}></b> votes against the decision. The latest published vote, at the meeting ending {longDay(lastVotes)}, was <b id="ex-votes-last" set:html={N["ex-votes-last"]}></b>.{minutesPending ? ` The minutes of the meeting that ended on ${decided}, which record each member's vote and reasons, are due about two weeks after it; this chart adds that meeting when they are out.` : ""}</p>
           </div>
         </div>
       </figure>
@@ -319,17 +393,10 @@ const baked = {
             <h3>Loan and deposit rates follow the repo rate, new business first</h3>
             <div class="sub">Weighted average lending rate (WALR) and term deposit rate (WADTDR) of all scheduled commercial banks, on fresh business in the month and on the whole book, against the repo rate at month-end, per cent, February 2012 to {PL.long}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-pass">–</div><div class="c">new loans, {PL.short}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-pass" set:html={N["pv-pass"]}></div><div class="c">new loans, {PL.short}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>New loans</span>
-            <span class="chip"><i style="background:#AFBBF0"></i>All loans</span>
-            <span class="chip"><i style="background:#C47A16"></i>New deposits</span>
-            <span class="chip"><i style="background:#E8C79A"></i>All deposits</span>
-            <span class="chip"><i style="background:#161A22"></i>Repo rate</span>
-          </div>
-          <div class="plotzone"><div id="plot-pass" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-pass" set:html={CH.pass()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Lending and Deposit Rates of Scheduled Commercial Banks (monthly release). All SCBs excludes regional rural and small finance banks. The fresh deposit rate begins March 2020 and is monthly from January 2021.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -342,7 +409,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {PL.long}</span>
-            <p>New loans averaged <b id="ex-pass-wf">–</b> and the whole loan book <b id="ex-pass-wo">–</b>. New fixed deposits paid <b id="ex-pass-df">–</b> and all fixed deposits <b id="ex-pass-do">–</b>. Over the twelve months to {PL.long}, new loan rates moved by <b id="ex-pass-dwf">–</b> and new deposit rates by <b id="ex-pass-ddf">–</b>, against a repo move of <b id="ex-pass-drepo">–</b>.</p>
+            <p>New loans averaged <b id="ex-pass-wf" set:html={N["ex-pass-wf"]}></b> and the whole loan book <b id="ex-pass-wo" set:html={N["ex-pass-wo"]}></b>. New fixed deposits paid <b id="ex-pass-df" set:html={N["ex-pass-df"]}></b> and all fixed deposits <b id="ex-pass-do" set:html={N["ex-pass-do"]}></b>. Over the twelve months to {PL.long}, new loan rates moved by <b id="ex-pass-dwf" set:html={N["ex-pass-dwf"]}></b> and new deposit rates by <b id="ex-pass-ddf" set:html={N["ex-pass-ddf"]}></b>, against a repo move of <b id="ex-pass-drepo" set:html={N["ex-pass-drepo"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -355,11 +422,10 @@ const baked = {
             <h3>{eblrIn} floating-rate loans are now tied to an external benchmark</h3>
             <div class="sub">Share of outstanding floating-rate rupee loans of all scheduled commercial banks by the benchmark they are priced on, per cent, quarter-ends, September 2019 to {PB.long}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-bench">–</div><div class="c">external benchmark, {PB.short}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-bench" set:html={N["pv-bench"]}></div><div class="c">external benchmark, {PB.short}</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-bench"></div>
-          <div class="plotzone"><div id="plot-bench" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-bench" set:html={CH.bench()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Lending and Deposit Rates release, Table 7.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -372,7 +438,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {PB.long}</span>
-            <p>External benchmarks priced <b id="ex-bench-eblr">–</b> of floating-rate loans, the MCLR <b id="ex-bench-mclr">–</b>, the base rate <b id="ex-bench-base">–</b>. At public sector banks the external-benchmark share was <b id="ex-bench-psb">–</b>; at private banks <b id="ex-bench-pvt">–</b>.</p>
+            <p>External benchmarks priced <b id="ex-bench-eblr" set:html={N["ex-bench-eblr"]}></b> of floating-rate loans, the MCLR <b id="ex-bench-mclr" set:html={N["ex-bench-mclr"]}></b>, the base rate <b id="ex-bench-base" set:html={N["ex-bench-base"]}></b>. At public sector banks the external-benchmark share was <b id="ex-bench-psb" set:html={N["ex-bench-psb"]}></b>; at private banks <b id="ex-bench-pvt" set:html={N["ex-bench-pvt"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -385,14 +451,10 @@ const baked = {
             <h3>What a new loan costs depends on what it is for</h3>
             <div class="sub">Weighted average lending rate on fresh rupee loans by purpose, all scheduled commercial banks, per cent, {PS.long}, with the rate a year earlier.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-loans">–</div><div class="c">housing loans</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-loans" set:html={N["pv-loans"]}></div><div class="c">housing loans</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i><span id="lg-loans">Latest</span></span>
-            <span class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>A year earlier</span>
-          </div>
-          <div class="plotzone"><div id="plot-loans" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-loans" set:html={CH.loans()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Lending and Deposit Rates release, Table 8 (fresh loans by sector).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -405,7 +467,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {PS.long}</span>
-            <p>A new housing loan averaged <b id="ex-loans-house">–</b>, a vehicle loan <b id="ex-loans-veh">–</b>, an education loan <b id="ex-loans-edu">–</b> and other personal loans <b id="ex-loans-pers">–</b>. Loans to micro, small and medium enterprises averaged <b id="ex-loans-msme">–</b>.</p>
+            <p>A new housing loan averaged <b id="ex-loans-house" set:html={N["ex-loans-house"]}></b>, a vehicle loan <b id="ex-loans-veh" set:html={N["ex-loans-veh"]}></b>, an education loan <b id="ex-loans-edu" set:html={N["ex-loans-edu"]}></b> and other personal loans <b id="ex-loans-pers" set:html={N["ex-loans-pers"]}></b>. Loans to micro, small and medium enterprises averaged <b id="ex-loans-msme" set:html={N["ex-loans-msme"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -418,10 +480,10 @@ const baked = {
             <h3>Credit card debt costs about {["", "", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"][cardTimes] ?? cardTimes} times as much as a home loan</h3>
             <div class="sub">Weighted average lending rate on all outstanding loans by the borrower's occupation, scheduled commercial banks, per cent, {PO.long}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-cards">–</div><div class="c">credit cards</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-cards" set:html={N["pv-cards"]}></div><div class="c">credit cards</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-cards" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-cards" set:html={CH.cards()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Quarterly Basic Statistical Return (BSR-1), Table 1.9 (DBIE report 949). Outstanding loans, a different ruler from the fresh-loan rates above.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -434,7 +496,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {PO.long}</span>
-            <p>Credit card balances carried <b id="ex-cards-card">–</b>, consumer durables loans <b id="ex-cards-dur">–</b> and housing loans <b id="ex-cards-house">–</b>. All bank credit averaged <b id="ex-cards-all">–</b>.</p>
+            <p>Credit card balances carried <b id="ex-cards-card" set:html={N["ex-cards-card"]}></b>, consumer durables loans <b id="ex-cards-dur" set:html={N["ex-cards-dur"]}></b> and housing loans <b id="ex-cards-house" set:html={N["ex-cards-house"]}></b>. All bank credit averaged <b id="ex-cards-all" set:html={N["ex-cards-all"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -447,10 +509,10 @@ const baked = {
             <h3>{nBanks} banks, {nBanks} prices: the 1-year MCLR bank by bank</h3>
             <div class="sub">One-year marginal cost of funds based lending rate of each bank that reported for {PM.long}, by bank group, per cent; the line marks each group's median.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-mclr">–</div><div class="c">median bank, {PM.short}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-mclr" set:html={N["pv-mclr"]}></div><div class="c">median bank, {PM.short}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-mclr" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-mclr" set:html={CH.mclr()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Lending and Deposit Rates release, Tables 5 and 6. The full list, with each bank's rate a year earlier, is in the table below.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -463,7 +525,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {PM.long}</span>
-            <p>The median bank's 1-year MCLR was <b id="ex-mclr-med">–</b>; among public sector banks <b id="ex-mclr-psb">–</b>, private banks <b id="ex-mclr-pvt">–</b> and foreign banks <b id="ex-mclr-frn">–</b>.</p>
+            <p>The median bank's 1-year MCLR was <b id="ex-mclr-med" set:html={N["ex-mclr-med"]}></b>; among public sector banks <b id="ex-mclr-psb" set:html={N["ex-mclr-psb"]}></b>, private banks <b id="ex-mclr-pvt" set:html={N["ex-mclr-pvt"]}></b> and foreign banks <b id="ex-mclr-frn" set:html={N["ex-mclr-frn"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -489,15 +551,10 @@ const baked = {
             <h3>What banks advertise to savers, and what savers actually get</h3>
             <div class="sub">Term deposit rates for more than a year at major banks (the band from lowest to highest), the savings account rate, and the average rate on fresh term deposits, per cent, April 2011 to {PW.long}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-savers">–</div><div class="c">top of the band, latest week</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-savers" set:html={N["pv-savers"]}></div><div class="c">top of the band, latest week</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#E7EBFC"></i>Card rates, more than a year</span>
-            <span class="chip"><i style="background:#2E4BD8"></i>Fresh deposits, actual</span>
-            <span class="chip"><i style="background:#878D99"></i>Savings account</span>
-          </div>
-          <div class="plotzone"><div id="plot-savers" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-savers" set:html={CH.savers()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Weekly Statistical Supplement, Table 4 (deposit rate ranges) and Lending and Deposit Rates release (WADTDR on fresh deposits).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -510,7 +567,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {PW.long}</span>
-            <p>Card rates for more than a year ran from <b id="ex-sav-min">–</b> to <b id="ex-sav-max">–</b>; savings accounts paid <b id="ex-sav-sb">–</b>. New deposits earned <b id="ex-sav-fd">–</b> on average in {PL.long}.</p>
+            <p>Card rates for more than a year ran from <b id="ex-sav-min" set:html={N["ex-sav-min"]}></b> to <b id="ex-sav-max" set:html={N["ex-sav-max"]}></b>; savings accounts paid <b id="ex-sav-sb" set:html={N["ex-sav-sb"]}></b>. New deposits earned <b id="ex-sav-fd" set:html={N["ex-sav-fd"]}></b> on average in {PL.long}.</p>
           </div>
         </div>
       </figure>
@@ -527,15 +584,10 @@ const baked = {
             <h3>After inflation, savers lost money for most of 2020 to 2022</h3>
             <div class="sub">Real interest rates: the average rate on fresh and on all fixed deposits, and the repo rate, each minus CPI inflation for the same month, percentage points, January 2014 to {PR.long}. CPI on the 2024 base: the NSO's back-cast to 2024 (paler), live from 2025.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-real">–</div><div class="c">new deposits after inflation</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-real" set:html={N["pv-real"]}></div><div class="c">new deposits after inflation</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>New fixed deposits</span>
-            <span class="chip"><i style="background:#878D99"></i>All fixed deposits</span>
-            <span class="chip"><i style="background:#C47A16"></i>Repo rate</span>
-          </div>
-          <div class="plotzone"><div id="plot-real" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-real" set:html={CH.real()} />
           <div class="plotfoot">
             <span class="src">Source: India Atlas calculation from RBI rates and MoSPI CPI (2024=100; the CPI guide's linked series). Before tax. The same calculation on the retired 2012 base is in the data downloads.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -548,7 +600,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {PR.long}</span>
-            <p>With CPI inflation at <b id="ex-real-cpi">–</b>, a new fixed deposit earned <b id="ex-real-fdf">–</b> after inflation and the average fixed deposit <b id="ex-real-fdo">–</b>. The real repo rate was <b id="ex-real-repo">–</b>.</p>
+            <p>With CPI inflation at <b id="ex-real-cpi" set:html={N["ex-real-cpi"]}></b>, a new fixed deposit earned <b id="ex-real-fdf" set:html={N["ex-real-fdf"]}></b> after inflation and the average fixed deposit <b id="ex-real-fdo" set:html={N["ex-real-fdo"]}></b>. The real repo rate was <b id="ex-real-repo" set:html={N["ex-real-repo"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -565,11 +617,10 @@ const baked = {
             <h3>The yield curve: what the government pays to borrow for 1 to 30 years</h3>
             <div class="sub">Yields of central government securities traded in the market at each whole year to maturity, per cent, at the end of {PC.long}, a year earlier and five years earlier.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-curve">–</div><div class="c">10-year yield, {PC.short}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-curve" set:html={N["pv-curve"]}></div><div class="c">10-year yield, {PC.short}</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-curve"></div>
-          <div class="plotzone"><div id="plot-curve" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-curve" set:html={CH.curve()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Month-end Yield of SGL Transactions in Government Dated Securities for Various Maturities (DBIE report 1368).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -582,7 +633,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {PC.long}</span>
-            <p>The 1-year yield was <b id="ex-curve-1">–</b>, the 10-year <b id="ex-curve-10">–</b> and the 30-year <b id="ex-curve-30">–</b>. The 10-year stood <b id="ex-curve-spread">–</b> above the 1-year.</p>
+            <p>The 1-year yield was <b id="ex-curve-1" set:html={N["ex-curve-1"]}></b>, the 10-year <b id="ex-curve-10" set:html={N["ex-curve-10"]}></b> and the 30-year <b id="ex-curve-30" set:html={N["ex-curve-30"]}></b>. The 10-year stood <b id="ex-curve-spread" set:html={N["ex-curve-spread"]}></b> above the 1-year.</p>
           </div>
         </div>
       </figure>
@@ -595,14 +646,10 @@ const baked = {
             <h3>Short and long: the 91-day Treasury bill and the 10-year bond since the 1990s</h3>
             <div class="sub">Cut-off yield at each weekly auction of the 91-day Treasury bill since January 1993, and the month-end 10-year government bond yield since April 1996, per cent.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-tbill">–</div><div class="c">91-day bill, latest auction</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-tbill" set:html={N["pv-tbill"]}></div><div class="c">91-day bill, latest auction</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>91-day Treasury bill</span>
-            <span class="chip"><i style="background:#C47A16"></i>10-year bond</span>
-          </div>
-          <div class="plotzone"><div id="plot-tbill" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-tbill" set:html={CH.tbill()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Auctions of 91-Day Government of India Treasury Bills (DBIE report 307), and month-end SGL yields (report 1368).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -615,7 +662,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {PT.long}</span>
-            <p>The latest 91-day auction, on {longDay(t91.dates.at(-1))}, cleared at <b id="ex-tbill-91">–</b>. The 10-year yield ended {PC.long} at <b id="ex-tbill-10">–</b>.</p>
+            <p>The latest 91-day auction, on {longDay(t91.dates.at(-1))}, cleared at <b id="ex-tbill-91" set:html={N["ex-tbill-91"]}></b>. The 10-year yield ended {PC.long} at <b id="ex-tbill-10" set:html={N["ex-tbill-10"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -628,14 +675,10 @@ const baked = {
             <h3>Call money since 1990: from wild swings to a narrow band</h3>
             <div class="sub">Call money rate, monthly average and the highest rate struck in the month, per cent, April 1990 to {PCM.long}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-call">–</div><div class="c">monthly average, {PCM.short}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-call" set:html={N["pv-call"]}></div><div class="c">monthly average, {PCM.short}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>Monthly average</span>
-            <span class="chip"><i style="background:#C9CED6"></i>Highest deal of the month</span>
-          </div>
-          <div class="plotzone"><div id="plot-call" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-call" set:html={CH.call()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Weighted Average Call/Notice Money Rates, monthly (DBIE report 1375, Handbook of Statistics).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -648,7 +691,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {PCM.long}</span>
-            <p>The call rate averaged <b id="ex-call-avg">–</b> in {PCM.long}, with the highest deal at <b id="ex-call-high">–</b>.</p>
+            <p>The call rate averaged <b id="ex-call-avg" set:html={N["ex-call-avg"]}></b> in {PCM.long}, with the highest deal at <b id="ex-call-high" set:html={N["ex-call-high"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -665,14 +708,10 @@ const baked = {
             <h3>{borrowTitle}</h3>
             <div class="sub">Gross market borrowing through dated securities by the central government and by all state governments together, ₹ lakh crore, financial years 1980-81 to {fy(borrow.dates.at(-1))}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-borrow">–</div><div class="c">centre and states, {fy(borrow.dates.at(-1))}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-borrow" set:html={N["pv-borrow"]}></div><div class="c">centre and states, {fy(borrow.dates.at(-1))}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>Central government</span>
-            <span class="chip"><i style="background:#C47A16"></i>State governments</span>
-          </div>
-          <div class="plotzone"><div id="plot-borrow" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-borrow" set:html={CH.borrow()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics, Market Borrowings of the Central and State Governments (DBIE report 104). Nominal rupees: not adjusted for inflation.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -685,7 +724,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {fy(borrow.dates.at(-1))}</span>
-            <p>In {fy(borrow.dates.at(-1))} the centre borrowed <b id="ex-bor-c">–</b> gross and the states <b id="ex-bor-s">–</b>.</p>
+            <p>In {fy(borrow.dates.at(-1))} the centre borrowed <b id="ex-bor-c" set:html={N["ex-bor-c"]}></b> gross and the states <b id="ex-bor-s" set:html={N["ex-bor-s"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -698,10 +737,10 @@ const baked = {
             <h3>When the market will not buy: bonds left with primary dealers</h3>
             <div class="sub">Central government bonds that the market did not take at auction and that primary dealers had to buy (devolvement), ₹ crore, financial years 1995-96 to {fy(dev.dates.at(-1))}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-dev">–</div><div class="c">largest year, {fy(devFY[0])}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-dev" set:html={N["pv-dev"]}></div><div class="c">largest year, {fy(devFY[0])}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-devolve" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-devolve" set:html={CH.devolve()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Details of Central Government Market Borrowings (DBIE report 559), summed by financial year. The current year is not over.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -714,7 +753,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {fy(dev.dates.at(-1))}</span>
-            <p>The largest year was {fy(devFY[0])}, with <b id="ex-dev-max">–</b> left with dealers on <b id="ex-dev-n">–</b> auction days. In {fy(dev.dates.at(-1))} so far, <b id="ex-dev-now">–</b>.</p>
+            <p>The largest year was {fy(devFY[0])}, with <b id="ex-dev-max" set:html={N["ex-dev-max"]}></b> left with dealers on <b id="ex-dev-n" set:html={N["ex-dev-n"]}></b> auction days. In {fy(dev.dates.at(-1))} so far, <b id="ex-dev-now" set:html={N["ex-dev-now"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -725,12 +764,12 @@ const baked = {
         <div class="plate-head">
           <div class="t">
             <h3>What each state pays to borrow</h3>
-            <div class="sub">Cut-off yield on each state's market loans in {fy(sdlFY)}, weighted by the amount raised, per cent, {nStates} states and union territories, against the all-state average.</div>
+            <div class="sub">Cut-off yield on each state's market loans in {fy(sdlFY)}, weighted by the amount raised, per cent, {nStates} states and union territories, against the all-state average: each bar is a state's gap from it, percentage points.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-states">–</div><div class="c">all states, {fy(sdlFY)}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-states" set:html={N["pv-states"]}></div><div class="c">all states, {fy(sdlFY)}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-states" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-states" set:html={CH.states()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Details of State Governments Market Borrowings (DBIE report 1213), states read from each loan's name; checked against the RBI's auction press releases. Every state's yield and borrowing since 2005-06 is in the table below.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -743,7 +782,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {fy(sdlFY)}</span>
-            <p>The states paid <b id="ex-st-all">–</b> on average. The lowest was <b id="ex-st-lo">–</b>, the highest <b id="ex-st-hi">–</b>.</p>
+            <p>The states paid <b id="ex-st-all" set:html={N["ex-st-all"]}></b> on average. The lowest was <b id="ex-st-lo" set:html={N["ex-st-lo"]}></b>, the highest <b id="ex-st-hi" set:html={N["ex-st-hi"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -777,14 +816,10 @@ const baked = {
             <h3>What a one-to-three-year fixed deposit paid, 1970 to today</h3>
             <div class="sub">Deposit rates for one to three years: the RBI's prescribed rate for all commercial banks to 1999-00, and the range at five major banks from 2000-01, per cent, financial years; the two are different rulers and are not joined.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-struct">–</div><div class="c">top of the range, {fy(structure.dates.at(-1))}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-struct" set:html={N["pv-struct"]}></div><div class="c">top of the range, {fy(structure.dates.at(-1))}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#878D99"></i>All commercial banks, to 1999-00</span>
-            <span class="chip"><i style="background:#2E4BD8"></i>Five major banks, from 2000-01</span>
-          </div>
-          <div class="plotzone"><div id="plot-structure" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-structure" set:html={CH.structure()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics, Structure of Interest Rates (DBIE report 282). The current year's figure is the latest the Handbook prints, not a full-year figure.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -797,7 +832,7 @@ const baked = {
           </div>
           <div class="now">
             <span class="mk">As of {fy(structure.dates.at(-1))}</span>
-            <p>Five major banks offered <b id="ex-struct-lo">–</b> to <b id="ex-struct-hi">–</b> for one to three years. The peak in this table is <b id="ex-struct-peak">–</b>.</p>
+            <p>Five major banks offered <b id="ex-struct-lo" set:html={N["ex-struct-lo"]}></b> to <b id="ex-struct-hi" set:html={N["ex-struct-hi"]}></b> for one to three years. The peak in this table is <b id="ex-struct-peak" set:html={N["ex-struct-peak"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -835,7 +870,7 @@ const baked = {
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Reserve Bank of India: the Handbook of Statistics on the Indian Economy, MPC resolutions and minutes, the monthly release on Lending and Deposit Rates of Scheduled Commercial Banks, the Weekly Statistical Supplement, auction results, and the Database on Indian Economy (DBIE), all read from India Atlas's archived copy of these RBI publications. CPI from MoSPI, read from this site's CPI guide. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Reserve Bank of India: the Handbook of Statistics on the Indian Economy, MPC resolutions and minutes, the monthly release on Lending and Deposit Rates of Scheduled Commercial Banks, the Weekly Statistical Supplement, auction results, and the Database on Indian Economy (DBIE), all read from India Atlas's archived copy of these RBI publications. CPI from MoSPI, read from this site's CPI guide. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]}></b>.</p>
       </div>
       <div>
         <h6>Method</h6>
@@ -852,13 +887,12 @@ const baked = {
     </div>
     <div class="fine">
       <span>India Atlas, interest rates</span>
-      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]}></span></span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
 
 </div>
-<script type="application/json" id="rates-baked" set:html={JSON.stringify(baked)} />
 <script>
   import "../../dossiers/guide.client.js";
   import "../../dossiers/rates.client.js";

@@ -7,6 +7,7 @@ import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 import { load, points, last, first, value, states, share, r1 } from "../../dossiers/gender.data.js";
+import { GENDER as CH } from "../../dossiers/health-gender.charts.js";
 const D = bySlug["gender"];
 
 // ---- the figures the copy names, read from the bundles at build time ----
@@ -175,7 +176,6 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
   canonical="https://atlas.thisindianlife.today/guides/gender/"
   ogImage={`/og/${D.slug}.png`}
 >
-<script type="application/json" id="gender-data" is:inline set:html={JSON.stringify(DATA)}></script>
 <div class="page">
 
   <div class="titleblock break">
@@ -250,7 +250,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
           <div class="plate-val"><div class="v acc" id="pv-srb">{f0(srbNow.value)}</div><div class="c">India, {srbNow.period}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-srb"></div>
+          <div class="plotzone" id="plot-srb" set:html={CH["srb"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: Sample Registration System, Office of the Registrar General of India, as reprinted in MoSPI's Women and Men in India 2025 (table 1.6).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in/census.website/data/SRSSTAT" target="_blank" rel="noopener">Source</a></span>
@@ -278,7 +278,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
           <div class="plate-val"><div class="v" id="pv-srb-states">{srbS.filter((r) => r.v < srbNow.value).length}</div><div class="c">states below India's {f0(srbNow.value)}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-srb-states"></div>
+          <div class="plotzone" id="plot-srb-states" set:html={CH["srb-states"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: Sample Registration System, Office of the Registrar General of India, as reprinted in MoSPI's Women and Men in India 2025 (table 1.6). The Civil Registration System's count of registered births by state (table 1.5) is in the data downloads.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in/census.website/data/SRSSTAT" target="_blank" rel="noopener">Source</a></span>
@@ -305,7 +305,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
           <div class="plate-val"><div class="v" id="pv-census">{f0(sr.at(-1).value)}</div><div class="c">Census {sr.at(-1).period}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-census"></div>
+          <div class="plotzone" id="plot-census" set:html={CH["census"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: Census of India, Office of the Registrar General of India, as reprinted in MoSPI's Women and Men in India 2025 (table 1.3). Every state's census ratio is in the data downloads.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -338,7 +338,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
           <div class="plate-val"><div class="v" id="pv-imr">{f0(imrF.at(-1).value)}</div><div class="c">girls, {imrF.at(-1).period}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-imr"></div>
+          <div class="plotzone" id="plot-imr" set:html={CH["imr"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: Sample Registration System, Office of the Registrar General of India, as reprinted in MoSPI's Women and Men in India 2025 (tables 2.5, 2.6). Rates by state, village and town are in the data downloads.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in/census.website/data/SRSSTAT" target="_blank" rel="noopener">Source</a></span>
@@ -365,7 +365,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
           <div class="plate-val"><div class="v" id="pv-mmr">{f0(mmr.at(-1).value)}</div><div class="c">{mmr.at(-1).period}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-mmr"></div>
+          <div class="plotzone" id="plot-mmr" set:html={CH["mmr"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: Sample Registration System special bulletins on maternal mortality, Office of the Registrar General of India, as reprinted in MoSPI's Women and Men in India 2025 (table 2.9).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in/census.website/data/SRSSTAT" target="_blank" rel="noopener">Source</a></span>
@@ -392,7 +392,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
           <div class="plate-val"><div class="v" id="pv-mmr-states">{f0(mmrS[0].v)}</div><div class="c">{mmrS[0].geo}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-mmr-states"></div>
+          <div class="plotzone" id="plot-mmr-states" set:html={CH["mmr-states"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: Sample Registration System, Office of the Registrar General of India, as reprinted in MoSPI's Women and Men in India 2025 (table 2.9).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in/census.website/data/SRSSTAT" target="_blank" rel="noopener">Source</a></span>
@@ -415,7 +415,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
           <div class="plate-val"><div class="v" id="pv-life">{f1(leLastMeasured.value)}</div><div class="c">women, {leLastMeasured.period}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-life"></div>
+          <div class="plotzone" id="plot-life" set:html={CH["life"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: Sample Registration System abridged life tables, Office of the Registrar General of India; projections from the Report of the Technical Group on Population Projections (July 2020); as reprinted in MoSPI's Women and Men in India 2025 (table 2.8). The UN's estimates are in the Population guide.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in/census.website/data/SRSSTAT" target="_blank" rel="noopener">Source</a></span>
@@ -443,12 +443,12 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
         <div class="plate-head">
           <div class="t">
             <h3>A woman who never went to school has {f1(tfrEdu[0].v)} children on average; a graduate has {f1(tfrEdu.at(-1).v)}</h3>
-            <div class="sub">Total fertility rate by the mother's schooling, India, {asOf("gender-t010")}. The dashed rule is all literate women.</div>
+            <div class="sub">Total fertility rate by the mother's schooling, India, {asOf("gender-t010")}. The rule marks all literate women.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-tfr-edu">{f1(tfrEdu[0].v)}</div><div class="c">children per woman, no schooling</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-tfr-edu"></div>
+          <div class="plotzone" id="plot-tfr-edu" set:html={CH["tfr-edu"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: Sample Registration System, Office of the Registrar General of India, as reprinted in MoSPI's Women and Men in India 2025 (table 2.1). Rates for villages and towns, and by age, are in the data downloads.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in/census.website/data/SRSSTAT" target="_blank" rel="noopener">Source</a></span>
@@ -475,7 +475,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
           <div class="plate-val"><div class="v" id="pv-marriage">{f1(mar)}</div><div class="c">years, India</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-marriage-states"></div>
+          <div class="plotzone" id="plot-marriage-states" set:html={CH["marriage-states"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: Sample Registration System, Office of the Registrar General of India, as reprinted in MoSPI's Women and Men in India 2025 (table 2.4). The NFHS's share of women married before 18 is in Family health.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in/census.website/data/SRSSTAT" target="_blank" rel="noopener">Source</a></span>
@@ -503,16 +503,12 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
         <div class="plate-head">
           <div class="t">
             <h3>Girls now enrol at least as much as boys at every level, and drop out less</h3>
-            <div class="sub">Gross enrolment ratio ({gerPeriod}) and dropout rate ({dropPeriod}), per cent: boys (grey) and girls (blue).</div>
+            <div class="sub">Gross enrolment ratio ({gerPeriod}) and dropout rate ({dropPeriod}), per cent: boys and girls.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-school">{f1(ger.at(-1).b)}<span class="pc">%</span></div><div class="c">women's enrolment in higher education</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#5F6675"></i>Boys and men</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>Girls and women</button>
-          </div>
-          <div class="plotzone" id="plot-school"></div>
+          <div class="plotzone" id="plot-school" set:html={CH["school"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: UDISE+, Department of School Education and Literacy, and the All India Survey on Higher Education, Ministry of Education, as reprinted in MoSPI's Women and Men in India 2025 (tables 3.5, 3.15).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://udiseplus.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -539,7 +535,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
           <div class="plate-val"><div class="v" id="pv-literacy">{f1(litF.at(-1).value)}<span class="pc">%</span></div><div class="c">women, Census 2011</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-literacy"></div>
+          <div class="plotzone" id="plot-literacy" set:html={CH["literacy"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: Census of India, Office of the Registrar General of India; 2017-18 from the National Sample Survey's 75th round, National Statistics Office; as reprinted in MoSPI's Women and Men in India 2025 (table 3.1). The two are different instruments and are not joined.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -561,12 +557,12 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
         <div class="plate-head">
           <div class="t">
             <h3>An Indian woman over 15 has {f1(ysWomen)} years of schooling, a man {f1(ysMen)}; {ysAhead.length ? `women lead in ${ysAhead.length} states and UTs` : "men have more in every state and UT"}</h3>
-            <div class="sub">Mean years of schooling, people 15 and over, women (blue) and men (grey), by state and UT, 2022-23.</div>
+            <div class="sub">Mean years of schooling, people 15 and over, women and men, by state and UT, 2022-23.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-schooling">{f1(ysWomen)}</div><div class="c">years, women, India</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-schooling-states"></div>
+          <div class="plotzone" id="plot-schooling-states" set:html={CH["schooling-states"](DATA, { a: ysMen, b: ysWomen })} />
           <div class="plotfoot">
             <span class="src">Source: Comprehensive Annual Modular Survey 2022-23 (NSS 79th round), National Statistics Office, as reprinted in MoSPI's Women and Men in India 2025 (table 3.12.3).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -599,7 +595,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
           <div class="plate-val"><div class="v acc" id="pv-work">{f1(wpr25F[0].value)}<span class="pc">%</span></div><div class="c">women at work, 2025</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-work"></div>
+          <div class="plotzone" id="plot-work" set:html={CH["work"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: Periodic Labour Force Survey, National Statistics Office, MoSPI, as reprinted in MoSPI's Women and Men in India 2025 (table 4.6.1). The Jobs guide carries every PLFS cut by state, age, sector and industry.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -622,12 +618,12 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
         <div class="plate-head">
           <div class="t">
             <h3>Women's labour force participation runs from {f1(lfRows.at(-1).women)}% in {lfRows.at(-1).geo} to {f1(lfRows[0].women)}% in {lfRows[0].geo}</h3>
-            <div class="sub">Labour force participation rate, people 15 and over, women (blue) and men (grey), by state and UT, 2025, usual status.</div>
+            <div class="sub">Labour force participation rate, people 15 and over, women and men, by state and UT, 2025, usual status.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-lfpr">{f1(lfW)}<span class="pc">%</span></div><div class="c">women, India</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-lfpr-states"></div>
+          <div class="plotzone" id="plot-lfpr-states" set:html={CH["lfpr-states"](DATA, { a: lfMen, b: lfW })} />
           <div class="plotfoot">
             <span class="src">Source: Periodic Labour Force Survey 2025, National Statistics Office, MoSPI, as reprinted in MoSPI's Women and Men in India 2025 (table 4.3).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -649,12 +645,12 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
         <div class="plate-head">
           <div class="t">
             <h3>A village woman doing casual work earns ₹{f0(wF)} a day, a man ₹{f0(wM)}: {Math.round((100 * wF) / wM)} rupees for every 100</h3>
-            <div class="sub">Average daily wage of casual labourers in work other than public works, rural, women (blue) and men (grey), by state and UT, 2025, rupees. {wageNone.length} states and UTs with no estimate for women are left out: {wageNone.join(", ")}.</div>
+            <div class="sub">Average daily wage of casual labourers in work other than public works, rural, women and men, by state and UT, 2025, rupees. {wageNone.length} states and UTs with no estimate for women are left out: {wageNone.join(", ")}.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-wage">₹{f0(wF)}</div><div class="c">a day, rural women</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-wage-states"></div>
+          <div class="plotzone" id="plot-wage-states" set:html={CH["wage-states"](DATA, { a: wM, b: wF })} />
           <div class="plotfoot">
             <span class="src">Source: Periodic Labour Force Survey 2025, National Statistics Office, MoSPI, as reprinted in MoSPI's Women and Men in India 2025 (table 4.7). Urban wages, and hourly earnings by occupation, are in the data downloads.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -682,16 +678,12 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
         <div class="plate-head">
           <div class="t">
             <h3>Women spend about {f1(time[0].b / 60)} hours a day on unpaid work at home, men under one hour, and the gap barely moved between the surveys</h3>
-            <div class="sub">Average minutes a day per person aged 6 and over, India: Time Use Survey 2019 (grey) and 2024 (blue). Unpaid work at home in 2019 adds the survey's two unpaid categories (domestic and care work, and production for the household's own use).</div>
+            <div class="sub">Average minutes a day per person aged 6 and over, India: Time Use Survey 2019 and 2024. Unpaid work at home in 2019 adds the survey's two unpaid categories (domestic and care work, and production for the household's own use).</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-time">{f0(time[0].b)}</div><div class="c">minutes, women, 2024</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#5F6675"></i>2019</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>2024</button>
-          </div>
-          <div class="plotzone" id="plot-time"></div>
+          <div class="plotzone" id="plot-time" set:html={CH["time"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: Time Use Survey 2019 and 2024, National Statistics Office, MoSPI, as reprinted in MoSPI's Women and Men in India 2025 (tables 4.21.1, 4.21.2). Every activity, by village and town and by age, is in the data downloads.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -724,7 +716,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
           <div class="plate-val"><div class="v" id="pv-money">{f1(money.find((m) => /Jan Dhan/.test(m.label)).v)}<span class="pc">%</span></div><div class="c">of Jan Dhan accounts are women's</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-money"></div>
+          <div class="plotzone" id="plot-money" set:html={CH["money"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: Department of Financial Services, Ministry of Finance (PMJDY, PMJJBY, PMSBY, APY, Stand-Up India); RBI, BSR-2 (deposits, March 2025); CDSL (demat); NSE (investors); as reprinted in MoSPI's Women and Men in India 2025 (tables 4.24 to 4.36). Shares computed by the Atlas from the printed counts.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -757,7 +749,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
           <div class="plate-val"><div class="v acc" id="pv-ls">{f1(lsNow.value)}<span class="pc">%</span></div><div class="c">{lsNow.period}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-lok-sabha"></div>
+          <div class="plotzone" id="plot-lok-sabha" set:html={CH["lok-sabha"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: Election Commission of India, as reprinted in MoSPI's Women and Men in India 2025 (table 5.2). Share computed by the Atlas: women elected divided by seats.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://eci.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -784,7 +776,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
           <div class="plate-val"><div class="v" id="pv-voice">{f1(voice[0].v)}<span class="pc">%</span></div><div class="c">{voice[0].label.replace(/^[A-Z](?![A-Z])/, (c) => c.toLowerCase())}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-voice"></div>
+          <div class="plotzone" id="plot-voice" set:html={CH["voice"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Panchayati Raj; Lok Sabha Secretariat; Department of Justice; Bureau of Police Research and Development; Election Commission of India; Ministry of Corporate Affairs; as reprinted in MoSPI's Women and Men in India 2025 (tables 5.1 to 5.11). Assembly and company shares computed by the Atlas from the printed counts.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -817,7 +809,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
           <div class="plate-val"><div class="v" id="pv-crime">{f1(crimeAI)}</div><div class="c">India, per 1,00,000 women</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-crime-states"></div>
+          <div class="plotzone" id="plot-crime-states" set:html={CH["crime-states"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: Crime in India, National Crime Records Bureau, as reprinted in MoSPI's Women and Men in India 2025 (table 6.2). Rates by crime head for every state are in the data downloads.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ncrb.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -839,12 +831,12 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
         <div class="plate-head">
           <div class="t">
             <h3>The most common recorded crime against women is cruelty by a husband or his family</h3>
-            <div class="sub">Cases registered under each head, India, {heads[0].from} (grey) and {heads[0].to} (blue).</div>
+            <div class="sub">Cases registered under each head, India, {heads[0].from} and {heads[0].to}.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-heads">{f0(heads[0].b)}</div><div class="c">cases of cruelty by husband or relatives, {heads[0].to}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-crime-heads"></div>
+          <div class="plotzone" id="plot-crime-heads" set:html={CH["crime-heads"](DATA, { from: heads[0].from, to: heads[0].to })} />
           <div class="plotfoot">
             <span class="src">Source: Crime in India, National Crime Records Bureau, as reprinted in MoSPI's Women and Men in India 2025 (table 6.1). Heads under the Indian Penal Code and special laws as NCRB reports them.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ncrb.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -871,7 +863,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
           <div class="plate-val"><div class="v" id="pv-conviction">{f1(convAll)}<span class="pc">%</span></div><div class="c">all crimes against women</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-conviction"></div>
+          <div class="plotzone" id="plot-conviction" set:html={CH["conviction"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: Crime in India, National Crime Records Bureau, as reprinted in MoSPI's Women and Men in India 2025 (table 6.6).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ncrb.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -899,12 +891,12 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
         <div class="plate-head">
           <div class="t">
             <h3>More than half of deaths are from non-communicable disease; injuries take {f1(causes[2].a)}% of men's deaths and {f1(causes[2].b)}% of women's</h3>
-            <div class="sub">Share of deaths by broad cause, men (grey) and women (blue), India, {causePeriod}.</div>
+            <div class="sub">Share of deaths by broad cause, men and women, India, {causePeriod}.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-causes">{f1(causes[0].b)}<span class="pc">%</span></div><div class="c">women's deaths from non-communicable disease</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-causes"></div>
+          <div class="plotzone" id="plot-causes" set:html={CH["causes"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: Cause of Death Statistics, Sample Registration System, Office of the Registrar General of India, as reprinted in MoSPI's Women and Men in India 2025 (table 2.30). Disability, HIV, tuberculosis and other health tables are in the data downloads; the household health survey is in Family health.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in/census.website/data/SRSSTAT" target="_blank" rel="noopener">Source</a></span>
@@ -985,6 +977,5 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
 </div>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/gender.client.js";
 </script>
 </Base>

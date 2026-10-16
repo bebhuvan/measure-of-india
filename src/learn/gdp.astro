@@ -1,5 +1,7 @@
 ---
 import Learn from "../layouts/Learn.astro";
+import * as CH from "./gdp.charts.js";
+const NUM = CH.NUM;
 ---
 <Learn
   title="GDP: what it counts, what it misses · India Atlas"
@@ -58,7 +60,7 @@ import Learn from "../layouts/Learn.astro";
   <!-- § 02 plate : a decade of growth -->
   <section>
     <div class="sec-head"><span class="no">02</span><h2>A decade, drawn once</h2><span class="line"></span><span class="unit">y/y %, quarterly</span></div>
-    <p>Drawn as a growth rate, the decade looks like a heart monitor: a steady pulse near 6 per cent, one arrest, a rebound off the fallen base, then a return to rhythm. The dashed rule is the rough pre-pandemic trend, drawn as a reference, not a target.</p>
+    <p>Drawn as a growth rate, the decade looks like a heart monitor: a steady pulse near 6 per cent, one arrest, a rebound off the fallen base, then a return to rhythm. The dotted rule is the rough pre-pandemic trend, drawn as a reference, not a target.</p>
     <div class="break">
       <figure id="cb-gdp" style="margin:0">
         <div class="plate-head">
@@ -66,12 +68,12 @@ import Learn from "../layouts/Learn.astro";
             <h3>Thirty-eight quarters of growth: and the one the economy stopped</h3>
             <div class="sub">Real GDP, year-on-year, constant 2011-12 prices, Q1 FY17 to Q2 FY26</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-gdp">–</div><div class="c">Q2 FY26, GDP y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-gdp" set:html={NUM["pv-gdp"]}></div><div class="c">Q2 FY26, GDP y/y</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-gdp"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-gdp" set:html={CH.gdp()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, National Accounts, base 2011-12, vintage <span id="pf-gdp">–</span>, dashed: rough 6% pre-pandemic trend</span>
+            <span class="src">Source: MoSPI, National Accounts, base 2011-12, vintage <span id="pf-gdp" set:html={NUM["pf-gdp"]}></span>, dotted: rough 6% pre-pandemic trend</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -83,12 +85,12 @@ import Learn from "../layouts/Learn.astro";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Every point compares one quarter with the same quarter a year earlier. Above zero, output grew; below zero, it shrank. Read the distance from the dashed rule, not only the sign: 3 per cent is still growth, but it is half the old rhythm.</p>
+            <p>Every point compares one quarter with the same quarter a year earlier. Above zero, output grew; below zero, it shrank. Read the distance from the dotted rule, not only the sign: 3 per cent is still growth, but it is half the old rhythm.</p>
             <p>The crash and the rebound are a pair. Output fell by nearly a quarter in the lockdown, then rose by nearly a quarter, because it was measured against the wreckage. Neither figure is a lie. Both are arithmetic, and the arithmetic has a name: the base effect.</p>
           </div>
           <div class="now">
             <span class="mk">The FY26 case</span>
-            <p>The last four quarters read <b id="fy26-run">–</b>: every one above the trend rule, ending at <b id="fy26-last">–</b> in Q2 FY26. Runs above the rule have come in bursts in this series. FY24 was one such burst; the last four quarters are another.</p>
+            <p>The last four quarters read <b id="fy26-run" set:html={NUM["fy26-run"]}></b>: every one above the trend rule, ending at <b id="fy26-last" set:html={NUM["fy26-last"]}></b> in Q2 FY26. Runs above the rule have come in bursts in this series. FY24 was one such burst; the last four quarters are another.</p>
             <p>Notice the difference from the rebound. The 2021 spike stood on a destroyed base. This run stands on ordinary quarters, which is what makes it worth reading slowly.</p>
           </div>
         </div>
@@ -100,10 +102,10 @@ import Learn from "../layouts/Learn.astro";
   <section>
     <div class="sec-head"><span class="no">03</span><h2>What the number cannot see</h2><span class="line"></span><span class="unit">Three blind spots</span></div>
     <div class="numbers">
-      <div class="num"><div class="l">The print, Q2 FY26</div><div class="v acc" id="n-last">–</div><div class="d">real GDP, year-on-year</div></div>
-      <div class="num"><div class="l">The quarter before</div><div class="v" id="n-prev">–</div><div class="d">Q1 FY26, same measure</div></div>
-      <div class="num"><div class="l">Pre-pandemic average</div><div class="v" id="n-trend">–</div><div class="d">FY17 to FY20, the dashed rule</div></div>
-      <div class="num"><div class="l">The lockdown quarter</div><div class="v" id="n-crash">–</div><div class="d">Q1 FY21, the flow stopped</div></div>
+      <div class="num"><div class="l">The print, Q2 FY26</div><div class="v acc" id="n-last" set:html={NUM["n-last"]}></div><div class="d">real GDP, year-on-year</div></div>
+      <div class="num"><div class="l">The quarter before</div><div class="v" id="n-prev" set:html={NUM["n-prev"]}></div><div class="d">Q1 FY26, same measure</div></div>
+      <div class="num"><div class="l">Pre-pandemic average</div><div class="v" id="n-trend" set:html={NUM["n-trend"]}></div><div class="d">FY17 to FY20, the dotted rule</div></div>
+      <div class="num"><div class="l">The lockdown quarter</div><div class="v" id="n-crash" set:html={NUM["n-crash"]}></div><div class="d">Q1 FY21, the flow stopped</div></div>
     </div>
     <p style="margin-top:40px">For one number, GDP is honest about what it is. The misuse begins when it is asked questions it cannot answer. Three of them matter most.</p>
     <p><b>Distribution, first.</b> GDP is a total; it cannot say who received it. If all of a year's extra output accrues to a thin slice of households, the print still rises, and the median family sees nothing. The aggregate carries no map of its own spread.</p>
@@ -154,7 +156,4 @@ import Learn from "../layouts/Learn.astro";
     <p>Companion guide: <a href="/guides/gdp/">National Accounts</a>.</p>
   </div>
 
-<script>
-  import "./gdp.client.js";
-</script>
 </Learn>

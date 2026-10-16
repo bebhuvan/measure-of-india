@@ -1,8 +1,12 @@
-import * as Plot from '@observablehq/plot';
-import {a11y,downloadSVG,downloadPNG} from '../charts/plumbing.js';
+// The chart is drawn with the house chart kit (src/kit/kit.js) in the browser, at the container's
+// measured width, because the reader picks the series; src/kit/enhance.js adds hover and the
+// SVG/PNG downloads (the figure's data-dl buttons). Missing values stay null and break the line.
+import * as K from '../kit/kit.js';
+import {figure} from '../kit/figure.js';
+import {enhance} from '../kit/enhance.js';
 import {createSearch,expectedScheduleContext} from '../dossiers/search-core.js';
 import {createLoader} from './loader.js';
-import {MAX_COMPARE,canComparePolicy,seriesURL,parseIdentity,assertCompatible,assertExpectedPolicy,observations,aligned,selectedCSV,selectedJSON,identity,unitLabel,compactAxisValue,expectedAsOf} from './model.js';
+import {MAX_COMPARE,canComparePolicy,seriesURL,parseIdentity,assertCompatible,assertExpectedPolicy,observations,aligned,selectedCSV,selectedJSON,identity,unitLabel,expectedAsOf} from './model.js';
 const root=document.getElementById('explorer');
 if(root){
   const el=id=>document.getElementById(id),loader=createLoader(fetch,root.dataset.qualityVersion);let appliedRange={},records=[],chart=null,controller=null,epoch=0,searchEpoch=0,searchPromise=null,tablePage=0;
@@ -20,33 +24,56 @@ if(root){
     el('explore-table-count').textContent=`${rows.length.toLocaleString('en-IN')} periods. Page ${tablePage+1} of ${Math.max(1,Math.ceil(rows.length/100))}. Downloads include the entire selected range.`;
     el('explore-prev').disabled=tablePage===0;el('explore-next').disabled=(tablePage+1)*100>=rows.length;
   }
+  // kit drawing helpers: frequency for the hover and tick labels, unit suffix, decimals the source publishes
+  const freqOf=(m,dates)=>m.frequency==='monthly'?'month':m.frequency==='quarterly'?'quarter':m.frequency==='annual'?(m.calendar==='fiscal-apr'||(m.calendar!=='calendar'&&dates.every(d=>d.slice(5)==='04-01'))?'fy':'year'):'day';
+  const PCT=new Set(['pct','pct_yoy','percent','pct_gdp','pct_rse']);
+  const unitOf=u=>PCT.has(u)?{suffix:'%'}:{};
+  const dpOf=vals=>Math.min(3,Math.max(0,...vals.map(v=>{const t=String(+(+v).toFixed(6));return t.includes('e')?3:(t.split('.')[1]||'').length;})));
+  // end labels: the series number (as in the list below the chart) and the cut's name, cut at a word; the number is tied to the first word so a phone keeps both
+  const short=(r,i)=>{const n=displayName(r),t=n.split(': ').at(-1)||n,w=t.split(/\s+/);let out=w[0];for(const x of w.slice(1)){if((out+' '+x).length>24){out+='…';break;}out+=' '+x;}return `${i+1}.\u00a0${out.replace(/[,;:]…$/,'…')}`;};
+  const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  let drawnWidth=0;
+  function chartHTML(){
+    const r=records[0],expectedSchedule=Boolean(expectedScheduleContext(r.quality)),width=Math.max(300,Math.min(1184,el('explore-chart').clientWidth||880));drawnWidth=width;
+    const snapshot=records.every(r=>r.series.data.filter(v=>v!=null).length<=1);
+    const obs=records.map(r=>observations(r,range()));
+    const vals=obs.flatMap(o=>o.map(d=>d.value).filter(v=>v!=null)),dp=dpOf(vals),unit=unitOf(r.unit),freq=freqOf(r.meta,r.dates);
+    const label=(expectedSchedule?'Expected source schedule':snapshot?'Published snapshot':`Published series: ${displayName(r)}`)+`. ${r.unit}; missing observations are gaps. Underlying values are in the table.`;
+    const widths={wide:width,mid:width,phone:width};
+    let draw;
+    if(snapshot){
+      // row names: what tells the cuts apart (the words they do not share), numbered as in the list, fitted to the name column
+      const words=records.map(r=>displayName(r).split(/\s+/));let pre=0,suf=0;
+      if(words.length>1){while(words.every(w=>w[pre]===words[0][pre]&&pre<w.length-1))pre++;while(words.every(w=>w.at(-1-suf)===words[0].at(-1-suf)&&suf<w.length-1-pre))suf++;}
+      const fit=(t,max)=>{if(K.tw(t,13,400)<=max)return t;while(t.length>1&&K.tw(t+'…',13,400)>max)t=t.slice(0,-1);return t.trimEnd().replace(/[,;:-]$/,'')+'…';};
+      const nameOf=(i,w)=>{const t=(words.length>1?words[i].slice(pre,words[i].length-suf):words[i]).join(' ').replace(/^[,;:-]\s*|\s*[,;:-]$/g,'')||displayName(records[i]);return fit(`${i+1}. ${t}`,w<560?w-24:Math.min(320,Math.round(w*.45))-16);};
+      draw=w=>K.bars({width:w,unit,dp,sort:false,nameMax:Math.min(320,Math.round(w*.45)),rows:records.map((r,i)=>{const d=obs[i].find(d=>d.value!=null);return d?{name:nameOf(i,w),value:d.value,color:records.length===1?K.C.lead:K.CAT[i]}:null;}).filter(Boolean)});
+    }else{
+      const series=records.map((r,i)=>({name:displayName(r),short:short(r,i),data:obs[i].map(d=>[d.date,d.value]),role:records.length===1?'lead':'cat',color:records.length===1?K.C.lead:K.CAT[i],dots:expectedSchedule?'open':undefined}));
+      // estimated observations: hollow dots over the line (the same series, never joined to anything)
+      records.forEach((r,i)=>{if(obs[i].some(d=>d.estimated&&d.value!=null))series.push({name:displayName(r)+', estimate',data:obs[i].map(d=>[d.date,d.estimated?d.value:null]),role:'cat',color:series[i].color,dots:'open',label:false,hover:false});});
+      let xTicks;
+      // annual series: one tick per year, thinned to the width (the kit's own ticks assume a span of years)
+      if(!expectedSchedule&&(freq==='fy'||freq==='year')){const ds=obs[0].map(d=>d.date),step=Math.max(1,Math.ceil(ds.length/Math.max(2,Math.floor(width/(freq==='fy'?84:64)))));xTicks=ds.filter((_,k)=>(ds.length-1-k)%step===0).map(d=>({t:d,label:K.tlabel(d,freq)}));}
+      if(expectedSchedule){const ds=obs[0].map(d=>d.date),step=Math.max(1,Math.ceil(ds.length/Math.max(2,Math.floor(width/90))));xTicks=ds.filter((_,k)=>k%step===0).map(d=>({t:d,label:r.periods[r.dates.indexOf(d)]||d}));}
+      draw=w=>K.line({width:w,height:w<520?260:380,series,unit,dp:undefined,endDp:dp,hoverDp:dp,freq,...(xTicks?{xTicks}:{})});
+    }
+    return `<span class="akf-title" hidden>${esc(el('explore-title').textContent)}</span><span class="akf-src" hidden>${esc('Source: '+(r.series.source||r.meta.source||'India Atlas'))}</span>`+
+      figure({bare:true,file:'atlas-series',label,widths,draw,data:{cols:['Period',...records.map(displayName)],rows:aligned(records,range()).map(row=>[row.date,...row.values])}});
+  }
+  function drawChart(){const box=el('explore-chart');box.innerHTML=chartHTML();chart=box.querySelector('.akf');enhance(box);}
+  new ResizeObserver(()=>{if(!chart||!records.length)return;const w=Math.max(300,Math.min(1184,el('explore-chart').clientWidth||880));if(Math.abs(w-drawnWidth)>4){clearTimeout(drawChart.t);drawChart.t=setTimeout(drawChart,120);}}).observe(el('explore-chart'));
   function draw(){
     if(!records.length)return;
     records.forEach(assertExpectedPolicy);
     const r=records[0],expectedSchedule=Boolean(expectedScheduleContext(r.quality)),from=range().from,to=range().to;if(expectedSchedule&&r.meta.observationKind!=='expected-schedule')throw Error('Expected source policy and canonical class differ');if(from&&to&&from>to){status('The start date must be before the end date.');return;}
-    const points=records.flatMap((r,i)=>observations(r,range()).map(d=>({...d,date:new Date(d.date+'T00:00:00Z'),label:displayName(r),i})));
-    const snapshot=records.every(r=>r.series.data.filter(v=>v!=null).length<=1),width=Math.max(280,Math.min(1184,el('explore-chart').clientWidth||880));
+    const points=records.flatMap(r=>observations(r,range()));
+    const snapshot=records.every(r=>r.series.data.filter(v=>v!=null).length<=1);
     el('explore-range').hidden=snapshot&&!from&&!to;
     if (!points.some(d=>d.value!=null)) {chart=null;el('explore-chart').textContent='No published observations in this date range.';el('explore-chart-note').textContent='Unpublished observations remain null in the table and downloads.';el('explore-unit').textContent=`Unit: ${unitLabel(r.unit)}. ${r.meta.frequency}.`;el('explore-svg').disabled=true;el('explore-png').disabled=true;table();return;}
     el('explore-svg').disabled=false;el('explore-png').disabled=false;
-    const lastDates=records.map(r=>new Date(r.dates[r.series.data.findLastIndex(v=>v!=null)]+'T00:00:00Z').getTime());
-    el('explore-range').hidden=snapshot&&!from&&!to;
-    const plotOptions={width,height:snapshot?Math.max(200,records.length*65+70):380,marginLeft:64,marginRight:24,marginBottom:expectedSchedule?110:42,style:{fontFamily:'Golos Text, system-ui, sans-serif',fontSize:'12px'},color:{domain:records.map(displayName),range:['#2E4BD8','#C47A16','#5F6675','#A3A9B4']}};
-    if(snapshot){plotOptions.x={label:null,grid:true,tickFormat:compactAxisValue};plotOptions.y={domain:records.map((_,i)=>String(i+1)),label:null};plotOptions.marks=[Plot.dot(points.filter(d=>d.value!=null),{x:'value',y:d=>String(d.i+1),fill:expectedSchedule?'white':'label',stroke:expectedSchedule?'label':undefined,r:5}),Plot.ruleX([0])];}
-    else{plotOptions.x={type:'utc',label:null,...(expectedSchedule?{tickRotate:width<680?-90:0}:{}),ticks:expectedSchedule?r.dates.filter(d=>(!from||d>=from)&&(!to||d<=to)).map(d=>new Date(d+'T00:00:00Z')):Math.max(2,Math.floor(width/130)),tickFormat:d=>{if(expectedSchedule){const iso=d.toISOString().slice(0,10);return r.periods[r.dates.indexOf(iso)]||iso;}const span=points.at(-1)?.date-points[0]?.date;return span<90*86400000?d.toLocaleDateString('en-IN',{day:'numeric',month:'short',timeZone:'UTC'}):span<730*86400000?d.toLocaleDateString('en-IN',{month:'short',year:'2-digit',timeZone:'UTC'}):String(d.getUTCFullYear());}};plotOptions.y={label:null,grid:true,tickFormat:compactAxisValue};plotOptions.marks=records.flatMap((r,i)=>[Plot.lineY(points.filter(d=>d.i===i),{x:'date',y:'value',stroke:'label',strokeWidth:i?1.5:2,strokeDasharray:['','6,3','2,2','8,3,2,3'][i]}),Plot.dot(points.filter(d=>d.i===i&&d.value!=null&&(d.expected||d.estimated||d.date.getTime()===lastDates[i])),{x:'date',y:'value',stroke:'label',fill:d=>d.expected||d.estimated?'white':['#2E4BD8','#C47A16','#5F6675','#A3A9B4'][i],r:3})]);}
-    chart=Plot.plot(plotOptions);
-    if(records.length>1){
-      const ns='http://www.w3.org/2000/svg',ctx=document.createElement('canvas').getContext('2d');ctx.font='12px Golos Text, system-ui, sans-serif';
-      let baseline=plotOptions.height+24;
-      records.forEach((r,i)=>{
-        const words=(`${i+1}. ${displayName(r)}`).split(/\s+/),lines=[];let line='';const max=(width-84)*.9;
-        for(const word of words){if(ctx.measureText((line?line+' ':'')+word).width>max&&line){lines.push(line);line='';}if(ctx.measureText(word).width>max){let part='';for(const char of word){if(ctx.measureText(part+char).width>max&&part){lines.push(part);part='';}part+=char;}line=part;}else line+=(line?' ':'')+word;}if(line)lines.push(line);
-        const sample=document.createElementNS(ns,'line');for(const [k,v] of Object.entries({x1:24,x2:48,y1:baseline-4,y2:baseline-4,stroke:['#2E4BD8','#C47A16','#5F6675','#A3A9B4'][i],'stroke-width':2,'stroke-dasharray':['','6,3','2,2','8,3,2,3'][i]}))sample.setAttribute(k,String(v));chart.append(sample);
-        for(const text of lines){const t=document.createElementNS(ns,'text');t.setAttribute('x','60');t.setAttribute('y',String(baseline));t.setAttribute('fill','#161A22');t.setAttribute('font-size','12');t.textContent=text;chart.append(t);baseline+=17;}baseline+=10;
-      });chart.setAttribute('height',String(baseline+8));chart.setAttribute('viewBox',`0 0 ${width} ${baseline+8}`);
-    }
-    a11y(chart,expectedSchedule?'Expected source schedule':snapshot?'Published snapshot':`Published series: ${displayName(r)}`,`${r.unit}; missing observations are gaps. Underlying values are in the table.`);el('explore-chart').replaceChildren(chart);
-    el('explore-chart-note').textContent=(expectedSchedule?`Expected administrative schedule by the source fiscal years, not realised exits. Hollow dots mark expected counts. ${expectedAsOf(r.meta)}. ${r.meta.forecastWindowNote||''}`:snapshot?'Snapshot: one published reference period. No trend or change rate is inferred.':'Straight segments join published values. Missing values break the line. Hollow dots identify estimated observations.')+' Axis abbreviations: k means thousand, m million, bn billion, tn trillion; very small or large ticks use scientific notation. Source units and observations are unchanged.';
+    drawChart();
+    el('explore-chart-note').textContent=(expectedSchedule?`Expected administrative schedule by the source fiscal years, not realised exits. Hollow dots mark expected counts. ${expectedAsOf(r.meta)}. ${r.meta.forecastWindowNote||''}`:snapshot?'Snapshot: one published reference period. No trend or change rate is inferred.':'Straight segments join published values. Missing values break the line. Hollow dots identify estimated observations.')+' Axis values use Indian digit grouping (12,34,567). Source units and observations are unchanged.';
     el('explore-unit').textContent=`Unit: ${unitLabel(r.unit)}. ${r.meta.frequency}. ${r.meta.base || 'No base year specified'}.`;
     table();
   }
@@ -97,8 +124,7 @@ if(root){
   el('explore-copy').onclick=()=>navigator.clipboard.writeText(location.href).then(()=>status('Series link copied.')).catch(()=>status('Copy this page’s address from your browser.'));
   el('explore-csv').onclick=()=>save(selectedCSV(records,range()),'text/csv','atlas-selected-series.csv');
   el('explore-json').onclick=()=>save(JSON.stringify(selectedJSON(records,range()),null,2),'application/json','atlas-selected-series.json');
-  const meta=()=>({title:el('explore-title').textContent,sub:el('explore-unit').textContent,foot:records[0]?.meta.source||'India Atlas'});
-  el('explore-svg').onclick=()=>chart&&downloadSVG(chart,'atlas-series',meta());el('explore-png').onclick=()=>chart&&downloadPNG(chart,'atlas-series',meta());
+  // SVG and PNG: the buttons carry data-dl; src/kit/enhance.js composes them from the drawn figure
   const q=el('explore-search');let timer;
   async function search(){const mine=++searchEpoch,text=q.value.trim();const out=el('explore-results');out.replaceChildren();if(!text)return;out.append(node('p','Searching the catalogue…'));try{
     searchPromise??=fetch('/search/core.json').then(r=>{if(!r.ok)throw new Error('Search is unavailable. Browse the guides below.');return r.json();}).then(core=>createSearch(core,p=>fetch('/search/'+p).then(r=>{if(!r.ok)throw new Error('Search data could not load.');return r.json();}),{expectedQualityVersion:root.dataset.qualityVersion})).catch(e=>{searchPromise=null;throw e;});

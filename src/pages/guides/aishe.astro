@@ -6,6 +6,8 @@ import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["aishe"];
+import * as CH from "../../dossiers/aishe.charts.js";
+const N = CH.numbers();
 ---
 <Base
   title="Higher Education · India Atlas"
@@ -34,10 +36,10 @@ const D = bySlug["aishe"];
       <span>Convention <b>Estimated enrolment, gross ratios</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Student enrolment, crore</div><div class="v acc" id="n-enrol">–</div><div class="d" id="d-enrol">–</div><div class="nspark" id="nspark-enrol"></div></div>
-      <div class="num"><div class="l">Gross Enrolment Ratio</div><div class="v" id="n-ger">–</div><div class="d" id="d-ger">–</div></div>
-      <div class="num"><div class="l">Gender Parity Index</div><div class="v" id="n-gpi">–</div><div class="d" id="d-gpi">–</div></div>
-      <div class="num"><div class="l">Pupil-Teacher Ratio</div><div class="v" id="n-ptr">–</div><div class="d" id="d-ptr">–</div></div>
+      <div class="num"><div class="l">Student enrolment, crore</div><div class="v acc" id="n-enrol" set:html={N["n-enrol"]}></div><div class="d" id="d-enrol" set:html={N["d-enrol"]}></div><div class="nspark" id="nspark-enrol"></div></div>
+      <div class="num"><div class="l">Gross Enrolment Ratio</div><div class="v" id="n-ger" set:html={N["n-ger"]}></div><div class="d" id="d-ger" set:html={N["d-ger"]}></div></div>
+      <div class="num"><div class="l">Gender Parity Index</div><div class="v" id="n-gpi" set:html={N["n-gpi"]}></div><div class="d" id="d-gpi" set:html={N["d-gpi"]}></div></div>
+      <div class="num"><div class="l">Pupil-Teacher Ratio</div><div class="v" id="n-ptr" set:html={N["n-ptr"]}></div><div class="d" id="d-ptr" set:html={N["d-ptr"]}></div></div>
     </div>
   </div>
 
@@ -45,15 +47,15 @@ const D = bySlug["aishe"];
   <section>
     <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">AISHE, 2021-22</span></div>
     <div class="reading-top">
-      <div><span class="rk">Estimated enrolment</span><div class="big" id="rb-enrol">–</div></div>
-      <p class="rt-cap">Students enrolled in higher education, 2021-22: the AISHE headline count. Beside it sits the Gross Enrolment Ratio: the share of the college-age population that enrolled, gross of repeats and in-migrants. Enrolments came to about <b id="rt-ratio">–</b> for every hundred Indians of college age.</p>
-      <div class="rt-side"><span class="rk">GER, per cent</span><div class="rt-side-v" id="rb-ger">–</div></div>
+      <div><span class="rk">Estimated enrolment</span><div class="big" id="rb-enrol" set:html={N["rb-enrol"]}></div></div>
+      <p class="rt-cap">Students enrolled in higher education, 2021-22: the AISHE headline count. Beside it sits the Gross Enrolment Ratio: the share of the college-age population that enrolled, gross of repeats and in-migrants. Enrolments came to about <b id="rt-ratio" set:html={N["rt-ratio"]}></b> for every hundred Indians of college age.</p>
+      <div class="rt-side"><span class="rk">GER, per cent</span><div class="rt-side-v" id="rb-ger" set:html={N["rb-ger"]}></div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
         <span class="mk">What the print says</span>
-        <p>The 2021-22 round counted <b id="cr-enrol">–</b> students enrolled across <b id="cr-univ">–</b> universities and <b id="cr-coll">–</b> colleges, taught by <b id="cr-teach">–</b> teachers. Enrolment rose from <b id="cr-enrol-first">–</b> in 2017-18, an increase of <b id="cr-growth">–</b> in four years. The Gross Enrolment Ratio reached <b id="cr-ger">–</b>, up from <b id="cr-ger-first">–</b> at the start of the window.</p>
-        <p>Women have reached enrolment-rate parity with men: the Gender Parity Index stands at <b id="cr-gpi">–</b>, where 1.0 is parity. Women are <b id="cr-fem-share">–</b> of all enrolled students. Scheduled Caste students are <b id="cr-sc-share">–</b>; Scheduled Tribe students, <b id="cr-st-share">–</b>.</p>
+        <p>The 2021-22 round counted <b id="cr-enrol" set:html={N["cr-enrol"]}></b> students enrolled across <b id="cr-univ" set:html={N["cr-univ"]}></b> universities and <b id="cr-coll" set:html={N["cr-coll"]}></b> colleges, taught by <b id="cr-teach" set:html={N["cr-teach"]}></b> teachers. Enrolment rose from <b id="cr-enrol-first" set:html={N["cr-enrol-first"]}></b> in 2017-18, an increase of <b id="cr-growth" set:html={N["cr-growth"]}></b> in four years. The Gross Enrolment Ratio reached <b id="cr-ger" set:html={N["cr-ger"]}></b>, up from <b id="cr-ger-first" set:html={N["cr-ger-first"]}></b> at the start of the window.</p>
+        <p>Women have reached enrolment-rate parity with men: the Gender Parity Index stands at <b id="cr-gpi" set:html={N["cr-gpi"]}></b>, where 1.0 is parity. Women are <b id="cr-fem-share" set:html={N["cr-fem-share"]}></b> of all enrolled students. Scheduled Caste students are <b id="cr-sc-share" set:html={N["cr-sc-share"]}></b>; Scheduled Tribe students, <b id="cr-st-share" set:html={N["cr-st-share"]}></b>.</p>
       </div>
       <div class="reading-col now">
         <span class="mk">What it does not say</span>
@@ -72,7 +74,7 @@ const D = bySlug["aishe"];
         <thead>
           <tr><th>Series</th><th>2021-22</th><th>vs prev. round</th><th>2017-18</th><th class="spark">5 rounds</th></tr>
         </thead>
-        <tbody id="ledger-body"></tbody>
+        <tbody id="ledger-body" set:html={CH.ledger()} />
       </table>
     </div>
   </section>
@@ -87,19 +89,10 @@ const D = bySlug["aishe"];
             <h3>Under-graduate, overwhelmingly</h3>
             <div class="sub">Estimated enrolment by level of education &amp; by social group, All India, Both, 2021-22, the eight levels sum to the Grand Total</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-comp">–</div><div class="c">Under Graduate, share of enrolment</div></div>
+          <div class="plate-val"><div class="v" id="pv-comp" set:html={N["pv-comp"]}></div><div class="c">Under Graduate, share of enrolment</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone">
-            <div class="basket" style="padding:8px 0 8px">
-              <div class="bar" id="bar-edu"></div>
-              <div class="labels" id="lab-edu"></div>
-            </div>
-            <div class="basket" style="padding:32px 0 8px">
-              <div class="bar" id="bar-soc"></div>
-              <div class="labels" id="lab-soc"></div>
-            </div>
-          </div>
+          <div class="plotzone" id="plot-comp" set:html={CH.comp()} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Education, AISHE 2021-22, estimated enrolment (Both) by education level and social group, "Others" is a residual: the API serves SC, ST and OBC but no plain Others category, so it is computed as Grand Total minus the three named groups</span>
             <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -113,7 +106,7 @@ const D = bySlug["aishe"];
           </div>
           <div class="now">
             <span class="mk">As of 2021-22</span>
-            <p>Under-graduate: <b id="ex-c-ug">–</b> of enrolment; post-graduate, <b id="ex-c-pg">–</b>; diploma, <b id="ex-c-dip">–</b>; Ph.D., <b id="ex-c-phd">–</b>. By group: OBC <b id="ex-c-obc">–</b>, Others <b id="ex-c-oth">–</b>, SC <b id="ex-c-sc">–</b>, ST <b id="ex-c-st">–</b>: Scheduled Caste and Scheduled Tribe students together are <b id="ex-c-scst">–</b> of the room.</p>
+            <p>Under-graduate: <b id="ex-c-ug" set:html={N["ex-c-ug"]}></b> of enrolment; post-graduate, <b id="ex-c-pg" set:html={N["ex-c-pg"]}></b>; diploma, <b id="ex-c-dip" set:html={N["ex-c-dip"]}></b>; Ph.D., <b id="ex-c-phd" set:html={N["ex-c-phd"]}></b>. By group: OBC <b id="ex-c-obc" set:html={N["ex-c-obc"]}></b>, Others <b id="ex-c-oth" set:html={N["ex-c-oth"]}></b>, SC <b id="ex-c-sc" set:html={N["ex-c-sc"]}></b>, ST <b id="ex-c-st" set:html={N["ex-c-st"]}></b>: Scheduled Caste and Scheduled Tribe students together are <b id="ex-c-scst" set:html={N["ex-c-scst"]}></b> of the room.</p>
           </div>
         </div>
       </figure>
@@ -130,16 +123,10 @@ const D = bySlug["aishe"];
             <h3>The room got bigger: parity in rates, not in counts</h3>
             <div class="sub">Estimated student enrolment by gender, All India, 2017-18 to 2021-22, women in blue, men in grey</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-enrol">–</div><div class="c">2017-18 → 2021-22, enrolment growth</div></div>
+          <div class="plate-val"><div class="v" id="pv-enrol" set:html={N["pv-enrol"]}></div><div class="c">2017-18 → 2021-22, enrolment growth</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-enrol">
-            <button class="chip" data-key="female"><i style="background:#2E4BD8"></i>Female</button>
-            <button class="chip" data-key="male"><i style="background:#5F6675"></i>Male</button>
-          </div>
-          <div class="plotzone">
-            <div id="plot-enrol" style="position:relative"><div class="cb-tip"></div></div>
-          </div>
+          <div class="plotzone" id="plot-enrol" set:html={CH.enrol()} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Education, AISHE, estimated student enrolment, Grand Total, by gender, survey years plotted at April, the Gender Parity Index (female GER ÷ male GER) sat at or above 1.0 across the window, rate parity, though men outnumber women in absolute enrolment because the male college-age cohort is larger</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -153,7 +140,7 @@ const D = bySlug["aishe"];
           </div>
           <div class="now">
             <span class="mk">As of 2021-22</span>
-            <p>Female enrolment reached <b id="ex-e-fem">–</b>, male <b id="ex-e-male">–</b>: women are <b id="ex-e-femshare">–</b> of the total. The Gender Parity Index stands at <b id="ex-e-gpi1">–</b> (it was <b id="ex-e-gpi0">–</b> in 2017-18): rate parity, within rounding. Men outnumber women by <b id="ex-e-gap1">–</b>, against <b id="ex-e-gap0">–</b> in 2017-18.</p>
+            <p>Female enrolment reached <b id="ex-e-fem" set:html={N["ex-e-fem"]}></b>, male <b id="ex-e-male" set:html={N["ex-e-male"]}></b>: women are <b id="ex-e-femshare" set:html={N["ex-e-femshare"]}></b> of the total. The Gender Parity Index stands at <b id="ex-e-gpi1" set:html={N["ex-e-gpi1"]}></b> (it was <b id="ex-e-gpi0" set:html={N["ex-e-gpi0"]}></b> in 2017-18): rate parity, within rounding. Men outnumber women by <b id="ex-e-gap1" set:html={N["ex-e-gap1"]}></b>, against <b id="ex-e-gap0" set:html={N["ex-e-gap0"]}></b> in 2017-18.</p>
           </div>
         </div>
       </figure>
@@ -196,17 +183,10 @@ const D = bySlug["aishe"];
             <h3>Three lines, three speeds</h3>
             <div class="sub">Gross Enrolment Ratio, All Categories, Scheduled Caste &amp; Scheduled Tribe, All India, 2017-18 to 2021-22</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-ger">–</div><div class="c">2021-22, ST gap to All-India GER</div></div>
+          <div class="plate-val"><div class="v" id="pv-ger" set:html={N["pv-ger"]}></div><div class="c">2021-22, ST gap to All-India GER</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-ger">
-            <button class="chip" data-key="ger_all_both"><i style="background:#2E4BD8"></i>All Categories</button>
-            <button class="chip" data-key="ger_sc_both"><i style="background:#5F6675"></i>Scheduled Caste</button>
-            <button class="chip" data-key="ger_st_both"><i style="background:#A3A9B4"></i>Scheduled Tribe</button>
-          </div>
-          <div class="plotzone">
-            <div id="plot-ger" style="position:relative"><div class="cb-tip"></div></div>
-          </div>
+          <div class="plotzone" id="plot-ger" set:html={CH.ger()} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Education, AISHE, GER by social category (Both), the API publishes GER only for All Categories, SC and ST, there is no OBC GER series, gross of repeats and out-of-age-band enrolment</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -220,7 +200,7 @@ const D = bySlug["aishe"];
           </div>
           <div class="now">
             <span class="mk">As of 2021-22</span>
-            <p>GER: All Categories <b id="ex-g-all">–</b>, Scheduled Caste <b id="ex-g-sc">–</b>, Scheduled Tribe <b id="ex-g-st">–</b>. The ST line sits <b id="ex-g-stgap">–</b> points below the All-India ratio; the SC gap is <b id="ex-g-scgap">–</b>. No OBC line is drawn: the survey does not publish an OBC GER.</p>
+            <p>GER: All Categories <b id="ex-g-all" set:html={N["ex-g-all"]}></b>, Scheduled Caste <b id="ex-g-sc" set:html={N["ex-g-sc"]}></b>, Scheduled Tribe <b id="ex-g-st" set:html={N["ex-g-st"]}></b>. The ST line sits <b id="ex-g-stgap" set:html={N["ex-g-stgap"]}></b> points below the All-India ratio; the SC gap is <b id="ex-g-scgap" set:html={N["ex-g-scgap"]}></b>. No OBC line is drawn: the survey does not publish an OBC GER.</p>
           </div>
         </div>
       </figure>
@@ -237,16 +217,10 @@ const D = bySlug["aishe"];
             <h3>Women's GER, at or above men's</h3>
             <div class="sub">Gross Enrolment Ratio, All Categories, female &amp; male, All India, 2017-18 to 2021-22, the Gender Parity Index is their ratio</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-gergen">–</div><div class="c">2021-22, GPI, female GER ÷ male GER</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-gergen" set:html={N["pv-gergen"]}></div><div class="c">2021-22, GPI, female GER ÷ male GER</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-gergen">
-            <button class="chip" data-key="female"><i style="background:#2E4BD8"></i>Female GER</button>
-            <button class="chip" data-key="male"><i style="background:#5F6675"></i>Male GER</button>
-          </div>
-          <div class="plotzone">
-            <div id="plot-gergen" style="position:relative"><div class="cb-tip"></div></div>
-          </div>
+          <div class="plotzone" id="plot-gergen" set:html={CH.gergen()} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Education, AISHE, GER (All Categories) by gender, the Gender Parity Index (GPI) is female GER ÷ male GER; a value at or above 1.0 means women enrol at the same or higher rate than men, the two lines nearly touch because parity is close</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -260,7 +234,7 @@ const D = bySlug["aishe"];
           </div>
           <div class="now">
             <span class="mk">As of 2021-22</span>
-            <p>Female GER <b id="ex-gg-fem">–</b>, male GER <b id="ex-gg-male">–</b>: women's rate is <b id="ex-gg-diff">–</b> points higher. GPI: <b id="ex-gg-gpi">–</b>. At the peak (2019-20) the index reached <b id="ex-gg-peak">–</b>; by 2021-22 it had eased back to parity.</p>
+            <p>Female GER <b id="ex-gg-fem" set:html={N["ex-gg-fem"]}></b>, male GER <b id="ex-gg-male" set:html={N["ex-gg-male"]}></b>: women's rate is <b id="ex-gg-diff" set:html={N["ex-gg-diff"]}></b> points higher. GPI: <b id="ex-gg-gpi" set:html={N["ex-gg-gpi"]}></b>. At the peak (2019-20) the index reached <b id="ex-gg-peak" set:html={N["ex-gg-peak"]}></b>; by 2021-22 it had eased back to parity.</p>
           </div>
         </div>
       </figure>
@@ -275,15 +249,12 @@ const D = bySlug["aishe"];
         <div class="plate-head">
           <div class="t">
             <h3>Access is a long slope, volume is a cluster</h3>
-            <div class="sub">Gross Enrolment Ratio by state/UT (top) &amp; estimated enrolment by state/UT (bottom), 2021-22, the blue rule is the All-India GER</div>
+            <div class="sub">Gross Enrolment Ratio by state/UT (top) &amp; estimated enrolment by state/UT (bottom), 2021-22, the vertical rule is the All-India GER</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-states">–</div><div class="c">GER spread: highest minus lowest state</div></div>
+          <div class="plate-val"><div class="v" id="pv-states" set:html={N["pv-states"]}></div><div class="c">GER spread: highest minus lowest state</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone">
-            <div id="plot-states"></div>
-            <div id="plot-states-enr" style="margin-top:26px"></div>
-          </div>
+          <div class="plotzone" id="plot-states" set:html={CH.states_()} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Education, AISHE 2021-22, GER (All Categories, Both) &amp; estimated enrolment (Grand Total, Both) by state/UT, city-UTs (Chandigarh, Delhi, Puducherry) read high on GER because students cross state borders to study, enrolment tracks population, UP and Maharashtra hold the most seats</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -297,7 +268,7 @@ const D = bySlug["aishe"];
           </div>
           <div class="now">
             <span class="mk">As of 2021-22</span>
-            <p>Highest GER: <b id="ex-s-top">–</b>. Lowest: <b id="ex-s-bot">–</b>. States above the All-India line: <b id="ex-s-above">–</b> of <b id="ex-s-n">–</b>; the GER spread is <b id="ex-s-spread">–</b> points. By volume: <b id="ex-se-top">–</b> holds the most enrolled students (<b id="ex-se-topn">–</b>); the top three states hold <b id="ex-se-top3">–</b> of all India.</p>
+            <p>Highest GER: <b id="ex-s-top" set:html={N["ex-s-top"]}></b>. Lowest: <b id="ex-s-bot" set:html={N["ex-s-bot"]}></b>. States above the All-India line: <b id="ex-s-above" set:html={N["ex-s-above"]}></b> of <b id="ex-s-n" set:html={N["ex-s-n"]}></b>; the GER spread is <b id="ex-s-spread" set:html={N["ex-s-spread"]}></b> points. By volume: <b id="ex-se-top" set:html={N["ex-se-top"]}></b> holds the most enrolled students (<b id="ex-se-topn" set:html={N["ex-se-topn"]}></b>); the top three states hold <b id="ex-se-top3" set:html={N["ex-se-top3"]}></b> of all India.</p>
           </div>
         </div>
       </figure>
@@ -314,12 +285,10 @@ const D = bySlug["aishe"];
             <h3>Eight levels, eight trajectories</h3>
             <div class="sub">Estimated enrolment by education level, Both, All India, 2017-18 to 2021-22, sorted by 2021-22 volume, each panel on its own scale</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-edu">–</div><div class="c">Integrated programmes, 5-year growth</div></div>
+          <div class="plate-val"><div class="v" id="pv-edu" set:html={N["pv-edu"]}></div><div class="c">Integrated programmes, 5-year growth</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone">
-            <div id="grid-edu"></div>
-          </div>
+          <div class="plotzone" id="grid-edu" set:html={CH.edu()} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Education, AISHE, estimated enrolment (Both) by education level, each panel is its own scale, Under Graduate dwarfs the rest, M.Phil. collapsed after NEP 2020 discontinued it; Integrated programmes more than doubled</span>
             <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -333,7 +302,7 @@ const D = bySlug["aishe"];
           </div>
           <div class="now">
             <span class="mk">As of 2021-22</span>
-            <p>Under-graduate: <b id="ex-edu-ug">–</b> enrolled. Integrated programmes grew <b id="ex-edu-int-gain">–</b> in four years. M.Phil. fell <b id="ex-edu-mphil">–</b>. Ph.D. enrolment rose <b id="ex-edu-phd">–</b>: the research track grew, but remains under one per cent of the room.</p>
+            <p>Under-graduate: <b id="ex-edu-ug" set:html={N["ex-edu-ug"]}></b> enrolled. Integrated programmes grew <b id="ex-edu-int-gain" set:html={N["ex-edu-int-gain"]}></b> in four years. M.Phil. fell <b id="ex-edu-mphil" set:html={N["ex-edu-mphil"]}></b>. Ph.D. enrolment rose <b id="ex-edu-phd" set:html={N["ex-edu-phd"]}></b>: the research track grew, but remains under one per cent of the room.</p>
           </div>
         </div>
       </figure>
@@ -350,12 +319,10 @@ const D = bySlug["aishe"];
             <h3>The higher the chair, the fewer the women</h3>
             <div class="sub">Teachers by faculty type, male &amp; female, All India, 2021-22, the five regular posts. Visiting (guest) teachers are a sixth group, in the data download.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-fac">–</div><div class="c">female share, Professor &amp; Equivalent</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-fac" set:html={N["pv-fac"]}></div><div class="c">female share, Professor &amp; Equivalent</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone">
-            <div id="plot-fac"></div>
-          </div>
+          <div class="plotzone" id="plot-fac" set:html={CH.fac()} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Education, AISHE 2021-22, teachers by the five regular posts × gender; the six posts with visiting teachers add up to the published total of all teachers</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -369,7 +336,7 @@ const D = bySlug["aishe"];
           </div>
           <div class="now">
             <span class="mk">As of 2021-22</span>
-            <p>Female share by rank: Professors <b id="ex-fac-prof">–</b>, Reader/Associate <b id="ex-fac-read">–</b>, Lecturer/Assistant <b id="ex-fac-lec">–</b>, Temporary <b id="ex-fac-temp">–</b>, Demonstrator/Tutor <b id="ex-fac-dem">–</b>. The Lecturer/Assistant rank alone holds <b id="ex-fac-lecn">–</b> of all teachers.</p>
+            <p>Female share by rank: Professors <b id="ex-fac-prof" set:html={N["ex-fac-prof"]}></b>, Reader/Associate <b id="ex-fac-read" set:html={N["ex-fac-read"]}></b>, Lecturer/Assistant <b id="ex-fac-lec" set:html={N["ex-fac-lec"]}></b>, Temporary <b id="ex-fac-temp" set:html={N["ex-fac-temp"]}></b>, Demonstrator/Tutor <b id="ex-fac-dem" set:html={N["ex-fac-dem"]}></b>. The Lecturer/Assistant rank alone holds <b id="ex-fac-lecn" set:html={N["ex-fac-lecn"]}></b> of all teachers.</p>
           </div>
         </div>
       </figure>
@@ -386,12 +353,10 @@ const D = bySlug["aishe"];
             <h3>Counts, not rates: the denominator is missing</h3>
             <div class="sub">Estimated enrolment of Persons With Disability &amp; minority communities, male &amp; female, All India, 2021-22, EWS is a category introduced in 2019-20</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-min">–</div><div class="c">Muslim enrolment, 2021-22</div></div>
+          <div class="plate-val"><div class="v" id="pv-min" set:html={N["pv-min"]}></div><div class="c">Muslim enrolment, 2021-22</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone">
-            <div id="plot-min"></div>
-          </div>
+          <div class="plotzone" id="plot-min" set:html={CH.min()} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Education, AISHE 2021-22, estimated enrolment of PWD &amp; minority communities by gender, these are counts, not GER-style rates, the eligible population for each group is not served, so no access ratio is computed, EWS (Economically Weaker Sections) data begins 2020-21</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -405,7 +370,7 @@ const D = bySlug["aishe"];
           </div>
           <div class="now">
             <span class="mk">As of 2021-22</span>
-            <p>Muslims: <b id="ex-min-mus">–</b> enrolled (<b id="ex-min-musf">–</b> female). Other minorities: <b id="ex-min-om">–</b>. EWS: <b id="ex-min-ews">–</b>: first reported 2020-21. Persons With Disability: <b id="ex-min-pwd">–</b>, of whom <b id="ex-min-pwdf">–</b> are women. Students with a disability are a fraction of one per cent of all enrolment.</p>
+            <p>Muslims: <b id="ex-min-mus" set:html={N["ex-min-mus"]}></b> enrolled (<b id="ex-min-musf" set:html={N["ex-min-musf"]}></b> female). Other minorities: <b id="ex-min-om" set:html={N["ex-min-om"]}></b>. EWS: <b id="ex-min-ews" set:html={N["ex-min-ews"]}></b>: first reported 2020-21. Persons With Disability: <b id="ex-min-pwd" set:html={N["ex-min-pwd"]}></b>, of whom <b id="ex-min-pwdf" set:html={N["ex-min-pwdf"]}></b> are women. Students with a disability are a fraction of one per cent of all enrolment.</p>
           </div>
         </div>
       </figure>
@@ -422,15 +387,10 @@ const D = bySlug["aishe"];
             <h3>Students per teacher, barely moving</h3>
             <div class="sub">Pupil-Teacher Ratio, all institutions (regular &amp; distance), All India, 2017-18 to 2021-22</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-ptr">–</div><div class="c">2021-22, students per teacher</div></div>
+          <div class="plate-val"><div class="v" id="pv-ptr" set:html={N["pv-ptr"]}></div><div class="c">2021-22, students per teacher</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-ptr">
-            <button class="chip" data-key="ptr"><i class="dash" style="border-color:#2E4BD8"></i>Pupil-Teacher Ratio</button>
-          </div>
-          <div class="plotzone">
-            <div id="plot-ptr" style="position:relative"><div class="cb-tip"></div></div>
-          </div>
+          <div class="plotzone" id="plot-ptr" set:html={CH.ptr()} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Education, AISHE, PTR = enrolled students ÷ teachers (all institutions, regular &amp; distance), a system-wide resource ratio, not average class size</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -444,7 +404,7 @@ const D = bySlug["aishe"];
           </div>
           <div class="now">
             <span class="mk">As of 2021-22</span>
-            <p>PTR: <b id="ex-ptr-now">–</b> students per teacher, down from <b id="ex-ptr-first">–</b> in 2017-18, with <b id="ex-ptr-teach">–</b> teachers in 2021-22. The state picture, which is far more uneven, is in "The states, closer" below.</p>
+            <p>PTR: <b id="ex-ptr-now" set:html={N["ex-ptr-now"]}></b> students per teacher, down from <b id="ex-ptr-first" set:html={N["ex-ptr-first"]}></b> in 2017-18, with <b id="ex-ptr-teach" set:html={N["ex-ptr-teach"]}></b> teachers in 2021-22. The state picture, which is far more uneven, is in "The states, closer" below.</p>
           </div>
         </div>
       </figure>
@@ -461,10 +421,10 @@ const D = bySlug["aishe"];
             <h3>A college teacher in Bihar has more than four times as many students as one in Tamil Nadu</h3>
             <div class="sub">Pupil-teacher ratio by state, regular students in all institutions, 2021-22. States above the all-India ratio are in blue.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-stptr">–</div><div class="c">students per teacher in the most stretched state</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-stptr" set:html={N["pv-stptr"]}></div><div class="c">students per teacher in the most stretched state</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-stptr" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-stptr" set:html={CH.stptr()} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Education, AISHE 2021-22, pupil-teacher ratio, regular mode, all institutions. Distance-learning students are left out here because open universities would swell some states' ratios; that version is in the data.</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -478,7 +438,7 @@ const D = bySlug["aishe"];
           </div>
           <div class="now">
             <span class="mk">As of 2021-22</span>
-            <p>Most stretched: <b id="ex-stptr-hi">–</b>. Least: <b id="ex-stptr-lo">–</b>. All India: <b id="ex-stptr-ai">–</b> regular students per teacher.</p>
+            <p>Most stretched: <b id="ex-stptr-hi" set:html={N["ex-stptr-hi"]}></b>. Least: <b id="ex-stptr-lo" set:html={N["ex-stptr-lo"]}></b>. All India: <b id="ex-stptr-ai" set:html={N["ex-stptr-ai"]}></b> regular students per teacher.</p>
           </div>
         </div>
       </figure>
@@ -489,16 +449,12 @@ const D = bySlug["aishe"];
         <div class="plate-head">
           <div class="t">
             <h3>Women are now nearly half of college students almost everywhere, but a quarter of the teachers in Bihar</h3>
-            <div class="sub">Women's share of college and university teachers (bars) and of students (dots), by state, 2021-22, per cent. States below the all-India share of women teachers are in blue.</div>
+            <div class="sub">Women's share of college and university teachers (solid dots) and of students (open dots), by state, 2021-22, per cent, the lowest share of women teachers first.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-stwomen">–</div><div class="c">women's share of teachers, All India</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-stwomen" set:html={N["pv-stwomen"]}></div><div class="c">women's share of teachers, All India</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>Women, share of teachers</span>
-            <span class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#C47A16"></i>Women, share of students</span>
-          </div>
-          <div class="plotzone"><div id="plot-stwomen" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-stwomen" set:html={CH.stwomen()} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Education, AISHE 2021-22, teachers by gender (all posts, including visiting teachers) and estimated enrolment by gender (all levels).</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -511,7 +467,7 @@ const D = bySlug["aishe"];
           </div>
           <div class="now">
             <span class="mk">As of 2021-22</span>
-            <p>Highest share of women teachers: <b id="ex-stw-hi">–</b>. Lowest: <b id="ex-stw-lo">–</b>. All India: <b id="ex-stw-ai">–</b> of teachers and <b id="ex-stw-ais">–</b> of students.</p>
+            <p>Highest share of women teachers: <b id="ex-stw-hi" set:html={N["ex-stw-hi"]}></b>. Lowest: <b id="ex-stw-lo" set:html={N["ex-stw-lo"]}></b>. All India: <b id="ex-stw-ai" set:html={N["ex-stw-ai"]}></b> of teachers and <b id="ex-stw-ais" set:html={N["ex-stw-ais"]}></b> of students.</p>
           </div>
         </div>
       </figure>
@@ -524,10 +480,10 @@ const D = bySlug["aishe"];
             <h3>Uttar Pradesh alone has nearly a fifth of India's colleges</h3>
             <div class="sub">Number of colleges by state, 2021-22. Twenty states with the most colleges; every state, with its universities, is in the data download.</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-stcol">–</div><div class="c">colleges in India, 2021-22</div></div>
+          <div class="plate-val"><div class="v" id="pv-stcol" set:html={N["pv-stcol"]}></div><div class="c">colleges in India, 2021-22</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-stcol" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-stcol" set:html={CH.stcol()} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Education, AISHE 2021-22, number of colleges and universities by state. A college is counted once, wherever it sits; most are affiliated to a university in the same state.</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -540,7 +496,7 @@ const D = bySlug["aishe"];
           </div>
           <div class="now">
             <span class="mk">As of 2021-22</span>
-            <p><span id="ex-stc-n1">–</span> <b id="ex-stc-v1">–</b> colleges, <b id="ex-stc-s1">–</b> of the country's. Universities in India: <b id="ex-stc-univ">–</b>, up from <b id="ex-stc-univ0">–</b> in 2017-18.</p>
+            <p><span id="ex-stc-n1" set:html={N["ex-stc-n1"]}></span> <b id="ex-stc-v1" set:html={N["ex-stc-v1"]}></b> colleges, <b id="ex-stc-s1" set:html={N["ex-stc-s1"]}></b> of the country's. Universities in India: <b id="ex-stc-univ" set:html={N["ex-stc-univ"]}></b>, up from <b id="ex-stc-univ0" set:html={N["ex-stc-univ0"]}></b> in 2017-18.</p>
           </div>
         </div>
       </figure>
@@ -605,7 +561,7 @@ const D = bySlug["aishe"];
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Ministry of Education, Department of Higher Education. All India Survey on Higher Education (AISHE), survey rounds 2017-18 to 2021-22: the five rounds the eSankhyiki API serves. Retrieved via the MoSPI eSankhyiki API, vintage <b id="prov-vintage">–</b>. The survey itself runs to 2010-11; earlier rounds are not chained in, because the institutional frame widened over time and a longer line would mix survey-coverage gains with genuine expansion.</p>
+        <p>Ministry of Education, Department of Higher Education. All India Survey on Higher Education (AISHE), survey rounds 2017-18 to 2021-22: the five rounds the eSankhyiki API serves. Retrieved via the MoSPI eSankhyiki API, vintage <b id="prov-vintage" set:html={N["prov-vintage"]}></b>. The survey itself runs to 2010-11; earlier rounds are not chained in, because the institutional frame widened over time and a longer line would mix survey-coverage gains with genuine expansion.</p>
         <p>Coverage: all nine AISHE indicators are ingested raw and baked, every one by state as well as for All India; thirteen bundles carry the page and the table of every cut. The headline series (universities, colleges, enrolment, teachers, GER, GPI, PTR), the access cuts (GER by social category × gender, GPI by social category, enrolment by gender), the composition (enrolment by education level and social group), the state grain (enrolment, GER and GPI by state/UT), the faculty hierarchy (teachers by the five regular faculty types × gender) and the minority cut (PWD &amp; minority enrolment by gender). Nothing is selected away: every indicator the survey publishes is on the page or in the audit dump behind it.</p>
         <p><b>A correction, October 2026.</b> Version 1.0 of this guide said the survey's 2021-22 "All Teacher" total was garbled (12,904 for All India) and rebuilt it from the five regular posts. That was our error, not the survey's: the download of 9 August 2026 came back from the API in an unstable page order, which repeated some rows and dropped others. A clean download on 10 October 2026, checked row by row for repeats, shows the published total, 15,97,688 teachers, and shows it equal to the five regular posts plus visiting teachers in 546 of 549 state, year and gender cells (All India 2020-21 is 34 teachers apart). Nagaland's 2021-22 enrolment, missing before, also returned. Every download is now checked for repeated rows and fails if it finds one. Both dumps are kept in the audit trail.</p>
       </div>
@@ -620,7 +576,7 @@ const D = bySlug["aishe"];
     </div>
     <div class="fine">
       <span>India Atlas, AISHE</span>
-      <span>Vintage <span id="prov-vintage2">–</span>, enrolments, not students</span>
+      <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]}></span>, enrolments, not students</span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
@@ -628,6 +584,5 @@ const D = bySlug["aishe"];
 </div>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/aishe.client.js";
 </script>
 </Base>

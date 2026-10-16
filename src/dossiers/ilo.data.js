@@ -1,10 +1,8 @@
 // src/dossiers/ilo.data.js: build-time reader for the ILO guide (src/pages/guides/ilo.astro).
 // The guide draws on 30-odd of the 177 ilo-* bundles, several of them hundreds of kilobytes
-// (the peers carry every modelled breakdown). Importing them whole into the client would blow
-// the page budget (docs/CONTRACT-render.md), so the page reads them here at build time and
-// embeds only the series it draws, in bundle shape (meta, dates, series), as one inline JSON
-// block that src/dossiers/ilo.client.js hydrates. No runtime fetch; every value is the
-// bundle's own.
+// (the peers carry every modelled breakdown). The page and src/dossiers/ilo.charts.js read them
+// here at build time; the reader's browser gets finished charts and numbers, never a bundle.
+// Every value is the bundle's own.
 import fs from "node:fs";
 import path from "node:path";
 

@@ -6,6 +6,8 @@ import EveryCut from "../../components/EveryCut.astro";
 import Prose from "../../components/Prose.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
+import * as CH from "../../dossiers/states.charts.js";
+const V = CH.V;
 const D = bySlug["states"];
 // every RBI Handbook table, baked as its own bundle, grouped by the Handbook's sections
 import fs from "node:fs";
@@ -82,24 +84,24 @@ const ELSEWHERE = [
       <span>Source <b>MoSPI, NSO, from each state's Directorate of Economics and Statistics; RBI Handbook of Statistics on Indian States</b></span>
       <span>Base <b>2011-12 prices</b></span>
       <span>Frequency <b>Annual, fiscal years</b></span>
-      <span>States and UTs <b id="m-count">–</b></span>
-      <span>Latest <b id="m-latest">–</b></span>
+      <span>States and UTs <b id="m-count" set:html={V["m-count"]}></b></span>
+      <span>Latest <b id="m-latest" set:html={V["m-latest"]}></b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Income per person, richest state against poorest</div><div class="v acc" id="n-gap">–</div><div class="d" id="d-gap">–</div><div class="nspark" id="nspark-gap"></div></div>
-      <div class="num"><div class="l">Income per person, richest state</div><div class="v" id="n-rich">–</div><div class="d" id="d-rich">–</div></div>
-      <div class="num"><div class="l">Income per person, poorest state</div><div class="v" id="n-poor">–</div><div class="d" id="d-poor">–</div></div>
-      <div class="num"><div class="l">Real growth, the typical state</div><div class="v" id="n-grow">–</div><div class="d" id="d-grow">–</div></div>
+      <div class="num"><div class="l">Income per person, richest state against poorest</div><div class="v acc" id="n-gap" set:html={V["n-gap"]}></div><div class="d" id="d-gap" set:html={V["d-gap"]}></div><div class="nspark" id="nspark-gap" set:html={V["nspark-gap"]} /></div>
+      <div class="num"><div class="l">Income per person, richest state</div><div class="v" id="n-rich" set:html={V["n-rich"]}></div><div class="d" id="d-rich" set:html={V["d-rich"]}></div></div>
+      <div class="num"><div class="l">Income per person, poorest state</div><div class="v" id="n-poor" set:html={V["n-poor"]}></div><div class="d" id="d-poor" set:html={V["d-poor"]}></div></div>
+      <div class="num"><div class="l">Real growth, the typical state</div><div class="v" id="n-grow" set:html={V["n-grow"]}></div><div class="d" id="d-grow" set:html={V["d-grow"]}></div></div>
     </div>
   </div>
 
   <!-- § 01 current reading. Inputs: states-spread (all series); prose: generated slots -->
   <section>
-    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading" set:html={V["u-reading"]}></span></div>
     <div class="reading-top">
-      <div><span class="rk">Richest state against poorest</span><div class="big" id="rb-gap">–</div></div>
-      <p class="rt-cap">What the richest state produces per person, as a multiple of what the poorest produces, among the <b id="rt-panel">–</b> states and union territories that report every year since 2011-12. In <span id="rt-first">–</span> the multiple was <b id="rt-gap0">–</b>.</p>
-      <div class="rt-side"><span class="rk">Spread across states</span><div class="rt-side-v" id="rb-cv">–</div></div>
+      <div><span class="rk">Richest state against poorest</span><div class="big" id="rb-gap" set:html={V["rb-gap"]}></div></div>
+      <p class="rt-cap">What the richest state produces per person, as a multiple of what the poorest produces, among the <b id="rt-panel" set:html={V["rt-panel"]}></b> states and union territories that report every year since 2011-12. In <span id="rt-first" set:html={V["rt-first"]}></span> the multiple was <b id="rt-gap0" set:html={V["rt-gap0"]}></b>.</p>
+      <div class="rt-side"><span class="rk">Spread across states</span><div class="rt-side-v" id="rb-cv" set:html={V["rb-cv"]}></div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -120,13 +122,13 @@ const ELSEWHERE = [
       <figure id="cb-pc" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3 id="h-pc">–</h3>
-            <div class="sub">Net state domestic product per person, ₹ a year at current prices, <span id="s-pc-year">–</span>. A hollow circle marks 2011-12. Pale bars are states whose latest year is earlier. The states that have already published 2025-26 are in the table in section 08.</div>
+            <h3 id="h-pc" set:html={V["h-pc"]}></h3>
+            <div class="sub">Net state domestic product per person, ₹ a year at current prices, <span id="s-pc-year" set:html={V["s-pc-year"]}></span>. A hollow circle marks 2011-12. Pale bars are states whose latest year is earlier. The states that have already published 2025-26 are in the table in section 08.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-pc">–</div><div class="c" id="pc-pc">–</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-pc" set:html={V["pv-pc"]}></div><div class="c" id="pc-pc" set:html={V["pc-pc"]}></div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-pc" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-pc" set:html={CH.pcChart()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NAS regional accounts, indicator 25 (indicator 32 for Assam, Haryana, Nagaland and Ladakh). Each state's own population estimate, as published.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -140,7 +142,7 @@ const ELSEWHERE = [
           </div>
           <div class="now">
             <span class="mk">As of 2024-25</span>
-            <p>Highest: <b id="ex-pc-top">–</b>. Lowest: <b id="ex-pc-low">–</b>, about <b id="ex-pc-lowday">–</b> a day. The median state produced <b id="ex-pc-med">–</b> per person. <b id="ex-pc-n25">–</b> states and union territories have already published 2025-26, mostly as advance estimates.</p>
+            <p>Highest: <b id="ex-pc-top" set:html={V["ex-pc-top"]}></b>. Lowest: <b id="ex-pc-low" set:html={V["ex-pc-low"]}></b>, about <b id="ex-pc-lowday" set:html={V["ex-pc-lowday"]}></b> a day. The median state produced <b id="ex-pc-med" set:html={V["ex-pc-med"]}></b> per person. <b id="ex-pc-n25" set:html={V["ex-pc-n25"]}></b> states and union territories have already published 2025-26, mostly as advance estimates.</p>
           </div>
         </div>
       </figure>
@@ -154,17 +156,13 @@ const ELSEWHERE = [
       <figure id="cb-gap" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3 id="h-gap">–</h3>
-            <div class="sub">Income per person in the richest state, as a multiple of the poorest's. The same <span id="s-gap-n">–</span> states and union territories every year, so the line moves only when incomes move.</div>
+            <h3 id="h-gap" set:html={V["h-gap"]}></h3>
+            <div class="sub">Income per person in the richest state, as a multiple of the poorest's. The same <span id="s-gap-n" set:html={V["s-gap-n"]}></span> states and union territories every year, so the line moves only when incomes move.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-gap">–</div><div class="c" id="pc-gap">–</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-gap" set:html={V["pv-gap"]}></div><div class="c" id="pc-gap" set:html={V["pc-gap"]}></div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>At current prices</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>At constant 2011-12 prices</button>
-          </div>
-          <div class="plotzone"><div id="plot-gap" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-gap" set:html={CH.gapChart()} />
           <div class="plotfoot">
             <span class="src">Source: India Atlas computation from MoSPI per-capita NSDP (states-spread). Not in the panel: Jammu and Kashmir (its territory changed in 2019-20), Ladakh and Nagaland (years missing).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/data/states-spread.csv">Data</a></span>
@@ -178,7 +176,7 @@ const ELSEWHERE = [
           </div>
           <div class="now">
             <span class="mk">As of 2024-25</span>
-            <p>The multiple went from <b id="ex-gap-0">–</b> in 2011-12 to <b id="ex-gap-l">–</b>. The spread across states fell from <b id="ex-cv-0">–</b> to <b id="ex-cv-l">–</b>. In rupees the distance between the richest and the poorest grew from <b id="ex-gap-r0">–</b> to <b id="ex-gap-rl">–</b> a year.</p>
+            <p>The multiple went from <b id="ex-gap-0" set:html={V["ex-gap-0"]}></b> in 2011-12 to <b id="ex-gap-l" set:html={V["ex-gap-l"]}></b>. The spread across states fell from <b id="ex-cv-0" set:html={V["ex-cv-0"]}></b> to <b id="ex-cv-l" set:html={V["ex-cv-l"]}></b>. In rupees the distance between the richest and the poorest grew from <b id="ex-gap-r0" set:html={V["ex-gap-r0"]}></b> to <b id="ex-gap-rl" set:html={V["ex-gap-rl"]}></b> a year.</p>
           </div>
         </div>
       </figure>
@@ -192,13 +190,13 @@ const ELSEWHERE = [
       <figure id="cb-size" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3 id="h-size">–</h3>
-            <div class="sub">Gross state domestic product, ₹ lakh crore at current prices, <span id="s-size-year">–</span>. Marked †: built from MoSPI's own value added, taxes and subsidies, because MoSPI's GSDP table leaves the state out.</div>
+            <h3 id="h-size" set:html={V["h-size"]}></h3>
+            <div class="sub">Gross state domestic product, ₹ lakh crore at current prices, <span id="s-size-year" set:html={V["s-size-year"]}></span>. Marked †: built from MoSPI's own value added, taxes and subsidies, because MoSPI's GSDP table leaves the state out.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-size">–</div><div class="c" id="pc-size">–</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-size" set:html={V["pv-size"]}></div><div class="c" id="pc-size" set:html={V["pc-size"]}></div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-size" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-size" set:html={CH.sizeChart()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NAS regional accounts, indicator 23; † GSVA (29) plus taxes (33) less subsidies (34), the identity that reproduces every published GSDP.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -212,7 +210,7 @@ const ELSEWHERE = [
           </div>
           <div class="now">
             <span class="mk">As of 2024-25</span>
-            <p>The largest: <b id="ex-size-1">–</b>, then <b id="ex-size-2">–</b> and <b id="ex-size-3">–</b>. The five largest produce <b id="ex-size-top5">–</b> of the total of the states shown. <b id="ex-size-big">–</b>'s economy is <b id="ex-size-x">–</b> the size of <b id="ex-size-small">–</b>'s.</p>
+            <p>The largest: <b id="ex-size-1" set:html={V["ex-size-1"]}></b>, then <b id="ex-size-2" set:html={V["ex-size-2"]}></b> and <b id="ex-size-3" set:html={V["ex-size-3"]}></b>. The five largest produce <b id="ex-size-top5" set:html={V["ex-size-top5"]}></b> of the total of the states shown. <b id="ex-size-big" set:html={V["ex-size-big"]}></b>'s economy is <b id="ex-size-x" set:html={V["ex-size-x"]}></b> the size of <b id="ex-size-small" set:html={V["ex-size-small"]}></b>'s.</p>
           </div>
         </div>
       </figure>
@@ -226,13 +224,13 @@ const ELSEWHERE = [
       <figure id="cb-growth" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3 id="h-growth">–</h3>
-            <div class="sub">Average real growth of GSDP a year, per cent, 2011-12 to <span id="s-growth-year">–</span>, at constant 2011-12 prices. The dotted line is the median rate.</div>
+            <h3 id="h-growth" set:html={V["h-growth"]}></h3>
+            <div class="sub">Average real growth of GSDP a year, per cent, 2011-12 to <span id="s-growth-year" set:html={V["s-growth-year"]}></span>, at constant 2011-12 prices. The dotted line is the median rate.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-growth">–</div><div class="c" id="pc-growth">–</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-growth" set:html={V["pv-growth"]}></div><div class="c" id="pc-growth" set:html={V["pc-growth"]}></div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-growth" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-growth" set:html={CH.growthChart()} />
           <div class="plotfoot">
             <span class="src">Source: India Atlas computation from MoSPI GSDP at constant 2011-12 prices: the compound annual rate between the two years. † Built from published parts. Year-by-year growth for every state is in states-growth-real.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/data/states-growth-real.csv">Data</a></span>
@@ -246,7 +244,7 @@ const ELSEWHERE = [
           </div>
           <div class="now">
             <span class="mk">As of 2024-25</span>
-            <p>Fastest: <b id="ex-gr-top">–</b>. Slowest: <b id="ex-gr-low">–</b>. The median rate was <b id="ex-gr-med">–</b> a year. In 2020-21, <b id="ex-gr-neg">–</b> of the <b id="ex-gr-negn">–</b> states with figures shrank.</p>
+            <p>Fastest: <b id="ex-gr-top" set:html={V["ex-gr-top"]}></b>. Slowest: <b id="ex-gr-low" set:html={V["ex-gr-low"]}></b>. The median rate was <b id="ex-gr-med" set:html={V["ex-gr-med"]}></b> a year. In 2020-21, <b id="ex-gr-neg" set:html={V["ex-gr-neg"]}></b> of the <b id="ex-gr-negn" set:html={V["ex-gr-negn"]}></b> states with figures shrank.</p>
           </div>
         </div>
       </figure>
@@ -256,13 +254,13 @@ const ELSEWHERE = [
       <figure id="cb-converge" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3 id="h-converge">–</h3>
-            <div class="sub">Each dot is a state. Across: income per person in 2011-12, ₹. Up: average real growth of income per person a year, 2011-12 to <span id="s-conv-year">–</span>, per cent. If poorer states were catching up, the dots would slope down from left to right.</div>
+            <h3 id="h-converge" set:html={V["h-converge"]}></h3>
+            <div class="sub">Each dot is a state. Across: income per person in 2011-12, ₹. Up: average real growth of income per person a year, 2011-12 to <span id="s-conv-year" set:html={V["s-conv-year"]}></span>, per cent. If poorer states were catching up, the dots would slope down from left to right.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-converge">–</div><div class="c">correlation, income and growth</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-converge" set:html={V["pv-converge"]}></div><div class="c">correlation, income and growth</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-converge" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-converge" set:html={CH.convergeChart()} />
           <div class="plotfoot">
             <span class="src">Source: India Atlas computation from MoSPI per-capita NSDP at constant 2011-12 prices. The same panel as the gap chart.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/data/states-pcnsdp-constant.csv">Data</a></span>
@@ -276,7 +274,7 @@ const ELSEWHERE = [
           </div>
           <div class="now">
             <span class="mk">As of 2024-25</span>
-            <p>The correlation is <b id="ex-cv-r">–</b>. <b id="ex-cv-poor">–</b>, the poorest state in 2011-12, grew its income per person by <b id="ex-cv-poorg">–</b> a year; <b id="ex-cv-rich">–</b>, the richest, by <b id="ex-cv-richg">–</b>.</p>
+            <p>The correlation is <b id="ex-cv-r" set:html={V["ex-cv-r"]}></b>. <b id="ex-cv-poor" set:html={V["ex-cv-poor"]}></b>, the poorest state in 2011-12, grew its income per person by <b id="ex-cv-poorg" set:html={V["ex-cv-poorg"]}></b> a year; <b id="ex-cv-rich" set:html={V["ex-cv-rich"]}></b>, the richest, by <b id="ex-cv-richg" set:html={V["ex-cv-richg"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -290,18 +288,13 @@ const ELSEWHERE = [
       <figure id="cb-structure" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3 id="h-structure">–</h3>
-            <div class="sub">Agriculture, industry and services as a share of each state's gross value added, per cent, <span id="s-str-year">–</span>, at current prices. Sorted by the share of farming, forestry and fishing.</div>
+            <h3 id="h-structure" set:html={V["h-structure"]}></h3>
+            <div class="sub">Agriculture, industry and services as a share of each state's gross value added, per cent, <span id="s-str-year" set:html={V["s-str-year"]}></span>, at current prices. Sorted by the share of farming, forestry and fishing.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-structure">–</div><div class="c" id="pc-structure">–</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-structure" set:html={V["pv-structure"]}></div><div class="c" id="pc-structure" set:html={V["pc-structure"]}></div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i class="sq" style="background:#2E4BD8;width:10px;height:10px"></i>Agriculture, forestry, fishing</span>
-            <span class="chip"><i class="sq" style="background:#A3A9B4;width:10px;height:10px"></i>Industry: mining, manufacturing, utilities, construction</span>
-            <span class="chip"><i class="sq" style="background:#DFE2E8;width:10px;height:10px"></i>Services</span>
-          </div>
-          <div class="plotzone"><div id="plot-structure" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-structure" set:html={CH.structureChart()} />
           <div class="plotfoot">
             <span class="src">Source: India Atlas computation from MoSPI GSVA by industry (indicator 29), current prices.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/data/states-structure.csv">Data</a></span>
@@ -314,7 +307,7 @@ const ELSEWHERE = [
           </div>
           <div class="now">
             <span class="mk">As of 2024-25</span>
-            <p>Farming's share is highest in <b id="ex-st-agtop">–</b> and lowest in <b id="ex-st-aglow">–</b>. Industry's share is highest in <b id="ex-st-intop">–</b>. Services' share is highest in <b id="ex-st-svtop">–</b>.</p>
+            <p>Farming's share is highest in <b id="ex-st-agtop" set:html={V["ex-st-agtop"]}></b> and lowest in <b id="ex-st-aglow" set:html={V["ex-st-aglow"]}></b>. Industry's share is highest in <b id="ex-st-intop" set:html={V["ex-st-intop"]}></b>. Services' share is highest in <b id="ex-st-svtop" set:html={V["ex-st-svtop"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -324,13 +317,13 @@ const ELSEWHERE = [
       <figure id="cb-industries" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3 id="h-industries">–</h3>
-            <div class="sub">Each industry's share of each state's gross value added, per cent, <span id="s-ind-year">–</span>, current prices. Darker cells are larger shares; each row adds up to 100.</div>
+            <h3 id="h-industries" set:html={V["h-industries"]}></h3>
+            <div class="sub">Each industry's share of each state's gross value added, per cent, <span id="s-ind-year" set:html={V["s-ind-year"]}></span>, current prices. Darker cells are larger shares; each row adds up to 100.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-industries">–</div><div class="c" id="pc-industries">–</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-industries" set:html={V["pv-industries"]}></div><div class="c" id="pc-industries" set:html={V["pc-industries"]}></div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-industries" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-industries" set:html={CH.industriesChart()} />
           <div class="plotfoot">
             <span class="src">Source: India Atlas computation from MoSPI GSVA by industry (indicator 29), current prices. Sub-industries (crops, livestock, road transport, hotels and others) are in states-gsva-current.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/data/states-industry-shares.csv">Data</a></span>
@@ -343,7 +336,7 @@ const ELSEWHERE = [
           </div>
           <div class="now">
             <span class="mk">As of 2024-25</span>
-            <p>Manufacturing's share is highest in <b id="ex-in-mfg">–</b>. Mining's is highest in <b id="ex-in-min">–</b>. Public administration's is highest in <b id="ex-in-pub">–</b>. Financial services' is highest in <b id="ex-in-fin">–</b>.</p>
+            <p>Manufacturing's share is highest in <b id="ex-in-mfg" set:html={V["ex-in-mfg"]}></b>. Mining's is highest in <b id="ex-in-min" set:html={V["ex-in-min"]}></b>. Public administration's is highest in <b id="ex-in-pub" set:html={V["ex-in-pub"]}></b>. Financial services' is highest in <b id="ex-in-fin" set:html={V["ex-in-fin"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -357,13 +350,13 @@ const ELSEWHERE = [
       <figure id="cb-finance" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3 id="h-finance">–</h3>
-            <div class="sub">Outstanding liabilities of each state government at the end of March <span id="s-fin-end">–</span>, as a share of its GSDP for <span id="s-fin-year">–</span>, per cent. Beside each bar: that year's gross fiscal deficit, the borrowing needed to close the year, as a share of GSDP; a minus is a surplus.</div>
+            <h3 id="h-finance" set:html={V["h-finance"]}></h3>
+            <div class="sub">Outstanding liabilities of each state government at the end of March <span id="s-fin-end" set:html={V["s-fin-end"]}></span>, as a share of its GSDP for <span id="s-fin-year" set:html={V["s-fin-year"]}></span>, per cent. Beside each bar: that year's gross fiscal deficit, the borrowing needed to close the year, as a share of GSDP; a minus is a surplus.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-finance">–</div><div class="c" id="pc-finance">–</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-finance" set:html={V["pv-finance"]}></div><div class="c" id="pc-finance" set:html={V["pc-finance"]}></div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-finance" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-finance" set:html={CH.financeChart()} />
           <div class="plotfoot">
             <span class="src">Source: India Atlas computation: RBI Handbook of Statistics on Indian States, Tables 164 and 176 (actuals only), over MoSPI GSDP at current prices for the same year.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/data/states-finances.csv">Data</a></span>
@@ -377,7 +370,7 @@ const ELSEWHERE = [
           </div>
           <div class="now">
             <span class="mk">As of 2022-23</span>
-            <p>Highest debt: <b id="ex-fn-top">–</b>. Lowest: <b id="ex-fn-low">–</b>. The median state owed <b id="ex-fn-med">–</b> of its GSDP. Largest deficit that year: <b id="ex-fn-gfd">–</b>. These are the latest actuals the Handbook carries for most states; later years are budget or revised estimates and are left out.</p>
+            <p>Highest debt: <b id="ex-fn-top" set:html={V["ex-fn-top"]}></b>. Lowest: <b id="ex-fn-low" set:html={V["ex-fn-low"]}></b>. The median state owed <b id="ex-fn-med" set:html={V["ex-fn-med"]}></b> of its GSDP. Largest deficit that year: <b id="ex-fn-gfd" set:html={V["ex-fn-gfd"]}></b>. These are the latest actuals the Handbook carries for most states; later years are budget or revised estimates and are left out.</p>
           </div>
         </div>
       </figure>
@@ -403,7 +396,7 @@ const ELSEWHERE = [
           <th><button data-k="debt">Debt, % GSDP</button></th>
           <th><button data-k="gfd">Deficit, % GSDP</button></th>
         </tr></thead>
-        <tbody id="st-body"></tbody>
+        <tbody id="st-body" set:html={CH.TABLE} />
       </table>
     </div>
     <div class="prose"><p style="font-size:.9rem;color:var(--muted)">Income per person is per-capita NSDP at current prices. Growth is real, at constant 2011-12 prices. Shares are of GSVA at current prices for the latest year. Debt and deficit are for 2022-23, the latest year of actuals. † GSDP built from MoSPI's published parts. The full tables, including every industry and sub-industry and all 182 tables of the RBI Handbook, are in the data downloads below.</p></div>
@@ -468,7 +461,7 @@ const ELSEWHERE = [
     <div class="cols">
       <div>
         <h6>Sources of record</h6>
-        <p>MoSPI, National Accounts Statistics, regional accounts (eSankhyiki, indicators 23 to 34, base 2011-12), estimates by each state's Directorate of Economics and Statistics. RBI, Handbook of Statistics on Indian States, all 182 tables, retrieved from the RBI's Database on Indian Economy through the owner's local mirror. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>MoSPI, National Accounts Statistics, regional accounts (eSankhyiki, indicators 23 to 34, base 2011-12), estimates by each state's Directorate of Economics and Statistics. RBI, Handbook of Statistics on Indian States, all 182 tables, retrieved from the RBI's Database on Indian Economy through the owner's local mirror. Data vintage <b id="prov-vintage" set:html={V["prov-vintage"]}></b>.</p>
         <p>Checked by hand: the Handbook's Table 19 gives Bihar ₹69,321 per person for 2024-25, as baked; MoSPI's newer round gives ₹69,211.</p>
       </div>
       <div>
@@ -486,7 +479,7 @@ const ELSEWHERE = [
     </div>
     <div class="fine">
       <span>India Atlas, state economies</span>
-      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Vintage <span id="prov-vintage2" set:html={V["prov-vintage2"]}></span></span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>

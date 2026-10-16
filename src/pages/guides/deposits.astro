@@ -6,6 +6,8 @@ import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["deposits"];
+import * as CH from "../../dossiers/deposits.charts.js";
+const N = CH.NUM;
 ---
 <Base
   title="Where Indians keep their money · India Atlas"
@@ -30,30 +32,30 @@ const D = bySlug["deposits"];
       <span>Instrument <b>Deposits with scheduled commercial banks, including RRBs</b></span>
       <span>Frequency <b>Annual, as on 31 March</b></span>
       <span>Window <b>March 2003 to March 2026; quarterly to June 2026</b></span>
-      <span>Latest <b id="m-latest">–</b></span>
+      <span>Latest <b id="m-latest" set:html={N["m-latest"]} /></span>
       <span>Unit <b>₹ lakh crore</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Household deposits, all banks</div><div class="v acc" id="n-hh">–</div><div class="d" id="d-hh">–</div><div class="nspark" id="nspark-hh"></div></div>
-      <div class="num"><div class="l">Share held in fixed deposits</div><div class="v" id="n-term">–</div><div class="d" id="d-term">–</div></div>
-      <div class="num"><div class="l">Fixed-deposit money earning below 6%, individuals</div><div class="v" id="n-low">–</div><div class="d" id="d-low">–</div></div>
-      <div class="num"><div class="l">Women's share of all bank deposits</div><div class="v" id="n-women">–</div><div class="d" id="d-women">–</div></div>
+      <div class="num"><div class="l">Household deposits, all banks</div><div class="v acc" id="n-hh" set:html={N["n-hh"]} /><div class="d" id="d-hh" set:html={N["d-hh"]} /><div class="nspark" id="nspark-hh"></div></div>
+      <div class="num"><div class="l">Share held in fixed deposits</div><div class="v" id="n-term" set:html={N["n-term"]} /><div class="d" id="d-term" set:html={N["d-term"]} /></div>
+      <div class="num"><div class="l">Fixed-deposit money earning below 6%, individuals</div><div class="v" id="n-low" set:html={N["n-low"]} /><div class="d" id="d-low" set:html={N["d-low"]} /></div>
+      <div class="num"><div class="l">Women's share of all bank deposits</div><div class="v" id="n-women" set:html={N["n-women"]} /><div class="d" id="d-women" set:html={N["d-women"]} /></div>
     </div>
   </div>
 
   <!-- § 01 current reading -->
   <section>
-    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading" set:html={N["u-reading"]} /></div>
     <div class="reading-top">
-      <div><span class="rk">Household bank deposits</span><div class="big" id="rb-hh">–</div></div>
+      <div><span class="rk">Household bank deposits</span><div class="big" id="rb-hh" set:html={N["rb-hh"]} /></div>
       <p class="rt-cap">Everything Indian households held in commercial banks on 31 March: savings accounts, fixed deposits and current accounts, from individuals, small shops and partnerships to charities and self-help groups.</p>
-      <div class="rt-side"><span class="rk">In fixed deposits</span><div class="rt-side-v" id="rb-term">–</div></div>
+      <div class="rt-side"><span class="rk">In fixed deposits</span><div class="rt-side-v" id="rb-term" set:html={N["rb-term"]} /></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
         <span class="mk">What the figures say</span>
-        <p>Households held <b id="cr-hh">–</b> in banks, <b id="cr-hh-share">–</b> of everything deposited by anyone. Of their money, <b id="cr-term">–</b> sat in fixed deposits, <b id="cr-sav">–</b> in savings accounts and <b id="cr-cur">–</b> in current accounts.</p>
-        <p>Individuals' fixed deposits have moved with interest rates. In March 2022, <b id="cr-low22">–</b> of that money earned less than 6% a year; by <span id="cr-lastyr">–</span>, only <b id="cr-low">–</b> did, and most of it earned between 6 and 8%.</p>
+        <p>Households held <b id="cr-hh" set:html={N["cr-hh"]} /> in banks, <b id="cr-hh-share" set:html={N["cr-hh-share"]} /> of everything deposited by anyone. Of their money, <b id="cr-term" set:html={N["cr-term"]} /> sat in fixed deposits, <b id="cr-sav" set:html={N["cr-sav"]} /> in savings accounts and <b id="cr-cur" set:html={N["cr-cur"]} /> in current accounts.</p>
+        <p>Individuals' fixed deposits have moved with interest rates. In March 2022, <b id="cr-low22" set:html={N["cr-low22"]} /> of that money earned less than 6% a year; by <span id="cr-lastyr" set:html={N["cr-lastyr"]} />, only <b id="cr-low" set:html={N["cr-low"]} /> did, and most of it earned between 6 and 8%.</p>
       </div>
       <div class="reading-col now">
         <span class="mk">What they do not say</span>
@@ -73,15 +75,10 @@ const D = bySlug["deposits"];
             <h3>About half of household bank money has always been in fixed deposits</h3>
             <div class="sub">Household deposits by type of account, ₹ lakh crore, as on 31 March. The household sector was redefined in 2018-19, so the two periods are drawn apart.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-types">–</div><div class="c">fixed deposits, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-types" set:html={N["pv-types"]} /><div class="c">fixed deposits, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Fixed (term) deposits</button>
-            <button class="chip"><i style="background:#5F6675"></i>Savings accounts</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Current accounts</button>
-          </div>
-          <div class="plotzone"><div id="plot-types" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-types" set:html={CH.types()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Basic Statistical Return 2 (DBIE report 737). Old sector classification to March 2018, new classification from March 2019; never joined.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -95,7 +92,7 @@ const D = bySlug["deposits"];
           </div>
           <div class="now">
             <span class="mk">As of March 2026</span>
-            <p>Fixed deposits <b id="ex-ty-term">–</b>, savings accounts <b id="ex-ty-sav">–</b>, current accounts <b id="ex-ty-cur">–</b>. Fixed deposits were <b id="ex-ty-share">–</b> of household deposits, against <b id="ex-ty-share19">–</b> in March 2019.</p>
+            <p>Fixed deposits <b id="ex-ty-term" set:html={N["ex-ty-term"]} />, savings accounts <b id="ex-ty-sav" set:html={N["ex-ty-sav"]} />, current accounts <b id="ex-ty-cur" set:html={N["ex-ty-cur"]} />. Fixed deposits were <b id="ex-ty-share" set:html={N["ex-ty-share"]} /> of household deposits, against <b id="ex-ty-share19" set:html={N["ex-ty-share19"]} /> in March 2019.</p>
           </div>
         </div>
       </figure>
@@ -112,11 +109,10 @@ const D = bySlug["deposits"];
             <h3>In 2022 four-fifths of fixed-deposit money earned below 6%; by 2026 about one rupee in sixteen did</h3>
             <div class="sub">Individuals' term deposits by contracted interest rate, share of the rupee value, as on 31 March each year.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-rates">–</div><div class="c">earning below 6%, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-rates" set:html={N["pv-rates"]} /><div class="c">earning below 6%, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-rates"></div>
-          <div class="plotzone"><div id="plot-rates" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-rates" set:html={CH.rates()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, BSR-2 Table 3.5 (DBIE report 865). Individuals include Hindu undivided families. Rates are those contracted when each deposit was placed, not today's card rates.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -130,7 +126,7 @@ const D = bySlug["deposits"];
           </div>
           <div class="now">
             <span class="mk">As of March 2026</span>
-            <p>Below 6%: <b id="ex-r-low">–</b> of the money. Between 6 and 7%: <b id="ex-r-67">–</b>. Between 7 and 8%: <b id="ex-r-78">–</b>. Eight per cent or more: <b id="ex-r-8">–</b>. Four years earlier, in March 2022, <b id="ex-r-low22">–</b> earned below 6%.</p>
+            <p>Below 6%: <b id="ex-r-low" set:html={N["ex-r-low"]} /> of the money. Between 6 and 7%: <b id="ex-r-67" set:html={N["ex-r-67"]} />. Between 7 and 8%: <b id="ex-r-78" set:html={N["ex-r-78"]} />. Eight per cent or more: <b id="ex-r-8" set:html={N["ex-r-8"]} />. Four years earlier, in March 2022, <b id="ex-r-low22" set:html={N["ex-r-low22"]} /> earned below 6%.</p>
           </div>
         </div>
       </figure>
@@ -147,10 +143,10 @@ const D = bySlug["deposits"];
             <h3>Most fixed-deposit money comes due within a year</h3>
             <div class="sub">Individuals' term deposits by time left until they mature, share of the rupee value, as on 31 March.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-maturity">–</div><div class="c">maturing within a year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-maturity" set:html={N["pv-maturity"]} /><div class="c">maturing within a year</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-maturity" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-maturity" set:html={CH.maturity()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, BSR-2 Table 3.4 (DBIE report 864). Residual maturity: the time remaining, not the term the deposit was opened for.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -163,7 +159,7 @@ const D = bySlug["deposits"];
           </div>
           <div class="now">
             <span class="mk">As of March 2026</span>
-            <p>Within a year: <b id="ex-m-1y">–</b> of the money. One to three years: <b id="ex-m-3y">–</b>. Three years or more: <b id="ex-m-long">–</b>.</p>
+            <p>Within a year: <b id="ex-m-1y" set:html={N["ex-m-1y"]} /> of the money. One to three years: <b id="ex-m-3y" set:html={N["ex-m-3y"]} />. Three years or more: <b id="ex-m-long" set:html={N["ex-m-long"]} />.</p>
           </div>
         </div>
       </figure>
@@ -176,10 +172,10 @@ const D = bySlug["deposits"];
             <h3>Most of the money sits in deposits of ₹1 lakh to ₹15 lakh</h3>
             <div class="sub">Individuals' term deposits by the size of each deposit, ₹ lakh crore, as on 31 March 2026, in the finer bands the RBI introduced that year.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-size">–</div><div class="c">in deposits of ₹1 lakh to ₹15 lakh</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-size" set:html={N["pv-size"]} /><div class="c">in deposits of ₹1 lakh to ₹15 lakh</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-size" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-size" set:html={CH.size()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, BSR-2 Table 3.6 (DBIE report 866). Size of each deposit account, not of each depositor: one family can hold several.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -192,7 +188,7 @@ const D = bySlug["deposits"];
           </div>
           <div class="now">
             <span class="mk">As of March 2026</span>
-            <p>Deposits of ₹1 lakh to ₹15 lakh hold <b id="ex-s-mid">–</b> of individuals' fixed-deposit money; deposits under ₹1 lakh, <b id="ex-s-small">–</b>; deposits of ₹1 crore or more, <b id="ex-s-big">–</b>.</p>
+            <p>Deposits of ₹1 lakh to ₹15 lakh hold <b id="ex-s-mid" set:html={N["ex-s-mid"]} /> of individuals' fixed-deposit money; deposits under ₹1 lakh, <b id="ex-s-small" set:html={N["ex-s-small"]} />; deposits of ₹1 crore or more, <b id="ex-s-big" set:html={N["ex-s-big"]} />.</p>
           </div>
         </div>
       </figure>
@@ -209,14 +205,10 @@ const D = bySlug["deposits"];
             <h3>Two-fifths of household deposits sit in metropolitan branches</h3>
             <div class="sub">Household deposits by the location of the bank branch, ₹ lakh crore, as on 31 March: March 2019 and the latest year.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-place">–</div><div class="c">metropolitan share, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-place" set:html={N["pv-place"]} /><div class="c">metropolitan share, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>March 2019</button>
-            <button class="chip"><i style="background:#2E4BD8"></i><span id="lg-place">Latest</span></button>
-          </div>
-          <div class="plotzone"><div id="plot-place" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-place" set:html={CH.place()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, BSR-2 Table 1.2 (DBIE report 847). Population groups follow the census classification of the centre where the branch sits.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -229,7 +221,7 @@ const D = bySlug["deposits"];
           </div>
           <div class="now">
             <span class="mk">As of March 2026</span>
-            <p>Metropolitan branches held <b id="ex-p-metro">–</b> of household deposits and rural branches <b id="ex-p-rural">–</b>. Women held <b id="ex-p-women">–</b> of all bank deposits, against <b id="ex-p-women19">–</b> in March 2019.</p>
+            <p>Metropolitan branches held <b id="ex-p-metro" set:html={N["ex-p-metro"]} /> of household deposits and rural branches <b id="ex-p-rural" set:html={N["ex-p-rural"]} />. Women held <b id="ex-p-women" set:html={N["ex-p-women"]} /> of all bank deposits, against <b id="ex-p-women19" set:html={N["ex-p-women19"]} /> in March 2019.</p>
           </div>
         </div>
       </figure>
@@ -245,14 +237,10 @@ const D = bySlug["deposits"];
             <h3>Households still hold most of the money, but their share has slipped as companies keep more in banks</h3>
             <div class="sub">Deposits by owner, as on 31 March 2026 (bars) and 31 March 2019 (dots), share of all deposits. Sub-groups are indented under their sector.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-sectors">–</div><div class="c">households' share, March 2026</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-sectors" set:html={N["pv-sectors"]} /><div class="c">households' share, March 2026</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>March 2026</span>
-            <span class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>March 2019</span>
-          </div>
-          <div class="plotzone"><div id="plot-sectors" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-sectors" set:html={CH.sectors()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, BSR-2 Table 1.1 (DBIE report 1200), sector classification of the System of National Accounts, used since March 2019. Tables 1.x include deposits that banks keep with other banks.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -266,7 +254,7 @@ const D = bySlug["deposits"];
           </div>
           <div class="now">
             <span class="mk">As of March 2026</span>
-            <p>Households <b id="ex-sc-hh">–</b> of deposits (<b id="ex-sc-hh19">–</b> in 2019). Non-financial companies <b id="ex-sc-nfc">–</b> (<b id="ex-sc-nfc19">–</b>). Government <b id="ex-sc-gov">–</b>. Non-resident Indians <b id="ex-sc-nri">–</b>. Self-help groups <b id="ex-sc-shg">–</b>.</p>
+            <p>Households <b id="ex-sc-hh" set:html={N["ex-sc-hh"]} /> of deposits (<b id="ex-sc-hh19" set:html={N["ex-sc-hh19"]} /> in 2019). Non-financial companies <b id="ex-sc-nfc" set:html={N["ex-sc-nfc"]} /> (<b id="ex-sc-nfc19" set:html={N["ex-sc-nfc19"]} />). Government <b id="ex-sc-gov" set:html={N["ex-sc-gov"]} />. Non-resident Indians <b id="ex-sc-nri" set:html={N["ex-sc-nri"]} />. Self-help groups <b id="ex-sc-shg" set:html={N["ex-sc-shg"]} />.</p>
           </div>
         </div>
       </figure>
@@ -282,14 +270,10 @@ const D = bySlug["deposits"];
             <h3>People over 60 hold two-fifths of what individuals keep in banks, and most of it in fixed deposits</h3>
             <div class="sub">Deposits of individuals by the age of the account holder, as on 31 March 2026, ₹ lakh crore, split into fixed deposits and savings and current accounts.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-age">–</div><div class="c">held by people aged 60 and above</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-age" set:html={N["pv-age"]} /><div class="c">held by people aged 60 and above</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>Fixed deposits</span>
-            <span class="chip"><i style="background:#B9C3F3"></i>Savings and current accounts</span>
-          </div>
-          <div class="plotzone"><div id="plot-age" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-age" set:html={CH.age()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, BSR-2 Table 2.11 (DBIE report 1260), age-wise distribution of individual depositors. Individuals include Hindu undivided families. The table covers about 99% of individuals' deposits in table 2.6 (accounts with no recorded age, presumably, are left out).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -303,7 +287,7 @@ const D = bySlug["deposits"];
           </div>
           <div class="now">
             <span class="mk">As of March 2026</span>
-            <p>Aged 60 and above: <b id="ex-age-60">–</b> of individuals' deposits (<b id="ex-age-60-23">–</b> in March 2023), <b id="ex-age-60-term">–</b> of it in fixed deposits. Aged 25 to 39: <b id="ex-age-25">–</b>. Under 18: <b id="ex-age-minor">–</b>.</p>
+            <p>Aged 60 and above: <b id="ex-age-60" set:html={N["ex-age-60"]} /> of individuals' deposits (<b id="ex-age-60-23" set:html={N["ex-age-60-23"]} /> in March 2023), <b id="ex-age-60-term" set:html={N["ex-age-60-term"]} /> of it in fixed deposits. Aged 25 to 39: <b id="ex-age-25" set:html={N["ex-age-25"]} />. Under 18: <b id="ex-age-minor" set:html={N["ex-age-minor"]} />.</p>
           </div>
         </div>
       </figure>
@@ -315,10 +299,10 @@ const D = bySlug["deposits"];
             <h3>Women's share of individuals' deposits runs from under a third to nearly half, state by state</h3>
             <div class="sub">Deposits held by women as a share of all deposits of individuals, by state, as on 31 March 2026, per cent.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-womenst">–</div><div class="c">women's share, All India</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-womenst" set:html={N["pv-womenst"]} /><div class="c">women's share, All India</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-womenst" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-womenst" set:html={CH.womenst()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, BSR-2 Table 2.6 (DBIE report 856). Women are counted inside individuals: the table's "of which female" column.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -331,7 +315,7 @@ const D = bySlug["deposits"];
           </div>
           <div class="now">
             <span class="mk">As of March 2026</span>
-            <p>Highest: <b id="ex-ws-hi">–</b>. Lowest: <b id="ex-ws-lo">–</b>. All India: <b id="ex-ws-ai">–</b>, against <b id="ex-ws-ai19">–</b> in March 2019.</p>
+            <p>Highest: <b id="ex-ws-hi" set:html={N["ex-ws-hi"]} />. Lowest: <b id="ex-ws-lo" set:html={N["ex-ws-lo"]} />. All India: <b id="ex-ws-ai" set:html={N["ex-ws-ai"]} />, against <b id="ex-ws-ai19" set:html={N["ex-ws-ai19"]} /> in March 2019.</p>
           </div>
         </div>
       </figure>
@@ -347,10 +331,10 @@ const D = bySlug["deposits"];
             <h3>Maharashtra holds more than a fifth of India's bank deposits; three states hold nearly two-fifths</h3>
             <div class="sub">Deposits by state, as on 31 March 2026, share of all deposits (tables 2.x, which leave out deposits of banks with banks).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-states">–</div><div class="c">held in Maharashtra's branches</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-states" set:html={N["pv-states"]} /><div class="c">held in Maharashtra's branches</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-states" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-states" set:html={CH.states()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, BSR-2 Table 2.3 (DBIE report 853). Deposits are counted where the branch is, so corporate head offices in Mumbai and Delhi swell those states.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -363,7 +347,7 @@ const D = bySlug["deposits"];
           </div>
           <div class="now">
             <span class="mk">As of March 2026</span>
-            <p><span id="ex-st-n1">–</span> <b id="ex-st-mh">–</b>, the next two (<span id="ex-st-n23">–</span>) <b id="ex-st-next">–</b>. <b id="ex-st-small">–</b> states and union territories hold less than 1% each.</p>
+            <p><span id="ex-st-n1" set:html={N["ex-st-n1"]} /> <b id="ex-st-mh" set:html={N["ex-st-mh"]} />, the next two (<span id="ex-st-n23" set:html={N["ex-st-n23"]} />) <b id="ex-st-next" set:html={N["ex-st-next"]} />. <b id="ex-st-small" set:html={N["ex-st-small"]} /> states and union territories hold less than 1% each.</p>
           </div>
         </div>
       </figure>
@@ -375,10 +359,10 @@ const D = bySlug["deposits"];
             <h3>Twenty-six of India's nearly 800 districts hold half of all bank deposits</h3>
             <div class="sub">The 30 districts with the most deposits, as on 31 March 2026, share of all deposits. A district's total is the sum of its rural, semi-urban, urban and metropolitan branches.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-districts">–</div><div class="c">districts that hold half the money</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-districts" set:html={N["pv-districts"]} /><div class="c">districts that hold half the money</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-districts" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-districts" set:html={CH.districts()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, BSR-2 Table 2.7 (DBIE report 857), deposits by district and population group, summed by district. Every district, with its accounts and branches, is in the table at the end of this guide.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -391,7 +375,7 @@ const D = bySlug["deposits"];
           </div>
           <div class="now">
             <span class="mk">As of March 2026</span>
-            <p>Mumbai <b id="ex-di-1">–</b>, Bengaluru Urban <b id="ex-di-2">–</b>. Districts that together hold half of all deposits: <b id="ex-di-half">–</b> of <b id="ex-di-n">–</b>.</p>
+            <p>Mumbai <b id="ex-di-1" set:html={N["ex-di-1"]} />, Bengaluru Urban <b id="ex-di-2" set:html={N["ex-di-2"]} />. Districts that together hold half of all deposits: <b id="ex-di-half" set:html={N["ex-di-half"]} /> of <b id="ex-di-n" set:html={N["ex-di-n"]} />.</p>
           </div>
         </div>
       </figure>
@@ -407,10 +391,10 @@ const D = bySlug["deposits"];
             <h3>Private banks' share of deposits rose by about six points in seven years, mostly from public sector banks</h3>
             <div class="sub">Share of all deposits by bank group, as on 31 March, 2019 to 2026.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-banks">–</div><div class="c">private banks' share, March 2026</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-banks" set:html={N["pv-banks"]} /><div class="c">private banks' share, March 2026</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-banks" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-banks" set:html={CH.banks()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, BSR-2 Table 1.5 (DBIE report 850). Bank groups as RBI classifies them each year; small finance banks and payments banks are newer groups.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -423,7 +407,7 @@ const D = bySlug["deposits"];
           </div>
           <div class="now">
             <span class="mk">As of March 2026</span>
-            <p>Public sector banks <b id="ex-bk-psb">–</b> (<b id="ex-bk-psb19">–</b> in 2019), private banks <b id="ex-bk-pvt">–</b> (<b id="ex-bk-pvt19">–</b>), foreign banks <b id="ex-bk-for">–</b>, regional rural banks <b id="ex-bk-rrb">–</b>, small finance banks <b id="ex-bk-sfb">–</b>.</p>
+            <p>Public sector banks <b id="ex-bk-psb" set:html={N["ex-bk-psb"]} /> (<b id="ex-bk-psb19" set:html={N["ex-bk-psb19"]} /> in 2019), private banks <b id="ex-bk-pvt" set:html={N["ex-bk-pvt"]} /> (<b id="ex-bk-pvt19" set:html={N["ex-bk-pvt19"]} />), foreign banks <b id="ex-bk-for" set:html={N["ex-bk-for"]} />, regional rural banks <b id="ex-bk-rrb" set:html={N["ex-bk-rrb"]} />, small finance banks <b id="ex-bk-sfb" set:html={N["ex-bk-sfb"]} />.</p>
           </div>
         </div>
       </figure>
@@ -435,10 +419,10 @@ const D = bySlug["deposits"];
             <h3>Women are a quarter of bank employees, and fewer still in small finance banks</h3>
             <div class="sub">Women's share of employees by bank group, as on 31 March 2026, with the number of employees.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-staff">–</div><div class="c">women's share of bank staff, All India</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-staff" set:html={N["pv-staff"]} /><div class="c">women's share of bank staff, All India</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-staff" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-staff" set:html={CH.staff()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, BSR-2 Table 4.2 (DBIE report 870), employees by bank group and population group, officers, clerks and subordinate staff.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -451,7 +435,7 @@ const D = bySlug["deposits"];
           </div>
           <div class="now">
             <span class="mk">As of March 2026</span>
-            <p>Bank employees: <b id="ex-sf-n">–</b>, <b id="ex-sf-w">–</b> of them women. Highest share: <b id="ex-sf-hi">–</b>. Lowest: <b id="ex-sf-lo">–</b>.</p>
+            <p>Bank employees: <b id="ex-sf-n" set:html={N["ex-sf-n"]} />, <b id="ex-sf-w" set:html={N["ex-sf-w"]} /> of them women. Highest share: <b id="ex-sf-hi" set:html={N["ex-sf-hi"]} />. Lowest: <b id="ex-sf-lo" set:html={N["ex-sf-lo"]} />.</p>
           </div>
         </div>
       </figure>
@@ -467,10 +451,10 @@ const D = bySlug["deposits"];
             <h3>Seven in ten rupees in fixed deposits are now booked for one to three years, up from half in 2022</h3>
             <div class="sub">All term deposits by the term they were booked for (original maturity), share of the money, as on 31 March, 2019 to 2026.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-origmat">–</div><div class="c">booked for one to three years, March 2026</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-origmat" set:html={N["pv-origmat"]} /><div class="c">booked for one to three years, March 2026</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-origmat" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-origmat" set:html={CH.origmat()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, BSR-2 Table 3.1 (DBIE report 861). Original maturity is the term at booking; the time left (residual maturity) is in Plate 4.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -483,7 +467,7 @@ const D = bySlug["deposits"];
           </div>
           <div class="now">
             <span class="mk">As of March 2026</span>
-            <p>One to three years: <b id="ex-om-13">–</b>. Under a year: <b id="ex-om-1">–</b>. Five years and more: <b id="ex-om-5">–</b> (<b id="ex-om-519">–</b> in 2019).</p>
+            <p>One to three years: <b id="ex-om-13" set:html={N["ex-om-13"]} />. Under a year: <b id="ex-om-1" set:html={N["ex-om-1"]} />. Five years and more: <b id="ex-om-5" set:html={N["ex-om-5"]} /> (<b id="ex-om-519" set:html={N["ex-om-519"]} /> in 2019).</p>
           </div>
         </div>
       </figure>
@@ -495,10 +479,10 @@ const D = bySlug["deposits"];
             <h3>Between the annual returns, deposits grew every quarter, and the household share dips each March</h3>
             <div class="sub">Deposits with scheduled commercial banks excluding regional rural banks, by quarter, March 2023 to June 2026, ₹ lakh crore (line), and households' share (labels).</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-quarterly">–</div><div class="c">deposits, latest quarter</div></div>
+          <div class="plate-val"><div class="v" id="pv-quarterly" set:html={N["pv-quarterly"]} /><div class="c">deposits, latest quarter</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-quarterly" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-quarterly" set:html={CH.quarterly()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, quarterly BSR-2 Table 1.1 (DBIE report 1302). The quarterly return leaves out regional rural banks, so it is a different total from the annual return and is drawn on its own.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -511,7 +495,7 @@ const D = bySlug["deposits"];
           </div>
           <div class="now">
             <span class="mk">As of June 2026</span>
-            <p>Deposits <b id="ex-q-tot">–</b> in the latest quarter, <b id="ex-q-yoy">–</b> on a year earlier. Households' share <b id="ex-q-hh">–</b>.</p>
+            <p>Deposits <b id="ex-q-tot" set:html={N["ex-q-tot"]} /> in the latest quarter, <b id="ex-q-yoy" set:html={N["ex-q-yoy"]} /> on a year earlier. Households' share <b id="ex-q-hh" set:html={N["ex-q-hh"]} />.</p>
           </div>
         </div>
       </figure>
@@ -549,7 +533,7 @@ const D = bySlug["deposits"];
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Reserve Bank of India, Basic Statistical Return 2: deposits with scheduled commercial banks including regional rural banks, annual, as on 31 March, and the quarterly return (from March 2023, excluding regional rural banks). Every BSR-2 table DBIE publishes: ownership (reports 737 and 1200), tables 1.2 to 1.5, 2.1 to 2.12, 3.1 to 3.8 and 4.1 to 4.2, annual and quarterly, and the 2010 to 2018 district table, read from India Atlas's archived copy of DBIE. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Reserve Bank of India, Basic Statistical Return 2: deposits with scheduled commercial banks including regional rural banks, annual, as on 31 March, and the quarterly return (from March 2023, excluding regional rural banks). Every BSR-2 table DBIE publishes: ownership (reports 737 and 1200), tables 1.2 to 1.5, 2.1 to 2.12, 3.1 to 3.8 and 4.1 to 4.2, annual and quarterly, and the 2010 to 2018 district table, read from India Atlas's archived copy of DBIE. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]} />.</p>
         <p>Checked against the RBI's own releases. March 2025: households held 60.2% of deposits and women 20.7%. March 2026 (release of 29 May 2026): households 59.3%, savings deposits 28.7%, term deposits 61.6%, senior citizens 20.0%, term deposits booked for one to three years 69.8%. These tables reproduce every one.</p>
       </div>
       <div>
@@ -567,7 +551,7 @@ const D = bySlug["deposits"];
     </div>
     <div class="fine">
       <span>India Atlas, bank deposits</span>
-      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]} /></span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
@@ -575,6 +559,5 @@ const D = bySlug["deposits"];
 </div>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/deposits.client.js";
 </script>
 </Base>

@@ -9,6 +9,9 @@ import { dateStamp } from "../../dossiers/display.js";
 import creditB from "../../../data/series/bis-credit.json";
 import gliB from "../../../data/series/bis-gli.json";
 const D = bySlug["debt"];
+import * as CH from "../../dossiers/debt.charts.js";
+// every number on the page, computed at build time from the bundles (was the client's setHTML)
+const N = CH.numbers();
 // periods named in the copy, read from the bundles (quarters dated at their first month)
 const M3 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const qlab = (iso) => { const m = +iso.slice(5, 7) - 1; return `${M3[m]} to ${M3[m + 2]} ${iso.slice(0, 4)}`; };
@@ -38,24 +41,24 @@ const LQG = qlab(gliB.dates.at(-1));
       <span>Measure <b>Loans and bonds owed by non-financial borrowers</b></span>
       <span>Frequency <b>Quarterly</b></span>
       <span>Window <b>1951 to {creditB.dates.at(-1).slice(0, 4)}</b></span>
-      <span>Latest <b id="m-latest">–</b></span>
+      <span>Latest <b id="m-latest" set:html={N["m-latest"]} /></span>
       <span>Unit <b>% of GDP</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Debt of households, companies and government, % of GDP</div><div class="v acc" id="n-total">–</div><div class="d" id="d-total">–</div><div class="nspark" id="nspark-total"></div></div>
-      <div class="num"><div class="l">Households' debt, % of GDP, last measured</div><div class="v" id="n-hh">–</div><div class="d" id="d-hh">–</div></div>
-      <div class="num"><div class="l">Credit-to-GDP gap</div><div class="v" id="n-gap">–</div><div class="d" id="d-gap">–</div></div>
-      <div class="num"><div class="l">Debt service ratio, households and companies</div><div class="v" id="n-dsr">–</div><div class="d" id="d-dsr">–</div></div>
+      <div class="num"><div class="l">Debt of households, companies and government, % of GDP</div><div class="v acc" id="n-total" set:html={N["n-total"]} /><div class="d" id="d-total" set:html={N["d-total"]} /><div class="nspark" id="nspark-total" set:html={N["nspark-total"]} /></div>
+      <div class="num"><div class="l">Households' debt, % of GDP, last measured</div><div class="v" id="n-hh" set:html={N["n-hh"]} /><div class="d" id="d-hh" set:html={N["d-hh"]} /></div>
+      <div class="num"><div class="l">Credit-to-GDP gap</div><div class="v" id="n-gap" set:html={N["n-gap"]} /><div class="d" id="d-gap" set:html={N["d-gap"]} /></div>
+      <div class="num"><div class="l">Debt service ratio, households and companies</div><div class="v" id="n-dsr" set:html={N["n-dsr"]} /><div class="d" id="d-dsr" set:html={N["d-dsr"]} /></div>
     </div>
   </div>
 
   <!-- § 01 current reading -->
   <section>
-    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading" set:html={N["u-reading"]} /></div>
     <div class="reading-top">
-      <div><span class="rk">India's non-financial debt</span><div class="big" id="rb-total">–</div></div>
-      <p class="rt-cap">Everything Indian households, companies and governments owed in loans and bonds, as a share of a year's GDP. Put plainly: for every ₹100 the economy produces in a year, borrowers owe about <b id="cr-per100">–</b>.</p>
-      <div class="rt-side"><span class="rk">In rupees</span><div class="rt-side-v" id="rb-inr">–</div></div>
+      <div><span class="rk">India's non-financial debt</span><div class="big" id="rb-total" set:html={N["rb-total"]} /></div>
+      <p class="rt-cap">Everything Indian households, companies and governments owed in loans and bonds, as a share of a year's GDP. Put plainly: for every ₹100 the economy produces in a year, borrowers owe about <b id="cr-per100" set:html={N["cr-per100"]} />.</p>
+      <div class="rt-side"><span class="rk">In rupees</span><div class="rt-side-v" id="rb-inr" set:html={N["rb-inr"]} /></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -79,16 +82,10 @@ const LQG = qlab(gliB.dates.at(-1));
             <h3>Households' debt rose against GDP from 2016 to 2023, the last quarter measured; companies owe less than in 2012</h3>
             <div class="sub">Debt of households, non-financial companies and government, % of GDP. Government from 1981; households and companies from 2007, when BIS begins the split. Pale dashed ends are BIS estimates, in which the split between households and companies is held fixed.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-sectors">–</div><div class="c">households, last measured</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-sectors" set:html={N["pv-sectors"]} /><div class="c">households, last measured</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Households</button>
-            <button class="chip"><i style="background:#5F6675"></i>Companies</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Government</button>
-            <button class="chip"><i style="background:#AFBBF0"></i>BIS estimate (dashed)</button>
-          </div>
-          <div class="plotzone"><div id="plot-sectors" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-sectors" set:html={CH.sectors()} />
           <div class="plotfoot">
             <span class="src">Source: BIS total credit statistics (WS_TC), break-adjusted. Government debt at nominal value; other borrowers at market value.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/TOTAL_CREDIT" target="_blank" rel="noopener">Source</a></span>
@@ -102,7 +99,7 @@ const LQG = qlab(gliB.dates.at(-1));
           </div>
           <div class="now">
             <span class="mk">As of {LQ}</span>
-            <p>In <span id="ex-s-q">–</span>, the last quarter the RBI's financial accounts cover, households owed <b id="ex-s-hh">–</b> of GDP (<b id="ex-s-hh07">–</b> when the series began in 2007, peak <b id="ex-s-hhpk">–</b>) and companies <b id="ex-s-co">–</b>, down from a peak of <b id="ex-s-copk">–</b> in <span id="ex-s-copkq">–</span>. BIS's estimates since then put households at <b id="ex-s-hhe">–</b> and companies at <b id="ex-s-coe">–</b>, but they hold the split between the two fixed, so we do not know how either has really moved. Government debt stood at <b id="ex-s-gov">–</b>, below its peak of <b id="ex-s-govpk">–</b> in <span id="ex-s-govpkq">–</span>, when the pandemic cut GDP and raised borrowing at once.</p>
+            <p>In <span id="ex-s-q" set:html={N["ex-s-q"]} />, the last quarter the RBI's financial accounts cover, households owed <b id="ex-s-hh" set:html={N["ex-s-hh"]} /> of GDP (<b id="ex-s-hh07" set:html={N["ex-s-hh07"]} /> when the series began in 2007, peak <b id="ex-s-hhpk" set:html={N["ex-s-hhpk"]} />) and companies <b id="ex-s-co" set:html={N["ex-s-co"]} />, down from a peak of <b id="ex-s-copk" set:html={N["ex-s-copk"]} /> in <span id="ex-s-copkq" set:html={N["ex-s-copkq"]} />. BIS's estimates since then put households at <b id="ex-s-hhe" set:html={N["ex-s-hhe"]} /> and companies at <b id="ex-s-coe" set:html={N["ex-s-coe"]} />, but they hold the split between the two fixed, so we do not know how either has really moved. Government debt stood at <b id="ex-s-gov" set:html={N["ex-s-gov"]} />, below its peak of <b id="ex-s-govpk" set:html={N["ex-s-govpk"]} /> in <span id="ex-s-govpkq" set:html={N["ex-s-govpkq"]} />, when the pandemic cut GDP and raised borrowing at once.</p>
           </div>
         </div>
       </figure>
@@ -115,14 +112,10 @@ const LQG = qlab(gliB.dates.at(-1));
             <h3>Seventy-five years of private borrowing, and banks still lend most of it</h3>
             <div class="sub">Credit to households and companies together, % of GDP, from all lenders and from banks alone, 1951 to the latest quarter.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-long">–</div><div class="c">all lenders, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-long" set:html={N["pv-long"]} /><div class="c">all lenders, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>From all lenders</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>From banks only</button>
-          </div>
-          <div class="plotzone"><div id="plot-long" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-long" set:html={CH.long()} />
           <div class="plotfoot">
             <span class="src">Source: BIS total credit statistics (WS_TC), private non-financial sector, break-adjusted.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/TOTAL_CREDIT" target="_blank" rel="noopener">Source</a></span>
@@ -135,7 +128,7 @@ const LQG = qlab(gliB.dates.at(-1));
           </div>
           <div class="now">
             <span class="mk">As of {LQ}</span>
-            <p>Private borrowers owed <b id="ex-l-now">–</b> of GDP on BIS's estimate, against <b id="ex-l-first">–</b> in 1951. Banks lent <b id="ex-l-banks">–</b> of GDP of it. In <span id="ex-l-q">–</span>, the last quarter measured, banks' share was about <b id="ex-l-share">–</b>; BIS's estimates since hold that share fixed.</p>
+            <p>Private borrowers owed <b id="ex-l-now" set:html={N["ex-l-now"]} /> of GDP on BIS's estimate, against <b id="ex-l-first" set:html={N["ex-l-first"]} /> in 1951. Banks lent <b id="ex-l-banks" set:html={N["ex-l-banks"]} /> of GDP of it. In <span id="ex-l-q" set:html={N["ex-l-q"]} />, the last quarter measured, banks' share was about <b id="ex-l-share" set:html={N["ex-l-share"]} />; BIS's estimates since hold that share fixed.</p>
           </div>
         </div>
       </figure>
@@ -152,15 +145,10 @@ const LQG = qlab(gliB.dates.at(-1));
             <h3>In rupees, household debt was more than six times its 2007 level by the end of 2023</h3>
             <div class="sub">Debt of households, companies and government, ₹ lakh crore at current prices, quarterly from 2007. BIS publishes the amounts in ₹ billion; 1,000 billion is one lakh crore.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-inr">–</div><div class="c">households, latest BIS estimate</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-inr" set:html={N["pv-inr"]} /><div class="c">households, latest BIS estimate</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Households</button>
-            <button class="chip"><i style="background:#5F6675"></i>Companies</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Government</button>
-          </div>
-          <div class="plotzone"><div id="plot-inr" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-inr" set:html={CH.inr()} />
           <div class="plotfoot">
             <span class="src">Source: BIS total credit statistics (WS_TC), domestic currency, break-adjusted. Not adjusted for inflation.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/TOTAL_CREDIT" target="_blank" rel="noopener">Source</a></span>
@@ -173,7 +161,7 @@ const LQG = qlab(gliB.dates.at(-1));
           </div>
           <div class="now">
             <span class="mk">As of {LQ}</span>
-            <p>In <span id="ex-i-q">–</span>, the last quarter measured, households owed <b id="ex-i-hh">–</b>, against <b id="ex-i-hh07">–</b> in 2007, <b id="ex-i-x">–</b> as much. On BIS's estimate for the latest quarter, all non-financial borrowers together owed <b id="ex-i-tot">–</b>.</p>
+            <p>In <span id="ex-i-q" set:html={N["ex-i-q"]} />, the last quarter measured, households owed <b id="ex-i-hh" set:html={N["ex-i-hh"]} />, against <b id="ex-i-hh07" set:html={N["ex-i-hh07"]} /> in 2007, <b id="ex-i-x" set:html={N["ex-i-x"]} /> as much. On BIS's estimate for the latest quarter, all non-financial borrowers together owed <b id="ex-i-tot" set:html={N["ex-i-tot"]} />.</p>
           </div>
         </div>
       </figure>
@@ -190,15 +178,10 @@ const LQG = qlab(gliB.dates.at(-1));
             <h3>On BIS's estimates, private credit has moved above its long-run trend for the first time since 2012</h3>
             <div class="sub">Above: credit to households and companies, % of GDP, with its long-run trend (dashed). Below: the gap between them, in percentage points, with the two thresholds bank regulators use. Pale stretches are BIS estimates.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-gap">–</div><div class="c">gap, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-gap" set:html={N["pv-gap"]} /><div class="c">gap, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Credit, % of GDP</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Trend</button>
-            <button class="chip"><i style="background:#C47A16"></i>Basel buffer thresholds</button>
-          </div>
-          <div class="plotzone"><div id="plot-gap" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-gap"><Fragment set:html={CH.gapRatio()} /><figure class="ak-panel" style="margin:0"><Fragment set:html={CH.gapPoints()} /></figure></div>
           <div class="plotfoot">
             <span class="src">Source: BIS credit-to-GDP gaps (WS_CREDIT_GAP). Trend: one-sided Hodrick-Prescott filter, smoothing 400,000.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/CREDIT_GAPS" target="_blank" rel="noopener">Source</a></span>
@@ -212,8 +195,8 @@ const LQG = qlab(gliB.dates.at(-1));
           </div>
           <div class="now">
             <span class="mk">As of {LQ}</span>
-            <p>The gap was <b id="ex-g-gap">–</b>, positive since <span id="ex-g-since">–</span>. It reached its widest, <b id="ex-g-max">–</b>, in <span id="ex-g-maxq">–</span>, during the credit boom before the global financial crisis, and its deepest, <b id="ex-g-min">–</b>, in <span id="ex-g-minq">–</span>, after banks pulled back to deal with bad loans.</p>
-            <p>Those latest quarters are not measured. After <span id="ex-g-measq">–</span>, when the gap stood at <b id="ex-g-meas">–</b>, BIS estimates private credit by scaling it with bank credit until the RBI's financial accounts catch up. On that estimate, credit to households and companies (government excluded) was <b id="ex-g-yoy">–</b> higher in rupees than a year earlier, against <b id="ex-g-yoy1">–</b> in the year before; with government included, all borrowers' debt grew <b id="ex-g-tot">–</b>. We do not know yet whether the measured figures will confirm the swing.</p>
+            <p>The gap was <b id="ex-g-gap" set:html={N["ex-g-gap"]} />, positive since <span id="ex-g-since" set:html={N["ex-g-since"]} />. It reached its widest, <b id="ex-g-max" set:html={N["ex-g-max"]} />, in <span id="ex-g-maxq" set:html={N["ex-g-maxq"]} />, during the credit boom before the global financial crisis, and its deepest, <b id="ex-g-min" set:html={N["ex-g-min"]} />, in <span id="ex-g-minq" set:html={N["ex-g-minq"]} />, after banks pulled back to deal with bad loans.</p>
+            <p>Those latest quarters are not measured. After <span id="ex-g-measq" set:html={N["ex-g-measq"]} />, when the gap stood at <b id="ex-g-meas" set:html={N["ex-g-meas"]} />, BIS estimates private credit by scaling it with bank credit until the RBI's financial accounts catch up. On that estimate, credit to households and companies (government excluded) was <b id="ex-g-yoy" set:html={N["ex-g-yoy"]} /> higher in rupees than a year earlier, against <b id="ex-g-yoy1" set:html={N["ex-g-yoy1"]} /> in the year before; with government included, all borrowers' debt grew <b id="ex-g-tot" set:html={N["ex-g-tot"]} />. We do not know yet whether the measured figures will confirm the swing.</p>
           </div>
         </div>
       </figure>
@@ -230,15 +213,10 @@ const LQG = qlab(gliB.dates.at(-1));
             <h3>An eighth of private income goes on repaying debt, less than in China or the US</h3>
             <div class="sub">Interest and principal paid by households and companies together, as a share of their income, quarterly: India, China and the United States.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-dsr">–</div><div class="c">India, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-dsr" set:html={N["pv-dsr"]} /><div class="c">India, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>India</button>
-            <button class="chip"><i style="background:#C47A16"></i>China</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>United States</button>
-          </div>
-          <div class="plotzone"><div id="plot-dsr" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-dsr" set:html={CH.dsr()} />
           <div class="plotfoot">
             <span class="src">Source: BIS debt service ratios (WS_DSR), private non-financial sector. BIS does not split India's ratio into households and companies; it computes the ratio from the credit stock, so India's latest quarters rest on BIS's credit estimates.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/DSR" target="_blank" rel="noopener">Source</a></span>
@@ -251,7 +229,7 @@ const LQG = qlab(gliB.dates.at(-1));
           </div>
           <div class="now">
             <span class="mk">As of {LQ}</span>
-            <p>India's ratio was <b id="ex-d-now">–</b>, up from <b id="ex-d-ya">–</b> a year earlier and below its peak of <b id="ex-d-pk">–</b> in <span id="ex-d-pkq">–</span>. China's was <b id="ex-d-cn">–</b> and the United States' <b id="ex-d-us">–</b>. The RBI's policy rate stood at <b id="ex-d-pol">–</b> in <span id="ex-d-polm">–</span>, the latest month BIS has posted.</p>
+            <p>India's ratio was <b id="ex-d-now" set:html={N["ex-d-now"]} />, up from <b id="ex-d-ya" set:html={N["ex-d-ya"]} /> a year earlier and below its peak of <b id="ex-d-pk" set:html={N["ex-d-pk"]} /> in <span id="ex-d-pkq" set:html={N["ex-d-pkq"]} />. China's was <b id="ex-d-cn" set:html={N["ex-d-cn"]} /> and the United States' <b id="ex-d-us" set:html={N["ex-d-us"]} />. The RBI's policy rate stood at <b id="ex-d-pol" set:html={N["ex-d-pol"]} /> in <span id="ex-d-polm" set:html={N["ex-d-polm"]} />, the latest month BIS has posted.</p>
           </div>
         </div>
       </figure>
@@ -268,15 +246,10 @@ const LQG = qlab(gliB.dates.at(-1));
             <h3>India owes less than China or the rich world, more than most emerging economies</h3>
             <div class="sub">Debt of households, companies and government (at nominal value), % of GDP, latest quarter BIS publishes for each economy, ranked by their sum. India's bar in blue.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-peers">–</div><div class="c">India's rank, most indebted first</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-peers" set:html={N["pv-peers"]} /><div class="c">India's rank, most indebted first</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Households</button>
-            <button class="chip"><i style="background:#5F6675"></i>Companies</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Government</button>
-          </div>
-          <div class="plotzone"><div id="plot-peers" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-peers" set:html={CH.peers()} />
           <div class="plotfoot">
             <span class="src">Source: BIS total credit statistics (WS_TC). Korea: BIS publishes government debt at market value only, so it is left out of Korea's bar and ranking.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/TOTAL_CREDIT" target="_blank" rel="noopener">Source</a></span>
@@ -289,7 +262,7 @@ const LQG = qlab(gliB.dates.at(-1));
           </div>
           <div class="now">
             <span class="mk">As of {LQ}</span>
-            <p>India's three borrowers owed <b id="ex-p-in">–</b> of GDP, ranking <b id="ex-p-rank">–</b>, against <b id="ex-p-cn">–</b> in China and <b id="ex-p-us">–</b> in the United States. On household debt alone India ranks <b id="ex-p-hhrank">–</b>. India's figures for the latest quarter are BIS estimates, with households and companies split as in late 2023.</p>
+            <p>India's three borrowers owed <b id="ex-p-in" set:html={N["ex-p-in"]} /> of GDP, ranking <b id="ex-p-rank" set:html={N["ex-p-rank"]} />, against <b id="ex-p-cn" set:html={N["ex-p-cn"]} /> in China and <b id="ex-p-us" set:html={N["ex-p-us"]} /> in the United States. On household debt alone India ranks <b id="ex-p-hhrank" set:html={N["ex-p-hhrank"]} />. India's figures for the latest quarter are BIS estimates, with households and companies split as in late 2023.</p>
           </div>
         </div>
       </figure>
@@ -302,10 +275,10 @@ const LQG = qlab(gliB.dates.at(-1));
             <h3>Few economies have credit running above trend; India is one of them</h3>
             <div class="sub">Credit-to-GDP gap, percentage points, latest quarter: India and 13 economies.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-peergap">–</div><div class="c">economies above trend</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-peergap" set:html={N["pv-peergap"]} /><div class="c">economies above trend</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-peergap" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-peergap" set:html={CH.peerGap()} />
           <div class="plotfoot">
             <span class="src">Source: BIS credit-to-GDP gaps (WS_CREDIT_GAP).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/CREDIT_GAPS" target="_blank" rel="noopener">Source</a></span>
@@ -318,7 +291,7 @@ const LQG = qlab(gliB.dates.at(-1));
           </div>
           <div class="now">
             <span class="mk">As of {LQ}</span>
-            <p>Of <b id="ex-pg-of">–</b> economies, <b id="ex-pg-n">–</b> had credit above trend: <span id="ex-pg-list">–</span>.</p>
+            <p>Of <b id="ex-pg-of" set:html={N["ex-pg-of"]} /> economies, <b id="ex-pg-n" set:html={N["ex-pg-n"]} /> had credit above trend: <span id="ex-pg-list" set:html={N["ex-pg-list"]} />.</p>
           </div>
         </div>
       </figure>
@@ -335,14 +308,10 @@ const LQG = qlab(gliB.dates.at(-1));
             <h3>Indian borrowers' dollar debt has eased from its 2020 peak</h3>
             <div class="sub">US dollar loans and bonds owed by Indian borrowers other than banks, US$ billion, quarterly from 2000, and the bank-loan part of it.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-gli">–</div><div class="c">latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-gli" set:html={N["pv-gli"]} /><div class="c">latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Loans and bonds</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Bank loans only</button>
-          </div>
-          <div class="plotzone"><div id="plot-gli" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-gli" set:html={CH.gli()} />
           <div class="plotfoot">
             <span class="src">Source: BIS global liquidity indicators (WS_GLI). Rupee figure: dollars times the quarter's average rupee rate (BIS WS_XRU), computed here.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/GLI" target="_blank" rel="noopener">Source</a></span>
@@ -355,7 +324,7 @@ const LQG = qlab(gliB.dates.at(-1));
           </div>
           <div class="now">
             <span class="mk">As of {LQG}</span>
-            <p>Dollar credit stood at <b id="ex-f-usd">–</b>, <b id="ex-f-yoy">–</b> on a year earlier and below its peak of <b id="ex-f-pk">–</b> in <span id="ex-f-pkq">–</span>. At the quarter's average rate of <b id="ex-f-rate">–</b> a dollar (<b id="ex-f-r16">–</b> ten years earlier), that is about <b id="ex-f-inr">–</b>. Indian borrowers also owed <b id="ex-f-eur">–</b> in euros and <b id="ex-f-jpy">–</b> in yen.</p>
+            <p>Dollar credit stood at <b id="ex-f-usd" set:html={N["ex-f-usd"]} />, <b id="ex-f-yoy" set:html={N["ex-f-yoy"]} /> on a year earlier and below its peak of <b id="ex-f-pk" set:html={N["ex-f-pk"]} /> in <span id="ex-f-pkq" set:html={N["ex-f-pkq"]} />. At the quarter's average rate of <b id="ex-f-rate" set:html={N["ex-f-rate"]} /> a dollar (<b id="ex-f-r16" set:html={N["ex-f-r16"]} /> ten years earlier), that is about <b id="ex-f-inr" set:html={N["ex-f-inr"]} />. Indian borrowers also owed <b id="ex-f-eur" set:html={N["ex-f-eur"]} /> in euros and <b id="ex-f-jpy" set:html={N["ex-f-jpy"]} /> in yen.</p>
           </div>
         </div>
       </figure>
@@ -394,7 +363,7 @@ const LQG = qlab(gliB.dates.at(-1));
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Bank for International Settlements statistics: total credit (WS_TC), credit-to-GDP gaps (WS_CREDIT_GAP), debt service ratios (WS_DSR), global liquidity indicators (WS_GLI), US dollar exchange rates (WS_XRU) and central bank policy rates (WS_CBPOL), read from India Atlas's archived copy of the BIS statistics. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Bank for International Settlements statistics: total credit (WS_TC), credit-to-GDP gaps (WS_CREDIT_GAP), debt service ratios (WS_DSR), global liquidity indicators (WS_GLI), US dollar exchange rates (WS_XRU) and central bank policy rates (WS_CBPOL), read from India Atlas's archived copy of the BIS statistics. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]} />.</p>
         <p>Checked by hand: India's private credit, 105.1% of GDP in January to March 2026, households 49.1 and companies 56.0, government 83.5, gap 4.3 points, as published on the BIS data portal.</p>
       </div>
       <div>
@@ -412,7 +381,7 @@ const LQG = qlab(gliB.dates.at(-1));
     </div>
     <div class="fine">
       <span>India Atlas, debt</span>
-      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]} /></span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
@@ -420,6 +389,5 @@ const LQG = qlab(gliB.dates.at(-1));
 </div>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/debt.client.js";
 </script>
 </Base>

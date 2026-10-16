@@ -1,5 +1,7 @@
 ---
 import Learn from "../layouts/Learn.astro";
+import * as CH from "./noise-and-trend.charts.js";
+const NUM = CH.NUM;
 ---
 <Learn
   title="Noise and trend · India Atlas"
@@ -66,12 +68,12 @@ import Learn from "../layouts/Learn.astro";
             <h3>The spike was weather: the line that matters barely noticed</h3>
             <div class="sub">CPI combined, month-on-month, thin grey, year-on-year, thick blue, Jan 2021 to Dec 2025</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-nt">–</div><div class="c">Dec 2025, y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-nt" set:html={NUM["pv-nt"]}></div><div class="c">Dec 2025, y/y</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-nt"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-nt" set:html={CH.nt()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, CPI combined, base 2012=100, vintage <span id="pf-nt">–</span>, m/m computed from published levels, not seasonally adjusted</span>
+            <span class="src">Source: MoSPI, CPI combined, base 2012=100, vintage <span id="pf-nt" set:html={NUM["pf-nt"]}></span>, m/m computed from published levels, not seasonally adjusted</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -87,8 +89,8 @@ import Learn from "../layouts/Learn.astro";
           </div>
           <div class="now">
             <span class="mk">The 2023 case</span>
-            <p>In July 2023 the monthly reading spiked to <b id="c-spike">–</b>, the largest in this window, on a tomato-driven surge in food prices. The very next month the grey line printed <b id="c-rev1">–</b>, and the month after, <b id="c-rev2">–</b>. The surge had unwound.</p>
-            <p>The thick line rose and fell back over the same months, from <b id="c-y0">–</b> to <b id="c-y1">–</b> and back to <b id="c-y2">–</b> within a quarter. That is what weather looks like: loud, brief, and gone.</p>
+            <p>In July 2023 the monthly reading spiked to <b id="c-spike" set:html={NUM["c-spike"]}></b>, the largest in this window, on a tomato-driven surge in food prices. The very next month the grey line printed <b id="c-rev1" set:html={NUM["c-rev1"]}></b>, and the month after, <b id="c-rev2" set:html={NUM["c-rev2"]}></b>. The surge had unwound.</p>
+            <p>The thick line rose and fell back over the same months, from <b id="c-y0" set:html={NUM["c-y0"]}></b> to <b id="c-y1" set:html={NUM["c-y1"]}></b> and back to <b id="c-y2" set:html={NUM["c-y2"]}></b> within a quarter. That is what weather looks like: loud, brief, and gone.</p>
           </div>
         </div>
       </figure>
@@ -99,10 +101,10 @@ import Learn from "../layouts/Learn.astro";
   <section>
     <div class="sec-head"><span class="no">03</span><h2>How to see a turning point early</h2><span class="line"></span><span class="unit">An honest method</span></div>
     <div class="numbers">
-      <div class="num"><div class="l">The spike, Jul 2023</div><div class="v acc" id="n-spike">–</div><div class="d">month-on-month</div></div>
-      <div class="num"><div class="l">The month after</div><div class="v" id="n-rev1">–</div><div class="d">Aug 2023, m/m</div></div>
-      <div class="num"><div class="l">Two months later</div><div class="v" id="n-rev2">–</div><div class="d">Sep 2023, m/m</div></div>
-      <div class="num"><div class="l">The calm line</div><div class="v" id="n-yoy">–</div><div class="d">y/y, Dec 2025</div></div>
+      <div class="num"><div class="l">The spike, Jul 2023</div><div class="v acc" id="n-spike" set:html={NUM["n-spike"]}></div><div class="d">month-on-month</div></div>
+      <div class="num"><div class="l">The month after</div><div class="v" id="n-rev1" set:html={NUM["n-rev1"]}></div><div class="d">Aug 2023, m/m</div></div>
+      <div class="num"><div class="l">Two months later</div><div class="v" id="n-rev2" set:html={NUM["n-rev2"]}></div><div class="d">Sep 2023, m/m</div></div>
+      <div class="num"><div class="l">The calm line</div><div class="v" id="n-yoy" set:html={NUM["n-yoy"]}></div><div class="d">y/y, Dec 2025</div></div>
     </div>
     <p style="margin-top:40px">There is an honest way to be early. When the fast line turns, note it and wait. If a second month agrees, lean. If a third agrees, the slow line will follow, and you have read the turning point a quarter before the headline admits it. The cost of the method is real: sometimes you must sit with a suspected turn and say nothing.</p>
     <p>The discipline cuts both ways. A trend that has persisted can also end, and refusing to see a genuine turn is as expensive as inventing a false one. The rule that guards against both errors is the same rule: three months, one direction, a change of season survived. Anything less is a guess with a chart attached.</p>
@@ -151,7 +153,4 @@ import Learn from "../layouts/Learn.astro";
     <p>Companion guide: <a href="/guides/cpi/">Consumer Price Index</a>.</p>
   </div>
 
-<script>
-  import "./noise-and-trend.client.js";
-</script>
 </Learn>

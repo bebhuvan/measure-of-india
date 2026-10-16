@@ -7,14 +7,16 @@ import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 import { period } from "../../dossiers/periods.js";
-import { bankData } from "../../dossiers/banks.data.js";
+import { bankNumbers } from "../../dossiers/banks.data.js";
+import * as CH from "../../dossiers/banks.charts.js";
 const D = bySlug["banks"];
 // periods named in the copy, read from the bundles (src/dossiers/periods.js)
 const PH = period("banks-health"), PU = period("banks-ucb-npa-dbie"), PUS = period("banks-ucb-states"), PR = period("banks-ucb-ratings-dbie");
 const PB = period("credit-deep-branches-population"), PO = period("credit-deep-offices-bank-groups"), PN = period("credit-nbfc"), PI = period("banks-fi-insured-deposits"), PF = period("banks-fi-nabard");
 const PS = period("banks-groups-sectoral"), PIN = period("banks-groups-infra");
 const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
-const DATA = bankData();
+// every figure in the text, set at build time (src/dossiers/banks.data.js)
+const N = bankNumbers();
 ---
 <Base
   title="India's banks, one by one · India Atlas"
@@ -26,7 +28,6 @@ const DATA = bankData();
   canonical="https://atlas.thisindianlife.today/guides/banks/"
   ogImage={`/og/${D.slug}.png`}
 >
-<script type="application/json" id="banks-data" is:inline set:html={JSON.stringify(DATA).replace(/</g, "\\u003c")}></script>
 <div class="page">
 
   <div class="titleblock break">
@@ -40,24 +41,24 @@ const DATA = bankData();
       <span>Instrument <b>Banks' off-site returns (report 1221); the urban co-operative banks' Outlook; financial institutions</b></span>
       <span>Frequency <b>Quarterly; annual for co-operative banks and institutions</b></span>
       <span>Window <b>{PH.firstLong} to {PH.long}</b></span>
-      <span>Latest <b id="m-latest">–</b></span>
+      <span>Latest <b id="m-latest" set:html={N["m-latest"]}></b></span>
       <span>Unit <b>Per cent; ₹ crore and ₹ lakh crore</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Bad loans, gross NPAs as a share of advances, all banks</div><div class="v acc" id="n-npa">–</div><div class="d" id="d-npa">–</div><div class="nspark" id="nspark-npa"></div></div>
-      <div class="num"><div class="l">Public sector banks' share of deposits</div><div class="v" id="n-psb">–</div><div class="d" id="d-psb">–</div></div>
-      <div class="num"><div class="l">Capital adequacy ratio, all banks</div><div class="v" id="n-crar">–</div><div class="d" id="d-crar">–</div></div>
-      <div class="num"><div class="l">Return on assets, all banks</div><div class="v" id="n-roa">–</div><div class="d" id="d-roa">–</div></div>
+      <div class="num"><div class="l">Bad loans, gross NPAs as a share of advances, all banks</div><div class="v acc" id="n-npa" set:html={N["n-npa"]}></div><div class="d" id="d-npa" set:html={N["d-npa"]}></div><div class="nspark" id="nspark-npa" set:html={CH.spark()} /></div>
+      <div class="num"><div class="l">Public sector banks' share of deposits</div><div class="v" id="n-psb" set:html={N["n-psb"]}></div><div class="d" id="d-psb" set:html={N["d-psb"]}></div></div>
+      <div class="num"><div class="l">Capital adequacy ratio, all banks</div><div class="v" id="n-crar" set:html={N["n-crar"]}></div><div class="d" id="d-crar" set:html={N["d-crar"]}></div></div>
+      <div class="num"><div class="l">Return on assets, all banks</div><div class="v" id="n-roa" set:html={N["n-roa"]}></div><div class="d" id="d-roa" set:html={N["d-roa"]}></div></div>
     </div>
   </div>
 
   <!-- § 01 current reading: the broad number and what it is not. Inputs: banks-health (every group's ratios), banks-shares. Prose: generated slots. -->
   <section>
-    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading" set:html={N["u-reading"]}></span></div>
     <div class="reading-top">
-      <div><span class="rk">Bad loans, all banks</span><div class="big" id="rb-npa">–</div></div>
+      <div><span class="rk">Bad loans, all banks</span><div class="big" id="rb-npa" set:html={N["rb-npa"]}></div></div>
       <p class="rt-cap">Of every ₹100 that India's scheduled commercial banks had lent in India at the end of {PH.long}, this much had stopped being repaid for three months or more.</p>
-      <div class="rt-side"><span class="rk">At the peak, <span id="rb-peakd">–</span></span><div class="rt-side-v" id="rb-peak">–</div></div>
+      <div class="rt-side"><span class="rk">At the peak, <span id="rb-peakd" set:html={N["rb-peakd"]}></span></span><div class="rt-side-v" id="rb-peak" set:html={N["rb-peak"]}></div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -76,7 +77,7 @@ const DATA = bankData();
     <div class="sec-head"><span class="no">02</span><h2>What a bank's health means at home</h2><span class="line"></span></div>
     <div class="prose">
       <p>A bank lends out most of what its depositors put in. When a borrower stops paying, the loan becomes a non-performing asset, and the bank must set aside money from its profits to cover the loss. A few bad loans are a normal cost of lending. Many bad loans eat through profits, then through the bank's own capital, and then the question becomes whether depositors will be paid back.</p>
-      <p>For most families that question has an answer in law. The Deposit Insurance and Credit Guarantee Corporation, a subsidiary of the Reserve Bank, insures each depositor up to ₹5 lakh in each bank, savings and fixed deposits together. At the end of {PI.long} <b id="lr-ins-acc">–</b> of all deposit accounts were fully covered, but only <b id="lr-ins-share">–</b> of the money, because large deposits sit above the limit. When the RBI freezes a bank's withdrawals, as it did at Punjab and Maharashtra Co-operative Bank in 2019, depositors can claim the insured amount within ninety days (a rule added in 2021); the rest depends on what the bank's assets fetch.</p>
+      <p>For most families that question has an answer in law. The Deposit Insurance and Credit Guarantee Corporation, a subsidiary of the Reserve Bank, insures each depositor up to ₹5 lakh in each bank, savings and fixed deposits together. At the end of {PI.long} <b id="lr-ins-acc" set:html={N["lr-ins-acc"]}></b> of all deposit accounts were fully covered, but only <b id="lr-ins-share" set:html={N["lr-ins-share"]}></b> of the money, because large deposits sit above the limit. When the RBI freezes a bank's withdrawals, as it did at Punjab and Maharashtra Co-operative Bank in 2019, depositors can claim the insured amount within ninety days (a rule added in 2021); the rest depends on what the bank's assets fetch.</p>
       <p>A bank's health also reaches borrowers. Banks weighed down by bad loans stop lending, or lend only at higher rates, which is what happened to India's public sector banks between 2015 and 2020: their share of new loans fell while private banks grew. And the profits a public sector bank makes, or the losses it runs, are ultimately the government's, which recapitalised them through those years.</p>
     </div>
   </section>
@@ -103,17 +104,10 @@ const DATA = bankData();
             <h3>Public sector banks' bad loans reached more than one rupee in seven before the clean-up</h3>
             <div class="sub">Gross non-performing assets as a share of gross advances, by bank group, domestic operations, every quarter since December 2013.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-npa">–</div><div class="c">all banks, latest quarter</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-npa" set:html={N["pv-npa"]}></div><div class="c">all banks, latest quarter</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Public sector banks</button>
-            <button class="chip"><i style="background:#C47A16"></i>Private sector banks</button>
-            <button class="chip"><i style="background:#161A22"></i>All banks</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Foreign banks</button>
-            <button class="chip"><i style="background:#C9CED6"></i>Small finance banks</button>
-          </div>
-          <div class="plotzone"><div id="plot-npa" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-npa" set:html={CH.npa()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, bank-wise and bank group-wise variables (DBIE report 1221, table 2), via the Reserve Bank Innovation Hub's data service. Bank groups as the RBI lists them each quarter.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
@@ -127,7 +121,7 @@ const DATA = bankData();
           </div>
           <div class="now">
             <span class="mk">As of {PH.long}</span>
-            <p>All banks <b id="ex-n-all">–</b>, public sector <b id="ex-n-psb">–</b>, private sector <b id="ex-n-pvt">–</b>, foreign <b id="ex-n-for">–</b>, small finance banks <b id="ex-n-sfb">–</b>. At the peak, in <span id="ex-n-pkd">–</span>, all banks stood at <b id="ex-n-pk">–</b> and public sector banks at <b id="ex-n-pkpsb">–</b>. Net of provisions, bad loans are now <b id="ex-n-net">–</b> of advances.</p>
+            <p>All banks <b id="ex-n-all" set:html={N["ex-n-all"]}></b>, public sector <b id="ex-n-psb" set:html={N["ex-n-psb"]}></b>, private sector <b id="ex-n-pvt" set:html={N["ex-n-pvt"]}></b>, foreign <b id="ex-n-for" set:html={N["ex-n-for"]}></b>, small finance banks <b id="ex-n-sfb" set:html={N["ex-n-sfb"]}></b>. At the peak, in <span id="ex-n-pkd" set:html={N["ex-n-pkd"]}></span>, all banks stood at <b id="ex-n-pk" set:html={N["ex-n-pk"]}></b> and public sector banks at <b id="ex-n-pkpsb" set:html={N["ex-n-pkpsb"]}></b>. Net of provisions, bad loans are now <b id="ex-n-net" set:html={N["ex-n-net"]}></b> of advances.</p>
           </div>
         </div>
       </figure>
@@ -144,16 +138,10 @@ const DATA = bankData();
             <h3>Private banks have taken a fifth of the market from public sector banks in twelve years</h3>
             <div class="sub">Each bank group's share of all scheduled commercial banks' deposits (left) and advances (right) in India, every quarter.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-shares">–</div><div class="c">public sector banks' share of deposits</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-shares" set:html={N["pv-shares"]}></div><div class="c">public sector banks' share of deposits</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Public sector banks</button>
-            <button class="chip"><i style="background:#C47A16"></i>Private sector banks</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Foreign banks</button>
-            <button class="chip"><i style="background:#C9CED6"></i>Small finance banks</button>
-          </div>
-          <div class="plotzone"><div id="plot-shares" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-shares" set:html={CH.shares()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, DBIE report 1221, table 1, via the Reserve Bank Innovation Hub. Shares computed by India Atlas: a group's deposits (or net advances) over all scheduled commercial banks', domestic operations. IDBI Bank moved from the public to the private group in 2019.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
@@ -167,7 +155,7 @@ const DATA = bankData();
           </div>
           <div class="now">
             <span class="mk">As of {PH.long}</span>
-            <p>Public sector banks hold <b id="ex-s-psb">–</b> of deposits (<b id="ex-s-psb0">–</b> in <span id="ex-s-d0">–</span>) and <b id="ex-s-psba">–</b> of loans. Private sector banks hold <b id="ex-s-pvt">–</b> of deposits (<b id="ex-s-pvt0">–</b>) and <b id="ex-s-pvta">–</b> of loans.</p>
+            <p>Public sector banks hold <b id="ex-s-psb" set:html={N["ex-s-psb"]}></b> of deposits (<b id="ex-s-psb0" set:html={N["ex-s-psb0"]}></b> in <span id="ex-s-d0" set:html={N["ex-s-d0"]}></span>) and <b id="ex-s-psba" set:html={N["ex-s-psba"]}></b> of loans. Private sector banks hold <b id="ex-s-pvt" set:html={N["ex-s-pvt"]}></b> of deposits (<b id="ex-s-pvt0" set:html={N["ex-s-pvt0"]}></b>) and <b id="ex-s-pvta" set:html={N["ex-s-pvta"]}></b> of loans.</p>
           </div>
         </div>
       </figure>
@@ -179,15 +167,10 @@ const DATA = bankData();
             <h3>State Bank of India holds more than one rupee in five deposited with India's banks</h3>
             <div class="sub">The fifteen largest banks by deposits in India, share of all scheduled commercial banks' deposits, latest quarter (bars) and December 2013 (open dots).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-biggest">–</div><div class="c">held by the five largest banks</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-biggest" set:html={N["pv-biggest"]}></div><div class="c">held by the five largest banks</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Public sector</button>
-            <button class="chip"><i style="background:#C47A16"></i>Private sector</button>
-            <button class="chip"><i style="background:#fff;border:1.5px solid #5F6675;border-radius:50%"></i>December 2013</button>
-          </div>
-          <div class="plotzone"><div id="plot-biggest" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-biggest" set:html={CH.biggest()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, DBIE report 1221, table 1 (total deposits, domestic operations), via the Reserve Bank Innovation Hub; shares computed by India Atlas. A bank's 2013 share excludes the banks it later absorbed.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
@@ -200,7 +183,7 @@ const DATA = bankData();
           </div>
           <div class="now">
             <span class="mk">As of {PH.long}</span>
-            <p><span id="ex-b-n">–</span> banks reported deposits. The largest, <span id="ex-b-1">–</span>, holds <b id="ex-b-1s">–</b> of them; the five largest together <b id="ex-b-5">–</b>. HDFC Bank's share went from <b id="ex-b-h0">–</b> to <b id="ex-b-h">–</b>; the quarter of its merger alone added <b id="ex-b-hm">–</b>.</p>
+            <p><span id="ex-b-n" set:html={N["ex-b-n"]}></span> banks reported deposits. The largest, <span id="ex-b-1" set:html={N["ex-b-1"]}></span>, holds <b id="ex-b-1s" set:html={N["ex-b-1s"]}></b> of them; the five largest together <b id="ex-b-5" set:html={N["ex-b-5"]}></b>. HDFC Bank's share went from <b id="ex-b-h0" set:html={N["ex-b-h0"]}></b> to <b id="ex-b-h" set:html={N["ex-b-h"]}></b>; the quarter of its merger alone added <b id="ex-b-hm" set:html={N["ex-b-hm"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -217,15 +200,10 @@ const DATA = bankData();
             <h3>Public sector banks lost money for five years running; now they earn as much as private banks</h3>
             <div class="sub">Net profit after tax, each financial year (April to March), ₹ lakh crore, by bank group, global operations.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-profit">–</div><div class="c">all banks, latest year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-profit" set:html={N["pv-profit"]}></div><div class="c">all banks, latest year</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Public sector banks</button>
-            <button class="chip"><i style="background:#C47A16"></i>Private sector banks</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Foreign banks</button>
-          </div>
-          <div class="plotzone"><div id="plot-profit" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-profit" set:html={CH.profit()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, DBIE report 1221, table 4 (net profit or loss, April to date, the March figure), via the Reserve Bank Innovation Hub.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
@@ -238,7 +216,7 @@ const DATA = bankData();
           </div>
           <div class="now">
             <span class="mk">As of {PH.long}</span>
-            <p>In <span id="ex-p-fy">–</span> all banks earned <b id="ex-p-all">–</b> after tax: public sector banks <b id="ex-p-psb">–</b>, private sector banks <b id="ex-p-pvt">–</b>. The worst year was <span id="ex-p-wfy">–</span>, when all banks together lost <b id="ex-p-w">–</b>.</p>
+            <p>In <span id="ex-p-fy" set:html={N["ex-p-fy"]}></span> all banks earned <b id="ex-p-all" set:html={N["ex-p-all"]}></b> after tax: public sector banks <b id="ex-p-psb" set:html={N["ex-p-psb"]}></b>, private sector banks <b id="ex-p-pvt" set:html={N["ex-p-pvt"]}></b>. The worst year was <span id="ex-p-wfy" set:html={N["ex-p-wfy"]}></span>, when all banks together lost <b id="ex-p-w" set:html={N["ex-p-w"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -250,15 +228,10 @@ const DATA = bankData();
             <h3>Every bank group now holds well above the minimum capital</h3>
             <div class="sub">Capital adequacy ratio (capital as a share of risk-weighted assets), by bank group, domestic operations, every quarter. The rule marks the RBI's minimum with the capital conservation buffer, 11.5%.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-capital">–</div><div class="c">all banks, latest quarter</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-capital" set:html={N["pv-capital"]}></div><div class="c">all banks, latest quarter</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Public sector banks</button>
-            <button class="chip"><i style="background:#C47A16"></i>Private sector banks</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Foreign banks</button>
-          </div>
-          <div class="plotzone"><div id="plot-capital" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-capital" set:html={CH.capital()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, DBIE report 1221, table 3 (standalone capital ratio), via the Reserve Bank Innovation Hub. Minimum: RBI's Basel III rules, 9% plus a 2.5% conservation buffer.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
@@ -271,7 +244,7 @@ const DATA = bankData();
           </div>
           <div class="now">
             <span class="mk">As of {PH.long}</span>
-            <p>All banks <b id="ex-c-all">–</b>, public sector <b id="ex-c-psb">–</b>, private sector <b id="ex-c-pvt">–</b>, foreign <b id="ex-c-for">–</b>. The lowest any group reached was <b id="ex-c-lo">–</b> (<span id="ex-c-lod">–</span>).</p>
+            <p>All banks <b id="ex-c-all" set:html={N["ex-c-all"]}></b>, public sector <b id="ex-c-psb" set:html={N["ex-c-psb"]}></b>, private sector <b id="ex-c-pvt" set:html={N["ex-c-pvt"]}></b>, foreign <b id="ex-c-for" set:html={N["ex-c-for"]}></b>. The lowest any group reached was <b id="ex-c-lo" set:html={N["ex-c-lo"]}></b> (<span id="ex-c-lod" set:html={N["ex-c-lod"]}></span>).</p>
           </div>
         </div>
       </figure>
@@ -283,15 +256,10 @@ const DATA = bankData();
             <h3>What banks pay for money and what they earn on it both fell; the margin between them stayed between three and four per cent</h3>
             <div class="sub">All scheduled commercial banks, domestic operations, every quarter: cost of funds, yield on funds and net interest margin, annualised, per cent.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-margins">–</div><div class="c">net interest margin, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-margins" set:html={N["pv-margins"]}></div><div class="c">net interest margin, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#A3A9B4"></i>Yield on funds</button>
-            <button class="chip"><i style="background:#C47A16"></i>Cost of funds</button>
-            <button class="chip"><i style="background:#2E4BD8"></i>Net interest margin</button>
-          </div>
-          <div class="plotzone"><div id="plot-margins" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-margins" set:html={CH.margins()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, DBIE report 1221, table 5, via the Reserve Bank Innovation Hub. Ratios as the RBI computes them, annualised.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
@@ -304,7 +272,7 @@ const DATA = bankData();
           </div>
           <div class="now">
             <span class="mk">As of {PH.long}</span>
-            <p>Yield <b id="ex-m-y">–</b>, cost <b id="ex-m-c">–</b>, margin <b id="ex-m-n">–</b>. In <span id="ex-m-d0">–</span> the yield was <b id="ex-m-y0">–</b> and the cost <b id="ex-m-c0">–</b>.</p>
+            <p>Yield <b id="ex-m-y" set:html={N["ex-m-y"]}></b>, cost <b id="ex-m-c" set:html={N["ex-m-c"]}></b>, margin <b id="ex-m-n" set:html={N["ex-m-n"]}></b>. In <span id="ex-m-d0" set:html={N["ex-m-d0"]}></span> the yield was <b id="ex-m-y0" set:html={N["ex-m-y0"]}></b> and the cost <b id="ex-m-c0" set:html={N["ex-m-c0"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -321,15 +289,10 @@ const DATA = bankData();
             <h3>Every one of the large public sector banks has cut its bad loans to a fraction of 2018's</h3>
             <div class="sub">Gross NPA ratio of the twenty largest banks by gross advances in India: latest quarter (dot) and March 2018 (open dot), domestic operations, per cent. Labels give the latest value, then March 2018's.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-bank-npa">–</div><div class="c">highest among the twenty, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-bank-npa" set:html={N["pv-bank-npa"]}></div><div class="c">highest among the twenty, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Public sector, latest</button>
-            <button class="chip"><i style="background:#C47A16"></i>Private sector, latest</button>
-            <button class="chip"><i style="background:#fff;border:1.5px solid #5F6675;border-radius:50%"></i>March 2018</button>
-          </div>
-          <div class="plotzone"><div id="plot-bank-npa" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-bank-npa" set:html={CH.bankNpa()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, DBIE report 1221, table 2, via the Reserve Bank Innovation Hub. Banks as the RBI names them; a merged bank's March 2018 figure is its own, before the merger.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
@@ -342,7 +305,7 @@ const DATA = bankData();
           </div>
           <div class="now">
             <span class="mk">As of {PH.long}</span>
-            <p>Among the twenty, the highest ratio is <span id="ex-bn-hi">–</span> at <b id="ex-bn-hiv">–</b> and the lowest <span id="ex-bn-lo">–</span> at <b id="ex-bn-lov">–</b>. Of all <span id="ex-bn-n">–</span> banks with at least ₹10,000 crore lent, the highest is <span id="ex-bn-x">–</span> at <b id="ex-bn-xv">–</b>.</p>
+            <p>Among the twenty, the highest ratio is <span id="ex-bn-hi" set:html={N["ex-bn-hi"]}></span> at <b id="ex-bn-hiv" set:html={N["ex-bn-hiv"]}></b> and the lowest <span id="ex-bn-lo" set:html={N["ex-bn-lo"]}></span> at <b id="ex-bn-lov" set:html={N["ex-bn-lov"]}></b>. Of all <span id="ex-bn-n" set:html={N["ex-bn-n"]}></span> banks with at least ₹10,000 crore lent, the highest is <span id="ex-bn-x" set:html={N["ex-bn-x"]}></span> at <b id="ex-bn-xv" set:html={N["ex-bn-xv"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -354,14 +317,10 @@ const DATA = bankData();
             <h3>The large private banks still earn more on each rupee of assets than the public sector banks</h3>
             <div class="sub">Return on assets of the twenty largest lenders, annualised, domestic operations, latest quarter, per cent.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-bank-roa">–</div><div class="c">highest among the twenty</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-bank-roa" set:html={N["pv-bank-roa"]}></div><div class="c">highest among the twenty</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Public sector</button>
-            <button class="chip"><i style="background:#C47A16"></i>Private sector</button>
-          </div>
-          <div class="plotzone"><div id="plot-bank-roa" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-bank-roa" set:html={CH.bankRoa()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, DBIE report 1221, table 5 (return on total assets, annualised), via the Reserve Bank Innovation Hub.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
@@ -374,7 +333,7 @@ const DATA = bankData();
           </div>
           <div class="now">
             <span class="mk">As of {PH.long}</span>
-            <p>Highest: <span id="ex-r-hi">–</span> at <b id="ex-r-hiv">–</b>. Lowest: <span id="ex-r-lo">–</span> at <b id="ex-r-lov">–</b>. State Bank of India: <b id="ex-r-sbi">–</b>.</p>
+            <p>Highest: <span id="ex-r-hi" set:html={N["ex-r-hi"]}></span> at <b id="ex-r-hiv" set:html={N["ex-r-hiv"]}></b>. Lowest: <span id="ex-r-lo" set:html={N["ex-r-lo"]}></span> at <b id="ex-r-lov" set:html={N["ex-r-lov"]}></b>. State Bank of India: <b id="ex-r-sbi" set:html={N["ex-r-sbi"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -386,10 +345,10 @@ const DATA = bankData();
             <h3>The steps in these lines are mergers, not growth</h3>
             <div class="sub">Deposits in India of six banks that absorbed others, ₹ lakh crore, every quarter. Each step marks the quarter a merger took effect.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-mergers">–</div><div class="c">State Bank of India's deposits</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-mergers" set:html={N["pv-mergers"]}></div><div class="c">State Bank of India's deposits</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-mergers" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-mergers" set:html={CH.mergers()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, DBIE report 1221, table 1 (total deposits, domestic operations), via the Reserve Bank Innovation Hub. Merger dates: RBI and government notifications.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
@@ -402,7 +361,7 @@ const DATA = bankData();
           </div>
           <div class="now">
             <span class="mk">As of {PH.long}</span>
-            <p>State Bank of India <b id="ex-mg-sbi">–</b>, HDFC Bank <b id="ex-mg-hdfc">–</b>, Punjab National Bank <b id="ex-mg-pnb">–</b>, Canara Bank <b id="ex-mg-can">–</b>, Bank of Baroda <b id="ex-mg-bob">–</b>, Union Bank of India <b id="ex-mg-ubi">–</b>.</p>
+            <p>State Bank of India <b id="ex-mg-sbi" set:html={N["ex-mg-sbi"]}></b>, HDFC Bank <b id="ex-mg-hdfc" set:html={N["ex-mg-hdfc"]}></b>, Punjab National Bank <b id="ex-mg-pnb" set:html={N["ex-mg-pnb"]}></b>, Canara Bank <b id="ex-mg-can" set:html={N["ex-mg-can"]}></b>, Bank of Baroda <b id="ex-mg-bob" set:html={N["ex-mg-bob"]}></b>, Union Bank of India <b id="ex-mg-ubi" set:html={N["ex-mg-ubi"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -419,16 +378,10 @@ const DATA = bankData();
             <h3>Loans to industry went bad the most; loans to households the least</h3>
             <div class="sub">Gross NPA ratio by sector of the borrower, all scheduled commercial banks, domestic operations, every quarter, per cent.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-sector-npa">–</div><div class="c">industry, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-sector-npa" set:html={N["pv-sector-npa"]}></div><div class="c">industry, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Industry</button>
-            <button class="chip"><i style="background:#C47A16"></i>Agriculture</button>
-            <button class="chip"><i style="background:#5F6675"></i>Services</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Retail loans</button>
-          </div>
-          <div class="plotzone"><div id="plot-sector-npa" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-sector-npa" set:html={CH.sectorNpa()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, DBIE report 1221, table 8 (major sectoral credit), via the Reserve Bank Innovation Hub.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
@@ -441,7 +394,7 @@ const DATA = bankData();
           </div>
           <div class="now">
             <span class="mk">As of {PS.long}</span>
-            <p>Industry <b id="ex-sn-ind">–</b> (peak <b id="ex-sn-indpk">–</b>), agriculture <b id="ex-sn-agr">–</b>, services <b id="ex-sn-ser">–</b>, retail <b id="ex-sn-ret">–</b>. Priority-sector loans <b id="ex-sn-psl">–</b>, other loans <b id="ex-sn-non">–</b>; loans to micro and small enterprises <b id="ex-sn-mse">–</b>.</p>
+            <p>Industry <b id="ex-sn-ind" set:html={N["ex-sn-ind"]}></b> (peak <b id="ex-sn-indpk" set:html={N["ex-sn-indpk"]}></b>), agriculture <b id="ex-sn-agr" set:html={N["ex-sn-agr"]}></b>, services <b id="ex-sn-ser" set:html={N["ex-sn-ser"]}></b>, retail <b id="ex-sn-ret" set:html={N["ex-sn-ret"]}></b>. Priority-sector loans <b id="ex-sn-psl" set:html={N["ex-sn-psl"]}></b>, other loans <b id="ex-sn-non" set:html={N["ex-sn-non"]}></b>; loans to micro and small enterprises <b id="ex-sn-mse" set:html={N["ex-sn-mse"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -453,14 +406,10 @@ const DATA = bankData();
             <h3>Credit cards go bad more often than home loans</h3>
             <div class="sub">Gross NPA ratio of retail loans by type, all scheduled commercial banks, latest quarter (bars) and the highest quarter since 2013 (open dots), per cent.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-retail-npa">–</div><div class="c">credit cards, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-retail-npa" set:html={N["pv-retail-npa"]}></div><div class="c">credit cards, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Latest quarter</button>
-            <button class="chip"><i style="background:#fff;border:1.5px solid #5F6675;border-radius:50%"></i>Highest since 2013</button>
-          </div>
-          <div class="plotzone"><div id="plot-retail-npa" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-retail-npa" set:html={CH.retailNpa()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, DBIE report 1221, table 8 (major break-up of retail loans), via the Reserve Bank Innovation Hub.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
@@ -473,7 +422,7 @@ const DATA = bankData();
           </div>
           <div class="now">
             <span class="mk">As of {PS.long}</span>
-            <p>Credit cards <b id="ex-rn-card">–</b>, vehicle loans <b id="ex-rn-veh">–</b>, education <b id="ex-rn-edu">–</b> (at most <b id="ex-rn-edupk">–</b>), home loans <b id="ex-rn-home">–</b>. Home loans outstanding: <b id="ex-rn-homeamt">–</b>.</p>
+            <p>Credit cards <b id="ex-rn-card" set:html={N["ex-rn-card"]}></b>, vehicle loans <b id="ex-rn-veh" set:html={N["ex-rn-veh"]}></b>, education <b id="ex-rn-edu" set:html={N["ex-rn-edu"]}></b> (at most <b id="ex-rn-edupk" set:html={N["ex-rn-edupk"]}></b>), home loans <b id="ex-rn-home" set:html={N["ex-rn-home"]}></b>. Home loans outstanding: <b id="ex-rn-homeamt" set:html={N["ex-rn-homeamt"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -485,10 +434,10 @@ const DATA = bankData();
             <h3>More than half of banks' infrastructure lending is to energy</h3>
             <div class="sub">Bank lending to infrastructure by sector, all scheduled commercial banks, latest quarter, ₹ lakh crore.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-infra">–</div><div class="c">to infrastructure in all</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-infra" set:html={N["pv-infra"]}></div><div class="c">to infrastructure in all</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-infra" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-infra" set:html={CH.infra()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, DBIE report 1221, table 10 (infrastructure financing), via the Reserve Bank Innovation Hub. The RBI's list of infrastructure sectors was renumbered in June 2022; the earlier list is in the data download, never joined to this one.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
@@ -501,7 +450,7 @@ const DATA = bankData();
           </div>
           <div class="now">
             <span class="mk">As of {PIN.long}</span>
-            <p>Energy <b id="ex-i-en">–</b> of the total, transport <b id="ex-i-tr">–</b>, communication <b id="ex-i-co">–</b>.</p>
+            <p>Energy <b id="ex-i-en" set:html={N["ex-i-en"]}></b> of the total, transport <b id="ex-i-tr" set:html={N["ex-i-tr"]}></b>, communication <b id="ex-i-co" set:html={N["ex-i-co"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -518,16 +467,10 @@ const DATA = bankData();
             <h3>Nationalisation took banks to the villages; the 1990s pulled them back, and the 2010s sent them out again</h3>
             <div class="sub">Branches of scheduled commercial banks by the population of the place they are in, every March since 1969.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-branches">–</div><div class="c">rural branches, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-branches" set:html={N["pv-branches"]}></div><div class="c">rural branches, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Rural</button>
-            <button class="chip"><i style="background:#C47A16"></i>Semi-urban</button>
-            <button class="chip"><i style="background:#5F6675"></i>Urban</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Metropolitan</button>
-          </div>
-          <div class="plotzone"><div id="plot-branches" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-branches" set:html={CH.branches()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics on the Indian Economy, branches by population group (DBIE report 115), the same figures the credit guide draws. Population groups by the census in force; the definitions changed with the 2001 and 2011 censuses.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -540,7 +483,7 @@ const DATA = bankData();
           </div>
           <div class="now">
             <span class="mk">As of {PB.long}</span>
-            <p>Rural <b id="ex-br-r">–</b>, semi-urban <b id="ex-br-s">–</b>, urban <b id="ex-br-u">–</b>, metropolitan <b id="ex-br-m">–</b>. Villages and small towns together: <b id="ex-br-rs">–</b> of all branches.</p>
+            <p>Rural <b id="ex-br-r" set:html={N["ex-br-r"]}></b>, semi-urban <b id="ex-br-s" set:html={N["ex-br-s"]}></b>, urban <b id="ex-br-u" set:html={N["ex-br-u"]}></b>, metropolitan <b id="ex-br-m" set:html={N["ex-br-m"]}></b>. Villages and small towns together: <b id="ex-br-rs" set:html={N["ex-br-rs"]}></b> of all branches.</p>
           </div>
         </div>
       </figure>
@@ -552,14 +495,10 @@ const DATA = bankData();
             <h3>Private banks have seven times as many branches as in 2006; public sector banks not quite twice as many</h3>
             <div class="sub">Functioning branches by bank group, latest quarter (bars), and the first quarter in the RBI's table (open dots).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-offices">–</div><div class="c">public sector bank branches</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-offices" set:html={N["pv-offices"]}></div><div class="c">public sector bank branches</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Latest quarter</button>
-            <button class="chip"><i style="background:#fff;border:1.5px solid #5F6675;border-radius:50%"></i>First quarter in the table</button>
-          </div>
-          <div class="plotzone"><div id="plot-offices" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-offices" set:html={CH.offices()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Statistical Tables Relating to Banks in India, functioning offices by bank group (DBIE report 619), the same figures the credit guide draws.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -572,7 +511,7 @@ const DATA = bankData();
           </div>
           <div class="now">
             <span class="mk">As of {PO.long}</span>
-            <p>Public sector banks <b id="ex-of-psb">–</b> branches (<b id="ex-of-psb0">–</b> in <span id="ex-of-d0">–</span>), private sector banks <b id="ex-of-pvt">–</b> (<b id="ex-of-pvt0">–</b>), regional rural banks <b id="ex-of-rrb">–</b>, small finance banks <b id="ex-of-sfb">–</b>.</p>
+            <p>Public sector banks <b id="ex-of-psb" set:html={N["ex-of-psb"]}></b> branches (<b id="ex-of-psb0" set:html={N["ex-of-psb0"]}></b> in <span id="ex-of-d0" set:html={N["ex-of-d0"]}></span>), private sector banks <b id="ex-of-pvt" set:html={N["ex-of-pvt"]}></b> (<b id="ex-of-pvt0" set:html={N["ex-of-pvt0"]}></b>), regional rural banks <b id="ex-of-rrb" set:html={N["ex-of-rrb"]}></b>, small finance banks <b id="ex-of-sfb" set:html={N["ex-of-sfb"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -592,14 +531,10 @@ const DATA = bankData();
             <h3>Fewer urban co-operative banks every year, and their bad loans fell only after 2021</h3>
             <div class="sub">Left: number of urban co-operative banks, 31 March. Right: gross NPA ratio of all urban co-operative banks and of all scheduled commercial banks, per cent, March of each year.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-ucb">–</div><div class="c">urban co-operative banks, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-ucb" set:html={N["pv-ucb"]}></div><div class="c">urban co-operative banks, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Urban co-operative banks</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Scheduled commercial banks</button>
-          </div>
-          <div class="plotzone"><div id="plot-ucb" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-ucb" set:html={CH.ucb()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Primary (Urban) Co-operative Banks' Outlook, structure and NPA tables (DBIE reports 812 and 774); the latest March is provisional. Commercial banks: DBIE report 1221.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -612,7 +547,7 @@ const DATA = bankData();
           </div>
           <div class="now">
             <span class="mk">As of {PU.long}</span>
-            <p><b id="ex-u-n">–</b> urban co-operative banks (<b id="ex-u-n0">–</b> in <span id="ex-u-d0">–</span>), <b id="ex-u-sch">–</b> of them scheduled. Their gross NPA ratio was <b id="ex-u-npa">–</b>, against <b id="ex-u-scb">–</b> for commercial banks; non-scheduled UCBs <b id="ex-u-non">–</b>.</p>
+            <p><b id="ex-u-n" set:html={N["ex-u-n"]}></b> urban co-operative banks (<b id="ex-u-n0" set:html={N["ex-u-n0"]}></b> in <span id="ex-u-d0" set:html={N["ex-u-d0"]}></span>), <b id="ex-u-sch" set:html={N["ex-u-sch"]}></b> of them scheduled. Their gross NPA ratio was <b id="ex-u-npa" set:html={N["ex-u-npa"]}></b>, against <b id="ex-u-scb" set:html={N["ex-u-scb"]}></b> for commercial banks; non-scheduled UCBs <b id="ex-u-non" set:html={N["ex-u-non"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -624,10 +559,10 @@ const DATA = bankData();
             <h3>Six rupees in ten of urban co-operative bank deposits are in Maharashtra</h3>
             <div class="sub">Deposits of urban co-operative banks by state, ₹ crore, as on 31 March, the twelve largest states; with each state's number of banks.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-ucb-states">–</div><div class="c">Maharashtra's share of UCB deposits</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-ucb-states" set:html={N["pv-ucb-states"]}></div><div class="c">Maharashtra's share of UCB deposits</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-ucb-states" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-ucb-states" set:html={CH.ucbStates()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Primary (Urban) Co-operative Banks' Outlook, table 10 (DBIE report 800), via the Reserve Bank Innovation Hub; provisional for the latest March.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
@@ -640,7 +575,7 @@ const DATA = bankData();
           </div>
           <div class="now">
             <span class="mk">As of {PUS.long}</span>
-            <p>Maharashtra <b id="ex-us-mh">–</b> across <b id="ex-us-mhn">–</b> banks; Gujarat <b id="ex-us-gj">–</b>; Karnataka <b id="ex-us-ka">–</b>. <span id="ex-us-none">–</span> states and union territories have one urban co-operative bank or none.</p>
+            <p>Maharashtra <b id="ex-us-mh" set:html={N["ex-us-mh"]}></b> across <b id="ex-us-mhn" set:html={N["ex-us-mhn"]}></b> banks; Gujarat <b id="ex-us-gj" set:html={N["ex-us-gj"]}></b>; Karnataka <b id="ex-us-ka" set:html={N["ex-us-ka"]}></b>. <span id="ex-us-none" set:html={N["ex-us-none"]}></span> states and union territories have one urban co-operative bank or none.</p>
           </div>
         </div>
       </figure>
@@ -652,10 +587,10 @@ const DATA = bankData();
             <h3>Most urban co-operative banks are rated middling by the RBI's supervisors</h3>
             <div class="sub">Urban co-operative banks by supervisory rating (A best, E worst), number of banks, as on 31 March.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-ucb-ratings">–</div><div class="c">rated D or E</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-ucb-ratings" set:html={N["pv-ucb-ratings"]}></div><div class="c">rated D or E</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-ucb-ratings" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-ucb-ratings" set:html={CH.ucbRatings()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Primary (Urban) Co-operative Banks' Outlook, rating-wise distribution (DBIE report 776) and CRAR-wise distribution (report 775).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -668,7 +603,7 @@ const DATA = bankData();
           </div>
           <div class="now">
             <span class="mk">As of {PR.long}</span>
-            <p>A <b id="ex-ur-a">–</b>, B+ <b id="ex-ur-bp">–</b>, B <b id="ex-ur-b">–</b>, C <b id="ex-ur-c">–</b>, D <b id="ex-ur-d">–</b>, E <b id="ex-ur-e">–</b>. <b id="ex-ur-low">–</b> banks had a capital ratio below 9%.</p>
+            <p>A <b id="ex-ur-a" set:html={N["ex-ur-a"]}></b>, B+ <b id="ex-ur-bp" set:html={N["ex-ur-bp"]}></b>, B <b id="ex-ur-b" set:html={N["ex-ur-b"]}></b>, C <b id="ex-ur-c" set:html={N["ex-ur-c"]}></b>, D <b id="ex-ur-d" set:html={N["ex-ur-d"]}></b>, E <b id="ex-ur-e" set:html={N["ex-ur-e"]}></b>. <b id="ex-ur-low" set:html={N["ex-ur-low"]}></b> banks had a capital ratio below 9%.</p>
           </div>
         </div>
       </figure>
@@ -685,10 +620,10 @@ const DATA = bankData();
             <h3>Non-bank lenders lend most to individuals and to industry</h3>
             <div class="sub">Credit outstanding from non-banking financial companies by sector, ₹ lakh crore, the latest month.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-nbfc">–</div><div class="c">NBFC credit in all</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-nbfc" set:html={N["pv-nbfc"]}></div><div class="c">NBFC credit in all</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-nbfc" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-nbfc" set:html={CH.nbfc()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, sectoral credit of NBFCs as drawn on the credit guide.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -701,7 +636,7 @@ const DATA = bankData();
           </div>
           <div class="now">
             <span class="mk">As of {PN.long}</span>
-            <p>Retail loans <b id="ex-nb-ret">–</b>, industry <b id="ex-nb-ind">–</b> (infrastructure <b id="ex-nb-inf">–</b>), services <b id="ex-nb-ser">–</b>.</p>
+            <p>Retail loans <b id="ex-nb-ret" set:html={N["ex-nb-ret"]}></b>, industry <b id="ex-nb-ind" set:html={N["ex-nb-ind"]}></b> (infrastructure <b id="ex-nb-inf" set:html={N["ex-nb-inf"]}></b>), services <b id="ex-nb-ser" set:html={N["ex-nb-ser"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -713,16 +648,10 @@ const DATA = bankData();
             <h3>NABARD has become the largest of the development banks</h3>
             <div class="sub">Total liabilities (equal to total assets) of four all-India financial institutions, ₹ lakh crore, as on 31 March.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-fi">–</div><div class="c">NABARD, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-fi" set:html={N["pv-fi"]}></div><div class="c">NABARD, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>NABARD</button>
-            <button class="chip"><i style="background:#C47A16"></i>SIDBI</button>
-            <button class="chip"><i style="background:#5F6675"></i>EXIM Bank</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>NHB</button>
-          </div>
-          <div class="plotzone"><div id="plot-fi" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-fi" set:html={CH.fi()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, liabilities and assets of NABARD, SIDBI, EXIM Bank and NHB (DBIE reports 392, 395, 873 and 393).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -735,7 +664,7 @@ const DATA = bankData();
           </div>
           <div class="now">
             <span class="mk">As of {PF.long}</span>
-            <p>NABARD <b id="ex-fi-nab">–</b>, SIDBI <b id="ex-fi-sid">–</b>, EXIM Bank <b id="ex-fi-exim">–</b>, NHB <b id="ex-fi-nhb">–</b>.</p>
+            <p>NABARD <b id="ex-fi-nab" set:html={N["ex-fi-nab"]}></b>, SIDBI <b id="ex-fi-sid" set:html={N["ex-fi-sid"]}></b>, EXIM Bank <b id="ex-fi-exim" set:html={N["ex-fi-exim"]}></b>, NHB <b id="ex-fi-nhb" set:html={N["ex-fi-nhb"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -747,10 +676,10 @@ const DATA = bankData();
             <h3>Almost every deposit account is fully insured; well under half the money is</h3>
             <div class="sub">Insured deposits as a share of assessable deposits (the money deposit insurance applies to), each date DICGC reports, per cent. Cover per depositor per bank: ₹1 lakh to 2020, ₹5 lakh since.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-insured">–</div><div class="c">of the money insured, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-insured" set:html={N["pv-insured"]}></div><div class="c">of the money insured, latest</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-insured" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-insured" set:html={CH.insured()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, DICGC insured deposits (DBIE report 384); share computed by India Atlas. Cover raised from ₹1 lakh to ₹5 lakh on 4 February 2020.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -763,7 +692,7 @@ const DATA = bankData();
           </div>
           <div class="now">
             <span class="mk">As of {PI.long}</span>
-            <p>Insured deposits <b id="ex-in-amt">–</b> of <b id="ex-in-ass">–</b> assessable: <b id="ex-in-sh">–</b>. Fully protected accounts: <b id="ex-in-acc">–</b> of all accounts.</p>
+            <p>Insured deposits <b id="ex-in-amt" set:html={N["ex-in-amt"]}></b> of <b id="ex-in-ass" set:html={N["ex-in-ass"]}></b> assessable: <b id="ex-in-sh" set:html={N["ex-in-sh"]}></b>. Fully protected accounts: <b id="ex-in-acc" set:html={N["ex-in-acc"]}></b> of all accounts.</p>
           </div>
         </div>
       </figure>
@@ -802,7 +731,7 @@ const DATA = bankData();
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Reserve Bank of India, DBIE: variables published bank and bank group-wise (report 1221), and the data tables of the Primary (Urban) Co-operative Banks' Outlook (reports 772, 784 to 789, 795 to 800), both gated behind a prompt on DBIE and read through the Reserve Bank Innovation Hub's data service; the Outlook's typed tables (771, 773 to 777, 810 to 812) and the financial-institutions tables (382 to 398, 801, 873, 1372), read from India Atlas's archived copy of DBIE. Branches, offices and NBFC credit are the credit guide's bundles. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Reserve Bank of India, DBIE: variables published bank and bank group-wise (report 1221), and the data tables of the Primary (Urban) Co-operative Banks' Outlook (reports 772, 784 to 789, 795 to 800), both gated behind a prompt on DBIE and read through the Reserve Bank Innovation Hub's data service; the Outlook's typed tables (771, 773 to 777, 810 to 812) and the financial-institutions tables (382 to 398, 801, 873, 1372), read from India Atlas's archived copy of DBIE. Branches, offices and NBFC credit are the credit guide's bundles. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]}></b>.</p>
         <p>Checked by hand: State Bank of India's gross NPAs for March 2025, ₹76,880 crore and 1.82%, equal SBI's audited results; insured deposits for March 2025, ₹100.12 lakh crore, equal DICGC's published figure.</p>
       </div>
       <div>
@@ -820,7 +749,7 @@ const DATA = bankData();
     </div>
     <div class="fine">
       <span>India Atlas, India's banks</span>
-      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]}></span></span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
@@ -828,6 +757,5 @@ const DATA = bankData();
 </div>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/banks.client.js";
 </script>
 </Base>

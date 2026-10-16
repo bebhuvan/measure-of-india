@@ -10,6 +10,8 @@ import propB from "../../../data/series/bis-property.json";
 import rbi22 from "../../../data/series/housing-rbi-2022.json";
 import rbi10 from "../../../data/series/housing-rbi-2010.json";
 import rx25 from "../../../data/series/housing-residex-2025.json";
+import * as CH from "../../dossiers/housing.charts.js";
+const TX = CH.numbers();
 const D = bySlug["housing"];
 // periods named in the copy, read from the bundles (quarters dated at their first month)
 const M3 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -43,24 +45,24 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
       <span>Frequency <b>Quarterly</b></span>
       <span>Rulers <b>Three, never joined</b></span>
       <span>Cities <b>Up to 50</b></span>
-      <span>Latest <b id="m-latest">–</b></span>
+      <span>Latest <b id="m-latest" set:html={TX["m-latest"]}></b></span>
       <span>Unit <b>Index; ₹ per sq ft</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">House prices in rupees, change on a year ago</div><div class="v acc" id="n-nom">–</div><div class="d" id="d-nom">–</div><div class="nspark" id="nspark-real"></div></div>
-      <div class="num"><div class="l">House prices after inflation, change on a year ago</div><div class="v" id="n-real">–</div><div class="d" id="d-real">–</div></div>
-      <div class="num"><div class="l">RBI 18-city index, change on a year ago</div><div class="v" id="n-rbi">–</div><div class="d" id="d-rbi">–</div></div>
-      <div class="num"><div class="l">NHB RESIDEX, India, change on a year ago</div><div class="v" id="n-rx">–</div><div class="d" id="d-rx">–</div></div>
+      <div class="num"><div class="l">House prices in rupees, change on a year ago</div><div class="v acc" id="n-nom" set:html={TX["n-nom"]}></div><div class="d" id="d-nom" set:html={TX["d-nom"]}></div><div class="nspark" id="nspark-real" set:html={CH.sparkReal()} /></div>
+      <div class="num"><div class="l">House prices after inflation, change on a year ago</div><div class="v" id="n-real" set:html={TX["n-real"]}></div><div class="d" id="d-real" set:html={TX["d-real"]}></div></div>
+      <div class="num"><div class="l">RBI 18-city index, change on a year ago</div><div class="v" id="n-rbi" set:html={TX["n-rbi"]}></div><div class="d" id="d-rbi" set:html={TX["d-rbi"]}></div></div>
+      <div class="num"><div class="l">NHB RESIDEX, India, change on a year ago</div><div class="v" id="n-rx" set:html={TX["n-rx"]}></div><div class="d" id="d-rx" set:html={TX["d-rx"]}></div></div>
     </div>
   </div>
 
   <!-- § 01 current reading -->
   <section>
-    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading" set:html={TX["u-reading"]}></span></div>
     <div class="reading-top">
-      <div><span class="rk">Real house prices, change on a year ago</span><div class="big" id="rb-real">–</div></div>
+      <div><span class="rk">Real house prices, change on a year ago</span><div class="big" id="rb-real" set:html={TX["rb-real"]}></div></div>
       <p class="rt-cap">How much dearer homes became than a year earlier, after taking out the rise in the prices of everything else a household buys. In rupees the rise was larger.</p>
-      <div class="rt-side"><span class="rk">In rupees</span><div class="rt-side-v" id="rb-nom">–</div></div>
+      <div class="rt-side"><span class="rk">In rupees</span><div class="rt-side-v" id="rb-nom" set:html={TX["rb-nom"]}></div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -84,14 +86,10 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
             <h3>In rupees homes cost several times their 2010 price; after inflation, far less, and below the 2019 peak</h3>
             <div class="sub">Residential property prices in India, nominal and real (deflated by consumer prices), index 2010 = 100, quarterly.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-nr">–</div><div class="c">real index, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-nr" set:html={TX["pv-nr"]}></div><div class="c">real index, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Nominal, in rupees</button>
-            <button class="chip"><i style="background:#C47A16"></i>Real, after inflation</button>
-          </div>
-          <div class="plotzone"><div id="plot-nr" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-nr" set:html={CH.nr()} />
           <div class="plotfoot">
             <span class="src">Source: BIS selected residential property prices (WS_SPP), compiled from the RBI's house price index.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/RPP" target="_blank" rel="noopener">Source</a></span>
@@ -100,12 +98,12 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Both lines start at 100 in 2010. The blue line is the price of a home in rupees. The gold line divides it by consumer prices, so it asks a different question: compared with everything else a family buys, have homes become dearer? When the blue line rises and the gold line is flat, homes are only keeping pace with inflation.</p>
+            <p>Both lines start at 100 in 2010. The grey line is the price of a home in rupees. The blue line divides it by consumer prices, so it asks a different question: compared with everything else a family buys, have homes become dearer? When the grey line rises and the blue line is flat, homes are only keeping pace with inflation.</p>
             <p>Real prices matter for the buyer who must save for a deposit out of a salary that also rises with inflation. Nominal prices matter for the seller and for the size of the loan.</p>
           </div>
           <div class="now">
             <span class="mk">As of {LQ}</span>
-            <p>The nominal index stood at <b id="ex-nr-nom">–</b>, <b id="ex-nr-x">–</b> its 2010 level. The real index stood at <b id="ex-nr-real">–</b>, <b id="ex-nr-below">–</b> below its peak of <b id="ex-nr-pk">–</b> in <span id="ex-nr-pkq">–</span>.</p>
+            <p>The nominal index stood at <b id="ex-nr-nom" set:html={TX["ex-nr-nom"]}></b>, <b id="ex-nr-x" set:html={TX["ex-nr-x"]}></b> its 2010 level. The real index stood at <b id="ex-nr-real" set:html={TX["ex-nr-real"]}></b>, <b id="ex-nr-below" set:html={TX["ex-nr-below"]}></b> below its peak of <b id="ex-nr-pk" set:html={TX["ex-nr-pk"]}></b> in <span id="ex-nr-pkq" set:html={TX["ex-nr-pkq"]}></span>.</p>
           </div>
         </div>
       </figure>
@@ -115,17 +113,13 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
       <figure id="cb-yoy" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3 id="h-yoy">How fast house prices rose, before and after inflation</h3>
+            <h3 id="h-yoy" set:html={TX["h-yoy"]}></h3>
             <div class="sub">Residential property prices, % change on the same quarter a year earlier, nominal and real.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-yoy">–</div><div class="c">real, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-yoy" set:html={TX["pv-yoy"]}></div><div class="c">real, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Nominal</button>
-            <button class="chip"><i style="background:#C47A16"></i>Real</button>
-          </div>
-          <div class="plotzone"><div id="plot-yoy" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-yoy" set:html={CH.yoy()} />
           <div class="plotfoot">
             <span class="src">Source: BIS selected residential property prices (WS_SPP), year-on-year changes as published by BIS.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/RPP" target="_blank" rel="noopener">Source</a></span>
@@ -138,7 +132,7 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
           </div>
           <div class="now">
             <span class="mk">As of {LQ}</span>
-            <p>Nominal prices rose <b id="ex-y-nom">–</b> on a year earlier and real prices <b id="ex-y-real">–</b>. Over the last <span id="ex-y-n">–</span> quarters the real change averaged <b id="ex-y-avg">–</b>.</p>
+            <p>Nominal prices rose <b id="ex-y-nom" set:html={TX["ex-y-nom"]}></b> on a year earlier and real prices <b id="ex-y-real" set:html={TX["ex-y-real"]}></b>. Over the last <span id="ex-y-n" set:html={TX["ex-y-n"]}></span> quarters the real change averaged <b id="ex-y-avg" set:html={TX["ex-y-avg"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -155,10 +149,10 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
             <h3>Over fifteen years, Lucknow's prices quadrupled; Kanpur's did not double</h3>
             <div class="sub">RBI house price index, {nRbi10} cities, index 2010-11 = 100, latest quarter of the 2010-11 base ({LR10}). An index of 300 means three times the 2010-11 price.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-cities10">–</div><div class="c">highest, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-cities10" set:html={TX["pv-cities10"]}></div><div class="c">highest, latest</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-cities10" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-cities10" set:html={CH.cities10()} />
           <div class="plotfoot">
             <span class="src">Source: RBI house price index (DBIE report 688), base 2010-11. Final values except the last quarter, which is provisional.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -171,7 +165,7 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
           </div>
           <div class="now">
             <span class="mk">As of {LR10}</span>
-            <p>The highest index was <b id="ex-c10-top">–</b>, the lowest <b id="ex-c10-bot">–</b>. The middle of the ten cities stood at about <b id="ex-c10-med">–</b>.</p>
+            <p>The highest index was <b id="ex-c10-top" set:html={TX["ex-c10-top"]}></b>, the lowest <b id="ex-c10-bot" set:html={TX["ex-c10-bot"]}></b>. The middle of the ten cities stood at about <b id="ex-c10-med" set:html={TX["ex-c10-med"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -181,13 +175,13 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
       <figure id="cb-cities" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3 id="h-cities">House prices city by city on the new 2022-23 base</h3>
+            <h3 id="h-cities" set:html={TX["h-cities"]}></h3>
             <div class="sub">RBI house price index, {nRbi} cities, index 2022-23 = 100, latest quarter ({LR}), with the change on a year ago shown beside each bar.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-cities">–</div><div class="c">highest, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-cities" set:html={TX["pv-cities"]}></div><div class="c">highest, latest</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-cities" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-cities" set:html={CH.cities()} />
           <div class="plotfoot">
             <span class="src">Source: RBI house price index (DBIE report 688), base 2022-23. The latest quarter is provisional; RBI revised several cities sharply between provisional and final in 2025.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -200,7 +194,7 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
           </div>
           <div class="now">
             <span class="mk">As of {LR}</span>
-            <p>The highest index was <span id="ex-c-topn">–</span>'s, at <b id="ex-c-top">–</b>, and the lowest <span id="ex-c-botn">–</span>'s, at <b id="ex-c-bot">–</b>. On a year earlier, <b id="ex-c-up">–</b> of the {nRbi} cities rose; the largest rise was <span id="ex-c-yhi">–</span> and the largest fall <span id="ex-c-ylo">–</span>.</p>
+            <p>The highest index was <span id="ex-c-topn" set:html={TX["ex-c-topn"]}></span>'s, at <b id="ex-c-top" set:html={TX["ex-c-top"]}></b>, and the lowest <span id="ex-c-botn" set:html={TX["ex-c-botn"]}></span>'s, at <b id="ex-c-bot" set:html={TX["ex-c-bot"]}></b>. On a year earlier, <b id="ex-c-up" set:html={TX["ex-c-up"]}></b> of the {nRbi} cities rose; the largest rise was <span id="ex-c-yhi" set:html={TX["ex-c-yhi"]}></span> and the largest fall <span id="ex-c-ylo" set:html={TX["ex-c-ylo"]}></span>.</p>
           </div>
         </div>
       </figure>
@@ -217,15 +211,10 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
             <h3>Three measures of India's house prices, rising at different speeds</h3>
             <div class="sub">Change on a year ago, per cent: the BIS series, the RBI's all-India index (10 cities on the 2010-11 base, then 18 cities on the 2022-23 base) and NHB RESIDEX for India on its 2017-18 and 2024-25 bases. Each line stays on its own base; none is joined to another.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-rulers">–</div><div class="c">spread between rulers, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-rulers" set:html={TX["pv-rulers"]}></div><div class="c">spread between rulers, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>BIS, nominal</button>
-            <button class="chip"><i style="background:#5F6675"></i>RBI, all-India (10 cities to Jan to Mar 2025, then 18 cities)</button>
-            <button class="chip"><i style="background:#C47A16"></i>NHB RESIDEX, India (2017-18 base to Oct to Dec 2025, then 2024-25 base)</button>
-          </div>
-          <div class="plotzone"><div id="plot-rulers" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-rulers" set:html={CH.rulers()} />
           <div class="plotfoot">
             <span class="src">Sources: BIS (WS_SPP, WS_DPP); RBI house price index via BIS; NHB RESIDEX, assessment prices, four-quarter moving average. Changes for RBI and NHB computed here from each base's index.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://residex.nhbonline.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -238,7 +227,7 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
           </div>
           <div class="now">
             <span class="mk">As of {LX}</span>
-            <p>On the latest quarter each publishes, BIS shows <b id="ex-r-bis">–</b>, the RBI's 18-city index <b id="ex-r-rbi">–</b> and RESIDEX <b id="ex-r-rx">–</b>. The RBI's two bases overlap for <b id="ex-r-ovn">–</b> quarters, in which their changes on a year differ by up to <b id="ex-r-ovgap">–</b>: one more reason never to join them.</p>
+            <p>On the latest quarter each publishes, BIS shows <b id="ex-r-bis" set:html={TX["ex-r-bis"]}></b>, the RBI's 18-city index <b id="ex-r-rbi" set:html={TX["ex-r-rbi"]}></b> and RESIDEX <b id="ex-r-rx" set:html={TX["ex-r-rx"]}></b>. The RBI's two bases overlap for <b id="ex-r-ovn" set:html={TX["ex-r-ovn"]}></b> quarters, in which their changes on a year differ by up to <b id="ex-r-ovgap" set:html={TX["ex-r-ovgap"]}></b>: one more reason never to join them.</p>
           </div>
         </div>
       </figure>
@@ -255,10 +244,10 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
             <h3>Across fifty cities, most rose in the past year; a few fell</h3>
             <div class="sub">NHB RESIDEX at assessment prices, change on a year ago to {LX}, per cent, four-quarter moving average, base 2024-25.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-rxcities">–</div><div class="c">cities that rose</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-rxcities" set:html={TX["pv-rxcities"]}></div><div class="c">cities that rose</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-rxcities" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-rxcities" set:html={CH.rxcities()} />
           <div class="plotfoot">
             <span class="src">Source: NHB RESIDEX (residex.nhbonline.org.in), HPI at assessment prices, base 2024-25.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://residex.nhbonline.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -271,7 +260,7 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
           </div>
           <div class="now">
             <span class="mk">As of {LX}</span>
-            <p><b id="ex-x-up">–</b> of <b id="ex-x-n">–</b> cities rose on a year earlier. The fastest was <span id="ex-x-top">–</span>; the slowest <span id="ex-x-bot">–</span>. The all-India index rose <b id="ex-x-india">–</b>.</p>
+            <p><b id="ex-x-up" set:html={TX["ex-x-up"]}></b> of <b id="ex-x-n" set:html={TX["ex-x-n"]}></b> cities rose on a year earlier. The fastest was <span id="ex-x-top" set:html={TX["ex-x-top"]}></span>; the slowest <span id="ex-x-bot" set:html={TX["ex-x-bot"]}></span>. The all-India index rose <b id="ex-x-india" set:html={TX["ex-x-india"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -284,10 +273,10 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
             <h3>A square foot in Mumbai costs nearly four times what it does in the middle city</h3>
             <div class="sub">Average price per square foot of carpet area at which lenders valued homes, ₹, latest quarter, with the implied price of a 646 sq ft (60 sq m) flat. Twenty cities with the highest prices, and the lowest-priced city.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-price">–</div><div class="c">highest, per sq ft</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-price" set:html={TX["pv-price"]}></div><div class="c">highest, per sq ft</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-price" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-price" set:html={CH.price()} />
           <div class="plotfoot">
             <span class="src">Source: NHB RESIDEX, assessment prices, weighted average carpet-area price, four-quarter moving average, base 2024-25. Flat price = price per sq ft × 646, computed here.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://residex.nhbonline.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -300,7 +289,7 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
           </div>
           <div class="now">
             <span class="mk">As of {LX}</span>
-            <p>The highest average price was <b id="ex-p-top">–</b> a square foot, which puts a 646 sq ft flat at about <b id="ex-p-flat">–</b>. The lowest was <b id="ex-p-bot">–</b>. The median city stood at <b id="ex-p-med">–</b>; Mumbai's price is <b id="ex-p-x">–</b> that.</p>
+            <p>The highest average price was <b id="ex-p-top" set:html={TX["ex-p-top"]}></b> a square foot, which puts a 646 sq ft flat at about <b id="ex-p-flat" set:html={TX["ex-p-flat"]}></b>. The lowest was <b id="ex-p-bot" set:html={TX["ex-p-bot"]}></b>. The median city stood at <b id="ex-p-med" set:html={TX["ex-p-med"]}></b>; Mumbai's price is <b id="ex-p-x" set:html={TX["ex-p-x"]}></b> that.</p>
           </div>
         </div>
       </figure>
@@ -317,10 +306,10 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
             <h3>After inflation, India's house prices are rising slowly; in several large economies they are falling</h3>
             <div class="sub">Real residential property prices, % change on a year ago, latest quarter BIS publishes for each economy.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-peers">–</div><div class="c">India's rank, fastest first</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-peers" set:html={TX["pv-peers"]}></div><div class="c">India's rank, fastest first</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-peers" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-peers" set:html={CH.peers()} />
           <div class="plotfoot">
             <span class="src">Source: BIS selected residential property prices (WS_SPP), real. Latest quarters differ by a quarter or two between economies.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/RPP" target="_blank" rel="noopener">Source</a></span>
@@ -333,7 +322,7 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
           </div>
           <div class="now">
             <span class="mk">As of {LQ}</span>
-            <p>India's real change, <b id="ex-pp-in">–</b>, ranked <b id="ex-pp-rank">–</b>. The fastest was <span id="ex-pp-top">–</span>; the slowest <span id="ex-pp-bot">–</span>.</p>
+            <p>India's real change, <b id="ex-pp-in" set:html={TX["ex-pp-in"]}></b>, ranked <b id="ex-pp-rank" set:html={TX["ex-pp-rank"]}></b>. The fastest was <span id="ex-pp-top" set:html={TX["ex-pp-top"]}></span>; the slowest <span id="ex-pp-bot" set:html={TX["ex-pp-bot"]}></span>.</p>
           </div>
         </div>
       </figure>
@@ -379,7 +368,7 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Reserve Bank of India, house price index (DBIE report 688), read from India Atlas's archived copy of DBIE; National Housing Bank, RESIDEX dashboards; Bank for International Settlements, residential property prices (WS_SPP, WS_DPP), from India Atlas's archived copy of the BIS statistics. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Reserve Bank of India, house price index (DBIE report 688), read from India Atlas's archived copy of DBIE; National Housing Bank, RESIDEX dashboards; Bank for International Settlements, residential property prices (WS_SPP, WS_DPP), from India Atlas's archived copy of the BIS statistics. Data vintage <b id="prov-vintage" set:html={TX["prov-vintage"]}></b>.</p>
         <p>Checked by hand: the RBI's 18-city all-India index for January to March 2026, 115.85 here, against 115.9 in the RBI's press release of 29 May 2026 (later revised to 116.2, a revision BIS has not yet picked up).</p>
       </div>
       <div>
@@ -397,7 +386,7 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
     </div>
     <div class="fine">
       <span>India Atlas, house prices</span>
-      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Vintage <span id="prov-vintage2" set:html={TX["prov-vintage2"]}></span></span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
@@ -405,6 +394,5 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
 </div>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/housing.client.js";
 </script>
 </Base>

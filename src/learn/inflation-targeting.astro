@@ -1,5 +1,7 @@
 ---
 import Learn from "../layouts/Learn.astro";
+import * as CH from "./inflation-targeting.charts.js";
+const NUM = CH.NUM;
 ---
 <Learn
   title="The band is law, not decoration · India Atlas"
@@ -57,20 +59,20 @@ import Learn from "../layouts/Learn.astro";
   <!-- § 02 plate : ten years against the band -->
   <section>
     <div class="sec-head"><span class="no">02</span><h2>Ten years against the band</h2><span class="line"></span><span class="unit">Headline y/y %, monthly</span></div>
-    <p>Below is the decade the framework has governed: the inflation rate drawn against its own rules, with the tolerance band shaded and the 4 per cent target dashed. The four marked excursions are the whole history of the band being tested.</p>
+    <p>Below is the decade the framework has governed: the inflation rate drawn against its own rules, with the tolerance band shaded and the 4 per cent target dotted. The four marked excursions are the whole history of the band being tested.</p>
     <div class="break">
       <figure id="cb-band" style="margin:0">
         <div class="plate-head">
           <div class="t">
             <h3>Mostly inside, four times out: the band doing its job</h3>
-            <div class="sub">CPI combined, year-on-year, shaded: tolerance 2–6%, dashed: 4% target, Jan 2016 to Dec 2025</div>
+            <div class="sub">CPI combined, year-on-year, shaded: tolerance 2–6%, dotted: 4% target, Jan 2016 to Dec 2025</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-it">–</div><div class="c">Dec 2025, the print</div></div>
+          <div class="plate-val"><div class="v" id="pv-it" set:html={NUM["pv-it"]}></div><div class="c">Dec 2025, the print</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-band"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-band" set:html={CH.band()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, CPI combined, base 2012=100, vintage <span id="pf-it">–</span>, band and target: RBI Act amendment, 2016</span>
+            <span class="src">Source: MoSPI, CPI combined, base 2012=100, vintage <span id="pf-it" set:html={NUM["pf-it"]}></span>, band and target: RBI Act amendment, 2016</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -82,12 +84,12 @@ import Learn from "../layouts/Learn.astro";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>The shaded strip is the band; the dashed line is the target. The rate spends most of the decade inside the strip, which is the point of the framework: the band holds almost all of ordinary economic weather. The marked excursions are the exceptions. Twice food pushed the rate through the ceiling, once war and oil did, and once a year of falling food prices pulled it through the floor.</p>
-            <p>Of the 120 months on this chart, <b id="it-m-above">–</b> closed above the ceiling and <b id="it-m-below">–</b> below the floor. The peaks: <b id="it-pk20">–</b> in January 2020, <b id="it-pk22">–</b> in April 2022 and <b id="it-pk23">–</b> in July 2023. The floor break came in October 2025, at <b id="it-low25">–</b>.</p>
+            <p>The shaded strip is the band; the dotted line is the target. The rate spends most of the decade inside the strip, which is the point of the framework: the band holds almost all of ordinary economic weather. The marked excursions are the exceptions. Twice food pushed the rate through the ceiling, once war and oil did, and once a year of falling food prices pulled it through the floor.</p>
+            <p>Of the 120 months on this chart, <b id="it-m-above" set:html={NUM["it-m-above"]}></b> closed above the ceiling and <b id="it-m-below" set:html={NUM["it-m-below"]}></b> below the floor. The peaks: <b id="it-pk20" set:html={NUM["it-pk20"]}></b> in January 2020, <b id="it-pk22" set:html={NUM["it-pk22"]}></b> in April 2022 and <b id="it-pk23" set:html={NUM["it-pk23"]}></b> in July 2023. The floor break came in October 2025, at <b id="it-low25" set:html={NUM["it-low25"]}></b>.</p>
           </div>
           <div class="now">
             <span class="mk">The 2022 case</span>
-            <p>From January to September 2022 the rate never came back inside: quarterly averages of <b id="it-c-q1">–</b>, <b id="it-c-q2">–</b> and <b id="it-c-q3">–</b>, against a ceiling of 6 per cent. Three consecutive quarters outside the band triggered the clause, and in November 2022 the RBI wrote to the government explaining the miss.</p>
+            <p>From January to September 2022 the rate never came back inside: quarterly averages of <b id="it-c-q1" set:html={NUM["it-c-q1"]}></b>, <b id="it-c-q2" set:html={NUM["it-c-q2"]}></b> and <b id="it-c-q3" set:html={NUM["it-c-q3"]}></b>, against a ceiling of 6 per cent. Three consecutive quarters outside the band triggered the clause, and in November 2022 the RBI wrote to the government explaining the miss.</p>
             <p>The letter is the framework working exactly as written. Not a scandal: a mechanism.</p>
           </div>
         </div>
@@ -155,7 +157,4 @@ import Learn from "../layouts/Learn.astro";
     <p>Companion guide: <a href="/guides/cpi/">Consumer Price Index</a>.</p>
   </div>
 
-<script>
-  import "./inflation-targeting.client.js";
-</script>
 </Learn>

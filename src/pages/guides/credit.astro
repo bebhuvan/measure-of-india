@@ -14,6 +14,8 @@ const PG = period("credit-growth"), PS = period("credit-sectors"), P42 = period(
 const PF = period("credit-food"), PN = period("credit-npa"), PST = period("credit-states-cd-annual"), PPL = period("credit-places"), PW = period("credit-women"), PR = period("credit-lending-rates");
 const PZ = period("credit-size"), PI = period("credit-industry"), PNB = period("credit-nbfc"), PFR = period("credit-frauds"), PMR = period("credit-money-ratios"), PNM = period("credit-npa-movement");
 const load = (b) => JSON.parse(fs.readFileSync(`data/series/${b}.json`, "utf8"));
+import * as CH from "../../dossiers/credit.charts.js";
+const T = CH.texts();
 const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
 
 ---
@@ -27,12 +29,6 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
   canonical="https://atlas.thisindianlife.today/guides/credit/"
   ogImage={`/og/${D.slug}.png`}
 >
-<style is:global>
-  .credit-sm{display:grid;grid-template-columns:repeat(auto-fill,minmax(372px,1fr));gap:18px 28px}
-  .credit-sm-cell .sm-h{font-family:var(--sans);font-size:.85rem;color:var(--ink-soft)}
-  .credit-sm-cell .sm-v{font-family:var(--sans);font-size:1.35rem;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;margin:2px 0 4px}
-  .credit-sm-cell svg{max-width:100%;height:auto}
-</style>
 <div class="page">
 
   <div class="titleblock break">
@@ -46,24 +42,24 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
       <span>Instrument <b>Scheduled commercial banks: Section 42 return, sectoral credit, BSR-1, money stock, NPAs</b></span>
       <span>Frequency <b>Fortnightly, monthly, quarterly, annual</b></span>
       <span>Window <b>1951 to {PG.year}</b></span>
-      <span>Latest <b id="m-latest">–</b></span>
+      <span>Latest <b id="m-latest" set:html={T["m-latest"]} /></span>
       <span>Unit <b>₹ lakh crore; growth on a year earlier</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Bank credit, growth on a year earlier</div><div class="v acc" id="n-growth">–</div><div class="d" id="d-growth">–</div><div class="nspark" id="nspark-growth"></div></div>
-      <div class="num"><div class="l">Personal loans, share of non-food credit</div><div class="v" id="n-pers">–</div><div class="d" id="d-pers">–</div></div>
-      <div class="num"><div class="l">Broad money (M3), growth on a year earlier</div><div class="v" id="n-m3">–</div><div class="d" id="d-m3">–</div></div>
-      <div class="num"><div class="l">Bad loans, gross NPAs as a share of advances</div><div class="v" id="n-npa">–</div><div class="d" id="d-npa">–</div></div>
+      <div class="num"><div class="l">Bank credit, growth on a year earlier</div><div class="v acc" id="n-growth" set:html={T["n-growth"]} /><div class="d" id="d-growth" set:html={T["d-growth"]} /><div class="nspark" id="nspark-growth"></div></div>
+      <div class="num"><div class="l">Personal loans, share of non-food credit</div><div class="v" id="n-pers" set:html={T["n-pers"]} /><div class="d" id="d-pers" set:html={T["d-pers"]} /></div>
+      <div class="num"><div class="l">Broad money (M3), growth on a year earlier</div><div class="v" id="n-m3" set:html={T["n-m3"]} /><div class="d" id="d-m3" set:html={T["d-m3"]} /></div>
+      <div class="num"><div class="l">Bad loans, gross NPAs as a share of advances</div><div class="v" id="n-npa" set:html={T["n-npa"]} /><div class="d" id="d-npa" set:html={T["d-npa"]} /></div>
     </div>
   </div>
 
   <!-- § 01 current reading: the broad number and what it is not. Inputs: credit-growth (headline, every sector), credit-sectors. Prose: generated slots. -->
   <section>
-    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading" set:html={T["u-reading"]} /></div>
     <div class="reading-top">
-      <div><span class="rk">Bank credit, growth on a year earlier</span><div class="big" id="rb-growth">–</div></div>
+      <div><span class="rk">Bank credit, growth on a year earlier</span><div class="big" id="rb-growth" set:html={T["rb-growth"]} /></div>
       <p class="rt-cap">How much more all scheduled commercial banks had lent out at the end of {PG.long} than a year before, counting every loan not yet repaid: to farmers, firms, traders, home buyers and everyone else.</p>
-      <div class="rt-side"><span class="rk">Outstanding, all banks</span><div class="rt-side-v" id="rb-stock">–</div></div>
+      <div class="rt-side"><span class="rk">Outstanding, all banks</span><div class="rt-side-v" id="rb-stock" set:html={T["rb-stock"]} /></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -108,15 +104,10 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
             <h3>Bank credit grew fastest in the mid-2000s boom and slowest after the 2016 bad-loan clean-up</h3>
             <div class="sub">Growth of bank credit and deposits on a year earlier, all scheduled commercial banks, every reporting fortnight. The pale line removes the HDFC merger's one-time jump, July 2023 to August 2025.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-growth">–</div><div class="c">credit growth, latest fortnight</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-growth" set:html={T["pv-growth"]} /><div class="c">credit growth, latest fortnight</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Bank credit</button>
-            <button class="chip"><i style="background:#AFBBF0"></i>Bank credit, excluding the merger</button>
-            <button class="chip"><i style="background:#C47A16"></i>Deposits</button>
-          </div>
-          <div class="plotzone"><div id="plot-growth" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-growth" set:html={CH.growth()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Business of Scheduled Banks (Section 42 return, DBIE report 689). Growth against the reporting date closest to a year earlier; excluding the merger: RBI's adjusted figures.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -130,7 +121,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {P42.long}</span>
-            <p>In the year to <span id="ex-g-date">–</span> bank credit grew <b id="ex-g-credit">–</b> and deposits <b id="ex-g-dep">–</b>. Since 2011 the slowest pace was <b id="ex-g-lo">–</b>, in <span id="ex-g-lo-d">–</span>. Excluding the merger, credit growth peaked at <b id="ex-g-exmax">–</b> in <span id="ex-g-exmax-d">–</span>; the pace now is above that. Part of the latest figure compares a month-end with an older Friday (the December 2025 change in reporting dates), which flatters it a little; we do not know by how much.</p>
+            <p>In the year to <span id="ex-g-date" set:html={T["ex-g-date"]} /> bank credit grew <b id="ex-g-credit" set:html={T["ex-g-credit"]} /> and deposits <b id="ex-g-dep" set:html={T["ex-g-dep"]} />. Since 2011 the slowest pace was <b id="ex-g-lo" set:html={T["ex-g-lo"]} />, in <span id="ex-g-lo-d" set:html={T["ex-g-lo-d"]} />. Excluding the merger, credit growth peaked at <b id="ex-g-exmax" set:html={T["ex-g-exmax"]} /> in <span id="ex-g-exmax-d" set:html={T["ex-g-exmax-d"]} />; the pace now is above that. Part of the latest figure compares a month-end with an older Friday (the December 2025 change in reporting dates), which flatters it a little; we do not know by how much.</p>
           </div>
         </div>
       </figure>
@@ -143,10 +134,10 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
             <h3>Banks now lend out four of every five rupees deposited, against about half in the late 1990s</h3>
             <div class="sub">Bank credit and banks' holdings of SLR securities (mostly government bonds) as a share of deposits, all scheduled commercial banks, every fortnight since June 1997.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-cd">–</div><div class="c">credit-deposit ratio, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-cd" set:html={T["pv-cd"]} /><div class="c">credit-deposit ratio, latest</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-cd" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-cd" set:html={CH.cd()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Section 42 return (DBIE report 689); ratios computed from the published levels.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -159,7 +150,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {P42.long}</span>
-            <p>Banks had lent <b id="ex-cd-now">–</b> of their deposits, against <b id="ex-cd-0">–</b> in <span id="ex-cd-0d">–</span>, and held <b id="ex-cd-inv">–</b> in SLR securities.</p>
+            <p>Banks had lent <b id="ex-cd-now" set:html={T["ex-cd-now"]} /> of their deposits, against <b id="ex-cd-0" set:html={T["ex-cd-0"]} /> in <span id="ex-cd-0d" set:html={T["ex-cd-0d"]} />, and held <b id="ex-cd-inv" set:html={T["ex-cd-inv"]} /> in SLR securities.</p>
           </div>
         </div>
       </figure>
@@ -172,10 +163,10 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
             <h3>Bank credit was a twentieth of the economy in 1951; it is now well over half</h3>
             <div class="sub">Deposits and credit of scheduled commercial banks as a share of GDP at current prices, every financial year since 1950-51.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-depth">–</div><div class="c">credit, share of GDP, latest year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-depth" set:html={T["pv-depth"]} /><div class="c">credit, share of GDP, latest year</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-depth" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-depth" set:html={CH.depth()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Scheduled Commercial Banks: Ratios (DBIE report 332), as published. GDP on the national accounts base RBI used for each year.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -188,7 +179,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {fyOf(load("credit-depth").dates.at(-1))}</span>
-            <p>In {fyOf(load("credit-depth").dates.at(-1))} bank credit was <b id="ex-dp-c">–</b> of GDP and deposits <b id="ex-dp-d">–</b>. In 1950-51 credit was <b id="ex-dp-c0">–</b>; in 1990-91, on the eve of the reforms, <b id="ex-dp-c91">–</b>.</p>
+            <p>In {fyOf(load("credit-depth").dates.at(-1))} bank credit was <b id="ex-dp-c" set:html={T["ex-dp-c"]} /> of GDP and deposits <b id="ex-dp-d" set:html={T["ex-dp-d"]} />. In 1950-51 credit was <b id="ex-dp-c0" set:html={T["ex-dp-c0"]} />; in 1990-91, on the eve of the reforms, <b id="ex-dp-c91" set:html={T["ex-dp-c91"]} />.</p>
           </div>
         </div>
       </figure>
@@ -203,12 +194,12 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
         <div class="plate-head">
           <div class="t">
             <h3>Home loans are the largest single kind of bank credit, ahead of all big industry</h3>
-            <div class="sub">Share of bank credit to agriculture, industry, services and personal loans, by borrower, <span id="lg-who">–</span> (bars) and a year earlier, <span id="lg-who-y">–</span> (circles).</div>
+            <div class="sub">Share of bank credit to agriculture, industry, services and personal loans, by borrower, <span id="lg-who" set:html={T["lg-who"]} /> (bars) and a year earlier, <span id="lg-who-y" set:html={T["lg-who-y"]} /> (circles).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-who">–</div><div class="c">the largest single share</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-who" set:html={T["pv-who"]} /><div class="c">the largest single share</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-who" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-who" set:html={CH.who()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Sectoral Deployment of Bank Credit (selected banks, about 95% of non-food credit). "Everything else" in services and personal loans is the published total less the rows shown.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -221,7 +212,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {PS.long}</span>
-            <p>Personal loans took <b id="ex-w-pers">–</b> of the credit, services <b id="ex-w-serv">–</b>, industry <b id="ex-w-ind">–</b> and agriculture <b id="ex-w-agri">–</b>. Housing alone was <b id="ex-w-house">–</b>, more than large industry at <b id="ex-w-large">–</b>. Loans to NBFCs were <b id="ex-w-nbfc">–</b>.</p>
+            <p>Personal loans took <b id="ex-w-pers" set:html={T["ex-w-pers"]} /> of the credit, services <b id="ex-w-serv" set:html={T["ex-w-serv"]} />, industry <b id="ex-w-ind" set:html={T["ex-w-ind"]} /> and agriculture <b id="ex-w-agri" set:html={T["ex-w-agri"]} />. Housing alone was <b id="ex-w-house" set:html={T["ex-w-house"]} />, more than large industry at <b id="ex-w-large" set:html={T["ex-w-large"]} />. Loans to NBFCs were <b id="ex-w-nbfc" set:html={T["ex-w-nbfc"]} />.</p>
           </div>
         </div>
       </figure>
@@ -234,16 +225,10 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
             <h3>Since 2007 banks have turned from lending to industry to lending to people</h3>
             <div class="sub">Share of bank credit to the four sectors, monthly. Pale lines: the old classification, April 2007 to December 2018; solid: the current one, from January 2019. Never joined.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-mix">–</div><div class="c">personal loans' share, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-mix" set:html={T["pv-mix"]} /><div class="c">personal loans' share, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Personal loans</button>
-            <button class="chip"><i style="background:#C47A16"></i>Services</button>
-            <button class="chip"><i style="background:#5F6675"></i>Industry</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Agriculture</button>
-          </div>
-          <div class="plotzone"><div id="plot-mix" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-mix" set:html={CH.mix()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Sectoral Deployment of Bank Credit, old format (2007 to 2020) and new format (2019 on); shares computed from the published amounts.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -256,7 +241,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {PS.long}</span>
-            <p>In April 2007 industry took <b id="ex-mx-i07">–</b> and personal loans <b id="ex-mx-p07">–</b>. Now industry takes <b id="ex-mx-i">–</b>, services <b id="ex-mx-s">–</b> and personal loans <b id="ex-mx-p">–</b>. On the current classification, personal loans first outweighed industry in <span id="ex-mx-cross">–</span>.</p>
+            <p>In April 2007 industry took <b id="ex-mx-i07" set:html={T["ex-mx-i07"]} /> and personal loans <b id="ex-mx-p07" set:html={T["ex-mx-p07"]} />. Now industry takes <b id="ex-mx-i" set:html={T["ex-mx-i"]} />, services <b id="ex-mx-s" set:html={T["ex-mx-s"]} /> and personal loans <b id="ex-mx-p" set:html={T["ex-mx-p"]} />. On the current classification, personal loans first outweighed industry in <span id="ex-mx-cross" set:html={T["ex-mx-cross"]} />.</p>
           </div>
         </div>
       </figure>
@@ -267,12 +252,12 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
         <div class="plate-head">
           <div class="t">
             <h3>Which kinds of credit are growing fastest</h3>
-            <div class="sub">Growth on a year earlier by kind of borrower, <span id="lg-fast">–</span> (bars) and a year before that, <span id="lg-fast-y">–</span> (circles). Blue: faster than bank credit as a whole.</div>
+            <div class="sub">Growth on a year earlier by kind of borrower, <span id="lg-fast" set:html={T["lg-fast"]} /> (bars) and a year before that, <span id="lg-fast-y" set:html={T["lg-fast-y"]} /> (circles). Blue: faster than bank credit as a whole.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-fast">–</div><div class="c">the fastest, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-fast" set:html={T["pv-fast"]} /><div class="c">the fastest, latest</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-fast" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-fast" set:html={CH.fast()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Sectoral Deployment of Bank Credit; growth on RBI's own printed year-ago figures where a release printed one.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -285,7 +270,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {PG.long}</span>
-            <p><span id="ex-f-top">–</span> grew fastest, at <b id="ex-f-topv">–</b>; <span id="ex-f-low">–</span> slowest, at <b id="ex-f-lowv">–</b>. <b id="ex-f-n">–</b> of these <span id="ex-f-of">–</span> kinds of credit grew faster than bank credit as a whole (<b id="ex-f-head">–</b>).</p>
+            <p><span id="ex-f-top" set:html={T["ex-f-top"]} /> grew fastest, at <b id="ex-f-topv" set:html={T["ex-f-topv"]} />; <span id="ex-f-low" set:html={T["ex-f-low"]} /> slowest, at <b id="ex-f-lowv" set:html={T["ex-f-lowv"]} />. <b id="ex-f-n" set:html={T["ex-f-n"]} /> of these <span id="ex-f-of" set:html={T["ex-f-of"]} /> kinds of credit grew faster than bank credit as a whole (<b id="ex-f-head" set:html={T["ex-f-head"]} />).</p>
           </div>
         </div>
       </figure>
@@ -302,13 +287,13 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
             <h3>Gold loans have boomed while credit-card borrowing has stalled</h3>
             <div class="sub">Growth on a year earlier of five kinds of personal loan, monthly since January 2020. Each panel has its own scale.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-personal">–</div><div class="c">all personal loans, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-personal" set:html={T["pv-personal"]} /><div class="c">all personal loans, latest</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-personal"></div></div>
+          <div class="plotzone" id="plot-personal" set:html={CH.personal()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Sectoral Deployment of Bank Credit, new format. Housing includes priority-sector housing; July 2023 to June 2024 includes HDFC Ltd's home loans arriving in HDFC Bank.</span>
-            <span class="dl"><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
@@ -318,7 +303,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {PG.long}</span>
-            <p>Gold loans grew <b id="ex-p-gold">–</b> in the year to <span id="ex-p-date">–</span>, to <b id="ex-p-goldamt">–</b>. Credit-card balances grew <b id="ex-p-cards">–</b>, down from a peak of <b id="ex-p-cardspk">–</b> in <span id="ex-p-cardspkd">–</span>. Home loans grew <b id="ex-p-house">–</b>.</p>
+            <p>Gold loans grew <b id="ex-p-gold" set:html={T["ex-p-gold"]} /> in the year to <span id="ex-p-date" set:html={T["ex-p-date"]} />, to <b id="ex-p-goldamt" set:html={T["ex-p-goldamt"]} />. Credit-card balances grew <b id="ex-p-cards" set:html={T["ex-p-cards"]} />, down from a peak of <b id="ex-p-cardspk" set:html={T["ex-p-cardspk"]} /> in <span id="ex-p-cardspkd" set:html={T["ex-p-cardspkd"]} />. Home loans grew <b id="ex-p-house" set:html={T["ex-p-house"]} />.</p>
           </div>
         </div>
       </figure>
@@ -329,12 +314,12 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
         <div class="plate-head">
           <div class="t">
             <h3>A credit-card balance costs nearly five times as much as a home loan</h3>
-            <div class="sub">Weighted average interest rate on outstanding bank loans, by what the loan is for, <span id="lg-cost">–</span> (bars) and a year earlier, <span id="lg-cost-y">–</span> (circles).</div>
+            <div class="sub">Weighted average interest rate on outstanding bank loans, by what the loan is for, <span id="lg-cost" set:html={T["lg-cost"]} /> (bars) and a year earlier, <span id="lg-cost-y" set:html={T["lg-cost-y"]} /> (circles).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-cost">–</div><div class="c">all loans, average rate</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-cost" set:html={T["pv-cost"]} /><div class="c">all loans, average rate</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-cost" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-cost" set:html={CH.cost()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, BSR-1 quarterly table 1.9 (DBIE report 949), scheduled commercial banks excluding RRBs. Rates on outstanding loans, weighted by amount.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -347,7 +332,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {PR.long}</span>
-            <p>In <span id="ex-c-date">–</span> credit-card balances carried <b id="ex-c-card">–</b> a year, home loans <b id="ex-c-house">–</b>, farm loans <b id="ex-c-agri">–</b> and loans to industry <b id="ex-c-ind">–</b>. All bank loans averaged <b id="ex-c-all">–</b>.</p>
+            <p>In <span id="ex-c-date" set:html={T["ex-c-date"]} /> credit-card balances carried <b id="ex-c-card" set:html={T["ex-c-card"]} /> a year, home loans <b id="ex-c-house" set:html={T["ex-c-house"]} />, farm loans <b id="ex-c-agri" set:html={T["ex-c-agri"]} /> and loans to industry <b id="ex-c-ind" set:html={T["ex-c-ind"]} />. All bank loans averaged <b id="ex-c-all" set:html={T["ex-c-all"]} />.</p>
           </div>
         </div>
       </figure>
@@ -358,12 +343,12 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
         <div class="plate-head">
           <div class="t">
             <h3>Most loan accounts are small; most of the money is in a few very large loans</h3>
-            <div class="sub">Bank loans by the size of the credit limit: share of all the money lent (bars) and of all loan accounts (circles), <span id="ex-z-date">–</span>.</div>
+            <div class="sub">Bank loans by the size of the credit limit: share of all the money lent (bars) and of all loan accounts (circles), <span id="ex-z-date" set:html={T["ex-z-date"]} />.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-size">–</div><div class="c">of the money, in loans above ₹100 crore</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-size" set:html={T["pv-size"]} /><div class="c">of the money, in loans above ₹100 crore</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-size" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-size" set:html={CH.size()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, BSR-1 quarterly table 1.7 (DBIE report 947), scheduled commercial banks excluding RRBs. Size is the limit sanctioned, not the amount drawn.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -376,7 +361,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {PZ.long}</span>
-            <p>Loans of up to ₹2 lakh were <b id="ex-z-smalln">–</b> of the <b id="ex-z-accts">–</b> crore loan accounts but <b id="ex-z-smallv">–</b> of the money. Loans above ₹100 crore were <b id="ex-z-bign">–</b> of accounts and <b id="ex-z-bigv">–</b> of the money.</p>
+            <p>Loans of up to ₹2 lakh were <b id="ex-z-smalln" set:html={T["ex-z-smalln"]} /> of the <b id="ex-z-accts" set:html={T["ex-z-accts"]} /> crore loan accounts but <b id="ex-z-smallv" set:html={T["ex-z-smallv"]} /> of the money. Loans above ₹100 crore were <b id="ex-z-bign" set:html={T["ex-z-bign"]} /> of accounts and <b id="ex-z-bigv" set:html={T["ex-z-bigv"]} /> of the money.</p>
           </div>
         </div>
       </figure>
@@ -393,15 +378,10 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
             <h3>Small and medium firms' borrowing has grown faster than big companies'</h3>
             <div class="sub">Growth on a year earlier of bank credit to industry, by size of firm, monthly since January 2020.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-ind">–</div><div class="c">all industry, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-ind" set:html={T["pv-ind"]} /><div class="c">all industry, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Micro and small</button>
-            <button class="chip"><i style="background:#C47A16"></i>Medium</button>
-            <button class="chip"><i style="background:#5F6675"></i>Large</button>
-          </div>
-          <div class="plotzone"><div id="plot-ind" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-ind" set:html={CH.ind()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Sectoral Deployment of Bank Credit, new format. Firm size follows the MSME definition, which was widened in July 2020 (investment and turnover limits).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -414,7 +394,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {PG.long}</span>
-            <p>In <span id="ex-i-date">–</span> credit to micro and small firms grew <b id="ex-i-mse">–</b>, to medium firms <b id="ex-i-med">–</b> and to large ones <b id="ex-i-lg">–</b>. Medium-firm credit grew fastest in <span id="ex-i-medpkd">–</span>, at <b id="ex-i-medpk">–</b>.</p>
+            <p>In <span id="ex-i-date" set:html={T["ex-i-date"]} /> credit to micro and small firms grew <b id="ex-i-mse" set:html={T["ex-i-mse"]} />, to medium firms <b id="ex-i-med" set:html={T["ex-i-med"]} /> and to large ones <b id="ex-i-lg" set:html={T["ex-i-lg"]} />. Medium-firm credit grew fastest in <span id="ex-i-medpkd" set:html={T["ex-i-medpkd"]} />, at <b id="ex-i-medpk" set:html={T["ex-i-medpk"]} />.</p>
           </div>
         </div>
       </figure>
@@ -425,12 +405,12 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
         <div class="plate-head">
           <div class="t">
             <h3>Infrastructure takes about a third of all bank lending to industry</h3>
-            <div class="sub">Share of bank credit to industry, by industry, <span id="ex-in-date">–</span>.</div>
+            <div class="sub">Share of bank credit to industry, by industry, <span id="ex-in-date" set:html={T["ex-in-date"]} />.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-industries">–</div><div class="c">infrastructure's share</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-industries" set:html={T["pv-industries"]} /><div class="c">infrastructure's share</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-industries" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-industries" set:html={CH.industries()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Industry-wise Deployment of Bank Credit (RBIB Table 16), new format, selected banks. Every industry and sub-industry is in the table at the foot of the page.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -443,7 +423,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {PI.long}</span>
-            <p>Infrastructure had <b id="ex-in-infra">–</b> of bank credit to industry: power alone <b id="ex-in-power">–</b> and roads <b id="ex-in-roads">–</b>. Among industries with at least ₹50,000 crore of bank loans, <span id="ex-in-fast">–</span> grew fastest over the year, at <b id="ex-in-fastg">–</b>.</p>
+            <p>Infrastructure had <b id="ex-in-infra" set:html={T["ex-in-infra"]} /> of bank credit to industry: power alone <b id="ex-in-power" set:html={T["ex-in-power"]} /> and roads <b id="ex-in-roads" set:html={T["ex-in-roads"]} />. Among industries with at least ₹50,000 crore of bank loans, <span id="ex-in-fast" set:html={T["ex-in-fast"]} /> grew fastest over the year, at <b id="ex-in-fastg" set:html={T["ex-in-fastg"]} />.</p>
           </div>
         </div>
       </figure>
@@ -456,10 +436,10 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
             <h3>Finance companies lend mostly to households and to infrastructure</h3>
             <div class="sub">Credit given by selected non-banking finance companies and housing finance companies, by sector, ₹ lakh crore, latest month.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-nbfc">–</div><div class="c">NBFC credit, all sectors</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-nbfc" set:html={T["pv-nbfc"]} /><div class="c">NBFC credit, all sectors</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-nbfc" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-nbfc" set:html={CH.nbfc()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, sectoral deployment of credit by selected NBFCs and HFCs, in the monthly sectoral credit release (from May 2024). Retail loans include housing, vehicles, gold and consumer durables.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -472,7 +452,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {PNB.long}</span>
-            <p>Selected NBFCs and HFCs had lent <b id="ex-n-tot">–</b> in <span id="ex-n-date">–</span>, <b id="ex-n-retail">–</b> of it as retail loans. Banks' own loans to NBFCs stood at <b id="ex-n-bank">–</b>, up <b id="ex-n-bankg">–</b> in a year.</p>
+            <p>Selected NBFCs and HFCs had lent <b id="ex-n-tot" set:html={T["ex-n-tot"]} /> in <span id="ex-n-date" set:html={T["ex-n-date"]} />, <b id="ex-n-retail" set:html={T["ex-n-retail"]} /> of it as retail loans. Banks' own loans to NBFCs stood at <b id="ex-n-bank" set:html={T["ex-n-bank"]} />, up <b id="ex-n-bankg" set:html={T["ex-n-bankg"]} /> in a year.</p>
           </div>
         </div>
       </figure>
@@ -489,10 +469,10 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
             <h3>Food credit swells when the government buys grain and shrinks as it is distributed</h3>
             <div class="sub">Bank loans to the Food Corporation of India and state agencies for buying and storing foodgrains, ₹ lakh crore, every reporting fortnight since January 1993.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-food">–</div><div class="c">latest fortnight</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-food" set:html={T["pv-food"]} /><div class="c">latest fortnight</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-food" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-food" set:html={CH.food()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Food and Non-Food Credit of Scheduled Commercial Banks (DBIE report 1130, item 7a.1 Food Credit).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -505,7 +485,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {PF.long}</span>
-            <p>Food credit was <b id="ex-fd-now">–</b> on <span id="ex-fd-date">–</span>, <b id="ex-fd-share">–</b> of bank credit. This year it has ranged from <b id="ex-fd-lo">–</b> (<span id="ex-fd-lod">–</span>) to <b id="ex-fd-hi">–</b> (<span id="ex-fd-hid">–</span>). Its highest ever was <b id="ex-fd-pk">–</b>, on <span id="ex-fd-pkd">–</span>.</p>
+            <p>Food credit was <b id="ex-fd-now" set:html={T["ex-fd-now"]} /> on <span id="ex-fd-date" set:html={T["ex-fd-date"]} />, <b id="ex-fd-share" set:html={T["ex-fd-share"]} /> of bank credit. This year it has ranged from <b id="ex-fd-lo" set:html={T["ex-fd-lo"]} /> (<span id="ex-fd-lod" set:html={T["ex-fd-lod"]} />) to <b id="ex-fd-hi" set:html={T["ex-fd-hi"]} /> (<span id="ex-fd-hid" set:html={T["ex-fd-hid"]} />). Its highest ever was <b id="ex-fd-pk" set:html={T["ex-fd-pk"]} />, on <span id="ex-fd-pkd" set:html={T["ex-fd-pkd"]} />.</p>
           </div>
         </div>
       </figure>
@@ -522,15 +502,10 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
             <h3>Money growth and inflation have parted ways: the link is loose year to year</h3>
             <div class="sub">Growth on a year earlier of broad money (M3), every fortnight, against consumer price inflation (CPI, 2024 base, NSO's linked series), monthly, since 2013.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-m3">–</div><div class="c">M3 growth, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-m3" set:html={T["pv-m3"]} /><div class="c">M3 growth, latest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>M3, including the HDFC merger</button>
-            <button class="chip"><i style="background:#AFBBF0"></i>M3, excluding the merger (to June 2025)</button>
-            <button class="chip"><i style="background:#C47A16"></i>Consumer price inflation</button>
-          </div>
-          <div class="plotzone"><div id="plot-m3" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-m3" set:html={CH.m3()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, money stock (DBIE Data Query MSC_F), growth computed inside each ruler; MoSPI, CPI 2024=100 with the NSO's back series (read from the consumer prices guide).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -543,7 +518,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {PM.long}</span>
-            <p>Broad money grew <b id="ex-m-m3">–</b> in the year to <span id="ex-m-m3d">–</span>, narrow money (cash and current and savings deposits) <b id="ex-m-m1">–</b>, and cash with the public <b id="ex-m-cur">–</b>. Consumer prices rose <b id="ex-m-cpi">–</b> in the year to <span id="ex-m-cpid">–</span>. Whether today's fast money growth will show up as inflation later, we do not know; it did not after the money surge of 2020.</p>
+            <p>Broad money grew <b id="ex-m-m3" set:html={T["ex-m-m3"]} /> in the year to <span id="ex-m-m3d" set:html={T["ex-m-m3d"]} />, narrow money (cash and current and savings deposits) <b id="ex-m-m1" set:html={T["ex-m-m1"]} />, and cash with the public <b id="ex-m-cur" set:html={T["ex-m-cur"]} />. Consumer prices rose <b id="ex-m-cpi" set:html={T["ex-m-cpi"]} /> in the year to <span id="ex-m-cpid" set:html={T["ex-m-cpid"]} />. Whether today's fast money growth will show up as inflation later, we do not know; it did not after the money surge of 2020.</p>
           </div>
         </div>
       </figure>
@@ -556,10 +531,10 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
             <h3>Cash's share of money halved with demonetisation and was back within two years</h3>
             <div class="sub">Currency with the public as a share of broad money (M3), every reporting fortnight since 2001.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-currency">–</div><div class="c">cash's share, latest</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-currency" set:html={T["pv-currency"]} /><div class="c">cash's share, latest</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-currency" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-currency" set:html={CH.currency()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, money stock components (DBIE Data Query MSC_F); share computed from the levels, on the M3 including the merger from July 2023.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -572,7 +547,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {PM.long}</span>
-            <p>Cash with the public was <b id="ex-cu-amt">–</b>, <b id="ex-cu-now">–</b> of broad money. Just before demonetisation it was <b id="ex-cu-pre">–</b>; at its lowest after it, <b id="ex-cu-low">–</b> on <span id="ex-cu-lowd">–</span>.</p>
+            <p>Cash with the public was <b id="ex-cu-amt" set:html={T["ex-cu-amt"]} />, <b id="ex-cu-now" set:html={T["ex-cu-now"]} /> of broad money. Just before demonetisation it was <b id="ex-cu-pre" set:html={T["ex-cu-pre"]} />; at its lowest after it, <b id="ex-cu-low" set:html={T["ex-cu-low"]} /> on <span id="ex-cu-lowd" set:html={T["ex-cu-lowd"]} />.</p>
           </div>
         </div>
       </figure>
@@ -585,10 +560,10 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
             <h3>Each rupee of money now supports about a quarter of the yearly output it did in the 1950s</h3>
             <div class="sub">GDP at current prices over broad money (the income velocity of money) and broad money over reserve money (the money multiplier), every financial year since 1951-52.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-velocity">–</div><div class="c">GDP over M3, latest year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-velocity" set:html={T["pv-velocity"]} /><div class="c">GDP over M3, latest year</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-velocity" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-velocity" set:html={CH.velocity()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, monetary ratios (DBIE Data Query MONTRY_RATIOS), as published.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -601,7 +576,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {fyOf(load("credit-money-ratios").dates.at(-1))}</span>
-            <p>In <span id="ex-v-yr">–</span> GDP was <b id="ex-v-now">–</b> broad money, against <b id="ex-v-0">–</b> in 1951-52. Each rupee of reserve money supported <b id="ex-v-mm">–</b> of broad money.</p>
+            <p>In <span id="ex-v-yr" set:html={T["ex-v-yr"]} /> GDP was <b id="ex-v-now" set:html={T["ex-v-now"]} /> broad money, against <b id="ex-v-0" set:html={T["ex-v-0"]} /> in 1951-52. Each rupee of reserve money supported <b id="ex-v-mm" set:html={T["ex-v-mm"]} /> of broad money.</p>
           </div>
         </div>
       </figure>
@@ -618,10 +593,10 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
             <h3>Three southern states lend out more than they take in; much of the north and east sends its savings elsewhere</h3>
             <div class="sub">Credit-deposit ratio by state, {PST.long}: credit booked by branches in the state as a share of deposits held there (bars), and credit actually used in the state as a share of its deposits (circles).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-states">–</div><div class="c">all India</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-states" set:html={T["pv-states"]} /><div class="c">all India</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-states" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-states" set:html={CH.states()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, annual spatial statement 3A (DBIE report 1427) and BSR-1 table 1.3, credit by place of sanction and of utilisation (DBIE report 1134); scheduled commercial banks including RRBs. States with deposits of at least ₹1 lakh crore.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -634,7 +609,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {PST.long}</span>
-            <p>For all India banks had lent <b id="ex-s-all">–</b> of deposits. <span id="ex-s-hi">–</span> had the highest ratio, <b id="ex-s-hiv">–</b>, and <span id="ex-s-lo">–</span> the lowest, <b id="ex-s-lov">–</b>; <b id="ex-s-n">–</b> of the <span id="ex-s-of">–</span> states shown were below the national ratio and <b id="ex-s-n100">–</b> above 100%. Maharashtra booked loans worth <b id="ex-s-mh">–</b> of its deposits but used <b id="ex-s-mhu">–</b>; Bihar booked <b id="ex-s-bh">–</b> and used <b id="ex-s-bhu">–</b>. Uttar Pradesh booked <b id="ex-s-up">–</b>.</p>
+            <p>For all India banks had lent <b id="ex-s-all" set:html={T["ex-s-all"]} /> of deposits. <span id="ex-s-hi" set:html={T["ex-s-hi"]} /> had the highest ratio, <b id="ex-s-hiv" set:html={T["ex-s-hiv"]} />, and <span id="ex-s-lo" set:html={T["ex-s-lo"]} /> the lowest, <b id="ex-s-lov" set:html={T["ex-s-lov"]} />; <b id="ex-s-n" set:html={T["ex-s-n"]} /> of the <span id="ex-s-of" set:html={T["ex-s-of"]} /> states shown were below the national ratio and <b id="ex-s-n100" set:html={T["ex-s-n100"]} /> above 100%. Maharashtra booked loans worth <b id="ex-s-mh" set:html={T["ex-s-mh"]} /> of its deposits but used <b id="ex-s-mhu" set:html={T["ex-s-mhu"]} />; Bihar booked <b id="ex-s-bh" set:html={T["ex-s-bh"]} /> and used <b id="ex-s-bhu" set:html={T["ex-s-bhu"]} />. Uttar Pradesh booked <b id="ex-s-up" set:html={T["ex-s-up"]} />.</p>
           </div>
         </div>
       </figure>
@@ -647,10 +622,10 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
             <h3>Metropolitan branches book well over half of all bank credit</h3>
             <div class="sub">Share of all bank credit (bars) and of all deposits (circles) by the population group of the branch, {PPL.long}, scheduled commercial banks excluding RRBs.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-pop">–</div><div class="c">metropolitan share of credit</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-pop" set:html={T["pv-pop"]} /><div class="c">metropolitan share of credit</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-pop" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-pop" set:html={CH.pop()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, quarterly spatial statement 3A (DBIE report 1415). Centres are classed by 2011 census population: rural below 10,000, semi-urban 10,000 to 1 lakh, urban 1 to 10 lakh, metropolitan above 10 lakh.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -663,7 +638,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {PPL.long}</span>
-            <p>Metropolitan branches held <b id="ex-pp-md">–</b> of deposits and booked <b id="ex-pp-mc">–</b> of credit, lending <b id="ex-pp-mcd">–</b> of their deposits. Rural branches held <b id="ex-pp-rd">–</b> of deposits and booked <b id="ex-pp-rc">–</b> of credit, lending <b id="ex-pp-rcd">–</b> of their deposits, in <span id="ex-pp-date">–</span>.</p>
+            <p>Metropolitan branches held <b id="ex-pp-md" set:html={T["ex-pp-md"]} /> of deposits and booked <b id="ex-pp-mc" set:html={T["ex-pp-mc"]} /> of credit, lending <b id="ex-pp-mcd" set:html={T["ex-pp-mcd"]} /> of their deposits. Rural branches held <b id="ex-pp-rd" set:html={T["ex-pp-rd"]} /> of deposits and booked <b id="ex-pp-rc" set:html={T["ex-pp-rc"]} /> of credit, lending <b id="ex-pp-rcd" set:html={T["ex-pp-rcd"]} /> of their deposits, in <span id="ex-pp-date" set:html={T["ex-pp-date"]} />.</p>
           </div>
         </div>
       </figure>
@@ -676,10 +651,10 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
             <h3>Women hold about a quarter of bank credit to individuals, and far more in the south</h3>
             <div class="sub">Women's share of outstanding bank loans to individuals, by state, {PW.long}. Blue: at or above the all-India share. States with at least ₹20,000 crore of loans to individuals.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-women">–</div><div class="c">all India</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-women" set:html={T["pv-women"]} /><div class="c">all India</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-women" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-women" set:html={CH.women()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, BSR-1 quarterly table 1.10, district and gender-wise credit to individuals (DBIE report 1555), summed to states; scheduled commercial banks excluding RRBs.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -692,7 +667,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {PW.long}</span>
-            <p>Women held <b id="ex-wo-all">–</b> of bank credit to individuals in <span id="ex-wo-date">–</span> and <b id="ex-wo-acc">–</b> of the loan accounts, up from <b id="ex-wo-0">–</b> of the credit in <span id="ex-wo-0d">–</span>. <span id="ex-wo-hi">–</span> had the highest share, <b id="ex-wo-hiv">–</b>; <span id="ex-wo-lo">–</span> the lowest, <b id="ex-wo-lov">–</b>.</p>
+            <p>Women held <b id="ex-wo-all" set:html={T["ex-wo-all"]} /> of bank credit to individuals in <span id="ex-wo-date" set:html={T["ex-wo-date"]} /> and <b id="ex-wo-acc" set:html={T["ex-wo-acc"]} /> of the loan accounts, up from <b id="ex-wo-0" set:html={T["ex-wo-0"]} /> of the credit in <span id="ex-wo-0d" set:html={T["ex-wo-0d"]} />. <span id="ex-wo-hi" set:html={T["ex-wo-hi"]} /> had the highest share, <b id="ex-wo-hiv" set:html={T["ex-wo-hiv"]} />; <span id="ex-wo-lo" set:html={T["ex-wo-lo"]} /> the lowest, <b id="ex-wo-lov" set:html={T["ex-wo-lov"]} />.</p>
           </div>
         </div>
       </figure>
@@ -709,16 +684,10 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
             <h3>The bad-loan cycle: from 2% of advances in 2011 to 11% in 2018, and back</h3>
             <div class="sub">Gross non-performing assets as a share of gross advances, by bank group, as on 31 March each year since 1997.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-npa">–</div><div class="c">all banks, latest March</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-npa" set:html={T["pv-npa"]} /><div class="c">all banks, latest March</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>All banks</button>
-            <button class="chip"><i style="background:#5F6675"></i>Public sector banks</button>
-            <button class="chip"><i style="background:#C47A16"></i>Private banks (from 2014)</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Foreign banks</button>
-          </div>
-          <div class="plotzone"><div id="plot-npa" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-npa" set:html={CH.npa()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Gross and Net NPAs of Scheduled Commercial Banks, bank group-wise (DBIE report 330). Private banks drawn from March 2014, when the RBI began reporting them as one group; old and new private banks before that are in the data download.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -731,7 +700,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {PN.long}</span>
-            <p>In <span id="ex-np-yr">–</span> gross NPAs were <b id="ex-np-all">–</b> of advances for all banks and <b id="ex-np-pub">–</b> for public sector banks, against a peak of <b id="ex-np-pk">–</b> (<span id="ex-np-pkd">–</span>) for all banks and <b id="ex-np-pkp">–</b> for public sector banks. After provisions, net NPAs were <b id="ex-np-net">–</b>. In 1997 the ratio was <b id="ex-np-97">–</b>. <b id="ex-cr-b9">–</b> of the <span id="ex-cr-n">–</span> banks reporting held capital below the 9% minimum in <span id="ex-cr-yr">–</span>; as many as <b id="ex-cr-pk">–</b> did in <span id="ex-cr-pkd">–</span>.</p>
+            <p>In <span id="ex-np-yr" set:html={T["ex-np-yr"]} /> gross NPAs were <b id="ex-np-all" set:html={T["ex-np-all"]} /> of advances for all banks and <b id="ex-np-pub" set:html={T["ex-np-pub"]} /> for public sector banks, against a peak of <b id="ex-np-pk" set:html={T["ex-np-pk"]} /> (<span id="ex-np-pkd" set:html={T["ex-np-pkd"]} />) for all banks and <b id="ex-np-pkp" set:html={T["ex-np-pkp"]} /> for public sector banks. After provisions, net NPAs were <b id="ex-np-net" set:html={T["ex-np-net"]} />. In 1997 the ratio was <b id="ex-np-97" set:html={T["ex-np-97"]} />. <b id="ex-cr-b9" set:html={T["ex-cr-b9"]} /> of the <span id="ex-cr-n" set:html={T["ex-cr-n"]} /> banks reporting held capital below the 9% minimum in <span id="ex-cr-yr" set:html={T["ex-cr-yr"]} />; as many as <b id="ex-cr-pk" set:html={T["ex-cr-pk"]} /> did in <span id="ex-cr-pkd" set:html={T["ex-cr-pkd"]} />.</p>
           </div>
         </div>
       </figure>
@@ -744,15 +713,10 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
             <h3>The clean-up was done more by writing loans off than by recovering them</h3>
             <div class="sub">Gross NPAs of all scheduled commercial banks added during the year, recovered or upgraded, and written off, ₹ lakh crore, every financial year since 2004-05.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-npaflow">–</div><div class="c">written off since 2015-16</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-npaflow" set:html={T["pv-npaflow"]} /><div class="c">written off since 2015-16</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Added (new bad loans)</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Recovered or upgraded</button>
-            <button class="chip"><i style="background:#C47A16"></i>Written off</button>
-          </div>
-          <div class="plotzone"><div id="plot-npaflow" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-npaflow" set:html={CH.npaflow()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Movement of NPAs of Scheduled Commercial Banks (DBIE report 1114), bank by bank, summed. Closing = opening + added - recovered - written off, checked for every year.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -765,7 +729,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {PNM.long}</span>
-            <p>New bad loans peaked at <b id="ex-nf-pk">–</b> in <span id="ex-nf-pkd">–</span>. Since 2015-16 banks have written off <b id="ex-nf-wo">–</b>. In <span id="ex-nf-yr">–</span> they added <b id="ex-nf-add">–</b>, recovered or upgraded <b id="ex-nf-red">–</b> and wrote off <b id="ex-nf-wol">–</b>, ending the year with <b id="ex-nf-close">–</b> of gross NPAs.</p>
+            <p>New bad loans peaked at <b id="ex-nf-pk" set:html={T["ex-nf-pk"]} /> in <span id="ex-nf-pkd" set:html={T["ex-nf-pkd"]} />. Since 2015-16 banks have written off <b id="ex-nf-wo" set:html={T["ex-nf-wo"]} />. In <span id="ex-nf-yr" set:html={T["ex-nf-yr"]} /> they added <b id="ex-nf-add" set:html={T["ex-nf-add"]} />, recovered or upgraded <b id="ex-nf-red" set:html={T["ex-nf-red"]} /> and wrote off <b id="ex-nf-wol" set:html={T["ex-nf-wol"]} />, ending the year with <b id="ex-nf-close" set:html={T["ex-nf-close"]} /> of gross NPAs.</p>
           </div>
         </div>
       </figure>
@@ -778,14 +742,10 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
             <h3>Most frauds by number are card and internet frauds; most by money are loan frauds</h3>
             <div class="sub">Amount involved in frauds reported by banks, by year of reporting, ₹ thousand crore, loan frauds and everything else, every financial year since 2004-05.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-frauds">–</div><div class="c">reported, latest year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-frauds" set:html={T["pv-frauds"]} /><div class="c">reported, latest year</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Loan frauds</button>
-            <button class="chip"><i style="background:#C9CED6"></i>Everything else (cards and internet, deposits, cash, cheques and more)</button>
-          </div>
-          <div class="plotzone"><div id="plot-frauds" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-frauds" set:html={CH.frauds()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Report on Trend and Progress of Banking: frauds in various banking operations, by date of reporting (DBIE report 1508).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -798,7 +758,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {fyOf(load("credit-frauds").dates.at(-1))}</span>
-            <p>In <span id="ex-fr-yr">–</span> banks reported <b id="ex-fr-n">–</b> frauds involving <b id="ex-fr-amt">–</b>. Loan frauds were <b id="ex-fr-adv">–</b> of the money; card and internet frauds were <b id="ex-fr-cards">–</b> of the cases but <b id="ex-fr-cardamt">–</b> of the money. The largest year was <span id="ex-fr-pkd">–</span>, at <b id="ex-fr-pk">–</b>.</p>
+            <p>In <span id="ex-fr-yr" set:html={T["ex-fr-yr"]} /> banks reported <b id="ex-fr-n" set:html={T["ex-fr-n"]} /> frauds involving <b id="ex-fr-amt" set:html={T["ex-fr-amt"]} />. Loan frauds were <b id="ex-fr-adv" set:html={T["ex-fr-adv"]} /> of the money; card and internet frauds were <b id="ex-fr-cards" set:html={T["ex-fr-cards"]} /> of the cases but <b id="ex-fr-cardamt" set:html={T["ex-fr-cardamt"]} /> of the money. The largest year was <span id="ex-fr-pkd" set:html={T["ex-fr-pkd"]} />, at <b id="ex-fr-pk" set:html={T["ex-fr-pk"]} />.</p>
           </div>
         </div>
       </figure>
@@ -826,7 +786,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Reserve Bank of India, Database on Indian Economy (DBIE), read from India Atlas's archived copy of it: the Section 42 return (report 689), food credit (1130), sectoral and industry-wise deployment of bank credit (the RBI's exports and monthly releases), money stock and reserve money (Data Query tables MSC_F, MSS_F, BMC_M, RMC_M and others), NPAs, capital adequacy and frauds (330, 1114, 329, 336, 1508), the spatial statements (1415, 1427, 1465, 1483), BSR-1 (941 to 963, 1134, 1555), NBFC credit, and bank ratios (332). CPI from MoSPI via the consumer prices guide. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Reserve Bank of India, Database on Indian Economy (DBIE), read from India Atlas's archived copy of it: the Section 42 return (report 689), food credit (1130), sectoral and industry-wise deployment of bank credit (the RBI's exports and monthly releases), money stock and reserve money (Data Query tables MSC_F, MSS_F, BMC_M, RMC_M and others), NPAs, capital adequacy and frauds (330, 1114, 329, 336, 1508), the spatial statements (1415, 1427, 1465, 1483), BSR-1 (941 to 963, 1134, 1555), NBFC credit, and bank ratios (332). CPI from MoSPI via the consumer prices guide. Data vintage <b id="prov-vintage" set:html={T["prov-vintage"]} />.</p>
       </div>
       <div>
         <h6>Method</h6>
@@ -843,7 +803,7 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
     </div>
     <div class="fine">
       <span>India Atlas, money, credit and banks</span>
-      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Vintage <span id="prov-vintage2" set:html={T["prov-vintage2"]} /></span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
@@ -851,6 +811,5 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
 </div>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/credit.client.js";
 </script>
 </Base>

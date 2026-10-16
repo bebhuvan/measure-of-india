@@ -1,5 +1,7 @@
 ---
 import Learn from "../layouts/Learn.astro";
+import * as CH from "./seasonality.charts.js";
+const NUM = CH.NUM;
 ---
 <Learn
   title="Seasons in the data · India Atlas"
@@ -60,12 +62,12 @@ import Learn from "../layouts/Learn.astro";
             <h3>The same dip, every winter: the calendar is the pattern</h3>
             <div class="sub">CPI food &amp; beverages, index level, 2012 = 100, shaded: November to February, Jan 2016 to Dec 2025</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-seas">–</div><div class="c">Dec 2025, index level</div></div>
+          <div class="plate-val"><div class="v" id="pv-seas" set:html={NUM["pv-seas"]}></div><div class="c">Dec 2025, index level</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-seas"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-seas" set:html={CH.seas()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, CPI food &amp; beverages group index, base 2012=100, vintage <span id="pf-seas">–</span>, shaded bands: November to February</span>
+            <span class="src">Source: MoSPI, CPI food &amp; beverages group index, base 2012=100, vintage <span id="pf-seas" set:html={NUM["pf-seas"]}></span>, shaded bands: November to February</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -77,12 +79,12 @@ import Learn from "../layouts/Learn.astro";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>The grey bands are November to February, every year for a decade. Watch the line inside them: it ends <b id="se-fell">–</b> of the shaded windows lower than it began, as the winter harvest comes in. Then watch what it does each summer: it climbs back, and further. The wobble is seasonal; the climb is the trend.</p>
-            <p>Across the whole decade the level rose <b id="se-rise">–</b>. The winter dips subtracted nothing from that total; they only delayed it. A seasonal fall is a pause with a date on it, and the date is the tell.</p>
+            <p>The grey bands are November to February, every year for a decade. Watch the line inside them: it ends <b id="se-fell" set:html={NUM["se-fell"]}></b> of the shaded windows lower than it began, as the winter harvest comes in. Then watch what it does each summer: it climbs back, and further. The wobble is seasonal; the climb is the trend.</p>
+            <p>Across the whole decade the level rose <b id="se-rise" set:html={NUM["se-rise"]}></b>. The winter dips subtracted nothing from that total; they only delayed it. A seasonal fall is a pause with a date on it, and the date is the tell.</p>
           </div>
           <div class="now">
             <span class="mk">The winter of 2024–25</span>
-            <p>The deepest dip of the decade followed the sharpest spike. The food level entered November 2024 at <b id="se-c-nov">–</b> and left February 2025 at <b id="se-c-feb">–</b>, a fall of <b id="se-c-drop">–</b>. Commentators called it victory over inflation. It was winter.</p>
+            <p>The deepest dip of the decade followed the sharpest spike. The food level entered November 2024 at <b id="se-c-nov" set:html={NUM["se-c-nov"]}></b> and left February 2025 at <b id="se-c-feb" set:html={NUM["se-c-feb"]}></b>, a fall of <b id="se-c-drop" set:html={NUM["se-c-drop"]}></b>. Commentators called it victory over inflation. It was winter.</p>
             <p>The line had done the same thing, on the same schedule, eight times before. Relief that arrives with the harvest leaves with the summer, and it did.</p>
           </div>
         </div>
@@ -155,7 +157,4 @@ import Learn from "../layouts/Learn.astro";
     <p>Companion guide: <a href="/guides/cpi/">Consumer Price Index</a>.</p>
   </div>
 
-<script>
-  import "./seasonality.client.js";
-</script>
 </Learn>

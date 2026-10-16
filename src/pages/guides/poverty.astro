@@ -8,6 +8,8 @@ import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["poverty"];
+import * as CH from "../../dossiers/poverty.charts.js";
+const TX = CH.numbers();
 
 // "Every cut": built at render time from the bundles (no client fetch)
 const B = (s) => JSON.parse(fs.readFileSync(`data/series/${s}.json`, "utf8"));
@@ -45,24 +47,24 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
       <span>Instrument <b>NSS and HCES household consumption surveys</b></span>
       <span>Frequency <b>Survey years; annual since 2022-23</b></span>
       <span>Window <b>{firstRound} to {latestRound}</b></span>
-      <span>Latest <b id="m-latest">–</b></span>
+      <span>Latest <b id="m-latest" set:html={TX["m-latest"]}></b></span>
       <span>Unit <b>2021 PPP dollars a day per person</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Below $3.00 a day</div><div class="v acc" id="n-h3">–</div><div class="d" id="d-h3">–</div><div class="nspark" id="nspark-h3"></div></div>
-      <div class="num"><div class="l">Below $4.20 a day</div><div class="v" id="n-h42">–</div><div class="d" id="d-h42">–</div></div>
-      <div class="num"><div class="l">People below $3.00 a day</div><div class="v" id="n-poor">–</div><div class="d" id="d-poor">–</div></div>
-      <div class="num"><div class="l">Gini index of consumption</div><div class="v" id="n-gini">–</div><div class="d" id="d-gini">–</div></div>
+      <div class="num"><div class="l">Below $3.00 a day</div><div class="v acc" id="n-h3" set:html={TX["n-h3"]}></div><div class="d" id="d-h3" set:html={TX["d-h3"]}></div><div class="nspark" id="nspark-h3" set:html={CH.sparkH3()} /></div>
+      <div class="num"><div class="l">Below $4.20 a day</div><div class="v" id="n-h42" set:html={TX["n-h42"]}></div><div class="d" id="d-h42" set:html={TX["d-h42"]}></div></div>
+      <div class="num"><div class="l">People below $3.00 a day</div><div class="v" id="n-poor" set:html={TX["n-poor"]}></div><div class="d" id="d-poor" set:html={TX["d-poor"]}></div></div>
+      <div class="num"><div class="l">Gini index of consumption</div><div class="v" id="n-gini" set:html={TX["n-gini"]}></div><div class="d" id="d-gini" set:html={TX["d-gini"]}></div></div>
     </div>
   </div>
 
   <!-- § 01 current reading: inputs poverty-pip-2022 (all series), poverty-pip-lineup, poverty-pip-2011; prose generated (slots poverty.current-reading.*) -->
   <section>
-    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading" set:html={TX["u-reading"]}></span></div>
     <div class="reading-top">
-      <div><span class="rk">Below $3.00 a day</span><div class="big" id="rb-h3">–</div></div>
-      <p class="rt-cap">The share of Indians whose consumption in the <span id="cr-round">–</span> survey was below the World Bank's extreme poverty line: $3.00 a day at 2021 purchasing power, about <span id="cr-line3">–</span> a person a day at that survey's prices.</p>
-      <div class="rt-side"><span class="rk">Below $4.20 a day</span><div class="rt-side-v" id="rb-h42">–</div></div>
+      <div><span class="rk">Below $3.00 a day</span><div class="big" id="rb-h3" set:html={TX["rb-h3"]}></div></div>
+      <p class="rt-cap">The share of Indians whose consumption in the <span id="cr-round" set:html={TX["cr-round"]}></span> survey was below the World Bank's extreme poverty line: $3.00 a day at 2021 purchasing power, about <span id="cr-line3" set:html={TX["cr-line3"]}></span> a person a day at that survey's prices.</p>
+      <div class="rt-side"><span class="rk">Below $4.20 a day</span><div class="rt-side-v" id="rb-h42" set:html={TX["rb-h42"]}></div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -86,15 +88,10 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
             <h3>Move the line a few dollars and the number of poor Indians changes many times over</h3>
             <div class="sub">Share of Indians whose daily consumption falls below each line, per cent. Lines in 2021 PPP dollars a day per person; the horizontal scale is logarithmic so that each doubling of the line takes the same width.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-ladder">–</div><div class="c">below $3.00 to below $8.30</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-ladder" set:html={TX["pv-ladder"]}></div><div class="c">below $3.00 to below $8.30</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i><span id="lg-lad-now">Latest</span></button>
-            <button class="chip"><i style="background:#B9C3F3"></i><span id="lg-lad-prev">Previous</span></button>
-            <button class="chip"><i style="background:#C9CED6"></i><span id="lg-lad-old">2011-12</span></button>
-          </div>
-          <div class="plotzone"><div id="plot-ladder" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-ladder" set:html={CH.ladder()} />
           <div class="plotfoot">
             <span class="src">Source: World Bank, Poverty and Inequality Platform, 2021 PPP, one query per line. The 2011-12 survey used a different design and is shown for shape, not for comparison.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://pip.worldbank.org/country-profiles/IND" target="_blank" rel="noopener">Source</a></span>
@@ -108,7 +105,7 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
           </div>
           <div class="now">
             <span class="mk">As of PIP, September 2026</span>
-            <p>In <span id="ex-la-round">–</span>, <b id="ex-la-3">–</b> of Indians were below $3.00 a day, <b id="ex-la-42">–</b> below $4.20 and <b id="ex-la-83">–</b> below $8.30. At that survey's prices, using the World Bank's factor of <b id="ex-la-ppp">–</b> rupees to the PPP dollar, $3.00 is <b id="ex-la-r3">–</b> a person a day, <b id="ex-la-r3m">–</b> a month, or <b id="ex-la-r3f">–</b> a month for a family of five. $4.20 is <b id="ex-la-r42">–</b> a day (<b id="ex-la-r42m">–</b> a month); $8.30 is <b id="ex-la-r83">–</b> (<b id="ex-la-r83m">–</b>). The median Indian consumed <b id="ex-la-med">–</b> a day, about <b id="ex-la-medr">–</b>.</p>
+            <p>In <span id="ex-la-round" set:html={TX["ex-la-round"]}></span>, <b id="ex-la-3" set:html={TX["ex-la-3"]}></b> of Indians were below $3.00 a day, <b id="ex-la-42" set:html={TX["ex-la-42"]}></b> below $4.20 and <b id="ex-la-83" set:html={TX["ex-la-83"]}></b> below $8.30. At that survey's prices, using the World Bank's factor of <b id="ex-la-ppp" set:html={TX["ex-la-ppp"]}></b> rupees to the PPP dollar, $3.00 is <b id="ex-la-r3" set:html={TX["ex-la-r3"]}></b> a person a day, <b id="ex-la-r3m" set:html={TX["ex-la-r3m"]}></b> a month, or <b id="ex-la-r3f" set:html={TX["ex-la-r3f"]}></b> a month for a family of five. $4.20 is <b id="ex-la-r42" set:html={TX["ex-la-r42"]}></b> a day (<b id="ex-la-r42m" set:html={TX["ex-la-r42m"]}></b> a month); $8.30 is <b id="ex-la-r83" set:html={TX["ex-la-r83"]}></b> (<b id="ex-la-r83m" set:html={TX["ex-la-r83m"]}></b>). The median Indian consumed <b id="ex-la-med" set:html={TX["ex-la-med"]}></b> a day, about <b id="ex-la-medr" set:html={TX["ex-la-medr"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -125,16 +122,10 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
             <h3>Extreme poverty has fallen over four decades; the biggest drop came between 2011-12 and 2022-23</h3>
             <div class="sub">Share of Indians below each international line, per cent, at every survey (dots). Lines join only surveys the World Bank treats as comparable. The pale line is the World Bank's estimate for the years in between, at $3.00.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-record">–</div><div class="c">surveys</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-record" set:html={TX["pv-record"]}></div><div class="c">surveys</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>$3.00 a day</button>
-            <button class="chip"><i style="background:#C47A16"></i>$4.20 a day</button>
-            <button class="chip"><i style="background:#5F6675"></i>$8.30 a day</button>
-            <button class="chip"><i style="background:#B9C3F3"></i>World Bank estimate between surveys</button>
-          </div>
-          <div class="plotzone"><div id="plot-record" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-record" set:html={CH.record()} />
           <div class="plotfoot">
             <span class="src">Source: World Bank, Poverty and Inequality Platform (2021 PPP): NSS consumption rounds 1977-78 to 2011-12, HCES 2022-23 and 2023-24; the lineup for other years.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://pip.worldbank.org/country-profiles/IND" target="_blank" rel="noopener">Source</a></span>
@@ -148,7 +139,7 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
           </div>
           <div class="now">
             <span class="mk">As of PIP, September 2026</span>
-            <p>Across <b id="ex-re-n">–</b> surveys in <b id="ex-re-spells">–</b> comparable spells, the share below $3.00 a day went from <b id="ex-re-77">–</b> in <span id="ex-re-77r">–</span> to <b id="ex-re-11">–</b> in <span id="ex-re-11r">–</span>, then <b id="ex-re-22">–</b> in <span id="ex-re-22r">–</span> and <b id="ex-re-23">–</b> in <span id="ex-re-23r">–</span>.</p>
+            <p>Across <b id="ex-re-n" set:html={TX["ex-re-n"]}></b> surveys in <b id="ex-re-spells" set:html={TX["ex-re-spells"]}></b> comparable spells, the share below $3.00 a day went from <b id="ex-re-77" set:html={TX["ex-re-77"]}></b> in <span id="ex-re-77r" set:html={TX["ex-re-77r"]}></span> to <b id="ex-re-11" set:html={TX["ex-re-11"]}></b> in <span id="ex-re-11r" set:html={TX["ex-re-11r"]}></span>, then <b id="ex-re-22" set:html={TX["ex-re-22"]}></b> in <span id="ex-re-22r" set:html={TX["ex-re-22r"]}></span> and <b id="ex-re-23" set:html={TX["ex-re-23"]}></b> in <span id="ex-re-23r" set:html={TX["ex-re-23r"]}></span>.</p>
           </div>
         </div>
       </figure>
@@ -165,14 +156,10 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
             <h3>Between 2011-12 and 2022-23 India's poverty figures are estimates, not measurements</h3>
             <div class="sub">Share below $3.00 a day, per cent: the World Bank's estimate for each calendar year (pale; dashed after the last survey) and the survey readings (dark).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-gap">–</div><div class="c">with no national survey</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-gap" set:html={TX["pv-gap"]}></div><div class="c">with no national survey</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Survey reading</button>
-            <button class="chip"><i style="background:#B9C3F3"></i>World Bank estimate</button>
-          </div>
-          <div class="plotzone"><div id="plot-gap" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-gap" set:html={CH.gap()} />
           <div class="plotfoot">
             <span class="src">Source: World Bank, Poverty and Inequality Platform, lineup estimates (fill_gaps) and survey estimates, 2021 PPP.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://pip.worldbank.org/country-profiles/IND" target="_blank" rel="noopener">Source</a></span>
@@ -186,7 +173,7 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
           </div>
           <div class="now">
             <span class="mk">As of PIP, September 2026</span>
-            <p>For the <b id="ex-ga-n">–</b> calendar years without a survey, the World Bank estimates the share below $3.00 a day fell from <b id="ex-ga-a">–</b> in <b id="ex-ga-ay">–</b> to <b id="ex-ga-b">–</b> in <b id="ex-ga-by">–</b>, with a rise in the pandemic year, from <b id="ex-ga-19">–</b> in 2019 to <b id="ex-ga-20">–</b> in 2020. Its nowcast for <b id="ex-ga-nowy">–</b> is <b id="ex-ga-now">–</b>, about <b id="ex-ga-poor">–</b> people.</p>
+            <p>For the <b id="ex-ga-n" set:html={TX["ex-ga-n"]}></b> calendar years without a survey, the World Bank estimates the share below $3.00 a day fell from <b id="ex-ga-a" set:html={TX["ex-ga-a"]}></b> in <b id="ex-ga-ay" set:html={TX["ex-ga-ay"]}></b> to <b id="ex-ga-b" set:html={TX["ex-ga-b"]}></b> in <b id="ex-ga-by" set:html={TX["ex-ga-by"]}></b>, with a rise in the pandemic year, from <b id="ex-ga-19" set:html={TX["ex-ga-19"]}></b> in 2019 to <b id="ex-ga-20" set:html={TX["ex-ga-20"]}></b> in 2020. Its nowcast for <b id="ex-ga-nowy" set:html={TX["ex-ga-nowy"]}></b> is <b id="ex-ga-now" set:html={TX["ex-ga-now"]}></b>, about <b id="ex-ga-poor" set:html={TX["ex-ga-poor"]}></b> people.</p>
           </div>
         </div>
       </figure>
@@ -201,16 +188,12 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
         <div class="plate-head">
           <div class="t">
             <h3>Fewer Indians are below $3.00 a day than at any survey since 1977</h3>
-            <div class="sub">People below $3.00 a day (dark) and below $4.20 a day (light), million, at each survey. Computed from the World Bank's share and population.</div>
+            <div class="sub">People below $3.00 a day (bars) and below $4.20 a day (rings), million, at each survey. Computed from the World Bank's share and population.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-poor">–</div><div class="c">below $3.00, latest survey</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-poor" set:html={TX["pv-poor"]}></div><div class="c">below $3.00, latest survey</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Below $3.00 a day</button>
-            <button class="chip"><i style="background:#E7D2B0"></i>Below $4.20 a day</button>
-          </div>
-          <div class="plotzone"><div id="plot-poor" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-poor" set:html={CH.poor()} />
           <div class="plotfoot">
             <span class="src">Source: World Bank, Poverty and Inequality Platform (headcount and population), 2021 PPP; counts computed here. Survey designs differ across spells (section 03).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://pip.worldbank.org/country-profiles/IND" target="_blank" rel="noopener">Source</a></span>
@@ -223,7 +206,7 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
           </div>
           <div class="now">
             <span class="mk">As of PIP, September 2026</span>
-            <p>In <span id="ex-po-r">–</span>, <b id="ex-po-n">–</b> Indians were below $3.00 a day and <b id="ex-po-n42">–</b> below $4.20; the most below $3.00 at any survey was <b id="ex-po-pk">–</b>, in <span id="ex-po-pkr">–</span>. The poverty gap at $3.00 was <b id="ex-po-gap">–</b> of the line: those below it fell short by <b id="ex-po-short">–</b> of the line on average, about <b id="ex-po-shortr">–</b>. At $4.20 the gap was <b id="ex-po-gap42">–</b>; the severity index at $3.00 was <b id="ex-po-sev">–</b>.</p>
+            <p>In <span id="ex-po-r" set:html={TX["ex-po-r"]}></span>, <b id="ex-po-n" set:html={TX["ex-po-n"]}></b> Indians were below $3.00 a day and <b id="ex-po-n42" set:html={TX["ex-po-n42"]}></b> below $4.20; the most below $3.00 at any survey was <b id="ex-po-pk" set:html={TX["ex-po-pk"]}></b>, in <span id="ex-po-pkr" set:html={TX["ex-po-pkr"]}></span>. The poverty gap at $3.00 was <b id="ex-po-gap" set:html={TX["ex-po-gap"]}></b> of the line: those below it fell short by <b id="ex-po-short" set:html={TX["ex-po-short"]}></b> of the line on average, about <b id="ex-po-shortr" set:html={TX["ex-po-shortr"]}></b>. At $4.20 the gap was <b id="ex-po-gap42" set:html={TX["ex-po-gap42"]}></b>; the severity index at $3.00 was <b id="ex-po-sev" set:html={TX["ex-po-sev"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -240,10 +223,10 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
             <h3>Consumption inequality is lower in the new survey than in any before it</h3>
             <div class="sub">Gini index of consumption per person, every survey. Lines join only comparable surveys.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-gini">–</div><div class="c">Gini, latest survey</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-gini" set:html={TX["pv-gini"]}></div><div class="c">Gini, latest survey</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-gini" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-gini" set:html={CH.gini()} />
           <div class="plotfoot">
             <span class="src">Source: World Bank, Poverty and Inequality Platform. Consumption, not income or wealth.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://pip.worldbank.org/country-profiles/IND" target="_blank" rel="noopener">Source</a></span>
@@ -256,7 +239,7 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
           </div>
           <div class="now">
             <span class="mk">As of PIP, September 2026</span>
-            <p>The Gini was <b id="ex-gi-now">–</b> in the latest survey, <b id="ex-gi-prev">–</b> in the one before and <b id="ex-gi-11">–</b> in 2011-12. The average Indian consumed <b id="ex-gi-mean">–</b> a day and the median Indian <b id="ex-gi-med">–</b> (2021 PPP); in rupees the average was <b id="ex-gi-meanr">–</b> a month at survey prices. The World Bank's societal poverty line, which rises with the median, stood at <b id="ex-gi-spl">–</b> a day, with <b id="ex-gi-spr">–</b> of Indians below it.</p>
+            <p>The Gini was <b id="ex-gi-now" set:html={TX["ex-gi-now"]}></b> in the latest survey, <b id="ex-gi-prev" set:html={TX["ex-gi-prev"]}></b> in the one before and <b id="ex-gi-11" set:html={TX["ex-gi-11"]}></b> in 2011-12. The average Indian consumed <b id="ex-gi-mean" set:html={TX["ex-gi-mean"]}></b> a day and the median Indian <b id="ex-gi-med" set:html={TX["ex-gi-med"]}></b> (2021 PPP); in rupees the average was <b id="ex-gi-meanr" set:html={TX["ex-gi-meanr"]}></b> a month at survey prices. The World Bank's societal poverty line, which rises with the median, stood at <b id="ex-gi-spl" set:html={TX["ex-gi-spl"]}></b> a day, with <b id="ex-gi-spr" set:html={TX["ex-gi-spr"]}></b> of Indians below it.</p>
           </div>
         </div>
       </figure>
@@ -268,14 +251,10 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
             <h3>The richest tenth of Indians consumes several times as much as the poorest tenth</h3>
             <div class="sub">Share of all household consumption by tenth of the population, ranked from the poorest, per cent. Bars are the latest survey; rings the one before (same design). The dashed line marks an equal share, 10%.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-deciles">–</div><div class="c">richest tenth over poorest tenth</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-deciles" set:html={TX["pv-deciles"]}></div><div class="c">richest tenth over poorest tenth</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i><span id="lg-dec-now">Latest</span></button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #5F6675"></i><span id="lg-dec-prev">Previous</span></button>
-          </div>
-          <div class="plotzone"><div id="plot-deciles" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-deciles" set:html={CH.deciles()} />
           <div class="plotfoot">
             <span class="src">Source: World Bank, Poverty and Inequality Platform, decile shares of consumption.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://pip.worldbank.org/country-profiles/IND" target="_blank" rel="noopener">Source</a></span>
@@ -288,7 +267,7 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
           </div>
           <div class="now">
             <span class="mk">As of PIP, September 2026</span>
-            <p>The richest tenth accounted for <b id="ex-dc-top">–</b> of all consumption and the poorest tenth for <b id="ex-dc-bot">–</b>: the richest tenth consumed <b id="ex-dc-x">–</b> as much. The poorest four tenths together had <b id="ex-dc-b40">–</b>. In the survey before, the richest tenth's share was <b id="ex-dc-top0">–</b>.</p>
+            <p>The richest tenth accounted for <b id="ex-dc-top" set:html={TX["ex-dc-top"]}></b> of all consumption and the poorest tenth for <b id="ex-dc-bot" set:html={TX["ex-dc-bot"]}></b>: the richest tenth consumed <b id="ex-dc-x" set:html={TX["ex-dc-x"]}></b> as much. The poorest four tenths together had <b id="ex-dc-b40" set:html={TX["ex-dc-b40"]}></b>. In the survey before, the richest tenth's share was <b id="ex-dc-top0" set:html={TX["ex-dc-top0"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -305,10 +284,10 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
             <h3>India's poverty rate is anything from a few per cent to four in five, depending on the yardstick</h3>
             <div class="sub">Share of Indians counted as poor under each measure the World Bank publishes for India, per cent, with its year. Grey marks older figures from surveys of a different design.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-quotes">–</div><div class="c">range across measures</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-quotes" set:html={TX["pv-quotes"]}></div><div class="c">range across measures</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-quotes" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-quotes" set:html={CH.quotes()} />
           <div class="plotfoot">
             <span class="src">Source: World Bank, Poverty and Inequality Platform and World Development Indicators (SI.POV.NAHC, SI.POV.MPWB, SI.POV.MPUN).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.worldbank.org/topic/poverty?locations=IN" target="_blank" rel="noopener">Source</a></span>
@@ -322,7 +301,7 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
           </div>
           <div class="now">
             <span class="mk">As of PIP, September 2026</span>
-            <p>The last official national-line figure, for <span id="ex-qu-naty">–</span>, was <b id="ex-qu-nat">–</b>; the World Bank's $3.00 figure for the same survey was <b id="ex-qu-wb11">–</b>. The World Bank's multidimensional measure for <span id="ex-qu-mpwby">–</span> counts <b id="ex-qu-mpwb">–</b> of Indians as poor; the UNDP and Oxford measure for <span id="ex-qu-mpuny">–</span>, <b id="ex-qu-mpun">–</b>.</p>
+            <p>The last official national-line figure, for <span id="ex-qu-naty" set:html={TX["ex-qu-naty"]}></span>, was <b id="ex-qu-nat" set:html={TX["ex-qu-nat"]}></b>; the World Bank's $3.00 figure for the same survey was <b id="ex-qu-wb11" set:html={TX["ex-qu-wb11"]}></b>. The World Bank's multidimensional measure for <span id="ex-qu-mpwby" set:html={TX["ex-qu-mpwby"]}></span> counts <b id="ex-qu-mpwb" set:html={TX["ex-qu-mpwb"]}></b> of Indians as poor; the UNDP and Oxford measure for <span id="ex-qu-mpuny" set:html={TX["ex-qu-mpuny"]}></span>, <b id="ex-qu-mpun" set:html={TX["ex-qu-mpun"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -397,7 +376,7 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>World Bank, Poverty and Inequality Platform, release of 22 September 2026, 2021 PPP (api.worldbank.org/pip/v1), country India, national level: survey estimates at each international line and a ladder of other lines, the lineup estimates, and the survey means table. Data vintage <b id="prov-vintage">–</b>. National-line and multidimensional measures from the World Development Indicators, vintage <b id="prov-wdi">–</b>.</p>
+        <p>World Bank, Poverty and Inequality Platform, release of 22 September 2026, 2021 PPP (api.worldbank.org/pip/v1), country India, national level: survey estimates at each international line and a ladder of other lines, the lineup estimates, and the survey means table. Data vintage <b id="prov-vintage" set:html={TX["prov-vintage"]}></b>. National-line and multidimensional measures from the World Development Indicators, vintage <b id="prov-wdi" set:html={TX["prov-wdi"]}></b>.</p>
         <p>Checked by hand: PIP and the World Bank's India country profile give 5.25% below $3.00 a day for 2022-23; WDI's rounded copy gives 5.3. The gate checks PIP against WDI at every survey.</p>
       </div>
       <div>
@@ -415,7 +394,7 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
     </div>
     <div class="fine">
       <span>India Atlas, poverty and inequality</span>
-      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Vintage <span id="prov-vintage2" set:html={TX["prov-vintage2"]}></span></span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
@@ -423,6 +402,5 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
 </div>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/poverty.client.js";
 </script>
 </Base>

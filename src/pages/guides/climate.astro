@@ -9,6 +9,7 @@ import { dateStamp } from "../../dossiers/display.js";
 import { climateData } from "../../dossiers/climate.data.js";
 import * as fmt from "../../charts/format.js";
 import { B } from "../../dossiers/climate.data.js";
+import * as CH from "../../dossiers/climate.charts.js";
 const D = bySlug["climate"];
 // Every figure on this page is derived from the bundles at build time
 // (src/dossiers/climate.data.js); qc.mjs recomputes the ones carrying ids.
@@ -60,7 +61,6 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
   canonical="https://atlas.thisindianlife.today/guides/climate/"
   ogImage={`/og/${D.slug}.png`}
 >
-<script type="application/json" id="climate-data" set:html={JSON.stringify(C).replace(/</g, "\\u003c")} />
 <div class="page">
 
   <div class="titleblock break">
@@ -114,8 +114,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="plate-val"><div class="v acc" id="pv-stripes">{sd2(M.anom)}</div><div class="c">{M.short}</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-stripes"></div>
-          <div class="plotzone"><div id="plot-stripes" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-stripes" set:html={CH.stripes(C)} />
           <div class="plotfoot">
             <span class="src">Source: Copernicus Climate Change Service, ERA5, country average by Our World in Data (CC BY 4.0). Baseline: the same calendar month, 1991-2020.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ourworldindata.org/grapher/monthly-temperature-anomalies" target="_blank" rel="noopener">Source</a></span>
@@ -168,7 +167,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="plate-val"><div class="v acc" id="pv-heat">{days(heat.tr26.recent)}</div><div class="c">nights of 26°C or more, {w(W.recent)} average</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-heat" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-heat" set:html={CH.heat(C)} />
           <div class="plotfoot">
             <span class="src">Source: Copernicus ERA5 reanalysis, indices and India area averages by the World Bank Climate Change Knowledge Portal (CCKP). Wet-bulb by the Stull formula; heat index by the US National Weather Service formula.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org/country/india" target="_blank" rel="noopener">Source</a></span>
@@ -225,11 +224,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="plate-val"><div class="v acc" id="pv-century">{fmt.num2(C.century.rate1976)}°C</div><div class="c">a decade since 1976, station record</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Station record (CRU TS)</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Reanalysis (ERA5)</button>
-          </div>
-          <div class="plotzone"><div id="plot-century" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-century" set:html={CH.century(C)} />
           <div class="plotfoot">
             <span class="src">Source: CRU TS 4.10 (University of East Anglia) and Copernicus ERA5, India area averages by the World Bank CCKP. Each line against its own 1951-1980 mean; the two are never joined.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org/country/india" target="_blank" rel="noopener">Source</a></span>
@@ -263,11 +258,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="plate-val"><div class="v acc" id="pv-months">{sd1(monthsSorted[0].tas)}</div><div class="c">{MN[monthsSorted[0].m]}, the month that warmed most</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>Days (daily maximum)</button>
-            <button class="chip"><i style="background:#2E4BD8"></i>Nights (daily minimum)</button>
-          </div>
-          <div class="plotzone"><div id="plot-months" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-months" set:html={CH.months(C)} />
           <div class="plotfoot">
             <span class="src">Source: CRU TS 4.10, monthly, India area average by the World Bank CCKP. Change is the difference of two 30-year means.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://crudata.uea.ac.uk/cru/data/hrg/" target="_blank" rel="noopener">Source</a></span>
@@ -300,11 +291,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="plate-val"><div class="v acc" id="pv-states">{sd1(stTop[0].tasCru)}</div><div class="c">{stTop[0].name}, the largest change</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Station record (CRU TS)</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>Reanalysis (ERA5)</button>
-          </div>
-          <div class="plotzone"><div id="plot-states" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-states" set:html={CH.states(C)} />
           <div class="plotfoot">
             <span class="src">Source: CRU TS 4.10 and Copernicus ERA5, area averages over CCKP's first-level boundaries. CCKP publishes no unit for Jammu and Kashmir or Ladakh. Small territories rest on few grid cells.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org/country/india" target="_blank" rel="noopener">Source</a></span>
@@ -333,11 +320,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="plate-val"><div class="v acc" id="pv-humid">+{fmt.num1(wbtTop[0].wbt27)}</div><div class="c">more humid days, {wbtTop[0].name}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Wet-bulb days, 27°C or more</button>
-            <button class="chip"><i style="background:#C9CED6"></i>Days of 40°C or more</button>
-          </div>
-          <div class="plotzone"><div id="plot-states-humid" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-states-humid" set:html={CH.statesHumid(C)} />
           <div class="plotfoot">
             <span class="src">Source: Copernicus ERA5 reanalysis, indices and state averages by the World Bank CCKP. Change in days a year between two 30-year averages.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org/country/india" target="_blank" rel="noopener">Source</a></span>
@@ -370,7 +353,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="plate-val"><div class="v acc" id="pv-rain">{fmt.inr(R.annual.at(-1)[1])} mm</div><div class="c">{R.annual.at(-1)[0]}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-rain" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-rain" set:html={CH.rain(C)} />
           <div class="plotfoot">
             <span class="src">Source: CRU TS 4.10 (rain-gauge record), India area average by the World Bank CCKP. The India Meteorological Department's own all-India series uses a different gauge network and differs in level.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://crudata.uea.ac.uk/cru/data/hrg/" target="_blank" rel="noopener">Source</a></span>
@@ -399,11 +382,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="plate-val"><div class="v acc" id="pv-rmonths">{(() => { const s = R.months.find((x) => x.m === "Sep"); return (s.recent - s.base >= 0 ? "+" : "−") + Math.abs(s.recent - s.base) + " mm"; })()}</div><div class="c">September, change</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>{w(W.base)}</button>
-            <button class="chip"><i style="background:#2E4BD8"></i>{w(W.recent)}</button>
-          </div>
-          <div class="plotzone"><div id="plot-rain-months" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-rain-months" set:html={CH.rainMonths(C)} />
           <div class="plotfoot">
             <span class="src">Source: CRU TS 4.10, monthly, India area average by the World Bank CCKP.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://crudata.uea.ac.uk/cru/data/hrg/" target="_blank" rel="noopener">Source</a></span>
@@ -432,7 +411,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="plate-val"><div class="v acc" id="pv-rext">{fmt.count(R.extremes[0].last.v)} mm</div><div class="c">wettest five days of {R.extremes[0].last.y}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-rain-extremes" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-rain-extremes" set:html={CH.rainExtremes(C)} />
           <div class="plotfoot">
             <span class="src">Source: Copernicus ERA5 reanalysis, indices and India area averages by the World Bank CCKP.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org/country/india" target="_blank" rel="noopener">Source</a></span>
@@ -465,12 +444,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="plate-val"><div class="v acc" id="pv-co2">{fmt.inr(E.india.co2)} Mt</div><div class="c">India, {E.year}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>India</button>
-            <button class="chip"><i style="background:#C47A16"></i>China</button>
-            <button class="chip"><i style="background:#878D99"></i>United States</button>
-          </div>
-          <div class="plotzone"><div id="plot-co2" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-co2" set:html={CH.co2(C)} />
           <div class="plotfoot">
             <span class="src">Source: Global Carbon Project, via Our World in Data (CC BY 4.0). Territorial emissions, excluding land-use change.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ourworldindata.org/co2-emissions" target="_blank" rel="noopener">Source</a></span>
@@ -499,13 +473,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="plate-val"><div class="v acc" id="pv-pc">{fmt.num2(S.IND.pc)} t</div><div class="c">India, per person, {E.year}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>India</button>
-            <button class="chip"><i style="background:#C47A16"></i>China</button>
-            <button class="chip"><i style="background:#878D99"></i>United States</button>
-            <button class="chip"><i style="background:#C9CED6"></i>World</button>
-          </div>
-          <div class="plotzone"><div id="plot-percap" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-percap" set:html={CH.percap(C)} />
           <div class="plotfoot">
             <span class="src">Source: Global Carbon Project, population from UN and OWID sources, via Our World in Data (CC BY 4.0).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ourworldindata.org/co2-emissions" target="_blank" rel="noopener">Source</a></span>
@@ -534,12 +502,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="plate-val"><div class="v acc" id="pv-stock">{fmt.num1(S.IND.warming)}%</div><div class="c">India's share of warming so far</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#C9CED6"></i>Share of {E.year} CO₂</button>
-            <button class="chip"><i style="background:#878D99"></i>Share of all CO₂ since 1750</button>
-            <button class="chip"><i style="background:#2E4BD8"></i>Share of warming caused</button>
-          </div>
-          <div class="plotzone"><div id="plot-stock" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-stock" set:html={CH.stock(C)} />
           <div class="plotfoot">
             <span class="src">Source: Global Carbon Project (CO₂) and Jones et al. (contributions to warming, all greenhouse gases including land use), via Our World in Data (CC BY 4.0).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ourworldindata.org/contributed-most-global-co2" target="_blank" rel="noopener">Source</a></span>
@@ -568,8 +531,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="plate-val"><div class="v acc" id="pv-fuels">{fmt.num1(E.india.coalShare)}%</div><div class="c">from coal, {E.year}</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-fuels"></div>
-          <div class="plotzone"><div id="plot-fuels" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-fuels" set:html={CH.fuels(C)} />
           <div class="plotfoot">
             <span class="src">Source: Global Carbon Project, via Our World in Data (CC BY 4.0). The Global Carbon Project reports no separate "other industry" CO₂ for India.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ourworldindata.org/co2-emissions" target="_blank" rel="noopener">Source</a></span>
@@ -598,12 +560,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="plate-val"><div class="v acc" id="pv-gases">{fmt.inr(E.india.ghg)} Mt</div><div class="c">all greenhouse gases, {E.year}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Carbon dioxide</button>
-            <button class="chip"><i style="background:#C47A16"></i>Methane</button>
-            <button class="chip"><i style="background:#878D99"></i>Nitrous oxide</button>
-          </div>
-          <div class="plotzone"><div id="plot-gases" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-gases" set:html={CH.gases(C)} />
           <div class="plotfoot">
             <span class="src">Source: Jones et al. (2025) national contributions, via Our World in Data (CC BY 4.0). CO₂-equivalent over 100 years.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ourworldindata.org/greenhouse-gas-emissions" target="_blank" rel="noopener">Source</a></span>
@@ -636,8 +593,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="plate-val"><div class="v acc" id="pv-energy">{fmt.num1(en("coal"))}%</div><div class="c">coal, {EN.year}</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-energy"></div>
-          <div class="plotzone"><div id="plot-energy" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-energy" set:html={CH.energy(C)} />
           <div class="plotfoot">
             <span class="src">Source: Energy Institute Statistical Review of World Energy, via Our World in Data (CC BY 4.0). Excludes firewood, crop waste and dung burned in homes. Sources under 2% are in the CSV download.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ourworldindata.org/energy/country/india" target="_blank" rel="noopener">Source</a></span>
@@ -666,8 +622,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="plate-val"><div class="v acc" id="pv-power">{fmt.num1(el("solar") + el("wind"))}%</div><div class="c">solar and wind, {EN.elYear}</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-power"></div>
-          <div class="plotzone"><div id="plot-power" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-power" set:html={CH.power(C)} />
           <div class="plotfoot">
             <span class="src">Source: Ember and the Energy Institute, via Our World in Data (CC BY 4.0). Sources under 2% (biofuels, other renewables, oil) are drawn only in the CSV download. Installed capacity is in the renewable energy guide.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ourworldindata.org/electricity-mix" target="_blank" rel="noopener">Source</a></span>
@@ -695,18 +650,12 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
         <div class="plate-head">
           <div class="t">
             <h3>In the years a child born in {born} turns 54 to 73, India is projected to be {fmt.num1(pt("ssp126", 2080).med)} to {fmt.num1(pt("ssp585", 2080).med)}°C warmer than in 1995-2014, depending on emissions</h3>
-            <div class="sub">Projected change in India's annual mean temperature from 1995-2014, °C, for four 20-year windows and four emission pathways. Dot: the median of about 30 models; line: the 10th to 90th percentile across them.</div>
+            <div class="sub">Projected change in India's annual mean temperature from 1995-2014, °C, for four 20-year windows and four emission pathways. Dot: the median of about 30 models; bar: the 10th to 90th percentile across them.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-proj">{sd1(pt("ssp245", 2080).med)}</div><div class="c">SSP2-4.5, 2080-2099, median</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>SSP1-2.6</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #2E4BD8"></i>SSP2-4.5</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #5F6675"></i>SSP3-7.0</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #C47A16"></i>SSP5-8.5</button>
-          </div>
-          <div class="plotzone"><div id="plot-proj" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-proj" set:html={CH.proj(C)} />
           <div class="plotfoot">
             <span class="src">Source: CMIP6 multi-model ensemble, downscaled and bias-corrected by the World Bank CCKP. Projections under stated scenarios, not forecasts.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org/country/india/climate-data-projections" target="_blank" rel="noopener">Source</a></span>
@@ -731,12 +680,12 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
         <div class="plate-head">
           <div class="t">
             <h3>Days of extreme humid heat are projected to multiply {fmt.num1(pd("hi41", "ssp245", 2040) / pref("hi41"))} times by mid-century, nights of 26°C or more by {fmt.count(100 * (pd("tr26", "ssp245", 2040) / pref("tr26") - 1))}%</h3>
-            <div class="sub">Projected days a year at an average spot in India, for 20-year windows, under SSP2-4.5 (blue) and SSP5-8.5 (ochre), ensemble median; the grey line is the models' own 1995-2014 level.</div>
+            <div class="sub">Projected days a year at an average spot in India, for 20-year windows, under SSP2-4.5 (blue) and SSP5-8.5 (red), ensemble median; the grey line is the models' own 1995-2014 level.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-projheat">{days(pd("tr26", "ssp245", 2040))}</div><div class="c">nights of 26°C or more, 2040-2059, SSP2-4.5</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-proj-heat" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-proj-heat" set:html={CH.projHeat(C)} />
           <div class="plotfoot">
             <span class="src">Source: CMIP6 multi-model ensemble median, indices by the World Bank CCKP. CCKP's projected wet-bulb series for India are corrupt at source (an India mean near 8°C) and are not used.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org/country/india/climate-data-projections" target="_blank" rel="noopener">Source</a></span>
@@ -765,7 +714,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="plate-val"><div class="v acc" id="pv-projst">{sd1(stProj[0].proj)}</div><div class="c">{stProj[0].name}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-proj-states" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-proj-states" set:html={CH.projStates(C)} />
           <div class="plotfoot">
             <span class="src">Source: CMIP6 multi-model ensemble median, state averages by the World Bank CCKP. Every scenario and window for every index, by state, is in the data downloads.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org/country/india/climate-data-projections" target="_blank" rel="noopener">Source</a></span>
@@ -799,20 +748,14 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
         <div class="plate-head">
           <div class="t">
             <h3>The heat a building must shed each year has risen {fmt.count(100 * (C.cost.cddRecent / C.cost.cddBase - 1))}% since {w(W.base)}, and the models project far more</h3>
-            <div class="sub">Cooling degree days at an average spot in India (each degree a day's average sits above 65°F, 18.3°C, summed over the year). Observed, ERA5, 1950 to {C.century.era5Last}, solid; projected, CMIP6 median, 20-year windows, hollow.</div>
+            <div class="sub">Cooling degree days at an average spot in India (each degree a day's average sits above 65°F, 18.3°C, summed over the year). Observed, ERA5, 1950 to {C.century.era5Last}, solid; projected, CMIP6 median, 20-year windows, dashed.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-cool">{fmt.inr(C.cost.cdd.at(-1)[1])}</div><div class="c">cooling degree days, {C.cost.cdd.at(-1)[0]}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Observed (ERA5)</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>Models, 1995-2014 average</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #2E4BD8"></i>Projected, SSP2-4.5</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #C47A16"></i>Projected, SSP5-8.5</button>
-          </div>
-          <div class="plotzone"><div id="plot-cool" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-cool" set:html={CH.cool(C)} />
           <div class="plotfoot">
-            <span class="src">Source: Copernicus ERA5 and CMIP6, cooling degree days by the World Bank CCKP. Two instruments: the observed line and the projected dots are never joined.</span>
+            <span class="src">Source: Copernicus ERA5 and CMIP6, cooling degree days by the World Bank CCKP. Two instruments: the observed line and the projected lines are never joined.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org/country/india" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -839,7 +782,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="plate-val"><div class="v acc" id="pv-deaths">+{fmt.num1(hdLast.at(-1)[1])}</div><div class="c">per 100,000, {hdLast.at(-1)[0]}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-deaths" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-deaths" set:html={CH.deaths(C)} />
           <div class="plotfoot">
             <span class="src">Source: Climate Impact Lab and UNDP, Human Climate Horizons (2024), via Our World in Data (CC BY 4.0). A model estimate; adaptation and income growth are assumed as in the source.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://horizons.hdr.undp.org" target="_blank" rel="noopener">Source</a></span>
@@ -868,8 +811,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="plate-val"><div class="v acc" id="pv-fires">{fmt.num1(cropShare)}%</div><div class="c">croplands, {fires.firesAll.at(-1)[0]}</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-fires"></div>
-          <div class="plotzone"><div id="plot-fires" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-fires" set:html={CH.fires(C)} />
           <div class="plotfoot">
             <span class="src">Source: Global Wildfire Information System (GWIS), via Our World in Data (CC BY 4.0). Burnt area seen by satellite; small fires can be missed.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://gwis.jrc.ec.europa.eu" target="_blank" rel="noopener">Source</a></span>
@@ -975,6 +917,21 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
 </style>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/climate.client.js";
+  // every state: the explorer table sorts on a click of its column head
+  const table = document.getElementById("explorer");
+  table?.querySelectorAll("th").forEach((th, col) => th.addEventListener("click", () => {
+    const tbody = table.tBodies[0], rows = [...tbody.rows];
+    const asc = th.getAttribute("aria-sort") === "descending";
+    table.querySelectorAll("th").forEach((h) => h.removeAttribute("aria-sort"));
+    th.setAttribute("aria-sort", asc ? "ascending" : "descending");
+    const val = (r) => (col === 0 ? r.cells[0].textContent : parseFloat(r.cells[col].dataset.v));
+    rows.sort((a, b) => {
+      const x = val(a), y = val(b);
+      if (col === 0) return asc ? x.localeCompare(y) : y.localeCompare(x);
+      if (Number.isNaN(x)) return 1; if (Number.isNaN(y)) return -1;
+      return asc ? x - y : y - x;
+    });
+    rows.forEach((r) => tbody.append(r));
+  }));
 </script>
 </Base>

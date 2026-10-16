@@ -1,5 +1,5 @@
 // src/dossiers/payments.fmt.js: the payments guide's number renderers, shared by the page
-// client (payments.client.js) and scripts/qc.mjs, so a rendered figure and its gate can never
+// (payments.astro), its charts (payments.charts.js) and scripts/qc.mjs, so a rendered figure and its gate can never
 // disagree. Bundles store volumes as counts and values as rupees (DBIE's ACTUALS).
 const grp = (v, d = 0) => v.toLocaleString("en-IN", { minimumFractionDigits: d, maximumFractionDigits: d });
 

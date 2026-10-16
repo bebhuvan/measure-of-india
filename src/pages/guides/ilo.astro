@@ -6,36 +6,11 @@ import EveryCut from "../../components/EveryCut.astro";
 import GuideData from "../../components/GuideData.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
-import { load, pick, at, last, first, flagged, K, PEERS } from "../../dossiers/ilo.data.js";
+import { load, at, last, first, flagged, K } from "../../dossiers/ilo.data.js";
 const D = bySlug["ilo"];
 
-// ---- the series the plates draw, embedded for the client (src/dossiers/ilo.data.js) ----
-const sexes = ["t", "m", "f"];
-const DATA = {
-  lfpr: pick("ilo-est-eap-2wap", sexes.map((s) => K.lfpr(s))),
-  ur: pick("ilo-est-une-2eap", [K.ur("t"), K.ur("t", "y15_24")]),
-  neet: pick("ilo-est-eip-2eet", [...sexes.map(K.neet), "eip_2eet_sex_nb__sex_t"]),
-  emp: pick("ilo-est-emp-2emp", [K.emp(), ...["total", "1", "2", "3", "5"].map(K.ste), ...["total", "agr", "ind", "ser"].map(K.eco), ...["total", "cat1", "cat2", "cat34"].map(K.cla)]),
-  proj: pick("ilo-est-projections", sexes.map((s) => K.lfpr(s))),
-  slfpr: pick("ilo-plfs-eap", [K.sLfpr("t"),
-    ...["y15_19", "y20_24", "y25_29", "y30_34", "y35_39", "y40_44", "y45_49", "y50_54", "y55_59", "y60_64", "yge65"].map((b) => K.sLfpr("f", "5yrbands_" + b)),
-    ...["ltb", "bas", "int", "adv"].map((e) => K.sLfprEdu("f", e)), ...["f", "m"].flatMap((s) => ["rur", "urb"].map((g) => K.sLfprGeo(s, g)))]),
-  nlfpr: pick("ilo-nss-eap", [K.sLfpr("t")]),
-  clfpr: pick("ilo-census", [K.sLfpr("t")]),
-  mospi: pick("plfs-annual", ["lfpr_psss", "lfpr_cws"]),
-  sur: pick("ilo-plfs-une", [K.sUr("t")]),
-  nur: pick("ilo-nss-une", [K.sUr("t")]),
-  sneet: pick("ilo-plfs-sdg", [K.sNeet("f")]),
-  nneet: pick("ilo-nss-more", [K.sNeet("f")]),
-  inf: pick("ilo-plfs-sdg", ["total", "agr", "ind", "ser"].map(K.sInf)),
-  lshare: pick("ilo-est-lap-2gdp", [K.lshare]),
-  ldist: pick("ilo-est-lap-2lid", Array.from({ length: 10 }, (_, i) => K.decile(i + 1))),
-  hours: pick("ilo-est-how-2emp", sexes.map(K.hours)),
-  earn: pick("ilo-plfs-ear", sexes.map(K.sEarn)),
-  gap: pick("ilo-plfs-ear", ["ear_ggap_ocu_rt__ocu_skill_total"]),
-  opw: pick("ilo-est-gdp-211p", [K.opw]),
-  ...Object.fromEntries(PEERS.map(([g]) => ["peer_" + g, pick("ilo-peer-" + g, [K.lfpr("f"), K.ur("t", "y15_24"), K.neet("t"), K.ste("total"), K.ste("3"), K.ste("5"), K.opw])])),
-};
+import * as CH from "../../dossiers/ilo.charts.js";
+const TX = CH.numbers();
 
 // ---- figures named in the copy, read from the bundles at build time ----
 const f1 = (v) => v.toFixed(1);
@@ -80,7 +55,6 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
   canonical="https://atlas.thisindianlife.today/guides/ilo/"
   ogImage={`/og/${D.slug}.png`}
 >
-<script type="application/json" id="ilo-data" is:inline set:html={JSON.stringify(DATA)}></script>
 <div class="page">
 
   <div class="titleblock break">
@@ -94,14 +68,14 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
       <span>Instruments <b>ILO modelled estimates; PLFS, NSS and Census as processed by the ILO</b></span>
       <span>Frequency <b>Annual, calendar years</b></span>
       <span>Edition <b>{edition}</b></span>
-      <span>Latest estimate <b id="m-latest">–</b></span>
+      <span>Latest estimate <b id="m-latest" set:html={TX["m-latest"]}></b></span>
       <span>Population <b>Age 15 and above</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Indians at work, ILO estimate</div><div class="v acc" id="n-emp">–</div><div class="d" id="d-emp">–</div><div class="nspark" id="nspark-emp"></div></div>
-      <div class="num"><div class="l">In the labour force, everyone 15+</div><div class="v" id="n-lfpr">–</div><div class="d" id="d-lfpr">–</div></div>
-      <div class="num"><div class="l">Women in the labour force</div><div class="v" id="n-women">–</div><div class="d" id="d-women">–</div></div>
-      <div class="num"><div class="l">Young women not in work or study</div><div class="v" id="n-neet">–</div><div class="d" id="d-neet">–</div></div>
+      <div class="num"><div class="l">Indians at work, ILO estimate</div><div class="v acc" id="n-emp" set:html={TX["n-emp"]}></div><div class="d" id="d-emp" set:html={TX["d-emp"]}></div><div class="nspark" id="nspark-emp" set:html={CH.sparkEmp()} /></div>
+      <div class="num"><div class="l">In the labour force, everyone 15+</div><div class="v" id="n-lfpr" set:html={TX["n-lfpr"]}></div><div class="d" id="d-lfpr" set:html={TX["d-lfpr"]}></div></div>
+      <div class="num"><div class="l">Women in the labour force</div><div class="v" id="n-women" set:html={TX["n-women"]}></div><div class="d" id="d-women" set:html={TX["d-women"]}></div></div>
+      <div class="num"><div class="l">Young women not in work or study</div><div class="v" id="n-neet" set:html={TX["n-neet"]}></div><div class="d" id="d-neet" set:html={TX["d-neet"]}></div></div>
     </div>
   </div>
 
@@ -109,9 +83,9 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
   <section>
     <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">ILO modelled estimates, {estYear}</span></div>
     <div class="reading-top">
-      <div><span class="rk">People at work, aged 15+</span><div class="big" id="rb-emp">–</div></div>
+      <div><span class="rk">People at work, aged 15+</span><div class="big" id="rb-emp" set:html={TX["rb-emp"]}></div></div>
       <p class="rt-cap">Everyone who did at least an hour's work for pay, profit or family gain in a reference week, as the ILO's model estimates it for {estYear}. A farmer, a street vendor and a software engineer count the same.</p>
-      <div class="rt-side"><span class="rk">In the labour force</span><div class="rt-side-v" id="rb-lfpr">–</div></div>
+      <div class="rt-side"><span class="rk">In the labour force</span><div class="rt-side-v" id="rb-lfpr" set:html={TX["rb-lfpr"]}></div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -145,15 +119,10 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
             <h3>{T.women}</h3>
             <div class="sub">Share of people aged 15 and over who work or are looking for work, by sex, 1990 to {estYear}, with the ILO's projections dashed. Dots mark years the ILO flags as taken from a survey.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-lfpr">–</div><div class="c">women, {estYear}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-lfpr" set:html={TX["pv-lfpr"]}></div><div class="c">women, {estYear}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Women</button>
-            <button class="chip"><i style="background:#5F6675"></i>Men</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Everyone 15+</button>
-          </div>
-          <div class="plotzone"><div id="plot-lfpr" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-lfpr" set:html={CH.lfpr()} />
           <div class="plotfoot">
             <span class="src">Source: ILO, ILOSTAT, {edition}, DF_EAP_2WAP_SEX_AGE_RT. Thirteenth ICLS definitions.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
@@ -167,7 +136,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="now">
             <span class="mk">As of {asOf.est}</span>
-            <p>Women's participation stands at <b id="ex-lfpr-now">–</b>, up from a low of <b id="ex-lfpr-low">–</b>, but still below <b id="ex-lfpr-peak">–</b> in 2005. {lfprReal.length ? `Of the years from 1990, the ILO flags only ${lfprReal.join(", ")} as taken directly from a survey; every other point is the model's.` : "The ILO flags no year from 1990 as taken directly from a survey: every point is the model's."}</p>
+            <p>Women's participation stands at <b id="ex-lfpr-now" set:html={TX["ex-lfpr-now"]}></b>, up from a low of <b id="ex-lfpr-low" set:html={TX["ex-lfpr-low"]}></b>, but still below <b id="ex-lfpr-peak" set:html={TX["ex-lfpr-peak"]}></b> in 2005. {lfprReal.length ? `Of the years from 1990, the ILO flags only ${lfprReal.join(", ")} as taken directly from a survey; every other point is the model's.` : "The ILO flags no year from 1990 as taken directly from a survey: every point is the model's."}</p>
           </div>
         </div>
       </figure>
@@ -184,18 +153,10 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
             <h3>Ask about the whole year and more Indians count as working than if you ask about last week</h3>
             <div class="sub">Labour force participation, everyone aged 15 and over: the ILO's model, the ILO's processing of PLFS, NSS and Census data, and MoSPI's own PLFS figures on two definitions. Each instrument drawn separately, never joined.</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-rulers">–</div><div class="c">usual status above weekly status, MoSPI {mospiRound}</div></div>
+          <div class="plate-val"><div class="v" id="pv-rulers" set:html={TX["pv-rulers"]}></div><div class="c">usual status above weekly status, MoSPI {mospiRound}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>PLFS, ILO processing</button>
-            <button class="chip"><i style="background:#C47A16"></i>PLFS, MoSPI, usual status</button>
-            <button class="chip"><i style="background:#E2B36F"></i>PLFS, MoSPI, weekly status</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>ILO model</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#5F6675"></i>NSS rounds</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #5F6675"></i>Census</button>
-          </div>
-          <div class="plotzone"><div id="plot-rulers" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-rulers" set:html={CH.rulers()} />
           <div class="plotfoot">
             <span class="src">Source: ILO, ILOSTAT (modelled estimates; PLFS, NSS and Census unit data processed by the ILO, DF_EAP_DWAP_SEX_AGE_RT); MoSPI, PLFS annual reports. MoSPI's July-June years are plotted at the January in their middle.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
@@ -209,7 +170,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="now">
             <span class="mk">As of {asOf.plfs}</span>
-            <p>For {mospiRound}, MoSPI's usual-status participation is <b id="ex-r-psss">–</b> and its weekly-status figure <b id="ex-r-cws">–</b>. For calendar 2024 the ILO's processing of the same survey gives <b id="ex-r-ilo">–</b> and its model <b id="ex-r-est">–</b>. None of these is wrong; each answers a different question.</p>
+            <p>For {mospiRound}, MoSPI's usual-status participation is <b id="ex-r-psss" set:html={TX["ex-r-psss"]}></b> and its weekly-status figure <b id="ex-r-cws" set:html={TX["ex-r-cws"]}></b>. For calendar 2024 the ILO's processing of the same survey gives <b id="ex-r-ilo" set:html={TX["ex-r-ilo"]}></b> and its model <b id="ex-r-est" set:html={TX["ex-r-est"]}></b>. None of these is wrong; each answers a different question.</p>
           </div>
         </div>
       </figure>
@@ -226,16 +187,10 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
             <h3>Before {T.urFirst}, the ILO's unemployment rate for India is the model's guess, inside a wide band</h3>
             <div class="sub">Unemployment rate, everyone 15+ and young people 15 to 24, ILO modelled estimates, with the ILO's uncertainty band for everyone 15+. Dots on the lines mark years the ILO took from a survey; free dots are the ILO's own processing of PLFS (filled) and NSS (hollow).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-unemp">–</div><div class="c">everyone 15+, {estYear}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-unemp" set:html={TX["pv-unemp"]}></div><div class="c">everyone 15+, {estYear}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Everyone 15+, model</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Aged 15-24, model</button>
-            <button class="chip"><i style="background:#E7EBFC"></i>The ILO's uncertainty band</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#5F6675"></i>PLFS, ILO processing</button>
-          </div>
-          <div class="plotzone"><div id="plot-unemp" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-unemp" set:html={CH.unemp()} />
           <div class="plotfoot">
             <span class="src">Source: ILO, ILOSTAT, {edition}, DF_UNE_2EAP_SEX_AGE_RT, with the ILO's published lower and upper bounds; survey points from DF_UNE_DEAP_SEX_AGE_RT.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
@@ -249,7 +204,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="now">
             <span class="mk">As of {asOf.est}</span>
-            <p>The model holds unemployment at about <b id="ex-u-flat">–</b> through the 2000s, with a band of <b id="ex-u-band">–</b> in 2000. The NSS rounds of those years, as the ILO itself processed them, measured <b id="ex-u-nss">–</b>. From <b id="ex-u-first">–</b> it follows the survey: <b id="ex-u-now">–</b> for everyone 15+ and <b id="ex-u-youth">–</b> for those aged 15 to 24 in {estYear}.</p>
+            <p>The model holds unemployment at about <b id="ex-u-flat" set:html={TX["ex-u-flat"]}></b> through the 2000s, with a band of <b id="ex-u-band" set:html={TX["ex-u-band"]}></b> in 2000. The NSS rounds of those years, as the ILO itself processed them, measured <b id="ex-u-nss" set:html={TX["ex-u-nss"]}></b>. From <b id="ex-u-first" set:html={TX["ex-u-first"]}></b> it follows the survey: <b id="ex-u-now" set:html={TX["ex-u-now"]}></b> for everyone 15+ and <b id="ex-u-youth" set:html={TX["ex-u-youth"]}></b> for those aged 15 to 24 in {estYear}.</p>
           </div>
         </div>
       </figure>
@@ -266,14 +221,10 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
             <h3>Women's participation rose at every age between {plfsFirst} and {plfsYear}</h3>
             <div class="sub">Women in the labour force by five-year age band, per cent, calendar {plfsYear} (bars) and {plfsFirst} (hollow dots). Current weekly status.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-women-age">–</div><div class="c">the highest band, {plfsYear}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-women-age" set:html={TX["pv-women-age"]}></div><div class="c">the highest band, {plfsYear}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #5F6675"></i>{plfsFirst}</button>
-            <button class="chip"><i style="background:#C9CED6"></i>{plfsYear}</button>
-          </div>
-          <div class="plotzone"><div id="plot-women-age" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-women-age" set:html={CH.womenAge()} />
           <div class="plotfoot">
             <span class="src">Source: ILO, ILOSTAT, PLFS unit data processed by the ILO, DF_EAP_DWAP_SEX_AGE_RT (5-year bands).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
@@ -286,7 +237,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="now">
             <span class="mk">As of {asOf.plfs}</span>
-            <p>The highest band is <b id="ex-wa-peak">–</b>. Among women aged 20 to 24, <b id="ex-wa-young">–</b> are in the labour force, against <b id="ex-wa-young0">–</b> in {plfsFirst}.</p>
+            <p>The highest band is <b id="ex-wa-peak" set:html={TX["ex-wa-peak"]}></b>. Among women aged 20 to 24, <b id="ex-wa-young" set:html={TX["ex-wa-young"]}></b> are in the labour force, against <b id="ex-wa-young0" set:html={TX["ex-wa-young0"]}></b> in {plfsFirst}.</p>
           </div>
         </div>
       </figure>
@@ -298,10 +249,10 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
             <h3>Women who finish school but not college are the least likely to be at work</h3>
             <div class="sub">Women aged 15+ in the labour force by level of education, per cent, calendar {plfsYear} (bars) and {plfsFirst} (hollow dots).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-women-edu">–</div><div class="c">upper secondary, {plfsYear}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-women-edu" set:html={TX["pv-women-edu"]}></div><div class="c">upper secondary, {plfsYear}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-women-edu" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-women-edu" set:html={CH.womenEdu()} />
           <div class="plotfoot">
             <span class="src">Source: ILO, ILOSTAT, PLFS unit data processed by the ILO, DF_EAP_DWAP_SEX_EDU_RT (aggregate levels).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
@@ -314,7 +265,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="now">
             <span class="mk">As of {asOf.plfs}</span>
-            <p>Women with less than basic schooling: <b id="ex-we-low">–</b> in the labour force. Upper secondary: <b id="ex-we-mid">–</b>. Graduates and above: <b id="ex-we-high">–</b>.</p>
+            <p>Women with less than basic schooling: <b id="ex-we-low" set:html={TX["ex-we-low"]}></b> in the labour force. Upper secondary: <b id="ex-we-mid" set:html={TX["ex-we-mid"]}></b>. Graduates and above: <b id="ex-we-high" set:html={TX["ex-we-high"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -326,16 +277,10 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
             <h3>The rise in women's work is a village story</h3>
             <div class="sub">Labour force participation, aged 15+, by sex and rural or urban area, per cent, calendar years {plfsFirst} to {plfsYear}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-women-area">–</div><div class="c">rural women, {plfsYear}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-women-area" set:html={TX["pv-women-area"]}></div><div class="c">rural women, {plfsYear}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Rural women</button>
-            <button class="chip"><i style="background:#5F6675"></i>Urban women</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Rural men</button>
-            <button class="chip"><i style="background:#C9CED6"></i>Urban men</button>
-          </div>
-          <div class="plotzone"><div id="plot-women-area" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-women-area" set:html={CH.womenArea()} />
           <div class="plotfoot">
             <span class="src">Source: ILO, ILOSTAT, PLFS unit data processed by the ILO, DF_EAP_DWAP_SEX_GEO_RT.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
@@ -348,7 +293,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="now">
             <span class="mk">As of {asOf.plfs}</span>
-            <p>Rural women's participation went from <b id="ex-wr-rur0">–</b> to <b id="ex-wr-rur">–</b>; urban women's from <b id="ex-wr-urb0">–</b> to <b id="ex-wr-urb">–</b>.</p>
+            <p>Rural women's participation went from <b id="ex-wr-rur0" set:html={TX["ex-wr-rur0"]}></b> to <b id="ex-wr-rur" set:html={TX["ex-wr-rur"]}></b>; urban women's from <b id="ex-wr-urb0" set:html={TX["ex-wr-urb0"]}></b> to <b id="ex-wr-urb" set:html={TX["ex-wr-urb"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -365,15 +310,10 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
             <h3>{T.neet}</h3>
             <div class="sub">Share of people aged 15 to 24 not in employment, education or training, by sex, ILO modelled estimates, with the ILO's processing of PLFS (hollow blue) and NSS (hollow grey) for young women.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-neet">–</div><div class="c">young women, {estYear}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-neet" set:html={TX["pv-neet"]}></div><div class="c">young women, {estYear}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Young women</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>All youth</button>
-            <button class="chip"><i style="background:#5F6675"></i>Young men</button>
-          </div>
-          <div class="plotzone"><div id="plot-neet" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-neet" set:html={CH.neet()} />
           <div class="plotfoot">
             <span class="src">Source: ILO, ILOSTAT, {edition}, DF_EIP_2EET_SEX_RT; SDG indicator 8.6.1 from PLFS and NSS unit data, DF_SDG_0861_SEX_RT.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
@@ -386,7 +326,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="now">
             <span class="mk">As of {asOf.est}</span>
-            <p>The model puts young women's NEET rate at <b id="ex-n-f">–</b>, down from <b id="ex-n-f0">–</b>; young men's at <b id="ex-n-m">–</b>. In all, <b id="ex-n-num">–</b> young Indians were neither working nor studying. The ILO's processing of PLFS puts young women at <b id="ex-n-plfs">–</b> in {plfsYear}.</p>
+            <p>The model puts young women's NEET rate at <b id="ex-n-f" set:html={TX["ex-n-f"]}></b>, down from <b id="ex-n-f0" set:html={TX["ex-n-f0"]}></b>; young men's at <b id="ex-n-m" set:html={TX["ex-n-m"]}></b>. In all, <b id="ex-n-num" set:html={TX["ex-n-num"]}></b> young Indians were neither working nor studying. The ILO's processing of PLFS puts young women at <b id="ex-n-plfs" set:html={TX["ex-n-plfs"]}></b> in {plfsYear}.</p>
           </div>
         </div>
       </figure>
@@ -403,16 +343,10 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
             <h3>Most Indians who work still work for themselves or their family, not for a wage</h3>
             <div class="sub">Share of everyone employed by status in employment, ILO modelled estimates, 1991 to {estYear}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-status">–</div><div class="c">employees, {estYear}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-status" set:html={TX["pv-status"]}></div><div class="c">employees, {estYear}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#5F6675"></i>Own-account workers</button>
-            <button class="chip"><i style="background:#2E4BD8"></i>Employees</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Contributing family workers</button>
-            <button class="chip"><i style="background:#C9CED6"></i>Employers</button>
-          </div>
-          <div class="plotzone"><div id="plot-status" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-status" set:html={CH.status()} />
           <div class="plotfoot">
             <span class="src">Source: ILO, ILOSTAT, {edition}, DF_EMP_2EMP_SEX_STE_NB, ICSE-93. Shares computed from the ILO's counts.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
@@ -425,7 +359,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="now">
             <span class="mk">As of {asOf.est}</span>
-            <p>Employees are <b id="ex-s-emp">–</b> of everyone at work, up from <b id="ex-s-emp0">–</b> in 1991. Own-account workers are <b id="ex-s-own">–</b> and family workers <b id="ex-s-fam">–</b>.</p>
+            <p>Employees are <b id="ex-s-emp" set:html={TX["ex-s-emp"]}></b> of everyone at work, up from <b id="ex-s-emp0" set:html={TX["ex-s-emp0"]}></b> in 1991. Own-account workers are <b id="ex-s-own" set:html={TX["ex-s-own"]}></b> and family workers <b id="ex-s-fam" set:html={TX["ex-s-fam"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -437,15 +371,10 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
             <h3>Farming's share of work fell for three decades, then rose again after 2019</h3>
             <div class="sub">Share of everyone employed by broad sector, ILO modelled estimates, 1991 to {estYear}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-sector">–</div><div class="c">in agriculture, {estYear}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-sector" set:html={TX["pv-sector"]}></div><div class="c">in agriculture, {estYear}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Agriculture</button>
-            <button class="chip"><i style="background:#5F6675"></i>Services</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Industry</button>
-          </div>
-          <div class="plotzone"><div id="plot-sector" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-sector" set:html={CH.sector()} />
           <div class="plotfoot">
             <span class="src">Source: ILO, ILOSTAT, {edition}, DF_EMP_2EMP_SEX_ECO_NB, broad sectors. Industry includes construction.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
@@ -458,7 +387,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="now">
             <span class="mk">As of {asOf.est}</span>
-            <p>Agriculture employs <b id="ex-e-agr">–</b> of workers, against <b id="ex-e-agr0">–</b> in 1991 and a low of <b id="ex-e-low">–</b>.</p>
+            <p>Agriculture employs <b id="ex-e-agr" set:html={TX["ex-e-agr"]}></b> of workers, against <b id="ex-e-agr0" set:html={TX["ex-e-agr0"]}></b> in 1991 and a low of <b id="ex-e-low" set:html={TX["ex-e-low"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -470,10 +399,10 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
             <h3>{T.inf}</h3>
             <div class="sub">Share of employment that is informal (no social security through the job, or work in an unregistered enterprise), by sector, PLFS as processed by the ILO, calendar {plfsYear} (bars) and {plfsFirst} (hollow dots).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-informal">–</div><div class="c">all work, {plfsYear}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-informal" set:html={TX["pv-informal"]}></div><div class="c">all work, {plfsYear}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-informal" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-informal" set:html={CH.informal()} />
           <div class="plotfoot">
             <span class="src">Source: ILO, ILOSTAT, SDG indicator 8.3.1 from PLFS unit data, DF_SDG_0831_SEX_ECO_RT. The ILO publishes no modelled informality series for India.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
@@ -486,7 +415,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="now">
             <span class="mk">As of {asOf.plfs}</span>
-            <p>Informal work is <b id="ex-i-tot">–</b> of all employment, against <b id="ex-i-tot0">–</b> in {plfsFirst}. In agriculture it is <b id="ex-i-agr">–</b>; in services <b id="ex-i-ser">–</b>.</p>
+            <p>Informal work is <b id="ex-i-tot" set:html={TX["ex-i-tot"]}></b> of all employment, against <b id="ex-i-tot0" set:html={TX["ex-i-tot0"]}></b> in {plfsFirst}. In agriculture it is <b id="ex-i-agr" set:html={TX["ex-i-agr"]}></b>; in services <b id="ex-i-ser" set:html={TX["ex-i-ser"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -503,15 +432,10 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
             <h3>{T.poverty}</h3>
             <div class="sub">Employed people by their household's income or spending per person a day, in 2021 international (PPP) dollars, ILO modelled estimates, millions.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-poverty">–</div><div class="c">under $3 a day, {asOf.cls}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-poverty" set:html={TX["pv-poverty"]}></div><div class="c">under $3 a day, {asOf.cls}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Under $3 a day</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>$3 to $4.20</button>
-            <button class="chip"><i style="background:#5F6675"></i>$4.20 or more</button>
-          </div>
-          <div class="plotzone"><div id="plot-poverty" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-poverty" set:html={CH.poverty()} />
           <div class="plotfoot">
             <span class="src">Source: ILO, ILOSTAT, {edition}, DF_EMP_2EMP_SEX_AGE_CLA_NB. Lines at the World Bank's 2021 PPP poverty lines.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
@@ -524,7 +448,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="now">
             <span class="mk">As of {asOf.cls}</span>
-            <p>In 1991, <b id="ex-p-ex0">–</b> workers, <b id="ex-p-ex0s">–</b> of all, lived in households under $3 a day. In {asOf.cls} the ILO estimates <b id="ex-p-ex">–</b>, <b id="ex-p-exs">–</b>, with another <b id="ex-p-mod">–</b> between $3 and $4.20.</p>
+            <p>In 1991, <b id="ex-p-ex0" set:html={TX["ex-p-ex0"]}></b> workers, <b id="ex-p-ex0s" set:html={TX["ex-p-ex0s"]}></b> of all, lived in households under $3 a day. In {asOf.cls} the ILO estimates <b id="ex-p-ex" set:html={TX["ex-p-ex"]}></b>, <b id="ex-p-exs" set:html={TX["ex-p-exs"]}></b>, with another <b id="ex-p-mod" set:html={TX["ex-p-mod"]}></b> between $3 and $4.20.</p>
           </div>
         </div>
       </figure>
@@ -536,10 +460,10 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
             <h3>{T.lsh}</h3>
             <div class="sub">Labour income share of GDP: wages of employees plus the estimated labour part of what the self-employed earn, ILO modelled estimates.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-lshare">–</div><div class="c">{estYear}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-lshare" set:html={TX["pv-lshare"]}></div><div class="c">{estYear}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-lshare" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-lshare" set:html={CH.lshare()} />
           <div class="plotfoot">
             <span class="src">Source: ILO, ILOSTAT, {edition}, DF_LAP_2GDP_NOC_RT. The self-employed's labour income is imputed from employees with similar characteristics.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
@@ -552,7 +476,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="now">
             <span class="mk">As of {asOf.est}</span>
-            <p>Labour's share is <b id="ex-ls">–</b> of GDP, against <b id="ex-ls-0">–</b> in 2004.</p>
+            <p>Labour's share is <b id="ex-ls" set:html={TX["ex-ls"]}></b> of GDP, against <b id="ex-ls-0" set:html={TX["ex-ls-0"]}></b> in 2004.</p>
           </div>
         </div>
       </figure>
@@ -564,10 +488,10 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
             <h3>{T.top10}</h3>
             <div class="sub">Share of all labour income earned by each tenth of workers, from the lowest-paid to the highest-paid, ILO modelled estimates, {estYear} (bars) and 2004 (hollow dots).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-deciles">–</div><div class="c">the top tenth, {estYear}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-deciles" set:html={TX["pv-deciles"]}></div><div class="c">the top tenth, {estYear}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-deciles" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-deciles" set:html={CH.deciles()} />
           <div class="plotfoot">
             <span class="src">Source: ILO, ILOSTAT, {load("ilo-est-lap-2lid").meta.edition}, DF_LAP_2LID_QTL_RT. The ILO flags its India deciles as model-based extrapolations for most years.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
@@ -580,7 +504,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="now">
             <span class="mk">As of {asOf.est}</span>
-            <p>The top tenth earn <b id="ex-d-top">–</b> of labour income, against <b id="ex-d-top0">–</b> in 2004. The bottom half together earn <b id="ex-d-bottom">–</b>.</p>
+            <p>The top tenth earn <b id="ex-d-top" set:html={TX["ex-d-top"]}></b> of labour income, against <b id="ex-d-top0" set:html={TX["ex-d-top0"]}></b> in 2004. The bottom half together earn <b id="ex-d-bottom" set:html={TX["ex-d-bottom"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -592,15 +516,10 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
             <h3>Indians in work put in long weeks, women fewer paid hours than men</h3>
             <div class="sub">Average hours actually worked in a week per employed person, by sex, ILO modelled estimates.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-hours">–</div><div class="c">everyone, {estYear}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-hours" set:html={TX["pv-hours"]}></div><div class="c">everyone, {estYear}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Women</button>
-            <button class="chip"><i style="background:#5F6675"></i>Men</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Everyone</button>
-          </div>
-          <div class="plotzone"><div id="plot-hours" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-hours" set:html={CH.hours()} />
           <div class="plotfoot">
             <span class="src">Source: ILO, ILOSTAT, {edition}, DF_HOW_2EMP_SEX_NB.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
@@ -613,7 +532,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="now">
             <span class="mk">As of {asOf.est}</span>
-            <p>Women in work average <b id="ex-h-f">–</b> hours a week and men <b id="ex-h-m">–</b>. Women averaged <b id="ex-h-f0">–</b> hours in 2019.</p>
+            <p>Women in work average <b id="ex-h-f" set:html={TX["ex-h-f"]}></b> hours a week and men <b id="ex-h-m" set:html={TX["ex-h-m"]}></b>. Women averaged <b id="ex-h-f0" set:html={TX["ex-h-f0"]}></b> hours in 2019.</p>
           </div>
         </div>
       </figure>
@@ -625,15 +544,10 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
             <h3>{T.earn}</h3>
             <div class="sub">Average monthly earnings of employees aged 15+, by sex, rupees at current prices, PLFS as processed by the ILO, calendar years. Not adjusted for inflation.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-earn">–</div><div class="c">all employees, {plfsYear}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-earn" set:html={TX["pv-earn"]}></div><div class="c">all employees, {plfsYear}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Women</button>
-            <button class="chip"><i style="background:#5F6675"></i>Men</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>All employees</button>
-          </div>
-          <div class="plotzone"><div id="plot-earn" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-earn" set:html={CH.earn()} />
           <div class="plotfoot">
             <span class="src">Source: ILO, ILOSTAT, PLFS unit data processed by the ILO, DF_EAR_EMTA_SEX_AGE_NB and DF_EAR_GGAP_OCU_RT. Employees only: the self-employed are not covered.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
@@ -646,7 +560,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="now">
             <span class="mk">As of {asOf.plfs}</span>
-            <p>The average employee earned <b id="ex-er-t">–</b> a month, against <b id="ex-er-t0">–</b> in {plfsFirst}. A woman's average was <b id="ex-er-ratio">–</b> of a man's; on the ILO's hourly measure the gender pay gap is <b id="ex-er-gap">–</b>.</p>
+            <p>The average employee earned <b id="ex-er-t" set:html={TX["ex-er-t"]}></b> a month, against <b id="ex-er-t0" set:html={TX["ex-er-t0"]}></b> in {plfsFirst}. A woman's average was <b id="ex-er-ratio" set:html={TX["ex-er-ratio"]}></b> of a man's; on the ILO's hourly measure the gender pay gap is <b id="ex-er-gap" set:html={TX["ex-er-gap"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -663,14 +577,10 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
             <h3>On the ILO's common yardstick, Indian women are the least likely of the five to be at work</h3>
             <div class="sub">Four measures, 1991 to {estYear}, per cent: women's labour force participation; unemployment among 15 to 24 year olds; young people not in employment, education or training; own-account and family workers as a share of employment. India in blue, the four peers in grey.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-peers">–</div><div class="c">Indian women in the labour force</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-peers" set:html={TX["pv-peers"]}></div><div class="c">Indian women in the labour force</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>India</button>
-            <button class="chip"><i style="background:#C9CED6"></i>China, Bangladesh, Indonesia, Vietnam</button>
-          </div>
-          <div class="plotzone"><div id="plot-peers" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-peers" set:html={CH.peers()} />
           <div class="plotfoot">
             <span class="src">Source: ILO, ILOSTAT, {edition} for each country. Most of these are imputed for most years; the ILO advises against ranking countries on imputed figures.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
@@ -683,7 +593,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="now">
             <span class="mk">As of {asOf.est}</span>
-            <p>Women's participation: India <b id="ex-pw-ind">–</b>, Bangladesh <b id="ex-pw-bgd">–</b>, Indonesia <b id="ex-pw-idn">–</b>, China <b id="ex-pw-chn">–</b>, Vietnam <b id="ex-pw-vnm">–</b>.</p>
+            <p>Women's participation: India <b id="ex-pw-ind" set:html={TX["ex-pw-ind"]}></b>, Bangladesh <b id="ex-pw-bgd" set:html={TX["ex-pw-bgd"]}></b>, Indonesia <b id="ex-pw-idn" set:html={TX["ex-pw-idn"]}></b>, China <b id="ex-pw-chn" set:html={TX["ex-pw-chn"]}></b>, Vietnam <b id="ex-pw-vnm" set:html={TX["ex-pw-vnm"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -695,14 +605,10 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
             <h3>{T.opw}</h3>
             <div class="sub">GDP per employed person, constant 2021 international dollars at purchasing power parity, ILO modelled estimates.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-output">–</div><div class="c">India, {estYear}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-output" set:html={TX["pv-output"]}></div><div class="c">India, {estYear}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>India</button>
-            <button class="chip"><i style="background:#C9CED6"></i>Peers</button>
-          </div>
-          <div class="plotzone"><div id="plot-output" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-output" set:html={CH.output()} />
           <div class="plotfoot">
             <span class="src">Source: ILO, ILOSTAT, {edition}, DF_GDP_211P_NOC_NB.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
@@ -715,7 +621,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="now">
             <span class="mk">As of {asOf.est}</span>
-            <p>India's output per worker is <b id="ex-o-ind">–</b>, up from <b id="ex-o-ind0">–</b> in 1991. China's is <b id="ex-o-chn">–</b>, up from <b id="ex-o-chn0">–</b>.</p>
+            <p>India's output per worker is <b id="ex-o-ind" set:html={TX["ex-o-ind"]}></b>, up from <b id="ex-o-ind0" set:html={TX["ex-o-ind0"]}></b> in 1991. China's is <b id="ex-o-chn" set:html={TX["ex-o-chn"]}></b>, up from <b id="ex-o-chn0" set:html={TX["ex-o-chn0"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -752,7 +658,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>International Labour Organization, ILOSTAT, read through its SDMX data service (sdmx.ilo.org): the ILO {edition} and the ILO's processing of India's PLFS, NSS and Census unit data, plus administrative series. MoSPI's PLFS figures beside them come from the jobs guide's bundle. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>International Labour Organization, ILOSTAT, read through its SDMX data service (sdmx.ilo.org): the ILO {edition} and the ILO's processing of India's PLFS, NSS and Census unit data, plus administrative series. MoSPI's PLFS figures beside them come from the jobs guide's bundle. Data vintage <b id="prov-vintage" set:html={TX["prov-vintage"]}></b>.</p>
         <p>Checked by hand against the ILO's labelled tables: unemployment rate 2024, 4.173%, flagged real; PLFS women's participation 2024, 34.389%.</p>
       </div>
       <div>
@@ -770,7 +676,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
     </div>
     <div class="fine">
       <span>India Atlas, work as the ILO counts it</span>
-      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Vintage <span id="prov-vintage2" set:html={TX["prov-vintage2"]}></span></span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
@@ -778,6 +684,5 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
 </div>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/ilo.client.js";
 </script>
 </Base>

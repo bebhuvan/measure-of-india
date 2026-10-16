@@ -2,11 +2,10 @@
 import { mastheadStamp } from "../../dossiers/headline.js";
 // Guide 15, merchandise trade. Data: data/series/trade-*.json (TradeStat via
 // scripts/lib/products/tradestat*.mjs; RBI DBIE via scripts/lib/products/dbie-trade.mjs).
-// The bundles are large (HS 4 digits monthly is 1.7 MB), so the plates' data is cut here at
-// build time and embedded as one JSON block; the client never fetches a series to draw a
-// plate. The every-cut explorer fetches its finer tables (/data/<bundle>.json, static files)
-// only when a reader asks for them.
-import fs from "node:fs";
+// The plates are drawn at build time (src/dossiers/trade.charts.js, the chart kit) and the
+// numbers set here, so the page ships no bundle data. The every-cut explorer alone keeps a
+// client script: its chapter and partner tables are embedded (#trade-xp), and it fetches the
+// finer tables (/data/<bundle>.json, static files) only when a reader asks for them.
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
 import GuideData from "../../components/GuideData.astro";
@@ -15,111 +14,16 @@ import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 import { period } from "../../dossiers/periods.js";
 const D = bySlug["trade"];
-const B = (s) => JSON.parse(fs.readFileSync(`data/series/${s}.json`, "utf8"));
-const has = (s) => fs.existsSync(`data/series/${s}.json`);
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const monthOf = (iso) => `${MONTHS[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}`;
 const fyOf = (iso) => `${iso.slice(0, 4)}-${String((+iso.slice(0, 4) + 1) % 100).padStart(2, "0")}`;
-const r1 = (v) => (v == null ? null : Math.round(v * 10) / 10);
 
 const PT = period("trade-total");
-const tot = B("trade-total");
-const L = tot.dates.length - 1;
 
-/* ---- the plates' data ---- */
-const T = {};
-T.vintage = tot.meta.vintage;
-T.total = { dates: tot.dates, exports: tot.series.exports.data, imports: tot.series.imports.data, balance: tot.series.balance.data, revision: tot.meta.revision };
-{
-  const a = B("trade-dbie-annual");
-  T.long = { dates: a.dates, exports: a.series.exports.data, imports: a.series.imports.data, balance: a.series.balance.data };
-  const ai = B("trade-dbie-annual-inr");
-  T.ccy = { dates: a.dates, usd: a.series.exports.data, inr: a.dates.map((d) => ai.series.exports.data[ai.dates.indexOf(d)] ?? null), usdImp: a.series.imports.data, inrImp: a.dates.map((d) => ai.series.imports.data[ai.dates.indexOf(d)] ?? null) };
-  const m = B("trade-dbie-monthly");
-  const i0 = m.dates.indexOf("1997-04-01");
-  T.oilm = { dates: m.dates.slice(i0), balance: m.series.balance.data.slice(i0), oil: m.series.balance_oil.data.slice(i0), nonoil: m.series.balance_non_oil.data.slice(i0), lastRev: m.meta.revision[m.dates.at(-1)] };
-}
-// oil and gold in the deficit: one publication (FTPA principal commodities), financial years
-{
-  const X = B("trade-principal-exports-fy"), M = B("trade-principal-imports-fy");
-  const at = (b, k, d) => b.series[k]?.data[b.dates.indexOf(d)] ?? null;
-  T.oilgold = X.dates.map((d) => {
-    const bal = at(X, "total", d) - at(M, "total", d);
-    const pet = at(X, "g20", d) - at(M, "g20", d);
-    const gold = at(X, "ig6", d) - at(M, "ig6", d);
-    return { fy: fyOf(d), bal: r1(bal), pet: r1(pet), gold: r1(gold), rest: r1(bal - pet - gold), flag: X.meta.revision[d] };
-  });
-  // the groups, first and latest full year
-  const first = X.dates[0], last = X.dates.at(-1);
-  const grp = (b) => Object.entries(b.series).filter(([k]) => /^g\d\d$/.test(k)).map(([k, s]) => ({ key: k, label: s.label.replace(/\s*\(group \d+\)$/, ""), first: at(b, k, first), last: at(b, k, last) }));
-  T.groups = { firstFy: fyOf(first), lastFy: fyOf(last), exports: grp(X), imports: grp(M), totalX: [at(X, "total", first), at(X, "total", last)], totalM: [at(M, "total", first), at(M, "total", last)] };
-  // the latest quick estimate (one month ahead of the final tables)
-  const qx = B("trade-principal-exports"), qm = B("trade-principal-imports");
-  T.qe = { date: qx.dates.at(-1), exports: qx.series.total.data.at(-1), imports: qm.series.total.data.at(-1), flag: qx.meta.revision[qx.dates.at(-1)],
-    exportsYearAgo: qx.series.total.data.at(-13), importsYearAgo: qm.series.total.data.at(-13) };
-}
-// chapters, latest full financial year
-{
-  const top = (slug) => { const b = B(slug), n = b.dates.length - 1; return { fy: fyOf(b.dates[n]), prevFy: fyOf(b.dates[n - 1]), rows: Object.entries(b.series).filter(([k]) => k !== "total").map(([k, s]) => ({ code: k.slice(1), label: s.label, last: s.data[n], prev: s.data[n - 1] })).filter((r) => r.last != null).sort((a, c) => c.last - a.last), total: b.series.total.data[n] }; };
-  T.chapters = { exports: top("trade-hs2-exports-fy"), imports: top("trade-hs2-imports-fy") };
-}
-// named goods (HS 4 digits, monthly, US$ million): runs through both HS editions
-{
-  const X = B("trade-hs4-exports"), M = B("trade-hs4-imports");
-  const NAMED = [
-    ["exports", "8517", "Phones and telecom equipment"], ["exports", "2710", "Petroleum products (diesel, petrol, jet fuel)"], ["exports", "3004", "Medicines in doses"], ["exports", "1006", "Rice"],
-    ["imports", "2709", "Crude oil"], ["imports", "7108", "Gold"], ["imports", "1511", "Palm oil"], ["imports", "2701", "Coal"],
-  ];
-  { const i = X.dates.length - 1; const vals = Object.entries(X.series).filter(([k]) => k !== "total").map(([k, s]) => [k, s.data[i]]).filter(([, v]) => v != null).sort((a, b) => b[1] - a[1]);
-    T.homeRank = { phone: vals.findIndex(([k]) => k === "c8517") + 1, of: vals.length, top: vals[0][0].slice(1) }; }
-  T.home = NAMED.map(([f, c, name]) => { const b = f === "exports" ? X : M; return { flow: f, code: c, name, label: b.series["c" + c]?.label ?? c, dates: b.dates, values: b.series["c" + c]?.data ?? [] }; });
-}
-// quantities, the last full financial year (sum of twelve published months; derived)
-{
-  const Q = { exports: B("trade-principal-quantity-exports"), imports: B("trade-principal-quantity-imports") };
-  const fyEnd = T.chapters.exports.fy; const y0 = +fyEnd.slice(0, 4);
-  const months = Array.from({ length: 12 }, (_, k) => `${k < 9 ? y0 : y0 + 1}-${String(((k + 3) % 12) + 1).padStart(2, "0")}-01`);
-  const fySum = (f, key) => { const b = Q[f], s = b.series[key]; if (!s) return null; const v = months.map((d) => s.data[b.dates.indexOf(d)]); return v.some((x) => x == null) ? null : v.reduce((a, x) => a + x, 0); };
-  T.qty = { fy: fyEnd,
-    gold: fySum("imports", "ig6_kgs"), vegoil: fySum("imports", "ib8_ton"), crude: fySum("imports", "is5_ton"), coal: fySum("imports", "if1_ton"),
-    riceB: fySum("exports", "ia3_ton"), riceNB: fySum("exports", "ia4_ton"), products: fySum("exports", "is6_ton") };
-  const o = B("trade-dbie-oil-volumes");
-  T.crude = { dates: o.dates, imports: o.series.crude_imports.data, production: o.series.crude_production.data };
-}
-// partners
-{
-  const F = B("trade-partners-balance-fy"), n = F.dates.length - 1;
-  const X = B("trade-partners-exports-fy"), M = B("trade-partners-imports-fy");
-  const rows = Object.entries(F.series).map(([k, s]) => ({ key: k, name: s.label.replace(/: exports minus imports \(derived\)$/, ""), bal: s.data[n], exp: X.series[k]?.data[n] ?? null, imp: M.series[k]?.data[n] ?? null })).filter((r) => r.bal != null && !/unspecified/i.test(r.name));
-  rows.sort((a, c) => a.bal - c.bal);
-  T.partners = { fy: fyOf(F.dates[n]), deficits: rows.slice(0, 10), surpluses: rows.slice(-10).reverse(), n: rows.length, inDeficit: rows.filter((r) => r.bal < 0).length };
-  const Lg = B("trade-partners-long"), pick = (k) => ({ exp: Lg.series[`${k}__exports`]?.data, imp: Lg.series[`${k}__imports`]?.data, bal: Lg.series[`${k}__balance`]?.data });
-  T.chinaus = { dates: Lg.dates, china: pick("china"), usa: pick("united_states"), flag: Lg.meta.revision };
-  const RX = B("trade-regions-exports-fy"), RM = B("trade-regions-imports-fy"), rn = RX.dates.length - 1;
-  T.regions = Object.entries(RX.series).filter(([k]) => /^region_/.test(k)).map(([k, s]) => ({ name: s.label.replace(/, all countries$/, ""), exp: s.data[rn], imp: RM.series[k]?.data[rn] ?? null }));
-  // exports and imports, partners' share of the latest year
-  T.partnerTotals = { exp: X.series && Object.values(X.series).reduce((a, s) => a + (s.data[n] ?? 0), 0), imp: Object.values(M.series).reduce((a, s) => a + (s.data[n] ?? 0), 0) };
-}
-// commodity x partner: what goes to the United States, what comes from China
-if (has("trade-partner-hs2-exports") && has("trade-partner-hs2-imports")) {
-  const top = (slug, ck) => { const b = B(slug), n = b.dates.length - 1; return { fy: fyOf(b.dates[n]), rows: Object.entries(b.series).filter(([k]) => k.startsWith(ck + "__")).map(([k, s]) => ({ code: k.split("__c")[1], label: s.label.replace(/^[^:]+:\s*/, ""), last: s.data[n] })).filter((r) => r.last != null).sort((a, c) => c.last - a.last).slice(0, 10) }; };
-  T.cxc = { us: top("trade-partner-hs2-exports", "united_states"), china: top("trade-partner-hs2-imports", "china") };
-}
-// prices and volumes (DGCI&S indices, base 2012-13)
-{
-  const t = B("trade-dbie-tot-2012");
-  T.tot = { dates: t.dates, uviX: t.series.uvi_exports.data, uviM: t.series.uvi_imports.data, qiX: t.series.qi_exports.data, qiM: t.series.qi_imports.data, net: t.series.tot_net.data, withheld: t.series.qi_exports.withheldNote ?? null };
-}
-// the every-cut explorer: chapters and partners inline; finer tables load on request
-{
-  const ex = (slug) => { const b = B(slug); return { dates: b.dates, rows: Object.entries(b.series).map(([k, s]) => [k, s.label, s.data]) }; };
-  T.explorer = { hs2x: ex("trade-hs2-exports-fy"), hs2m: ex("trade-hs2-imports-fy"), px: ex("trade-partners-exports-fy"), pm: ex("trade-partners-imports-fy") };
-
-}
-const YTD = { x: B("trade-hs2-exports-ytd"), m: B("trade-hs2-imports-ytd") };
-T.ytd = { label: YTD.x.meta.period.label, prev: [YTD.x.series.total.data[0], YTD.m.series.total.data[0]], cur: [YTD.x.series.total.data[1], YTD.m.series.total.data[1]], fy: fyOf(YTD.x.dates[1]) };
-const latestFy = T.chapters.exports.fy;
-const fmtBn = (v) => `$${(v / 1000).toFixed(1)} bn`;
+/* ---- the plates' data, the page's numbers and the plates: src/dossiers/trade.charts.js ---- */
+import * as CH from "../../dossiers/trade.charts.js";
+const T = CH.T, W = CH.W;
+const XP = CH.explorer(), XS = CH.explorerStart();
 // the 6- and 8-digit line tables in the deep archive (data/archive/manifest.json)
 import { archiveForFamily } from "../../dossiers/archive.js";
 const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
@@ -151,10 +55,10 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
       <span>Unit <b>US$, with ₹ where it matters</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Exports, {PT.long}</div><div class="v acc" id="n-exp">–</div><div class="d" id="d-exp">–</div><div class="nspark" id="nspark-exp"></div></div>
-      <div class="num"><div class="l">Imports, {PT.long}</div><div class="v" id="n-imp">–</div><div class="d" id="d-imp">–</div></div>
-      <div class="num"><div class="l">Trade balance, {PT.long}</div><div class="v" id="n-bal">–</div><div class="d" id="d-bal">–</div></div>
-      <div class="num"><div class="l">Exports, {T.ytd.label} {T.ytd.fy}</div><div class="v" id="n-ytd">–</div><div class="d" id="d-ytd">–</div></div>
+      <div class="num"><div class="l">Exports, {PT.long}</div><div class="v acc" id="n-exp" set:html={W["n-exp"]}></div><div class="d" id="d-exp" set:html={W["d-exp"]}></div><div class="nspark" id="nspark-exp" set:html={CH.sparkExports()} /></div>
+      <div class="num"><div class="l">Imports, {PT.long}</div><div class="v" id="n-imp" set:html={W["n-imp"]}></div><div class="d" id="d-imp" set:html={W["d-imp"]}></div></div>
+      <div class="num"><div class="l">Trade balance, {PT.long}</div><div class="v" id="n-bal" set:html={W["n-bal"]}></div><div class="d" id="d-bal" set:html={W["d-bal"]}></div></div>
+      <div class="num"><div class="l">Exports, {T.ytd.label} {T.ytd.fy}</div><div class="v" id="n-ytd" set:html={W["n-ytd"]}></div><div class="d" id="d-ytd" set:html={W["d-ytd"]}></div></div>
     </div>
   </div>
 
@@ -162,9 +66,9 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
   <section>
     <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">{PT.long}, final tables</span></div>
     <div class="reading-top">
-      <div><span class="rk">Trade balance</span><div class="big" id="rb-big">–</div></div>
+      <div><span class="rk">Trade balance</span><div class="big" id="rb-big" set:html={W["rb-big"]}></div></div>
       <p class="rt-cap">India's merchandise trade balance in {PT.long}: what it sold abroad minus what it bought. A minus sign is a deficit. Services, which India sells well, are not in this number.</p>
-      <div class="rt-side"><span class="rk">Exports</span><div class="rt-side-v" id="rb-exp">–</div></div>
+      <div class="rt-side"><span class="rk">Exports</span><div class="rt-side-v" id="rb-exp" set:html={W["rb-exp"]}></div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -176,7 +80,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
         <Prose slot="trade.current-reading.what-it-does-not-say" />
       </div>
     </div>
-    <p class="qe-note">The first estimate for <span id="qe-month">–</span> is already out: exports <b id="qe-exp">–</b> and imports <b id="qe-imp">–</b> (provisional quick estimates, revised when the final tables arrive a month later).</p>
+    <p class="qe-note">The first estimate for <span id="qe-month" set:html={W["qe-month"]}></span> is already out: exports <b id="qe-exp" set:html={W["qe-exp"]}></b> and imports <b id="qe-imp" set:html={W["qe-imp"]}></b> (provisional quick estimates, revised when the final tables arrive a month later).</p>
   </section>
 
   <!-- § 02 lived reality: inputs trade-hs4-exports, trade-hs4-imports (8517, 2710, 3004, 1006, 2709, 7108, 1511, 2701), trade-principal-quantity-*; prose: evergreen + governed As-of -->
@@ -184,19 +88,19 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
     <div class="sec-head"><span class="no">02</span><h2>What it has to do with your house</h2><span class="line"></span><span class="unit">Eight goods, monthly, US$ million</span></div>
     <div class="prose">
       <p>The phone in your pocket, the oil in your kitchen and the petrol in your scooter all have a line in these tables. India now sells phones to the world by the billion dollars a month. Most of the edible oil it cooks with is bought abroad, palm oil above all. Most of the crude its refineries turn into petrol and diesel arrives by tanker, and some of that diesel and jet fuel goes straight back out as exports.</p>
-      <p>That is what these numbers are. In {T.qty.fy} India bought <b id="lv-oil">–</b> of vegetable oil, <b id="lv-gold">–</b> of gold and <b id="lv-crude">–</b> of crude oil, and sold <b id="lv-rice">–</b> of rice. Each line below is one of those goods, month by month since 2017.</p>
+      <p>That is what these numbers are. In {T.qty.fy} India bought <b id="lv-oil" set:html={W["lv-oil"]}></b> of vegetable oil, <b id="lv-gold" set:html={W["lv-gold"]}></b> of gold and <b id="lv-crude" set:html={W["lv-crude"]}></b> of crude oil, and sold <b id="lv-rice" set:html={W["lv-rice"]}></b> of rice. Each line below is one of those goods, month by month since 2017.</p>
     </div>
     <div class="break">
       <figure id="cb-home" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3><span id="h-home">–</span></h3>
+            <h3><span id="h-home" set:html={W["h-home"]}></span></h3>
             <div class="sub">Eight goods by HS heading (4 digits), monthly, US$ million, January 2017 to {PT.long}. Each panel has its own scale.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-home">–</div><div class="c">phone exports, {PT.long}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-home" set:html={W["pv-home"]}></div><div class="c">phone exports, {PT.long}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-home" class="sm-grid" role="img" aria-label="Eight goods, monthly trade values"></div></div>
+          <div class="plotzone" id="plot-home" set:html={CH.home()} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Commerce, TradeStat (DGCI&amp;S customs data), MEIDB. HS headings: 8517 telephones and telecom equipment, 2710 petroleum products, 3004 medicaments in doses, 1006 rice, 2709 crude oil, 7108 gold, 1511 palm oil, 2701 coal.</span>
             <span class="dl"><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
@@ -210,7 +114,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
           </div>
           <div class="now">
             <span class="mk">As of {PT.long}</span>
-            <p>Phone exports were <b id="ex-h-phone">–</b> in {PT.month}, against <b id="ex-h-phone17">–</b> in January 2017. Crude imports were <b id="ex-h-crude">–</b> and gold <b id="ex-h-gold">–</b>.</p>
+            <p>Phone exports were <b id="ex-h-phone" set:html={W["ex-h-phone"]}></b> in {PT.month}, against <b id="ex-h-phone17" set:html={W["ex-h-phone17"]}></b> in January 2017. Crude imports were <b id="ex-h-crude" set:html={W["ex-h-crude"]}></b> and gold <b id="ex-h-gold" set:html={W["ex-h-gold"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -236,17 +140,13 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
       <figure id="cb-long" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3><span id="h-long">–</span></h3>
+            <h3><span id="h-long" set:html={W["h-long"]}></span></h3>
             <div class="sub">Merchandise exports and imports, US$ billion, financial years 1970-71 to {T.long.dates.length ? fyOf(T.long.dates.at(-1)) : ""}. RBI's republication of DGCI&amp;S data.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-long">–</div><div class="c">deficit, {fyOf(T.long.dates.at(-1))}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-long" set:html={W["pv-long"]}></div><div class="c">deficit, {fyOf(T.long.dates.at(-1))}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Exports</button>
-            <button class="chip"><i style="background:#C47A16"></i>Imports</button>
-          </div>
-          <div class="plotzone"><div id="plot-long" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-long" set:html={CH.long()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Database on Indian Economy (report 649), DGCI&amp;S data. Financial years, April to March.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -259,7 +159,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
           </div>
           <div class="now">
             <span class="mk">As of {fyOf(T.long.dates.at(-1))}</span>
-            <p>Exports <b id="ex-l-exp">–</b>, imports <b id="ex-l-imp">–</b>, a balance of <b id="ex-l-bal">–</b>. Exports were <b id="ex-l-x">–</b> times their 1990-91 level. India ran a surplus in only <span id="ex-l-surp">–</span>. The gap narrowed most in <span id="ex-l-narrow">–</span>, when imports fell.</p>
+            <p>Exports <b id="ex-l-exp" set:html={W["ex-l-exp"]}></b>, imports <b id="ex-l-imp" set:html={W["ex-l-imp"]}></b>, a balance of <b id="ex-l-bal" set:html={W["ex-l-bal"]}></b>. Exports were <b id="ex-l-x" set:html={W["ex-l-x"]}></b> times their 1990-91 level. India ran a surplus in only <span id="ex-l-surp" set:html={W["ex-l-surp"]}></span>. The gap narrowed most in <span id="ex-l-narrow" set:html={W["ex-l-narrow"]}></span>, when imports fell.</p>
           </div>
         </div>
       </figure>
@@ -269,18 +169,13 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
       <figure id="cb-month" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3><span id="h-month">–</span></h3>
+            <h3><span id="h-month" set:html={W["h-month"]}></span></h3>
             <div class="sub">Merchandise exports, imports and the balance, US$ billion, January 2017 to {PT.long}. TradeStat's final and revised tables.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-month">–</div><div class="c">balance, {PT.long}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-month" set:html={W["pv-month"]}></div><div class="c">balance, {PT.long}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Exports</button>
-            <button class="chip"><i style="background:#C47A16"></i>Imports</button>
-            <button class="chip"><i style="background:#878D99"></i>Balance</button>
-          </div>
-          <div class="plotzone"><div id="plot-month" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-month" set:html={CH.month()} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Commerce, TradeStat (DGCI&amp;S), MEIDB India totals. Each month is its revised print where one exists.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
@@ -293,7 +188,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
           </div>
           <div class="now">
             <span class="mk">As of {PT.long}</span>
-            <p>The balance in {PT.month} was <b id="ex-m-bal">–</b>, against <b id="ex-m-bal1">–</b> a year earlier. The largest monthly deficit in this series was <b id="ex-m-max">–</b>, in <span id="ex-m-maxd">–</span>. March was the busiest export month in <span id="ex-m-march">–</span> full financial years.</p>
+            <p>The balance in {PT.month} was <b id="ex-m-bal" set:html={W["ex-m-bal"]}></b>, against <b id="ex-m-bal1" set:html={W["ex-m-bal1"]}></b> a year earlier. The largest monthly deficit in this series was <b id="ex-m-max" set:html={W["ex-m-max"]}></b>, in <span id="ex-m-maxd" set:html={W["ex-m-maxd"]}></span>. March was the busiest export month in <span id="ex-m-march" set:html={W["ex-m-march"]}></span> full financial years.</p>
           </div>
         </div>
       </figure>
@@ -307,18 +202,13 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
       <figure id="cb-oilgold" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3><span id="h-oilgold">–</span></h3>
+            <h3><span id="h-oilgold" set:html={W["h-oilgold"]}></span></h3>
             <div class="sub">The merchandise trade balance split into petroleum (crude and products, exports minus imports), gold, and everything else, US$ billion, financial years 2009-10 to {T.groups.lastFy}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-oilgold">–</div><div class="c">oil and gold's share of the deficit, {T.groups.lastFy}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-oilgold" set:html={W["pv-oilgold"]}></div><div class="c">oil and gold's share of the deficit, {T.groups.lastFy}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i class="sq" style="background:#2E4BD8;width:10px;height:10px"></i>Petroleum</button>
-            <button class="chip"><i class="sq" style="background:#C47A16;width:10px;height:10px"></i>Gold</button>
-            <button class="chip"><i class="sq" style="background:#C9CED6;width:10px;height:10px"></i>Everything else</button>
-          </div>
-          <div class="plotzone"><div id="plot-oilgold" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-oilgold" set:html={CH.oilgold()} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Commerce, TradeStat, principal commodities (FTPA): group 20 petroleum, crude and products; item G6 gold. Balances computed as exports minus imports.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
@@ -332,7 +222,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
           </div>
           <div class="now">
             <span class="mk">As of {T.groups.lastFy}</span>
-            <p>The balance was <b id="ex-og-bal">–</b>: petroleum <b id="ex-og-pet">–</b>, gold <b id="ex-og-gold">–</b>, everything else <b id="ex-og-rest">–</b>.</p>
+            <p>The balance was <b id="ex-og-bal" set:html={W["ex-og-bal"]}></b>: petroleum <b id="ex-og-pet" set:html={W["ex-og-pet"]}></b>, gold <b id="ex-og-gold" set:html={W["ex-og-gold"]}></b>, everything else <b id="ex-og-rest" set:html={W["ex-og-rest"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -345,14 +235,10 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
             <h3>The oil deficit swings with world prices; the rest of the deficit has grown more steadily</h3>
             <div class="sub">Monthly trade balance in oil and in everything else, US$ billion, April 1997 to {monthOf(T.oilm.dates.at(-1))}. RBI's republication; the latest month is provisional.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-oilm">–</div><div class="c">oil balance, latest month</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-oilm" set:html={W["pv-oilm"]}></div><div class="c">oil balance, latest month</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Oil</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Non-oil</button>
-          </div>
-          <div class="plotzone"><div id="plot-oilm" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-oilm" set:html={CH.oilm()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, DBIE reports 426 and 433 (DGCI&amp;S data). Oil exports are petroleum products; oil imports are crude and products. Balances computed as exports minus imports.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -365,7 +251,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
           </div>
           <div class="now">
             <span class="mk">As of {monthOf(T.oilm.dates.at(-1))}</span>
-            <p>Oil balance <b id="ex-om-oil">–</b>, non-oil balance <b id="ex-om-non">–</b> in {monthOf(T.oilm.dates.at(-1))} (<span id="ex-om-rev">–</span>).</p>
+            <p>Oil balance <b id="ex-om-oil" set:html={W["ex-om-oil"]}></b>, non-oil balance <b id="ex-om-non" set:html={W["ex-om-non"]}></b> in {monthOf(T.oilm.dates.at(-1))} (<span id="ex-om-rev" set:html={W["ex-om-rev"]}></span>).</p>
           </div>
         </div>
       </figure>
@@ -379,17 +265,13 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
       <figure id="cb-sell" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3><span id="h-sell">–</span></h3>
+            <h3><span id="h-sell" set:html={W["h-sell"]}></span></h3>
             <div class="sub">Exports by the Ministry's 21 principal-commodity groups, US$ billion, {T.groups.firstFy} (circle) and {T.groups.lastFy} (bar).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-sell">–</div><div class="c">electronics exports, {T.groups.lastFy}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-sell" set:html={W["pv-sell"]}></div><div class="c">electronics exports, {T.groups.lastFy}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>{T.groups.firstFy}</button>
-            <button class="chip"><i style="background:#2E4BD8"></i>{T.groups.lastFy}</button>
-          </div>
-          <div class="plotzone"><div id="plot-sell" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-sell" set:html={CH.groups("exports")} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Commerce, TradeStat, principal commodities (FTPA), revised where available.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
@@ -402,7 +284,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
           </div>
           <div class="now">
             <span class="mk">As of {T.groups.lastFy}</span>
-            <p>The largest export groups were <span id="ex-s-1">–</span>, <span id="ex-s-2">–</span> and <span id="ex-s-3">–</span>. Electronics rose from <b id="ex-s-el0">–</b> to <b id="ex-s-el1">–</b>.</p>
+            <p>The largest export groups were <span id="ex-s-1" set:html={W["ex-s-1"]}></span>, <span id="ex-s-2" set:html={W["ex-s-2"]}></span> and <span id="ex-s-3" set:html={W["ex-s-3"]}></span>. Electronics rose from <b id="ex-s-el0" set:html={W["ex-s-el0"]}></b> to <b id="ex-s-el1" set:html={W["ex-s-el1"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -412,17 +294,13 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
       <figure id="cb-buy" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3><span id="h-buy">–</span></h3>
+            <h3><span id="h-buy" set:html={W["h-buy"]}></span></h3>
             <div class="sub">Imports by the same 21 groups, US$ billion, {T.groups.firstFy} (circle) and {T.groups.lastFy} (bar).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-buy">–</div><div class="c">petroleum imports, {T.groups.lastFy}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-buy" set:html={W["pv-buy"]}></div><div class="c">petroleum imports, {T.groups.lastFy}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>{T.groups.firstFy}</button>
-            <button class="chip"><i style="background:#C47A16"></i>{T.groups.lastFy}</button>
-          </div>
-          <div class="plotzone"><div id="plot-buy" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-buy" set:html={CH.groups("imports")} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Commerce, TradeStat, principal commodities (FTPA), revised where available.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
@@ -435,7 +313,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
           </div>
           <div class="now">
             <span class="mk">As of {T.groups.lastFy}</span>
-            <p>The largest import groups were <span id="ex-b-1">–</span>, <span id="ex-b-2">–</span> and <span id="ex-b-3">–</span>.</p>
+            <p>The largest import groups were <span id="ex-b-1" set:html={W["ex-b-1"]}></span>, <span id="ex-b-2" set:html={W["ex-b-2"]}></span> and <span id="ex-b-3" set:html={W["ex-b-3"]}></span>.</p>
           </div>
         </div>
       </figure>
@@ -445,17 +323,13 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
       <figure id="cb-chapx" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3><span id="h-chapx">–</span></h3>
+            <h3><span id="h-chapx" set:html={W["h-chapx"]}></span></h3>
             <div class="sub">The twelve largest HS chapters (2 digits) of India's exports, US$ billion, {T.chapters.exports.fy} (bar), with {T.chapters.exports.prevFy} as a circle.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-chapx">–</div><div class="c">of exports in these twelve chapters</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-chapx" set:html={W["pv-chapx"]}></div><div class="c">of exports in these twelve chapters</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>{T.chapters.exports.prevFy}</button>
-            <button class="chip"><i style="background:#2E4BD8"></i>{T.chapters.exports.fy}</button>
-          </div>
-          <div class="plotzone"><div id="plot-chapx" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-chapx" set:html={CH.chapters("exports")} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Commerce, TradeStat (DGCI&amp;S), MEIDB: March tables, April-to-March totals.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
@@ -468,7 +342,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
           </div>
           <div class="now">
             <span class="mk">As of {T.chapters.exports.fy}</span>
-            <p>The top export chapter was <span id="ex-c-x1">–</span> at <b id="ex-c-x1v">–</b>, then <span id="ex-c-x2">–</span> at <b id="ex-c-x2v">–</b>.</p>
+            <p>The top export chapter was <span id="ex-c-x1" set:html={W["ex-c-x1"]}></span> at <b id="ex-c-x1v" set:html={W["ex-c-x1v"]}></b>, then <span id="ex-c-x2" set:html={W["ex-c-x2"]}></span> at <b id="ex-c-x2v" set:html={W["ex-c-x2v"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -478,17 +352,13 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
       <figure id="cb-chapm" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3><span id="h-chapm">–</span></h3>
+            <h3><span id="h-chapm" set:html={W["h-chapm"]}></span></h3>
             <div class="sub">The twelve largest HS chapters of India's imports, US$ billion, {T.chapters.imports.fy} (bar), with {T.chapters.imports.prevFy} as a circle.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-chapm">–</div><div class="c">of imports in these twelve chapters</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-chapm" set:html={W["pv-chapm"]}></div><div class="c">of imports in these twelve chapters</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>{T.chapters.imports.prevFy}</button>
-            <button class="chip"><i style="background:#C47A16"></i>{T.chapters.imports.fy}</button>
-          </div>
-          <div class="plotzone"><div id="plot-chapm" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-chapm" set:html={CH.chapters("imports")} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Commerce, TradeStat (DGCI&amp;S), MEIDB: March tables, April-to-March totals.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
@@ -501,7 +371,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
           </div>
           <div class="now">
             <span class="mk">As of {T.chapters.imports.fy}</span>
-            <p>The top import chapter was <span id="ex-c-m1">–</span> at <b id="ex-c-m1v">–</b>, then <span id="ex-c-m2">–</span> at <b id="ex-c-m2v">–</b>.</p>
+            <p>The top import chapter was <span id="ex-c-m1" set:html={W["ex-c-m1"]}></span> at <b id="ex-c-m1v" set:html={W["ex-c-m1v"]}></b>, then <span id="ex-c-m2" set:html={W["ex-c-m2"]}></span> at <b id="ex-c-m2v" set:html={W["ex-c-m2v"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -515,13 +385,13 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
       <figure id="cb-partners" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3><span id="h-partners">–</span></h3>
+            <h3><span id="h-partners" set:html={W["h-partners"]}></span></h3>
             <div class="sub">Trade balance with India's ten largest deficit partners and ten largest surplus partners, US$ billion, {T.partners.fy}. Exports minus imports.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-partners">–</div><div class="c">deficit with China, {T.partners.fy}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-partners" set:html={W["pv-partners"]}></div><div class="c">deficit with China, {T.partners.fy}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-partners" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-partners" set:html={CH.partners()} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Commerce, TradeStat (DGCI&amp;S), MEIDB region-wise tables, March cumulatives. Balance computed as exports minus imports.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
@@ -534,7 +404,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
           </div>
           <div class="now">
             <span class="mk">As of {T.partners.fy}</span>
-            <p>India ran a deficit with <b id="ex-p-n">–</b> of <span id="ex-p-of">–</span> partners. Deficit with China <b id="ex-p-cn">–</b>; surplus with the United States <b id="ex-p-us">–</b>.</p>
+            <p>India ran a deficit with <b id="ex-p-n" set:html={W["ex-p-n"]}></b> of <span id="ex-p-of" set:html={W["ex-p-of"]}></span> partners. Deficit with China <b id="ex-p-cn" set:html={W["ex-p-cn"]}></b>; surplus with the United States <b id="ex-p-us" set:html={W["ex-p-us"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -544,17 +414,13 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
       <figure id="cb-chinaus" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3><span id="h-chinaus">–</span></h3>
+            <h3><span id="h-chinaus" set:html={W["h-chinaus"]}></span></h3>
             <div class="sub">Trade balance with China and with the United States, US$ billion, financial years 2009-10 to {fyOf(T.chinaus.dates.at(-1))}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-chinaus">–</div><div class="c">imports from China, {fyOf(T.chinaus.dates.at(-1))}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-chinaus" set:html={W["pv-chinaus"]}></div><div class="c">imports from China, {fyOf(T.chinaus.dates.at(-1))}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>United States</button>
-            <button class="chip"><i style="background:#C47A16"></i>China</button>
-          </div>
-          <div class="plotzone"><div id="plot-chinaus" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-chinaus" set:html={CH.chinaus()} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Commerce, TradeStat, total trade by country (FTSPCC), March tables, revised where available.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
@@ -567,7 +433,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
           </div>
           <div class="now">
             <span class="mk">As of {fyOf(T.chinaus.dates.at(-1))}</span>
-            <p>India bought <b id="ex-cu-cnm">–</b> from China and sold it <b id="ex-cu-cnx">–</b>. It sold the United States <b id="ex-cu-usx">–</b> and bought <b id="ex-cu-usm">–</b>.</p>
+            <p>India bought <b id="ex-cu-cnm" set:html={W["ex-cu-cnm"]}></b> from China and sold it <b id="ex-cu-cnx" set:html={W["ex-cu-cnx"]}></b>. It sold the United States <b id="ex-cu-usx" set:html={W["ex-cu-usx"]}></b> and bought <b id="ex-cu-usm" set:html={W["ex-cu-usm"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -578,12 +444,12 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
         <div class="plate-head">
           <div class="t">
             <h3>What goes to America, and what comes from China</h3>
-            <div class="sub">The ten largest HS chapters in India's exports to the United States and its imports from China, US$ billion, <span id="sub-cxc">–</span>.</div>
+            <div class="sub">The ten largest HS chapters in India's exports to the United States and its imports from China, US$ billion, <span id="sub-cxc" set:html={W["sub-cxc"]}></span>.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-cxc">–</div><div class="c">electrical machinery from China</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-cxc" set:html={W["pv-cxc"]}></div><div class="c">electrical machinery from China</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-cxc" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-cxc" set:html={CH.cxc()} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Commerce, TradeStat (DGCI&amp;S), MEIDB country-wise all-commodities tables, March cumulatives.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
@@ -596,7 +462,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
           </div>
           <div class="now">
             <span class="mk">As of {T.cxc ? T.cxc.us.fy : T.partners.fy}</span>
-            <p>Top export to the United States: <span id="ex-x-us1">–</span>, <b id="ex-x-us1v">–</b>. Top import from China: <span id="ex-x-cn1">–</span>, <b id="ex-x-cn1v">–</b>.</p>
+            <p>Top export to the United States: <span id="ex-x-us1" set:html={W["ex-x-us1"]}></span>, <b id="ex-x-us1v" set:html={W["ex-x-us1v"]}></b>. Top import from China: <span id="ex-x-cn1" set:html={W["ex-x-cn1"]}></span>, <b id="ex-x-cn1v" set:html={W["ex-x-cn1v"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -606,17 +472,13 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
       <figure id="cb-regions" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3><span id="h-regions">–</span></h3>
+            <h3><span id="h-regions" set:html={W["h-regions"]}></span></h3>
             <div class="sub">Exports and imports by region, US$ billion, {T.partners.fy}. TradeStat's regions; small territories it does not assign sit under "unspecified".</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-regions">–</div><div class="c">of imports from Asia</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-regions" set:html={W["pv-regions"]}></div><div class="c">of imports from Asia</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Exports</button>
-            <button class="chip"><i style="background:#C47A16"></i>Imports</button>
-          </div>
-          <div class="plotzone"><div id="plot-regions" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-regions" set:html={CH.regions()} />
           <div class="plotfoot">
             <span class="src">Source: Ministry of Commerce, TradeStat (DGCI&amp;S), MEIDB region-wise tables, March cumulatives.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
@@ -629,7 +491,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
           </div>
           <div class="now">
             <span class="mk">As of {T.partners.fy}</span>
-            <p>Asia took <b id="ex-r-ax">–</b> of India's exports and supplied <b id="ex-r-am">–</b> of its imports.</p>
+            <p>Asia took <b id="ex-r-ax" set:html={W["ex-r-ax"]}></b> of India's exports and supplied <b id="ex-r-am" set:html={W["ex-r-am"]}></b> of its imports.</p>
           </div>
         </div>
       </figure>
@@ -643,19 +505,13 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
       <figure id="cb-tot" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3><span id="h-tot">–</span></h3>
+            <h3><span id="h-tot" set:html={W["h-tot"]}></span></h3>
             <div class="sub">Unit value (price) and quantum (volume) indices of exports and imports, 2012-13 = 100, financial years 2013-14 to {fyOf(T.tot.dates.at(-1))}. DGCI&amp;S indices.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-tot">–</div><div class="c">net terms of trade, latest year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-tot" set:html={W["pv-tot"]}></div><div class="c">net terms of trade, latest year</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Export prices</button>
-            <button class="chip"><i style="background:#C47A16"></i>Import prices</button>
-            <button class="chip"><i class="dash"></i>Export volume</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Import volume</button>
-          </div>
-          <div class="plotzone"><div id="plot-tot" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-tot" set:html={CH.tot()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, DBIE report 379 (DGCI&amp;S index numbers), base 2012-13 = 100. The export volume index for the latest year is withheld: see the note below.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -669,7 +525,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
           </div>
           <div class="now">
             <span class="mk">As of {fyOf(T.tot.dates.at(-1))}</span>
-            <p>Export prices stood at <b id="ex-t-ux">–</b> and import prices at <b id="ex-t-um">–</b> (2012-13 = 100). <span id="ex-t-withheld">–</span></p>
+            <p>Export prices stood at <b id="ex-t-ux" set:html={W["ex-t-ux"]}></b> and import prices at <b id="ex-t-um" set:html={W["ex-t-um"]}></b> (2012-13 = 100). <span id="ex-t-withheld" set:html={W["ex-t-withheld"]}></span></p>
           </div>
         </div>
       </figure>
@@ -679,17 +535,13 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
       <figure id="cb-crude" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3><span id="h-crude">–</span></h3>
+            <h3><span id="h-crude" set:html={W["h-crude"]}></span></h3>
             <div class="sub">Crude oil produced in India and crude oil imported, million tonnes, financial years 1972-73 to {fyOf(T.crude.dates.at(-1))}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-crude">–</div><div class="c">imported share, latest year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-crude" set:html={W["pv-crude"]}></div><div class="c">imported share, latest year</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#C47A16"></i>Imported</button>
-            <button class="chip"><i style="background:#5F6675"></i>Produced in India</button>
-          </div>
-          <div class="plotzone"><div id="plot-crude" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-crude" set:html={CH.crude()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics on the Indian Economy (DBIE report 148), Ministry of Petroleum and Natural Gas data. The RBI's table repeats 1998-99 to 2007-08 in the rows for 1988-89 to 1997-98, so those ten years are left blank.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -702,7 +554,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
           </div>
           <div class="now">
             <span class="mk">As of {fyOf(T.crude.dates.at(-1))}</span>
-            <p>Imported <b id="ex-cr-imp">–</b>, produced <b id="ex-cr-prod">–</b>.</p>
+            <p>Imported <b id="ex-cr-imp" set:html={W["ex-cr-imp"]}></b>, produced <b id="ex-cr-prod" set:html={W["ex-cr-prod"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -712,17 +564,13 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
       <figure id="cb-ccy" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3><span id="h-ccy">–</span></h3>
+            <h3><span id="h-ccy" set:html={W["h-ccy"]}></span></h3>
             <div class="sub">Growth of merchandise exports over the previous year, in US dollars and in rupees, per cent, financial years 1991-92 to {fyOf(T.ccy.dates.at(-1))}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-ccy">–</div><div class="c">years when rupee growth beat dollar growth</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-ccy" set:html={W["pv-ccy"]}></div><div class="c">years when rupee growth beat dollar growth</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>In US dollars</button>
-            <button class="chip"><i style="background:#C47A16"></i>In rupees</button>
-          </div>
-          <div class="plotzone"><div id="plot-ccy" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-ccy" set:html={CH.ccy()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, DBIE reports 649 (US$) and 432 (₹), DGCI&amp;S data. Growth computed from the annual values.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -735,7 +583,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
           </div>
           <div class="now">
             <span class="mk">As of {fyOf(T.ccy.dates.at(-1))}</span>
-            <p>Exports grew <b id="ex-cc-usd">–</b> in dollars and <b id="ex-cc-inr">–</b> in rupees.</p>
+            <p>Exports grew <b id="ex-cc-usd" set:html={W["ex-cc-usd"]}></b> in dollars and <b id="ex-cc-inr" set:html={W["ex-cc-inr"]}></b> in rupees.</p>
           </div>
         </div>
       </figure>
@@ -758,11 +606,11 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
             </select></label>
             <label>Flow <select id="xp-flow"><option value="exports">Exports</option><option value="imports">Imports</option></select></label>
             <label class="xp-q">Find <input id="xp-q" type="search" placeholder="rice, 8517, Japan" autocomplete="off"></label>
-            <span class="xp-n" id="xp-n">–</span>
+            <span class="xp-n" id="xp-n">{XS.n}</span>
           </div>
           <div class="ledger xp-table">
             <table>
-              <thead><tr><th data-k="code">Code</th><th data-k="label">Description</th><th data-k="cur" class="n" id="xp-h-cur">–</th><th data-k="prev" class="n" id="xp-h-prev">–</th><th data-k="chg" class="n">Change</th></tr></thead>
+              <thead><tr><th data-k="code">Code</th><th data-k="label">Description</th><th data-k="cur" class="n" id="xp-h-cur">{XS.cur}</th><th data-k="prev" class="n" id="xp-h-prev">{XS.prev}</th><th data-k="chg" class="n">Change</th></tr></thead>
               <tbody id="xp-body"></tbody>
             </table>
           </div>
@@ -808,7 +656,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Commodity and partner detail: Ministry of Commerce and Industry, TradeStat (tradestat.commerce.gov.in), which publishes DGCI&amp;S customs data: the monthly export-import data bank (MEIDB), principal-commodity tables (FTPA and FTSPCC). The long history and the oil split: RBI, Database on Indian Economy, read from India Atlas's archived copy of DBIE. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Commodity and partner detail: Ministry of Commerce and Industry, TradeStat (tradestat.commerce.gov.in), which publishes DGCI&amp;S customs data: the monthly export-import data bank (MEIDB), principal-commodity tables (FTPA and FTSPCC). The long history and the oil split: RBI, Database on Indian Economy, read from India Atlas's archived copy of DBIE. Data vintage <b id="prov-vintage" set:html={W["prov-vintage"]}></b>.</p>
         <p>Checked against the Ministry's quick-estimates release of 13 August 2026: gold imports for July 2025 (US$ 3,974 million), rice exports (US$ 921 million) and coal imports (US$ 2,361 million) match these tables to the million, and 2025-26 exports total US$ 441,452 million in both.</p>
       </div>
       <div>
@@ -827,25 +675,17 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
     </div>
     <div class="fine">
       <span>India Atlas, merchandise trade</span>
-      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Vintage <span id="prov-vintage2" set:html={W["prov-vintage2"]}></span></span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
 
 </div>
-<script type="application/json" id="trade-data" set:html={JSON.stringify(T)}></script>
+<script type="application/json" id="trade-xp" set:html={JSON.stringify(XP)}></script>
 <style is:global>
-  /* trade guide only: the small-multiple grid of named goods and the every-cut explorer */
+  /* trade guide only: the every-cut explorer */
   .now b{white-space:nowrap}
   .qe-note{font-family:var(--sans);font-size:.88rem;color:var(--ink-soft);margin:22px 0 0;max-width:880px}
-  .sm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:26px 30px}
-  .sm-panel{border-top:1px solid var(--rule);padding-top:10px;position:relative;min-width:0}
-  .sm-panel .sm-t{font-family:var(--sans);font-size:.8rem;color:var(--grey1);line-height:1.45;padding-right:72px;min-height:2.4em}
-  .sm-panel .sm-t small{display:block;color:var(--muted)}
-  .sm-panel .sm-v{position:absolute;top:10px;right:0;font-family:var(--sans);font-size:.82rem;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
-  .sm-panel svg{width:100%;height:auto;display:block}
-  @media (max-width:900px){.sm-grid{grid-template-columns:repeat(2,1fr)}}
-  @media (max-width:520px){.sm-grid{grid-template-columns:1fr}}
   .xp-controls{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:flex-end;font-family:var(--sans);font-size:.85rem;color:var(--ink-soft);padding:6px 0 18px}
   .xp-controls label{display:flex;flex-direction:column;gap:5px}
   .xp-controls select,.xp-controls input{font:inherit;color:var(--ink);background:#fff;border:1px solid var(--rule-2);padding:6px 8px;min-width:150px}

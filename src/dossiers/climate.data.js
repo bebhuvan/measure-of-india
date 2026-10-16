@@ -2,8 +2,8 @@
 //
 // The guide draws on 62 bundles (about 12 MB); a page may not ship that. This module
 // reads the bundles in Node when the page is built and keeps only what the plates draw
-// and the copy names. The page embeds the result as JSON; climate.client.js draws from
-// it; scripts/qc.mjs recomputes the rendered figures from the bundles independently.
+// and the copy names. The page quotes it and climate.charts.js draws the plates from it at
+// build time; scripts/qc.mjs recomputes the rendered figures from the bundles independently.
 //
 // Every derived number is arithmetic on published values, stated where it is shown:
 //   - "change" between two periods is the difference of the two periods' means, computed

@@ -1,5 +1,7 @@
 ---
 import Learn from "../layouts/Learn.astro";
+import * as CH from "./monsoon-and-food-prices.charts.js";
+const NUM = CH.NUM;
 ---
 <Learn
   title="The monsoon and food prices · India Atlas"
@@ -60,12 +62,12 @@ import Learn from "../layouts/Learn.astro";
             <h3>Rain in July, the print by winter: the lag, drawn once</h3>
             <div class="sub">CPI food &amp; beverages, year-on-year, shaded: the 2019 monsoon months, Jan 2016 to Dec 2025</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-mo">–</div><div class="c">Dec 2025, food y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-mo" set:html={NUM["pv-mo"]}></div><div class="c">Dec 2025, food y/y</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-monsoon"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-monsoon" set:html={CH.monsoon()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, CPI food &amp; beverages group, base 2012=100, vintage <span id="pf-mo">–</span>, episodes dated by the prints they produced</span>
+            <span class="src">Source: MoSPI, CPI food &amp; beverages group, base 2012=100, vintage <span id="pf-mo" set:html={NUM["pf-mo"]}></span>, episodes dated by the prints they produced</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -81,8 +83,8 @@ import Learn from "../layouts/Learn.astro";
           </div>
           <div class="now">
             <span class="mk">The 2019 onion case</span>
-            <p>The 2019 monsoon was late, and the unseasonal autumn rain that followed it rotted stored onions across the growing belt. By December 2019 food inflation had reached <b id="mo-onion">–</b>, the decade's highest reading, months after the rain had done its damage. Nothing about the December economy explained the December print. The explanation had fallen from the sky earlier that year.</p>
-            <p>The mirror image came six years on: after the spike of 2023 and a normal monsoon, food inflation fell through zero and bottomed at <b id="mo-defl">–</b> in October 2025, closing the year at <b id="mo-dec25">–</b>. The same lag delivered relief that had once delivered pain.</p>
+            <p>The 2019 monsoon was late, and the unseasonal autumn rain that followed it rotted stored onions across the growing belt. By December 2019 food inflation had reached <b id="mo-onion" set:html={NUM["mo-onion"]}></b>, the decade's highest reading, months after the rain had done its damage. Nothing about the December economy explained the December print. The explanation had fallen from the sky earlier that year.</p>
+            <p>The mirror image came six years on: after the spike of 2023 and a normal monsoon, food inflation fell through zero and bottomed at <b id="mo-defl" set:html={NUM["mo-defl"]}></b> in October 2025, closing the year at <b id="mo-dec25" set:html={NUM["mo-dec25"]}></b>. The same lag delivered relief that had once delivered pain.</p>
           </div>
         </div>
       </figure>
@@ -149,7 +151,4 @@ import Learn from "../layouts/Learn.astro";
     <p>Companion guide: <a href="/guides/cpi/">Consumer Price Index</a>.</p>
   </div>
 
-<script>
-  import "./monsoon-and-food-prices.client.js";
-</script>
 </Learn>

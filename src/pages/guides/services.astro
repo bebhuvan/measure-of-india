@@ -10,20 +10,6 @@ import { dateStamp } from "../../dossiers/display.js";
 import { period, word } from "../../dossiers/periods.js";
 const D = bySlug["services"];
 const load = (slug) => JSON.parse(fs.readFileSync(`data/series/${slug}.json`, "utf8"));
-// the large bundles ride in the page as picks of the series the plates draw; the whole files
-// are in the downloads and the every-series table below (CONTRACT-render: page JS budget)
-const pick = (slug, re) => { const b = load(slug); return { meta: { vintage: b.meta.vintage, versions: b.meta.versions ?? null }, dates: b.dates,
-  series: Object.fromEntries(Object.entries(b.series).filter(([k]) => re.test(k)).map(([k, s]) => [k, { name: s.name, label: s.label, color: s.color, data: s.data }])) }; };
-const PICK = {
-  "services-bop-quarterly": pick("services-bop-quarterly", /^1_a_b(_\d+)?_(credit|debit|net)$/),
-  "services-invisibles-quarterly": pick("services-invisibles-quarterly", /^r(41|56|57|60|63|68)$/),
-  // the revamped PLFS design's calendar years only: 2023-24 (original design) is services-jobs-cy, a different ruler
-  "services-jobs-cy25": pick("services-jobs-cy25", /^(sec_[a-u]__(person|female|male)_all_ps|tertiary__(person|male|female)_(all|rural|urban)_cws)$/),
-  "services-jobs-ay": pick("services-jobs-ay", /^(own_account|helper|regular|casual|self_employed)__(trade|transport|accommodation_food|other_services|tertiary|manufacturing)__person_all_ps$/),
-  "services-asuse": pick("services-asuse", /^(establishments__estimated_no_of_establishments__.*__combined__all|workers__all__all__.*__combined__all|gva_per_worker__.*__(combined|rural|urban)__all)$/),
-  "services-asuse-profile": pick("services-asuse-profile", /^location__.*__combined__all$/),
-};
-const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
 const PS = period("services-gva-2022-share"), PT = period("services-trade-monthly"), PI = period("services-isp-growth");
 const fy = (p) => `${p.year}-${String((+p.year + 1) % 100).padStart(2, "0")}`;
 // review-a (2026-10): the trial ISP plate's title is counted from the latest month, not typed
@@ -35,6 +21,96 @@ const capW = (t) => t.charAt(0).toUpperCase() + t.slice(1);
 const ISP_TITLE = `${capW(word(ispDD))} of the ${word(ispRows.length)} service sub-sectors are growing in double digits; ` +
   (ispNeg.length ? `${listW(ispNeg.map((r) => r.label.toLowerCase()))} ${ispNeg.length === 1 ? "is" : "are"} shrinking` : "none is shrinking");
 const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) => v < 0)).map((r) => r.label.toLowerCase());
+// the plates are drawn at build time (src/dossiers/services.charts.js); every number the page
+// names is set here, from the same bundles, so the page ships no data and no chart code
+import * as CH from "../../dossiers/services.charts.js";
+import * as fmt from "../../charts/format.js";
+import { numWord } from "../../dossiers/precision.js";
+const { share22, growth22, share11, gdpInd, ispAnnual, tradeM, bopA, bopQ, invQ, jobsCy, jobsAy, AS, asY, asFy, asKey, locVal, lastIdx, fyOf } = CH;
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const M3 = MONTHS.map((m) => m.slice(0, 3));
+const monthOf = (iso) => `${MONTHS[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}`;
+const qOf = (iso) => { const m = +iso.slice(5, 7) - 1; return `${M3[m]} to ${M3[m + 2]} ${iso.slice(0, 4)}`; };
+const pc = (u) => `<span class="pc">${u}</span>`;
+const bn = (mn) => mn / 1000;
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+const V = {};
+{
+  const SH = share22.series, iS = lastIdx(SH.services.data), shareNow = SH.services.data[iS], shareFirst = SH.services.data[0], fyNow = fyOf(share22.dates[iS]);
+  const A = bopA.series, iA = lastIdx(A.s1_2_1_credit.data), expFY = bn(A.s1_2_1_credit.data[iA]), netFY = bn(A.s1_2_1_net.data[iA]), fyTrade = fyOf(bopA.dates[iA]);
+  const JC = jobsCy.series, yJ = jobsCy.dates.at(-1).slice(0, 4), jobsNow = JC.tertiary__person_all_cws.data.at(-1);
+  const ispL = CH.ispLatest, ispDouble = ispL.filter((d) => d.v >= 10).length, ispMonth = monthOf(CH.ispGrowth.dates.at(-1));
+  const TM = tradeM.series, tmLast = tradeM.dates.at(-1);
+  Object.assign(V, {
+    "m-latest": `${fyNow} (output), ${monthOf(tmLast)} (trade)`,
+    "n-share": shareNow.toFixed(1) + pc("%"), "d-share": `<b>${shareFirst.toFixed(1)}%</b> in ${fyOf(share22.dates[0])}`,
+    "n-exp": "$" + Math.round(expFY) + pc(" bn"), "d-exp": `<b>${fmt.bnAuto(netFY)}</b> more than India paid for services, ${fyTrade}`,
+    "n-jobs": jobsNow.toFixed(1) + pc("%"), "d-jobs": `of workers, ${yJ}, current weekly status`,
+    "n-isp": String(ispDouble) + pc(" of " + ispL.length), "d-isp": `sub-sectors grew 10% or more, ${ispMonth}`,
+    "u-reading": `${fyNow}, NAS base 2022-23; trade to ${monthOf(tmLast)}`,
+    "rb-share": shareNow.toFixed(1) + pc("%"), "rb-side": fmt.bnAuto(TM.exports.data.at(-1)), "rb-side-l": `services exports, ${monthOf(tmLast)}`,
+    "rt-fy": fyNow, "rt-est": (share22.meta.estimates.split("; ").at(-1) || "").split(": ")[1]?.toLowerCase() ?? "latest",
+  });
+  // § 02 the mix
+  const i = CH.iSub, fySub = fyOf(share22.dates[i]), p = (k) => SH[k].data[i].toFixed(1) + "%";
+  Object.assign(V, { "pv-mix": p("realty_prof"), "mix-fy": fySub, "ex-mix-fy": fySub, "ex-mix-realty": p("realty_prof"), "ex-mix-trade": p("trade_repair"), "ex-mix-other": p("other_services"), "ex-mix-fin": p("finance"), "ex-mix-svc": p("services") });
+  // § 03 two rulers
+  const pts = (b) => b.dates.map((d, k) => ({ d, v: b.series.services.data[k] })).filter((x) => x.v != null);
+  const old = pts(share11), neu = pts(share22);
+  Object.assign(V, { "pv-long": neu.at(-1).v.toFixed(1) + "%", "ex-long-old0": old[0].v.toFixed(1) + "%", "ex-long-old0y": fyOf(old[0].d), "ex-long-old1": old.at(-1).v.toFixed(1) + "%", "ex-long-old1y": fyOf(old.at(-1).d),
+    "ex-long-new0": neu[0].v.toFixed(1) + "%", "ex-long-new1": neu.at(-1).v.toFixed(1) + "%", "ex-long-new1y": fyOf(neu.at(-1).d) });
+  // § 03 growth by sub-industry
+  const G = growth22.series, { i1, rows: gr, tot } = CH.gr;
+  Object.assign(V, { "pv-growth": tot.b.toFixed(1) + "%", "ex-gr-fy": fyOf(growth22.dates[i1]), "ex-gr-top": `${gr[0].label.toLowerCase()} (${gr[0].b.toFixed(1)}%)`, "ex-gr-bot": `${gr.at(-1).label.toLowerCase()} (${gr.at(-1).b.toFixed(1)}%)`,
+    "ex-gr-tot": tot.b.toFixed(1) + "%", "ex-gr-gva": G.total_gva.data[i1].toFixed(1) + "%", "ex-gr-latest": `${fyOf(growth22.dates.at(-1))}: ${G.services.data.at(-1).toFixed(1)}%` });
+  // § 03 quarterly groups
+  const Q = gdpInd.series;
+  Object.assign(V, { "pv-quarter": fmt.pct1(Q.finance_realty.data.at(-1)), "ex-q-q": qOf(gdpInd.dates.at(-1)), "ex-q-fin": fmt.pct1(Q.finance_realty.data.at(-1)), "ex-q-trade": fmt.pct1(Q.trade_transport.data.at(-1)), "ex-q-pub": fmt.pct1(Q.public_admin.data.at(-1)) });
+  // § 04 trial ISP
+  Object.assign(V, { "pv-isp": `${ispDouble} of ${ispL.length}`, "ex-isp-m": ispMonth, "ex-isp-top": `${ispL[0].label} (${ispL[0].v.toFixed(1)}%)`, "ex-isp-bot": `${ispL.at(-1).label} (${ispL.at(-1).v.toFixed(1)}%)`,
+    "ex-isp-n": String(ispDouble), "ex-isp-neg": numWord(ispL.filter((d) => d.v < 0).length) });
+  const fyA = fyOf(ispAnnual.dates.at(-1)), ia = Object.values(ispAnnual.series).map((s) => ({ label: s.label, v: s.data.at(-1) - 100 })).filter((r) => r.v != null).sort((a, b) => b.v - a.v);
+  Object.assign(V, { "pv-ispa": ia[0].v.toFixed(1) + "%", "ispa-fy": fyA, "ex-ispa-fy": fyA, "ex-ispa-top": `${ia[0].label} (${ia[0].v.toFixed(1)}%)`, "ex-ispa-bot": `${ia.at(-1).label} (${ia.at(-1).v.toFixed(1)}%)` });
+  // § 05 trade
+  const e0i = A.s1_2_1_credit.data.findIndex((v) => v != null && v > 0), e0 = A.s1_2_1_credit.data[e0i] / 1000;
+  Object.assign(V, { "pv-trade-long": fmt.bnAuto(expFY), "ex-tl-fy": fyTrade, "ex-tl-exp": fmt.bnAuto(expFY), "ex-tl-imp": fmt.bnAuto(bn(A.s1_2_1_debit.data[iA])), "ex-tl-sw": fmt.bnAuto(bn(A.s1_2_1_5_1_credit.data[iA])),
+    "ex-tl-swsh": ((100 * A.s1_2_1_5_1_credit.data[iA]) / A.s1_2_1_credit.data[iA]).toFixed(1) + "%", "ex-tl-merch": ((100 * A.s1_2_1_credit.data[iA]) / A.s1_1_credit.data[iA]).toFixed(1) + "%",
+    "ex-tl-e0": fmt.bnAuto(e0), "ex-tl-e0y": fyOf(bopA.dates[e0i]) });
+  const yAgo = TM.exports.data[tradeM.dates.length - 13];
+  Object.assign(V, { "pv-monthly": fmt.bnFixed1(TM.exports.data.at(-1)), "ex-mo-m": monthOf(tmLast), "ex-mo-exp": fmt.bnFixed1(TM.exports.data.at(-1)), "ex-mo-imp": fmt.bnFixed1(TM.imports.data.at(-1)),
+    "ex-mo-net": fmt.bnFixed1(TM.net.data.at(-1)), "ex-mo-yoy": yAgo ? fmt.pct1Minus(100 * (TM.exports.data.at(-1) / yAgo - 1)) : "—" });
+  const { from, to, rows: cr, total } = CH.cat, ict = cr.find((r) => r.c === 9), obs = cr.find((r) => r.c === 10);
+  const spanTxt = `${M3[+from.slice(5, 7) - 1]} ${from.slice(0, 4)} to ${M3[+to.slice(5, 7) + 1]} ${to.slice(0, 4)}`;
+  Object.assign(V, { "cats-span": spanTxt, "pv-cats": ((100 * (ict.exp + obs.exp)) / total).toFixed(1) + "%", "ex-c-span": spanTxt, "ex-c-ict": fmt.bnAuto(ict.exp), "ex-c-obs": fmt.bnAuto(obs.exp),
+    "ex-c-tot": fmt.bnAuto(total), "ex-c-ip": fmt.bnAuto(cr.find((r) => r.c === 8).imp), "ex-c-tr": fmt.bnAuto(cr.find((r) => r.c === 3).imp), "ex-c-ver": (bopQ.meta.versions?.[to] ?? "").toLowerCase() });
+  const S = invQ.series, iq = invQ.dates.length - 1, i0 = invQ.dates.indexOf(`${+invQ.dates.at(-1).slice(0, 4) - 5}${invQ.dates.at(-1).slice(4)}`);
+  Object.assign(V, { "pv-gcc": fmt.bnFixed1(S.r60.data[iq] / 1000), "ex-g-q": qOf(invQ.dates.at(-1)), "ex-g-cons": fmt.bnFixed1(S.r60.data[iq] / 1000), "ex-g-cons5": i0 >= 0 ? fmt.bnFixed1(S.r60.data[i0] / 1000) : "—",
+    "ex-g-q5": i0 >= 0 ? qOf(invQ.dates[i0]) : "—", "ex-g-rd": fmt.bnFixed1(S.r57.data[iq] / 1000), "ex-g-sw": fmt.bnFixed1(S.r41.data[iq] / 1000) });
+  // § 06 who does the work
+  const jr = CH.jb.rows, jf = (c) => jr.find((r) => r.c === c);
+  Object.assign(V, { "jobs-y": yJ, "pv-jobs": CH.jb.svc.toFixed(1) + "%", "ex-j-y": yJ, "ex-j-svc": CH.jb.svc.toFixed(1) + "%", "ex-j-trade": jf("g").b.toFixed(1) + "%", "ex-j-ict": jf("j").b.toFixed(1) + "%",
+    "ex-j-edu-f": jf("p").f.toFixed(1) + "%", "ex-j-edu-m": jf("p").m.toFixed(1) + "%", "ex-j-dom-f": jf("t").f.toFixed(1) + "%", "ex-j-agri": JC.sec_a__person_all_ps.data.at(-1).toFixed(1) + "%" });
+  const years = jobsCy.dates.map((d) => d.slice(0, 4)), w = CH.who;
+  Object.assign(V, { "who-y": years.length > 1 ? `${years.at(-1)} (grey: ${years[0]}${years.length > 2 ? " to " + years.at(-2) : ""}, same design)` : years.at(-1),
+    "pv-who": w["Women, urban"].toFixed(1) + "%", "ex-w-y": years.at(-1), "ex-w-fu": w["Women, urban"].toFixed(1) + "%", "ex-w-fr": w["Women, rural"].toFixed(1) + "%", "ex-w-mu": w["Men, urban"].toFixed(1) + "%", "ex-w-mr": w["Men, rural"].toFixed(1) + "%" });
+  const J = jobsAy.series, yi = jobsAy.dates.length - 1, ay = CH.ayOf(), jp = (k) => J[k].data[yi].toFixed(1) + "%";
+  Object.assign(V, { "status-ay": ay, "pv-status": jp("regular__tertiary__person_all_ps"), "ex-s-ay": ay, "ex-s-reg": jp("regular__tertiary__person_all_ps"), "ex-s-trade-se": jp("self_employed__trade__person_all_ps"),
+    "ex-s-oth-reg": jp("regular__other_services__person_all_ps"), "ex-s-acc-cas": jp("casual__accommodation_food__person_all_ps") });
+  // § 07 the informal service economy
+  const wk = (a) => AS[asKey("workers", a)]?.data[asY], totW = wk("other_services_group") + wk("trading"), allW = wk("all_activities"), top = CH.asz.rows[0];
+  Object.assign(V, { "asize-fy": asFy, "pv-asize": (totW / 1e7).toFixed(1) + " crore", "ex-as-fy": asFy, "ex-as-tot": (totW / 1e7).toFixed(1) + " crore", "ex-as-share": ((100 * totW) / allW).toFixed(1) + "%",
+    "ex-as-top": `${top.label.toLowerCase()} (${(top.wk / 1e5).toFixed(1)} lakh)`,
+    "ex-as-est": ((AS[asKey("establishments", "trading")].data[asY] + AS[asKey("establishments", "other_services_group")].data[asY]) / 1e7).toFixed(1) + " crore" });
+  const gpw = (a) => AS[asKey("gva_per_worker", a, "combined")].data[asY];
+  Object.assign(V, { "agva-fy": asFy, "pv-agva": "₹" + fmt.inr(gpw("other_services_group")), "ex-ag-fy": asFy, "ex-ag-svc": "₹" + fmt.inr(gpw("other_services_group")), "ex-ag-tr": "₹" + fmt.inr(gpw("trading")),
+    "ex-ag-mo": "₹" + fmt.inr(Math.round(gpw("other_services_group") / 12)), "ex-ag-u": "₹" + fmt.inr(CH.agvaAll.u), "ex-ag-r": "₹" + fmt.inr(CH.agvaAll.r) });
+  const home = (a) => locVal("within_household_premises", a);
+  Object.assign(V, { "awhere-fy": asFy, "pv-awhere": home("other_services_group").toFixed(1) + "%", "ex-aw-fy": asFy, "ex-aw-svc": home("other_services_group").toFixed(1) + "%",
+    "ex-aw-ret": locVal("no_fixed", "other_retail_trade").toFixed(1) + "%", "ex-aw-pers": home("other_community_social_and_personal_service_activities").toFixed(1) + "%", "ex-aw-edu": home("education").toFixed(1) + "%" });
+  Object.assign(V, { "prov-vintage": share22.meta.vintage, "prov-vintage2": share22.meta.vintage, "prov-trade-v": bopQ.meta.vintage });
+  // plain text is escaped; the few figures that carry markup (a unit span, a bold figure) pass as HTML
+  for (const k in V) if (!/^<|<span class="pc">|^<b>/.test(V[k])) V[k] = esc(V[k]);
+}
 ---
 <Base
   title="Services · India Atlas"
@@ -46,7 +122,6 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
   canonical="https://atlas.thisindianlife.today/guides/services/"
   ogImage={`/og/${D.slug}.png`}
 >
-<script type="application/json" id="svc-data" set:html={pickJson}></script>
 <div class="page">
 
   <div class="titleblock break">
@@ -59,23 +134,23 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
       <span>Sources <b>MoSPI (national accounts, ISP, PLFS, ASUSE) and the RBI</b></span>
       <span>Frequency <b>Annual, quarterly and monthly</b></span>
       <span>Bases <b>GVA 2022-23 and 2011-12, never joined; ISP 2024-25 = 100, a trial</b></span>
-      <span>Latest <b id="m-latest">–</b></span>
+      <span>Latest <b id="m-latest" set:html={V["m-latest"]}></b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Services' share of gross value added</div><div class="v acc" id="n-share">–</div><div class="d" id="d-share">–</div><div class="nspark" id="nspark-share"></div></div>
-      <div class="num"><div class="l">Services exports in the year</div><div class="v" id="n-exp">–</div><div class="d" id="d-exp">–</div></div>
-      <div class="num"><div class="l">Share of workers in services</div><div class="v" id="n-jobs">–</div><div class="d" id="d-jobs">–</div></div>
-      <div class="num"><div class="l">Trial index, sub-sectors growing fast</div><div class="v" id="n-isp">–</div><div class="d" id="d-isp">–</div></div>
+      <div class="num"><div class="l">Services' share of gross value added</div><div class="v acc" id="n-share" set:html={V["n-share"]}></div><div class="d" id="d-share" set:html={V["d-share"]}></div><div class="nspark" id="nspark-share" set:html={CH.shareSpark()} /></div>
+      <div class="num"><div class="l">Services exports in the year</div><div class="v" id="n-exp" set:html={V["n-exp"]}></div><div class="d" id="d-exp" set:html={V["d-exp"]}></div></div>
+      <div class="num"><div class="l">Share of workers in services</div><div class="v" id="n-jobs" set:html={V["n-jobs"]}></div><div class="d" id="d-jobs" set:html={V["d-jobs"]}></div></div>
+      <div class="num"><div class="l">Trial index, sub-sectors growing fast</div><div class="v" id="n-isp" set:html={V["n-isp"]}></div><div class="d" id="d-isp" set:html={V["d-isp"]}></div></div>
     </div>
   </div>
 
   <!-- § 01 the current reading: generated prose (pipeline/slots.yml, services) -->
   <section>
-    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading" set:html={V["u-reading"]}></span></div>
     <div class="reading-top">
-      <div><span class="rk">Services, share of GVA</span><div class="big" id="rb-share">–</div></div>
-      <p class="rt-cap">The part of the year's production that comes from services, at current prices, in <span id="rt-fy">–</span> (the <span id="rt-est">–</span>), on the national accounts' 2022-23 base.</p>
-      <div class="rt-side"><span class="rk" id="rb-side-l">–</span><div class="rt-side-v" id="rb-side">–</div></div>
+      <div><span class="rk">Services, share of GVA</span><div class="big" id="rb-share" set:html={V["rb-share"]}></div></div>
+      <p class="rt-cap">The part of the year's production that comes from services, at current prices, in <span id="rt-fy" set:html={V["rt-fy"]}></span> (the <span id="rt-est" set:html={V["rt-est"]}></span>), on the national accounts' 2022-23 base.</p>
+      <div class="rt-side"><span class="rk" id="rb-side-l" set:html={V["rb-side-l"]}></span><div class="rt-side-v" id="rb-side" set:html={V["rb-side"]}></div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -91,7 +166,7 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
 
   <!-- § 02 lived reality: what counts as a service. Inputs: services-gva-2022-share (13 sub-industries) -->
   <section>
-    <div class="sec-head"><span class="no">02</span><h2>What counts as a service</h2><span class="line"></span><span class="unit">Share of GVA by service industry, <span id="mix-fy">–</span></span></div>
+    <div class="sec-head"><span class="no">02</span><h2>What counts as a service</h2><span class="line"></span><span class="unit">Share of GVA by service industry, <span id="mix-fy" set:html={V["mix-fy"]}></span></span></div>
     <div class="prose">
       <p>A service is anything sold that is not a thing: work done for you, rather than goods handed over. Follow one ordinary day. The milk and vegetables come through a shop, which is trade. The auto, the bus and the train are transport, and the phone recharge on the way is communication. The salary lands in a bank, the EMI goes out of it and the insurance premium is deducted: finance. The rent is real estate. The child's school, the clinic visit, the tailor, the barber and the cook who comes in the morning are other services. The police station, the municipal office and the army are public administration. Behind the shop counter there are also warehouses, couriers and accountants, all services.</p>
       <p>The national accounts sort these into three groups: trade, hotels, transport and communication; finance, real estate and professional services; and public administration, defence and other services. Software and the back offices of foreign banks sit in the second group, under professional services; they also lead the export figures further down.</p>
@@ -103,10 +178,10 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
             <h3>The biggest service is not software but rent, property and professional work</h3>
             <div class="sub">Each service sub-industry's share of India's gross value added at current prices, national accounts, 2022-23 base. Blue: finance, real estate and professional services; dark grey: trade, hotels, transport and communication; light grey: public administration and other services.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-mix">–</div><div class="c">real estate, dwellings and professional services</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-mix" set:html={V["pv-mix"]}></div><div class="c">real estate, dwellings and professional services</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-mix" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-mix" set:html={CH.mix()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, National Accounts Statistics, GVA by industry and sub-industry (eSankhyiki). Shares computed by India Atlas from published current-price levels.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -120,7 +195,7 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
           </div>
           <div class="now">
             <span class="mk">As of 2024-25</span>
-            <p>In <span id="ex-mix-fy">–</span>, the latest year with sub-industry detail, services were <b id="ex-mix-svc">–</b> of GVA. Real estate, dwellings and professional services were <b id="ex-mix-realty">–</b>, trade and repair <b id="ex-mix-trade">–</b>, other services such as schools, clinics and personal services <b id="ex-mix-other">–</b>, and finance <b id="ex-mix-fin">–</b>.</p>
+            <p>In <span id="ex-mix-fy" set:html={V["ex-mix-fy"]}></span>, the latest year with sub-industry detail, services were <b id="ex-mix-svc" set:html={V["ex-mix-svc"]}></b> of GVA. Real estate, dwellings and professional services were <b id="ex-mix-realty" set:html={V["ex-mix-realty"]}></b>, trade and repair <b id="ex-mix-trade" set:html={V["ex-mix-trade"]}></b>, other services such as schools, clinics and personal services <b id="ex-mix-other" set:html={V["ex-mix-other"]}></b>, and finance <b id="ex-mix-fin" set:html={V["ex-mix-fin"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -137,14 +212,10 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
             <h3>Services have taken a slowly rising share of the economy</h3>
             <div class="sub">Services' share of gross value added at current prices, financial years. Pale: the 2011-12 base; blue: the 2022-23 base. Two rulers, drawn side by side and never joined.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-long">–</div><div class="c">2022-23 base, latest year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-long" set:html={V["pv-long"]}></div><div class="c">2022-23 base, latest year</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#B9C3F3"></i>2011-12 base</button>
-            <button class="chip"><i style="background:#2E4BD8"></i>2022-23 base</button>
-          </div>
-          <div class="plotzone"><div id="plot-long" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-long" set:html={CH.long()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, National Accounts Statistics. "Services" is the sum of the three published service groups, or of their six parts where only the parts are published; computed by India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -158,7 +229,7 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
           </div>
           <div class="now">
             <span class="mk">As of 2025-26</span>
-            <p>On the old base the share went from <b id="ex-long-old0">–</b> in <span id="ex-long-old0y">–</span> to <b id="ex-long-old1">–</b> in <span id="ex-long-old1y">–</span>, the last year it was estimated. On the new base it went from <b id="ex-long-new0">–</b> in 2022-23 to <b id="ex-long-new1">–</b> in <span id="ex-long-new1y">–</span>. The latest years on both bases are early estimates and will be revised.</p>
+            <p>On the old base the share went from <b id="ex-long-old0" set:html={V["ex-long-old0"]}></b> in <span id="ex-long-old0y" set:html={V["ex-long-old0y"]}></span> to <b id="ex-long-old1" set:html={V["ex-long-old1"]}></b> in <span id="ex-long-old1y" set:html={V["ex-long-old1y"]}></span>, the last year it was estimated. On the new base it went from <b id="ex-long-new0" set:html={V["ex-long-new0"]}></b> in 2022-23 to <b id="ex-long-new1" set:html={V["ex-long-new1"]}></b> in <span id="ex-long-new1y" set:html={V["ex-long-new1y"]}></span>. The latest years on both bases are early estimates and will be revised.</p>
           </div>
         </div>
       </figure>
@@ -171,14 +242,10 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
             <h3>Air travel, storage and phones grew fastest; hotels, roads and railways slowest</h3>
             <div class="sub">Real growth of each service sub-industry, the two latest years with sub-industry detail, 2022-23 base. Dashed line: all services.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-growth">–</div><div class="c">all services, real growth</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-growth" set:html={V["pv-growth"]}></div><div class="c">all services, real growth</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i><span id="lg-growth-a">–</span></button>
-            <button class="chip"><i style="background:#2E4BD8"></i><span id="lg-growth-b">–</span></button>
-          </div>
-          <div class="plotzone"><div id="plot-growth" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-growth" set:html={CH.growth()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, National Accounts Statistics, GVA at constant 2022-23 prices. Growth computed by India Atlas from published levels.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -191,7 +258,7 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
           </div>
           <div class="now">
             <span class="mk">As of 2024-25</span>
-            <p>In <span id="ex-gr-fy">–</span> the fastest was <b id="ex-gr-top">–</b> and the slowest <b id="ex-gr-bot">–</b>. All services grew <b id="ex-gr-tot">–</b>, against <b id="ex-gr-gva">–</b> for the whole economy's GVA. The next year has group totals but no sub-industry detail yet (<span id="ex-gr-latest">–</span> for all services).</p>
+            <p>In <span id="ex-gr-fy" set:html={V["ex-gr-fy"]}></span> the fastest was <b id="ex-gr-top" set:html={V["ex-gr-top"]}></b> and the slowest <b id="ex-gr-bot" set:html={V["ex-gr-bot"]}></b>. All services grew <b id="ex-gr-tot" set:html={V["ex-gr-tot"]}></b>, against <b id="ex-gr-gva" set:html={V["ex-gr-gva"]}></b> for the whole economy's GVA. The next year has group totals but no sub-industry detail yet (<span id="ex-gr-latest" set:html={V["ex-gr-latest"]}></span> for all services).</p>
           </div>
         </div>
       </figure>
@@ -204,10 +271,10 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
             <h3>Trade and transport swing the most; finance and property grow more steadily</h3>
             <div class="sub">Real growth of the three service groups over the same quarter a year earlier, 2022-23 base. Drawn from the GDP guide's quarterly industry table.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-quarter">–</div><div class="c">finance, real estate, professional, latest quarter</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-quarter" set:html={V["pv-quarter"]}></div><div class="c">finance, real estate, professional, latest quarter</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-quarter" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-quarter" set:html={CH.quarter()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, quarterly estimates of GDP, GVA by industry at constant prices. Growth computed by India Atlas from levels.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -220,7 +287,7 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
           </div>
           <div class="now">
             <span class="mk">As of Apr to Jun 2026</span>
-            <p>In <span id="ex-q-q">–</span>, finance, real estate and professional services grew <b id="ex-q-fin">–</b>; trade, hotels, transport and communication <b id="ex-q-trade">–</b>; public administration and other services <b id="ex-q-pub">–</b>.</p>
+            <p>In <span id="ex-q-q" set:html={V["ex-q-q"]}></span>, finance, real estate and professional services grew <b id="ex-q-fin" set:html={V["ex-q-fin"]}></b>; trade, hotels, transport and communication <b id="ex-q-trade" set:html={V["ex-q-trade"]}></b>; public administration and other services <b id="ex-q-pub" set:html={V["ex-q-pub"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -238,16 +305,12 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
         <div class="plate-head">
           <div class="t">
             <h3>{ISP_TITLE}</h3>
-            <div class="sub">Trial ISP, growth over the same month a year earlier, by sub-sector. Blue: the latest month; grey: the months before it. A trial series: treat every value as provisional.</div>
+            <div class="sub">Trial ISP, growth over the same month a year earlier, by sub-sector, the latest month. Blue: 10% or more. A trial series: treat every value as provisional.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-isp">–</div><div class="c">sub-sectors growing 10% or more</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-isp" set:html={V["pv-isp"]}></div><div class="c">sub-sectors growing 10% or more</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i><span id="lg-isp-m">–</span></button>
-            <button class="chip"><i style="background:#C9CED6"></i><span id="lg-isp-span">–</span></button>
-          </div>
-          <div class="plotzone"><div id="plot-isp" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-isp" set:html={CH.isp()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, trial Index of Services Production, base 2024-25 = 100 (eSankhyiki). Growth computed by India Atlas from the index; it matches MoSPI's published rates within 0.15 points. Trial series.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -260,7 +323,7 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
           </div>
           <div class="now">
             <span class="mk">As of July 2026</span>
-            <p>In <span id="ex-isp-m">–</span>, <b id="ex-isp-n">–</b> of the {word(ispRows.length)} sub-sectors grew 10% or more. The fastest was <b id="ex-isp-top">–</b> and the slowest <b id="ex-isp-bot">–</b>; <b id="ex-isp-neg">–</b> shrank.{alwaysBelow.length ? ` ${capW(listW(alwaysBelow))} ${alwaysBelow.length === 1 ? "has" : "have"} been below the year-ago level in every month of the record.` : ""}</p>
+            <p>In <span id="ex-isp-m" set:html={V["ex-isp-m"]}></span>, <b id="ex-isp-n" set:html={V["ex-isp-n"]}></b> of the {word(ispRows.length)} sub-sectors grew 10% or more. The fastest was <b id="ex-isp-top" set:html={V["ex-isp-top"]}></b> and the slowest <b id="ex-isp-bot" set:html={V["ex-isp-bot"]}></b>; <b id="ex-isp-neg" set:html={V["ex-isp-neg"]}></b> shrank.{alwaysBelow.length ? ` ${capW(listW(alwaysBelow))} ${alwaysBelow.length === 1 ? "has" : "have"} been below the year-ago level in every month of the record.` : ""}</p>
           </div>
         </div>
       </figure>
@@ -271,12 +334,12 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
         <div class="plate-head">
           <div class="t">
             <h3>Over a full year, shops, hotels and repair grew most; post and courier shrank</h3>
-            <div class="sub">Trial ISP, annual index for <span id="ispa-fy">–</span> against the base year 2024-25 = 100, shown as growth. One year is all the trial series has.</div>
+            <div class="sub">Trial ISP, annual index for <span id="ispa-fy" set:html={V["ispa-fy"]}></span> against the base year 2024-25 = 100, shown as growth. One year is all the trial series has.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-ispa">–</div><div class="c">fastest sub-sector</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-ispa" set:html={V["pv-ispa"]}></div><div class="c">fastest sub-sector</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-ispa" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-ispa" set:html={CH.ispa()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, trial Index of Services Production, annual (eSankhyiki; first release, 14 July 2026). Trial series.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -289,7 +352,7 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
           </div>
           <div class="now">
             <span class="mk">As of 2025-26</span>
-            <p>In <span id="ex-ispa-fy">–</span>, the fastest sub-sector was <b id="ex-ispa-top">–</b> and the slowest <b id="ex-ispa-bot">–</b>.</p>
+            <p>In <span id="ex-ispa-fy" set:html={V["ex-ispa-fy"]}></span>, the fastest sub-sector was <b id="ex-ispa-top" set:html={V["ex-ispa-top"]}></b> and the slowest <b id="ex-ispa-bot" set:html={V["ex-ispa-bot"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -309,10 +372,10 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
             <h3>Seventy-five years of services trade, and the software boom inside it</h3>
             <div class="sub">India's services receipts (exports) and payments (imports), and software receipts, US$ billion a year, financial years from 1950-51, logarithmic scale: each step up is ten times the one below.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-trade-long">–</div><div class="c">services exports, latest year</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-trade-long" set:html={V["pv-trade-long"]}></div><div class="c">services exports, latest year</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-trade-long" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-trade-long" set:html={CH.tradeLong()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics on the Indian Economy, invisibles by category of transactions (DBIE report 807). Software services are shown from 1997-98, the first year the table separates them.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -325,7 +388,7 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
           </div>
           <div class="now">
             <span class="mk">As of 2025-26</span>
-            <p>In <span id="ex-tl-fy">–</span> India exported <b id="ex-tl-exp">–</b> of services and imported <b id="ex-tl-imp">–</b>. Software alone was <b id="ex-tl-sw">–</b>, or <b id="ex-tl-swsh">–</b> of services exports. Services exports were <b id="ex-tl-merch">–</b> of the value of merchandise exports. In <span id="ex-tl-e0y">–</span> they were <b id="ex-tl-e0">–</b>.</p>
+            <p>In <span id="ex-tl-fy" set:html={V["ex-tl-fy"]}></span> India exported <b id="ex-tl-exp" set:html={V["ex-tl-exp"]}></b> of services and imported <b id="ex-tl-imp" set:html={V["ex-tl-imp"]}></b>. Software alone was <b id="ex-tl-sw" set:html={V["ex-tl-sw"]}></b>, or <b id="ex-tl-swsh" set:html={V["ex-tl-swsh"]}></b> of services exports. Services exports were <b id="ex-tl-merch" set:html={V["ex-tl-merch"]}></b> of the value of merchandise exports. In <span id="ex-tl-e0y" set:html={V["ex-tl-e0y"]}></span> they were <b id="ex-tl-e0" set:html={V["ex-tl-e0"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -338,10 +401,10 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
             <h3>Every month, India sells about twice the services it buys</h3>
             <div class="sub">Services exports and imports, US$ billion a month, as first published by the RBI. Provisional, revised when the quarterly balance of payments is compiled.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-monthly">–</div><div class="c">exports, latest month</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-monthly" set:html={V["pv-monthly"]}></div><div class="c">exports, latest month</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-monthly" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-monthly" set:html={CH.monthly()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, monthly data on India's international trade in services (DBIE report 1501, read from the Atlas's local mirror of DBIE).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -355,7 +418,7 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
           </div>
           <div class="now">
             <span class="mk">As of May 2026</span>
-            <p>In <span id="ex-mo-m">–</span>, services exports were <b id="ex-mo-exp">–</b> and imports <b id="ex-mo-imp">–</b>, a surplus of <b id="ex-mo-net">–</b>. Exports were <b id="ex-mo-yoy">–</b> above the same month a year earlier.</p>
+            <p>In <span id="ex-mo-m" set:html={V["ex-mo-m"]}></span>, services exports were <b id="ex-mo-exp" set:html={V["ex-mo-exp"]}></b> and imports <b id="ex-mo-imp" set:html={V["ex-mo-imp"]}></b>, a surplus of <b id="ex-mo-net" set:html={V["ex-mo-net"]}></b>. Exports were <b id="ex-mo-yoy" set:html={V["ex-mo-yoy"]}></b> above the same month a year earlier.</p>
           </div>
         </div>
       </figure>
@@ -366,16 +429,12 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
         <div class="plate-head">
           <div class="t">
             <h3>Computer services and business services are most of what India sells</h3>
-            <div class="sub">Services exports (blue) and imports (gold) by category, US$ billion, the four latest quarters (<span id="cats-span">–</span>), international standard BPM6.</div>
+            <div class="sub">Services exports (blue dot) and imports (ring) by category, US$ billion, the four latest quarters (<span id="cats-span" set:html={V["cats-span"]}></span>), international standard BPM6.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-cats">–</div><div class="c">of exports from these two categories</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-cats" set:html={V["pv-cats"]}></div><div class="c">of exports from these two categories</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Exports</button>
-            <button class="chip"><i style="background:#C47A16"></i>Imports</button>
-          </div>
-          <div class="plotzone"><div id="plot-cats" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-cats" set:html={CH.cats()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, standard presentation of the balance of payments (BPM6), quarterly (DBIE report 1076). The most mature version of each quarter is used.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -388,7 +447,7 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
           </div>
           <div class="now">
             <span class="mk">As of Apr to Jun 2026</span>
-            <p>Over <span id="ex-c-span">–</span>, telecom, computer and information services earned <b id="ex-c-ict">–</b> and other business services <b id="ex-c-obs">–</b>, out of <b id="ex-c-tot">–</b> of services exports. India paid <b id="ex-c-tr">–</b> for transport and <b id="ex-c-ip">–</b> to use foreign intellectual property. The latest quarter is <span id="ex-c-ver">–</span> and will be revised.</p>
+            <p>Over <span id="ex-c-span" set:html={V["ex-c-span"]}></span>, telecom, computer and information services earned <b id="ex-c-ict" set:html={V["ex-c-ict"]}></b> and other business services <b id="ex-c-obs" set:html={V["ex-c-obs"]}></b>, out of <b id="ex-c-tot" set:html={V["ex-c-tot"]}></b> of services exports. India paid <b id="ex-c-tr" set:html={V["ex-c-tr"]}></b> for transport and <b id="ex-c-ip" set:html={V["ex-c-ip"]}></b> to use foreign intellectual property. The latest quarter is <span id="ex-c-ver" set:html={V["ex-c-ver"]}></span> and will be revised.</p>
           </div>
         </div>
       </figure>
@@ -401,10 +460,10 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
             <h3>Consulting and research sold abroad have more than tripled since 2020</h3>
             <div class="sub">Receipts for professional and management consulting, technical and trade-related services, and research and development, US$ billion a quarter, from banks' purpose codes.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-gcc">–</div><div class="c">consulting receipts, latest quarter</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-gcc" set:html={V["pv-gcc"]}></div><div class="c">consulting receipts, latest quarter</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-gcc" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-gcc" set:html={CH.gcc()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, invisibles by category of transactions, receipts by purpose code, quarterly (DBIE report 1076). These tables run a few quarters behind the BPM6 table.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -417,7 +476,7 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
           </div>
           <div class="now">
             <span class="mk">As of Apr to Jun 2025</span>
-            <p>In <span id="ex-g-q">–</span>, consulting receipts were <b id="ex-g-cons">–</b>, against <b id="ex-g-cons5">–</b> five years earlier (<span id="ex-g-q5">–</span>). Research and development earned <b id="ex-g-rd">–</b> and software services, the largest single code, <b id="ex-g-sw">–</b>.</p>
+            <p>In <span id="ex-g-q" set:html={V["ex-g-q"]}></span>, consulting receipts were <b id="ex-g-cons" set:html={V["ex-g-cons"]}></b>, against <b id="ex-g-cons5" set:html={V["ex-g-cons5"]}></b> five years earlier (<span id="ex-g-q5" set:html={V["ex-g-q5"]}></span>). Research and development earned <b id="ex-g-rd" set:html={V["ex-g-rd"]}></b> and software services, the largest single code, <b id="ex-g-sw" set:html={V["ex-g-sw"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -435,17 +494,12 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
         <div class="plate-head">
           <div class="t">
             <h3>Shops employ the most service workers; women are over-represented in teaching, health and domestic work</h3>
-            <div class="sub">Share of all workers in each service industry (NIC 2008 section), <span id="jobs-y">–</span>, usual status. Ring: everyone; grey dot: men; gold dot: women (each as a share of their own workers).</div>
+            <div class="sub">Share of all workers in each service industry (NIC 2008 section), <span id="jobs-y" set:html={V["jobs-y"]}></span>, usual status. Ring: women; dot: men (each as a share of their own workers); sorted by the share of all workers, shaded where women's share is higher.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-jobs">–</div><div class="c">of workers in service industries</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-jobs" set:html={V["pv-jobs"]}></div><div class="c">of workers in service industries</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:2px solid #2E4BD8"></i>Everyone</button>
-            <button class="chip"><i style="background:#5F6675"></i>Men</button>
-            <button class="chip"><i style="background:#C47A16"></i>Women</button>
-          </div>
-          <div class="plotzone"><div id="plot-jobs" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-jobs" set:html={CH.jobs()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, Periodic Labour Force Survey, calendar-year estimates on the survey's revamped design (from January 2025), percentage distribution of workers by industry (eSankhyiki); 2023 and 2024, on the original design, are a different ruler and are in the data downloads.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -459,7 +513,7 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
           </div>
           <div class="now">
             <span class="mk">As of 2025</span>
-            <p>In <span id="ex-j-y">–</span>, service industries employed <b id="ex-j-svc">–</b> of workers, against <b id="ex-j-agri">–</b> in farming. Trade alone employed <b id="ex-j-trade">–</b>; information and communication, the home of IT, <b id="ex-j-ict">–</b>. Education employed <b id="ex-j-edu-f">–</b> of working women and <b id="ex-j-edu-m">–</b> of working men; domestic work, <b id="ex-j-dom-f">–</b> of women.</p>
+            <p>In <span id="ex-j-y" set:html={V["ex-j-y"]}></span>, service industries employed <b id="ex-j-svc" set:html={V["ex-j-svc"]}></b> of workers, against <b id="ex-j-agri" set:html={V["ex-j-agri"]}></b> in farming. Trade alone employed <b id="ex-j-trade" set:html={V["ex-j-trade"]}></b>; information and communication, the home of IT, <b id="ex-j-ict" set:html={V["ex-j-ict"]}></b>. Education employed <b id="ex-j-edu-f" set:html={V["ex-j-edu-f"]}></b> of working women and <b id="ex-j-edu-m" set:html={V["ex-j-edu-m"]}></b> of working men; domestic work, <b id="ex-j-dom-f" set:html={V["ex-j-dom-f"]}></b> of women.</p>
           </div>
         </div>
       </figure>
@@ -470,12 +524,12 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
         <div class="plate-head">
           <div class="t">
             <h3>In cities, services are most work; in villages, a small part</h3>
-            <div class="sub">Services' share of workers, current weekly status, by sex and place, <span id="who-y">–</span>, the survey's revamped design.</div>
+            <div class="sub">Services' share of workers, current weekly status, by sex and place, <span id="who-y" set:html={V["who-y"]}></span>, the survey's revamped design.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-who">–</div><div class="c">of urban women workers are in services</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-who" set:html={V["pv-who"]}></div><div class="c">of urban women workers are in services</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-who" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-who" set:html={CH.whoPlate()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, Periodic Labour Force Survey, calendar-year estimates on the revamped design, distribution of workers by broad industry, current weekly status (eSankhyiki); the original design's 2023 and 2024 figures are a different ruler, in the data downloads.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -488,7 +542,7 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
           </div>
           <div class="now">
             <span class="mk">As of 2025</span>
-            <p>In <span id="ex-w-y">–</span>, services employed <b id="ex-w-fu">–</b> of working women in towns and cities but <b id="ex-w-fr">–</b> in villages; for men the figures were <b id="ex-w-mu">–</b> and <b id="ex-w-mr">–</b>.</p>
+            <p>In <span id="ex-w-y" set:html={V["ex-w-y"]}></span>, services employed <b id="ex-w-fu" set:html={V["ex-w-fu"]}></b> of working women in towns and cities but <b id="ex-w-fr" set:html={V["ex-w-fr"]}></b> in villages; for men the figures were <b id="ex-w-mu" set:html={V["ex-w-mu"]}></b> and <b id="ex-w-mr" set:html={V["ex-w-mr"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -499,13 +553,12 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
         <div class="plate-head">
           <div class="t">
             <h3>Shopkeeping is self-employment; salaried work is in the other services</h3>
-            <div class="sub">How the workers in each service group are employed, <span id="status-ay">–</span>, usual status, per cent of the group's workers. Manufacturing for comparison.</div>
+            <div class="sub">How the workers in each service group are employed, <span id="status-ay" set:html={V["status-ay"]}></span>, usual status, per cent of the group's workers. Manufacturing for comparison.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-status">–</div><div class="c">of service workers on a regular wage or salary</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-status" set:html={V["pv-status"]}></div><div class="c">of service workers on a regular wage or salary</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="lg-status"></div>
-          <div class="plotzone"><div id="plot-status" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-status" set:html={CH.status()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, Periodic Labour Force Survey annual report (agriculture year, July to June), distribution of workers by status within each industry group (eSankhyiki).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -518,7 +571,7 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
           </div>
           <div class="now">
             <span class="mk">As of 2023-24</span>
-            <p>In <span id="ex-s-ay">–</span>, <b id="ex-s-reg">–</b> of all service workers had a regular wage or salary. In trade, <b id="ex-s-trade-se">–</b> were self-employed; in the other services, <b id="ex-s-oth-reg">–</b> were salaried. Casual labour was <b id="ex-s-acc-cas">–</b> of the workforce in hotels and food service.</p>
+            <p>In <span id="ex-s-ay" set:html={V["ex-s-ay"]}></span>, <b id="ex-s-reg" set:html={V["ex-s-reg"]}></b> of all service workers had a regular wage or salary. In trade, <b id="ex-s-trade-se" set:html={V["ex-s-trade-se"]}></b> were self-employed; in the other services, <b id="ex-s-oth-reg" set:html={V["ex-s-oth-reg"]}></b> were salaried. Casual labour was <b id="ex-s-acc-cas" set:html={V["ex-s-acc-cas"]}></b> of the workforce in hotels and food service.</p>
           </div>
         </div>
       </figure>
@@ -536,12 +589,12 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
         <div class="plate-head">
           <div class="t">
             <h3>Retail shops employ more informal service workers than anything else</h3>
-            <div class="sub">Workers in unincorporated service enterprises by activity, <span id="asize-fy">–</span>, rural and urban together, all establishment types.</div>
+            <div class="sub">Workers in unincorporated service enterprises by activity, <span id="asize-fy" set:html={V["asize-fy"]}></span>, rural and urban together, all establishment types.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-asize">–</div><div class="c">workers in informal trade and services</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-asize" set:html={V["pv-asize"]}></div><div class="c">workers in informal trade and services</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-asize" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-asize" set:html={CH.asize()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, Annual Survey of Unincorporated Sector Enterprises, estimated workers by activity (eSankhyiki).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -554,7 +607,7 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
           </div>
           <div class="now">
             <span class="mk">As of 2023-24</span>
-            <p>In <span id="ex-as-fy">–</span>, informal trade and services employed <b id="ex-as-tot">–</b> people in <b id="ex-as-est">–</b> establishments: <b id="ex-as-share">–</b> of all workers in unincorporated enterprises. The largest activity was <b id="ex-as-top">–</b>.</p>
+            <p>In <span id="ex-as-fy" set:html={V["ex-as-fy"]}></span>, informal trade and services employed <b id="ex-as-tot" set:html={V["ex-as-tot"]}></b> people in <b id="ex-as-est" set:html={V["ex-as-est"]}></b> establishments: <b id="ex-as-share" set:html={V["ex-as-share"]}></b> of all workers in unincorporated enterprises. The largest activity was <b id="ex-as-top" set:html={V["ex-as-top"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -565,16 +618,12 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
         <div class="plate-head">
           <div class="t">
             <h3>An informal service worker produces a few lakh rupees of value a year</h3>
-            <div class="sub">Gross value added per worker in unincorporated service enterprises, ₹ a year, <span id="agva-fy">–</span>. Blue: urban; ring: rural. Dashed line: all activities, urban.</div>
+            <div class="sub">Gross value added per worker in unincorporated service enterprises, ₹ a year, <span id="agva-fy" set:html={V["agva-fy"]}></span>. Blue: urban; ring: rural. Dashed line: all activities, urban.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-agva">–</div><div class="c">per worker a year, other services</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-agva" set:html={V["pv-agva"]}></div><div class="c">per worker a year, other services</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Urban</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>Rural</button>
-          </div>
-          <div class="plotzone"><div id="plot-agva" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-agva" set:html={CH.agva()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, Annual Survey of Unincorporated Sector Enterprises, annual GVA per worker, market establishments (eSankhyiki).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -588,7 +637,7 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
           </div>
           <div class="now">
             <span class="mk">As of 2023-24</span>
-            <p>In <span id="ex-ag-fy">–</span>, an informal worker in other services produced <b id="ex-ag-svc">–</b> a year, about <b id="ex-ag-mo">–</b> a month; in trade, <b id="ex-ag-tr">–</b>. Across all informal activities the figure was <b id="ex-ag-u">–</b> in towns and <b id="ex-ag-r">–</b> in villages.</p>
+            <p>In <span id="ex-ag-fy" set:html={V["ex-ag-fy"]}></span>, an informal worker in other services produced <b id="ex-ag-svc" set:html={V["ex-ag-svc"]}></b> a year, about <b id="ex-ag-mo" set:html={V["ex-ag-mo"]}></b> a month; in trade, <b id="ex-ag-tr" set:html={V["ex-ag-tr"]}></b>. Across all informal activities the figure was <b id="ex-ag-u" set:html={V["ex-ag-u"]}></b> in towns and <b id="ex-ag-r" set:html={V["ex-ag-r"]}></b> in villages.</p>
           </div>
         </div>
       </figure>
@@ -599,13 +648,12 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
         <div class="plate-head">
           <div class="t">
             <h3>Many service businesses are run from home or from the street</h3>
-            <div class="sub">Where unincorporated service enterprises operate, share of establishments, <span id="awhere-fy">–</span>, rural and urban together. Sorted by the share run from home.</div>
+            <div class="sub">Where unincorporated service enterprises operate, share of establishments, <span id="awhere-fy" set:html={V["awhere-fy"]}></span>, rural and urban together. Sorted by the share run from home.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-awhere">–</div><div class="c">of other-service businesses run from home</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-awhere" set:html={V["pv-awhere"]}></div><div class="c">of other-service businesses run from home</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="lg-awhere"></div>
-          <div class="plotzone"><div id="plot-awhere" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-awhere" set:html={CH.awhere()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, Annual Survey of Unincorporated Sector Enterprises, per 1,000 distribution of establishments by type of location (eSankhyiki). "No fixed place" adds the survey's mobile-market and street-vendor categories.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
@@ -618,7 +666,7 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
           </div>
           <div class="now">
             <span class="mk">As of 2023-24</span>
-            <p>In <span id="ex-aw-fy">–</span>, <b id="ex-aw-svc">–</b> of other-service establishments were run from home: <b id="ex-aw-pers">–</b> of personal services and <b id="ex-aw-edu">–</b> of education. Among retail shops, <b id="ex-aw-ret">–</b> had no fixed place of business.</p>
+            <p>In <span id="ex-aw-fy" set:html={V["ex-aw-fy"]}></span>, <b id="ex-aw-svc" set:html={V["ex-aw-svc"]}></b> of other-service establishments were run from home: <b id="ex-aw-pers" set:html={V["ex-aw-pers"]}></b> of personal services and <b id="ex-aw-edu" set:html={V["ex-aw-edu"]}></b> of education. Among retail shops, <b id="ex-aw-ret" set:html={V["ex-aw-ret"]}></b> had no fixed place of business.</p>
           </div>
         </div>
       </figure>
@@ -660,7 +708,7 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
     <div class="cols">
       <div>
         <h6>Sources of record</h6>
-        <p>Ministry of Statistics and Programme Implementation, National Statistics Office: National Accounts Statistics (GVA by industry and sub-industry, 2011-12 and 2022-23 bases), the trial Index of Services Production (base 2024-25), the Periodic Labour Force Survey and the Annual Survey of Unincorporated Sector Enterprises, all through the eSankhyiki API. Reserve Bank of India: monthly trade in services, the balance of payments by category and purpose code, and the long annual invisibles table, from its Database on Indian Economy through the Atlas's local, read-only mirror. Data vintage <b id="prov-vintage">–</b>; trade vintage <b id="prov-trade-v">–</b>.</p>
+        <p>Ministry of Statistics and Programme Implementation, National Statistics Office: National Accounts Statistics (GVA by industry and sub-industry, 2011-12 and 2022-23 bases), the trial Index of Services Production (base 2024-25), the Periodic Labour Force Survey and the Annual Survey of Unincorporated Sector Enterprises, all through the eSankhyiki API. Reserve Bank of India: monthly trade in services, the balance of payments by category and purpose code, and the long annual invisibles table, from its Database on Indian Economy through the Atlas's local, read-only mirror. Data vintage <b id="prov-vintage" set:html={V["prov-vintage"]}></b>; trade vintage <b id="prov-trade-v" set:html={V["prov-trade-v"]}></b>.</p>
         <p>Checked by hand against the agencies' own releases: MoSPI's first ISP release (14 July 2026: retail trade 130.5 for 2025-26, 137.50 for April 2026) and its 29 July release (retail trade up 13.3% in May 2026); the RBI's balance-of-payments press release of 27 June 2025 (net services US$ 53.3 billion in January to March 2025, US$ 42.7 billion a year earlier); and its 30 June 2026 release on monthly services trade (May 2026 receipts US$ 33,355 million, payments US$ 17,637 million).</p>
       </div>
       <div>
@@ -678,7 +726,7 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
     </div>
     <div class="fine">
       <span>India Atlas, services</span>
-      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Vintage <span id="prov-vintage2" set:html={V["prov-vintage2"]}></span></span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
@@ -688,6 +736,5 @@ const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) =>
 </style>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/services.client.js";
 </script>
 </Base>

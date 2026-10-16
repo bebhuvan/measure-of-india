@@ -2,8 +2,8 @@
 // (src/pages/guides/nfhs.astro). The guide draws on 37 bundles (21 tables x two rounds), several
 // of them half a megabyte; importing them into the client would blow the page budget
 // (docs/CONTRACT-render.md). The page reads them here at build time, computes the figures its
-// copy names, and embeds only what each plate draws as one inline JSON block that
-// src/dossiers/nfhs.client.js reads. No runtime fetch; every value is a bundle's own.
+// copy names, and hands what each plate draws to src/dossiers/health-gender.charts.js, which
+// draws it at build time. No runtime fetch, no data in the client; every value is a bundle's own.
 //
 // The two rounds are two rulers (data/sources.yml seams: nfhs). Nothing here joins them into a
 // series: a plate puts the NFHS-4 value beside the NFHS-5 value, and only where the NFHS-4

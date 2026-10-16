@@ -29,6 +29,25 @@ function hoist(svgs) {
   }));
   return { out, series };
 }
+// In the built site only the phone drawing is in the page. The wide and mid drawings are keyed
+// by a hash of their content; after the build, the kit integration in astro.config.mjs gathers
+// the drawings each page's placeholders name into one file beside it (<page>/kit.json), which
+// enhance.js fetches when a figure is wide enough to need it. A phone downloads only what it
+// shows; each placeholder holds its drawing's exact box, so nothing moves when it arrives.
+// In dev, and in scripts run outside Astro, all three drawings are inline.
+const SPLIT = !!import.meta.env?.PROD;
+const ALT = (globalThis.__akAlt ??= new Map());
+const box = (svg) => { const m = svg.slice(0, 300).match(/width="([\d.]+)" height="([\d.]+)"/); return m ? `${m[1]} / ${m[2]}` : "2 / 1"; };
+function hash(str) { // two FNV-1a passes, 64 bits as hex
+  let a = 0x811c9dc5, b = 0x01000193 ^ str.length;
+  for (let i = 0; i < str.length; i++) { const c = str.charCodeAt(i); a = Math.imul(a ^ c, 16777619); b = Math.imul(b ^ c, 2246822519); }
+  return (a >>> 0).toString(16).padStart(8, "0") + (b >>> 0).toString(16).padStart(8, "0");
+}
+function drawing(kind, svg) {
+  if (!SPLIT || kind === "phone") return `<div class="akf-${kind}" aria-hidden="true">${svg}</div>`;
+  const k = hash(svg); ALT.set(k, svg);
+  return `<div class="akf-${kind}" aria-hidden="true" data-k="${k}" style="aspect-ratio:${box(svg)}"></div>`;
+}
 const attrJSON = (o) => JSON.stringify(o).replace(/&/g, "&amp;").replace(/'/g, "&#39;").replace(/</g, "&lt;");
 
 // bare: the drawings and their data only, for a page that already sets the title, source line and
@@ -36,11 +55,13 @@ const attrJSON = (o) => JSON.stringify(o).replace(/&/g, "&amp;").replace(/'/g, "
 export function figure({ id, title = "", sub = "", source = "", notes = "", draw, data = null, file = null, widths = WIDTHS, className = "", bare = false, label = "" }) {
   const drawn = ["wide", "mid", "phone"].map((k) => draw(widths[k]));
   const { out, series } = hoist(drawn);
-  const csv = data ?? (series ? fromSeries(series) : null);
+  // a line chart's CSV is rebuilt from its hover series in the browser (enhance.js), so the
+  // series ship once; other forms carry their table explicitly
+  const csv = data;
   const name = file ?? `india-atlas_${slug(id || title)}`;
   const aria = esc(label || title + (sub ? ". " + sub : ""));
   const plot = `<div class="akf-plot" role="img" aria-label="${aria}">` +
-    out.map((svg, i) => `<div class="akf-${["wide", "mid", "phone"][i]}" aria-hidden="true">${svg}</div>`).join("") + `</div>`;
+    out.map((svg, i) => drawing(["wide", "mid", "phone"][i], svg)).join("") + `</div>`;
   const dataTag = csv ? `<script type="application/json" class="akf-data">${JSON.stringify(csv).replace(/</g, "\\u003c")}</script>` : "";
   if (bare) return `<div class="akf akf-bare"${series ? ` data-aks='${attrJSON(series)}'` : ""} data-file="${esc(name)}">${plot}${dataTag}</div>`;
   return `<figure class="akf${className ? " " + className : ""}"${id ? ` id="${esc(id)}"` : ""}${series ? ` data-aks='${attrJSON(series)}'` : ""} data-file="${esc(name)}">` +
@@ -49,11 +70,4 @@ export function figure({ id, title = "", sub = "", source = "", notes = "", draw
     `<div class="akf-foot">${source ? `<p class="akf-src">${source}</p>` : ""}${notes ? `<p class="akf-note">${notes}</p>` : ""}` +
     `<p class="akf-dl"><button type="button" data-akdl="csv">CSV</button><button type="button" data-akdl="svg">SVG</button><button type="button" data-akdl="png">PNG</button></p></div>` +
     dataTag + `</figure>`;
-}
-
-// A line chart's series as one table: a row per date, a column per series, nulls left blank.
-function fromSeries(series) {
-  const dates = [...new Set(series.flatMap((s) => s[2].map((p) => p[0])))].sort();
-  const at = series.map((s) => new Map(s[2].map((p) => [p[0], p[1]])));
-  return { cols: ["Date", ...series.map((s) => s[0])], rows: dates.map((d) => [d, ...at.map((m) => m.get(d) ?? null)]) };
 }

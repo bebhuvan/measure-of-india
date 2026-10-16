@@ -5,7 +5,7 @@
 const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
 const tnum = (d) => { const [y, m = 1, dd = 1] = String(d).split("-").map(Number); return y + (m - 1) / 12 + (dd - 1) / 365; };
-const tlabel = (d, f) => { const [y, m] = String(d).split("-"); if (f === "year" || !m) return y; if (f === "quarter") return `${MON[+m - 1]}–${MON[(+m + 1) % 12]} ${y}`; return `${MON[+m - 1]} ${y}`; };
+const tlabel = (d, f) => { const [y, m] = String(d).split("-"); if (f === "fy") return `${y}-${String((+y + 1) % 100).padStart(2, "0")}`; if (f === "year" || !m) return y;if (f === "quarter") return `${MON[+m - 1]}–${MON[(+m + 1) % 12]} ${y}`; return `${MON[+m - 1]} ${y}`; };
 const group = (i) => { const l = i.slice(-3), r = i.slice(0, -3); return (r ? r.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," : "") + l; };
 const num = (v, [pre, suf, dp]) => { if (v == null) return "–"; const [i, f] = Math.abs(v).toFixed(dp).split("."); return (v < 0 && +Math.abs(v).toFixed(dp) ? "−" : "") + pre + group(i) + (f ? "." + f : "") + suf; };
 
@@ -19,10 +19,11 @@ function show(html, ev) {
 const hide = () => { tip.style.opacity = 0; };
 
 function lineHover(fig, svg, series) {
-  const m = JSON.parse(svg.dataset.ak), hit = svg.querySelector(".ak-hit");
+  const m = JSON.parse(svg.dataset.ak), hit = svg.querySelector(":scope > .ak-hit");
+  if (m.s) series = m.s; // a panel of a composed figure carries its own series (kit panels())
   if (!hit) return;
   const [px0, px1, t0, t1] = m.x, [py0, py1, v0, v1] = m.y;
-  const X = (t) => px0 + (t - t0) / ((t1 - t0) || 1) * (px1 - px0), Y = (v) => py0 + (v - v0) / ((v1 - v0) || 1) * (py1 - py0);
+  const X = (t) => px0 + (t - t0) / ((t1 - t0) || 1) * (px1 - px0), Y = m.l ? (v) => py0 + (Math.log10(v) - Math.log10(v0)) / ((Math.log10(v1) - Math.log10(v0)) || 1) * (py1 - py0) : (v) => py0 + (v - v0) / ((v1 - v0) || 1) * (py1 - py0);
   const pts = series.map((s) => s[2].map((p) => ({ d: p[0], t: tnum(p[0]), v: p[1] })));
   const g = document.createElementNS("http://www.w3.org/2000/svg", "g"); g.style.pointerEvents = "none"; svg.append(g);
   const top = +hit.getAttribute("y"), bot = top + +hit.getAttribute("height");
@@ -54,22 +55,31 @@ function save(name, blob) {
 }
 // A standalone drawing: the title above, the source below, the chart face named inline.
 function standalone(fig) {
-  const svg = visibleSVG(fig).cloneNode(true), w = +svg.getAttribute("width"), h = +svg.getAttribute("height");
   const box = fig.closest("figure") ?? fig;
+  // a plate with several drawings (learn port: a level above its rate) downloads them all, stacked
+  const svgs = (box === fig ? [fig] : [...box.querySelectorAll(".akf")]).map((f) => visibleSVG(f).cloneNode(true));
+  const w = Math.max(...svgs.map((s) => +s.getAttribute("width"))), h = svgs.reduce((a, s) => a + +s.getAttribute("height"), 0) + 24 * (svgs.length - 1);
+  let at = 0; const body = svgs.map((s) => { const g = `<g transform="translate(0,${at})">${s.innerHTML}</g>`; at += +s.getAttribute("height") + 24; return g; }).join("");
   const title = (box.querySelector(".akf-title, .plate-head h3")?.textContent ?? "").trim();
   const src = (box.querySelector(".akf-src, .plotfoot .src")?.textContent ?? "").replace(/\s+/g, " ").trim();
   const NS = "http://www.w3.org/2000/svg", out = document.createElementNS(NS, "svg"), H = h + 64;
   out.setAttribute("xmlns", NS); out.setAttribute("width", w); out.setAttribute("height", H); out.setAttribute("viewBox", `0 0 ${w} ${H}`);
   out.setAttribute("font-family", "'Libre Franklin', 'Helvetica Neue', Arial, sans-serif");
   out.innerHTML = `<rect width="${w}" height="${H}" fill="#fff"/><text x="0" y="18" font-size="15" font-weight="600" fill="#15171A">${esc(title)}</text>` +
-    `<g transform="translate(0,34)">${svg.innerHTML}</g><text x="0" y="${H - 6}" font-size="11" fill="#6B7078">${esc(src)}</text>`;
+    `<g transform="translate(0,34)">${body}</g><text x="0" y="${H - 6}" font-size="11" fill="#6B7078">${esc(src)}</text>`;
   out.querySelectorAll(".ak-hit").forEach((n) => n.remove());
   return { text: new XMLSerializer().serializeToString(out), w, h: H };
 }
 function download(fig, kind) {
   const name = fig.dataset.file || "india-atlas_chart";
   if (kind === "csv") {
-    const d = JSON.parse(fig.querySelector(".akf-data")?.textContent ?? "null"); if (!d) return;
+    let d = JSON.parse(fig.querySelector(".akf-data")?.textContent ?? "null");
+    if (!d && fig.dataset.aks) { // a line chart: one row per date, one column per series, blanks for gaps
+      const S = JSON.parse(fig.dataset.aks), dates = [...new Set(S.flatMap((s) => s[2].map((p) => p[0])))].sort();
+      const at = S.map((s) => new Map(s[2].map((p) => [p[0], p[1]])));
+      d = { cols: ["Date", ...S.map((s) => s[0])], rows: dates.map((t) => [t, ...at.map((m) => m.get(t) ?? null)]) };
+    }
+    if (!d) return;
     const cell = (v) => v == null ? "" : /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v);
     const box = fig.closest("figure") ?? fig, src = box.querySelector(".akf-src, .plotfoot .src")?.textContent?.replace(/\s+/g, " ").trim();
     save(name + ".csv", new Blob([[d.cols, ...d.rows].map((r) => r.map(cell).join(",")).join("\n") + (src ? `\n\n${cell(src)}\n` : "\n")], { type: "text/csv" }));
@@ -90,13 +100,38 @@ export function enhance(root = document) {
     if (series) for (const svg of fig.querySelectorAll("svg[data-ak]")) lineHover(fig, svg, series);
     // a guide plate keeps its own download buttons around a bare figure; one figure per plate
     const box = fig.closest("figure") ?? fig;
-    box.addEventListener("click", (e) => { const b = e.target.closest("[data-akdl], [data-dl]"); if (b) download(fig, b.dataset.akdl ?? b.dataset.dl); });
+    // bound once per plate (learn port: a plate may hold two figures, the explorer redraws); the figure is found at click time
+    if (!box.akBound) { box.akBound = true; box.addEventListener("click", (e) => { const b = e.target.closest("[data-akdl], [data-dl]"); const f = box.matches(".akf") ? box : box.querySelector(".akf"); if (b && f) download(f, b.dataset.akdl ?? b.dataset.dl); }); }
   }
+  tips(root);
+  fill();
+}
+function tips(root) {
   for (const el of root.querySelectorAll(".akf [data-tip]")) {
+    if (el.akTip) continue; el.akTip = true;
     el.addEventListener("pointermove", (e) => show(esc(el.dataset.tip), e));
     el.addEventListener("pointerleave", hide);
   }
 }
+
+// The built site ships each figure's wide and mid drawings in <page>/kit.json (src/kit/figure.js);
+// fetch it once, only when a placeholder is actually shown, and drop each drawing into its box.
+let kitP = null;
+const kitURL = () => { const p = location.pathname; return p.endsWith("/") ? p + "kit.json" : p.replace(/(\.html)?$/, ".kit.json"); };
+async function fill() {
+  const need = [...document.querySelectorAll(".akf-plot > [data-k]:empty")].filter((el) => getComputedStyle(el).display !== "none");
+  if (!need.length) return;
+  kitP ??= fetch(kitURL()).then((r) => (r.ok ? r.json() : {})).catch(() => ({}));
+  const K = await kitP;
+  for (const el of need) {
+    const svg = K[el.dataset.k]; if (!svg || el.firstChild) continue;
+    el.innerHTML = svg; el.style.aspectRatio = "";
+    const fig = el.closest(".akf"), series = fig?.dataset.aks ? JSON.parse(fig.dataset.aks) : null;
+    if (series) for (const s of el.querySelectorAll("svg[data-ak]")) lineHover(fig, s, series);
+    tips(el);
+  }
+}
+if (typeof window !== "undefined") { let t; addEventListener("resize", () => { clearTimeout(t); t = setTimeout(fill, 150); }); }
 
 if (typeof document !== "undefined") {
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => enhance());

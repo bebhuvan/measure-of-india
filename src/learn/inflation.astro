@@ -1,5 +1,7 @@
 ---
 import Learn from "../layouts/Learn.astro";
+import * as CH from "./inflation.charts.js";
+const NUM = CH.NUM;
 ---
 <Learn
   title="Inflation is not “prices going up” · India Atlas"
@@ -99,13 +101,13 @@ import Learn from "../layouts/Learn.astro";
             <h3>The price level climbs while the inflation rate falls: both true at once</h3>
             <div class="sub">CPI combined, above: index level, 2012 = 100, below: year-on-year rate, Jan 2016 to Dec 2025</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-lr">–</div><div class="c">Dec 2025, index level</div></div>
+          <div class="plate-val"><div class="v" id="pv-lr" set:html={NUM["pv-lr"]}></div><div class="c">Dec 2025, index level</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-level"><div class="cb-tip"></div></div>
-          <div class="plotzone" id="plot-rate" style="margin-top:34px"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-level" set:html={CH.level()} />
+          <div class="plotzone" id="plot-rate" style="margin-top:34px" set:html={CH.rateChart()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, CPI group indices, base 2012=100, vintage <span id="pf-lr">–</span>, shaded band: RBI tolerance 2–6%, dashed: 4% target</span>
+            <span class="src">Source: MoSPI, CPI group indices, base 2012=100, vintage <span id="pf-lr" set:html={NUM["pf-lr"]}></span>, shaded band: RBI tolerance 2–6%, dotted: 4% target</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -122,7 +124,7 @@ import Learn from "../layouts/Learn.astro";
           </div>
           <div class="now">
             <span class="mk">The 2025 case</span>
-            <p>Through 2025 the rate collapsed, from <b id="lr-rjan">–</b> in January to <b id="lr-rdec">–</b> in December, the calmest year-end in the series. And the level? It wobbled through the winter, as it does, then climbed to <b id="lr-ldec">–</b>, the highest reading the index has ever recorded.</p>
+            <p>Through 2025 the rate collapsed, from <b id="lr-rjan" set:html={NUM["lr-rjan"]}></b> in January to <b id="lr-rdec" set:html={NUM["lr-rdec"]}></b> in December, the calmest year-end in the series. And the level? It wobbled through the winter, as it does, then climbed to <b id="lr-ldec" set:html={NUM["lr-ldec"]}></b>, the highest reading the index has ever recorded.</p>
             <p>Inflation fell all year. Prices rose all year. Both statements are true at once, and holding them together is the whole lesson of this page.</p>
           </div>
         </div>
@@ -139,18 +141,18 @@ import Learn from "../layouts/Learn.astro";
   <section>
     <div class="sec-head"><span class="no">03</span><h2>The arithmetic the headline compresses</h2><span class="line"></span><span class="unit">A worked example, Dec 2024 → Dec 2025</span></div>
     <div class="numbers">
-      <div class="num"><div class="l">The basket, Dec 2024</div><div class="v" id="n-lvl-then">–</div><div class="d">index points, 2012 = 100</div></div>
-      <div class="num"><div class="l">The basket, Dec 2025</div><div class="v" id="n-lvl-now">–</div><div class="d">index points, 2012 = 100</div></div>
-      <div class="num"><div class="l">The rate, Dec 2025</div><div class="v acc" id="n-rate-now">–</div><div class="d">the ratio of the two, minus one</div></div>
-      <div class="num"><div class="l">What ₹1,000 became</div><div class="v" id="n-rupee">–</div><div class="d">same basket, one year later</div></div>
+      <div class="num"><div class="l">The basket, Dec 2024</div><div class="v" id="n-lvl-then" set:html={NUM["n-lvl-then"]}></div><div class="d">index points, 2012 = 100</div></div>
+      <div class="num"><div class="l">The basket, Dec 2025</div><div class="v" id="n-lvl-now" set:html={NUM["n-lvl-now"]}></div><div class="d">index points, 2012 = 100</div></div>
+      <div class="num"><div class="l">The rate, Dec 2025</div><div class="v acc" id="n-rate-now" set:html={NUM["n-rate-now"]}></div><div class="d">the ratio of the two, minus one</div></div>
+      <div class="num"><div class="l">What ₹1,000 became</div><div class="v" id="n-rupee" set:html={NUM["n-rupee"]}></div><div class="d">same basket, one year later</div></div>
     </div>
-    <p style="margin-top:40px">The index is not money, but its ratio is. Divide the December 2025 level by the December 2024 level and you get the print: <b id="ar-ratio">–</b> over <b id="ar-then">–</b> is 1.013: the 1.3 per cent of the headline. A basket that cost ₹1,000 in December 2024 cost <b id="ar-rupee">–</b> a year later. The rate can halve while the total climbs, because the rate only ever measures the climb.</p>
+    <p style="margin-top:40px">The index is not money, but its ratio is. Divide the December 2025 level by the December 2024 level and you get the print: <b id="ar-ratio" set:html={NUM["ar-ratio"]}></b> over <b id="ar-then" set:html={NUM["ar-then"]}></b> is 1.013: the 1.3 per cent of the headline. A basket that cost ₹1,000 in December 2024 cost <b id="ar-rupee" set:html={NUM["ar-rupee"]}></b> a year later. The rate can halve while the total climbs, because the rate only ever measures the climb.</p>
     <aside class="defbox">
       <div class="term">Year-on-year <span class="sub">y/y, the standard comparison</span></div>
       <p>A comparison with the same month a year earlier: December against December, not against November. Comparing like with like cancels the seasons: mangoes are dear every summer and cheap every winter, so month-on-month moves are mostly weather and festivals. What remains in the year-on-year figure is real change.</p>
       <div class="eg"><b>In plain words:</b> this is the measure the news means when it says "the inflation rate".</div>
     </aside>
-    <p style="margin-top:1.4em">And the climb compounds. Each year's print is applied to a level already raised by every print before it, which is why a decade of mostly moderate inflation has made the basket <b id="ar-decade">–</b> more expensive since 2016, with no year of relief subtracted anywhere in between.</p>
+    <p style="margin-top:1.4em">And the climb compounds. Each year's print is applied to a level already raised by every print before it, which is why a decade of mostly moderate inflation has made the basket <b id="ar-decade" set:html={NUM["ar-decade"]}></b> more expensive since 2016, with no year of relief subtracted anywhere in between.</p>
     <aside class="defbox">
       <div class="term">Compounding <span class="sub">growth on growth</span></div>
       <p>Each year's inflation is applied to a level already raised by every year before it. Ten years of 5 per cent inflation does not make the basket 50 per cent more expensive. It makes it about 63 per cent more expensive, because each year's 5 per cent multiplies all the increases that came before.</p>
@@ -168,12 +170,12 @@ import Learn from "../layouts/Learn.astro";
             <h3>Deflation is the level line turning down: food did it, briefly</h3>
             <div class="sub">Food &amp; beverages, index level, 2012 = 100, Jan 2023 to Dec 2025</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-foodlvl">–</div><div class="c">Dec 2025, index level</div></div>
+          <div class="plate-val"><div class="v" id="pv-foodlvl" set:html={NUM["pv-foodlvl"]}></div><div class="c">Dec 2025, index level</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-foodlvl"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-foodlvl" set:html={CH.foodLevel()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, CPI food &amp; beverages group index, base 2012=100, <span id="pf-foodlvl">–</span></span>
+            <span class="src">Source: MoSPI, CPI food &amp; beverages group index, base 2012=100, <span id="pf-foodlvl" set:html={NUM["pf-foodlvl"]}></span></span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -188,7 +190,7 @@ import Learn from "../layouts/Learn.astro";
             <p>This is a level chart, not a rate chart. It is the same view as the top line of the previous plate, zoomed to three years. Deflation lives here: not the line flattening, not the rate falling, but the line itself turning down. A peak, then a genuine decline. Anything less is disinflation wearing deflation's clothes.</p>
           </div>          <div class="now">
             <span class="mk">The 2025 case</span>
-            <p>The food index peaked in October 2024 at <b id="fl-peak">–</b> and slid to <b id="fl-now">–</b> by December 2025, about <b id="fl-drop">–</b> cheaper at the shelf. Vegetables drove the fall, reversing the spike of the autumn before. That is what falling prices look like: food is the only major group that does it with any regularity. Relief at the shop and distress on the farm, in the same figure.</p>
+            <p>The food index peaked in October 2024 at <b id="fl-peak" set:html={NUM["fl-peak"]}></b> and slid to <b id="fl-now" set:html={NUM["fl-now"]}></b> by December 2025, about <b id="fl-drop" set:html={NUM["fl-drop"]}></b> cheaper at the shelf. Vegetables drove the fall, reversing the spike of the autumn before. That is what falling prices look like: food is the only major group that does it with any regularity. Relief at the shop and distress on the farm, in the same figure.</p>
           </div>
         </div>
         <aside class="defbox" style="margin-top:44px">
@@ -250,7 +252,4 @@ import Learn from "../layouts/Learn.astro";
     <p>Companion guide: <a href="/guides/cpi/">Consumer Price Index</a>.</p>
   </div>
 
-<script>
-  import "./inflation.client.js";
-</script>
 </Learn>

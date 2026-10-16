@@ -7,6 +7,7 @@ import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 import { load, val, states, strip, pairs, ruralUrban, directionRows, withheld, short, polarity, TABLE_ORDER, bundleOf } from "../../dossiers/nfhs.data.js";
+import { NFHS as CH } from "../../dossiers/health-gender.charts.js";
 const D = bySlug["nfhs"];
 
 // ---- the figures the copy names, read from the bundles at build time ----
@@ -199,7 +200,6 @@ const asOf = "NFHS-5";
   canonical="https://atlas.thisindianlife.today/guides/nfhs/"
   ogImage={`/og/${D.slug}.png`}
 >
-<script type="application/json" id="nfhs-data" is:inline set:html={JSON.stringify(DATA)}></script>
 <style is:global>
   .nf-table-wrap{overflow-x:auto}
   .nf-table{border-collapse:collapse;font-family:var(--sans);font-size:.8rem;font-variant-numeric:tabular-nums;width:100%;min-width:980px}
@@ -265,12 +265,12 @@ const asOf = "NFHS-5";
         <div class="plate-head">
           <div class="t">
             <h3>In NFHS-6, stunting {moved(s6)} to {f1(s6.now)}% and full vaccination {moved(fv6)} to {f1(fv6.now)}%</h3>
-            <div class="sub">Selected measures, India, NFHS-5 (grey) and NFHS-6 (blue), both as printed in the NFHS-6 fact sheets. Every measure, for every state, village and town, is in the downloads.</div>
+            <div class="sub">Selected measures, India, NFHS-5 and NFHS-6, both as printed in the NFHS-6 fact sheets. Every measure, for every state, village and town, is in the downloads.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-nfhs6">{f1(s6.now)}<span class="pc">%</span></div><div class="c">children under 5 stunted, NFHS-6</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-nfhs6"></div>
+          <div class="plotzone" id="plot-nfhs6" set:html={CH["nfhs6"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-6 (2023-24) India fact sheet, IIPS and MoHFW, May 2026, with the NFHS-5 figures it prints alongside. Read into data by India Atlas; not yet on MoSPI's API.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -279,7 +279,7 @@ const asOf = "NFHS-5";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Each row is one measure: the grey dot is NFHS-5 (2019-21), the blue dot NFHS-6 (2023-24). They are two surveys with different samples, a before and an after, not a trend. Whether a move is good depends on the measure: fewer stunted children is good, more men with high blood pressure is not.</p>
+            <p>Each row is one measure: the open dot is NFHS-5 (2019-21), the solid dot NFHS-6 (2023-24). They are two surveys with different samples, a before and an after, not a trend. Whether a move is good depends on the measure: fewer stunted children is good, more men with high blood pressure is not.</p>
           </div>
           <div class="now">
             <span class="mk">As of NFHS-6</span>
@@ -297,7 +297,7 @@ const asOf = "NFHS-5";
       <div>
         <p>The National Family Health Survey is a door-to-door visit. Field teams working for the International Institute for Population Sciences, on behalf of the Ministry of Health and Family Welfare, sit with a sample of households in every district, ask about births and deaths, vaccines and contraception, money and violence, and measure what a clinic would: height, weight, waist, a drop of blood for haemoglobin and sugar, three blood-pressure readings. Each round publishes a fact sheet for India and for every state and union territory, split by village and town. This guide holds every line of those fact sheets that MoSPI serves: 21 tables, two rounds, {nCells.toLocaleString("en-IN")} figures in {nBundles} files.</p>
         <p>Every figure is a share of people at the time of the survey, not a count of new cases. "Two in three children anaemic" means two in three children had low haemoglobin on the day the blood was taken. Mortality rates are the exception: they count deaths in the five years before the interview, per 1,000 births.</p>
-        <p><b>The two rounds are two rulers.</b> NFHS-4 ({round4.fieldwork}) and NFHS-5 ({round5.fieldwork}) used different samples, and several questions changed. NFHS-5 measured blood pressure and blood sugar, and asked about tobacco and alcohol, for everyone 15 and over; NFHS-4 for ages 15 to 49. Its cancer questions changed too. This guide puts the two rounds side by side, a grey dot and a blue one, and never draws them as a trend: two surveys are a before and an after, not a line.</p>
+        <p><b>The two rounds are two rulers.</b> NFHS-4 ({round4.fieldwork}) and NFHS-5 ({round5.fieldwork}) used different samples, and several questions changed. NFHS-5 measured blood pressure and blood sugar, and asked about tobacco and alcohol, for everyone 15 and over; NFHS-4 for ages 15 to 49. Its cancer questions changed too. This guide puts the two rounds side by side, an open dot and a solid one, and never draws them as a trend: two surveys are a before and an after, not a line.</p>
         <p><b>A figure in brackets</b> in the fact sheet rests on 25 to 49 people; this guide marks it with an asterisk. A figure based on fewer than 25 is not published at all. Small union territories (Lakshadweep, Ladakh, the Andaman and Nicobar Islands) often sit at the edges of a ranking for this reason.</p>
         <!-- profiles (lb/profiles): NFHS-6, the third round, from the IIPS fact sheets -->
         <p><b>NFHS-6 (2023-24), the third round,</b> is not on MoSPI's API, so it comes from the IIPS fact sheets themselves (the 182-page PDF IIPS published in May 2026), read table by table into data and checked before use: the NFHS-5 figures those fact sheets print beside each indicator agree with MoSPI's NFHS-5 to the fact sheet's rounding in 2,486 of 2,499 state figures, every total lies between its urban and rural figures, and Bihar's pages were checked by hand against the PDF. Its 101 indicators for India and every state and UT are in this guide's data and every-cut table as their own ruler, with the NFHS-5 column the fact sheets print beside them; section 02 sets its India figures beside NFHS-5, and the plates after this section compare NFHS-4 and NFHS-5. The state profiles use NFHS-6 where its fact sheets carry a measure.</p>
@@ -319,17 +319,12 @@ const asOf = "NFHS-5";
         <div class="plate-head">
           <div class="t">
             <h3>Of {directed} measures with a right direction, {better.length} moved the right way; anaemia leads the {worse.length} that did not</h3>
-            <div class="sub">Change from NFHS-4 to NFHS-5, India, every per-cent measure the fact sheet carries in both rounds. Blue bars moved the wrong way; light grey bars have no right direction.</div>
+            <div class="sub">Change from NFHS-4 to NFHS-5, India, every per-cent measure the fact sheet carries in both rounds. Red bars moved the wrong way, pale blue bars the right way; grey bars have no right direction.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-direction">{worse.length}</div><div class="c">measures moved the wrong way</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#A3A9B4;height:8px"></i>Moved the right way</button>
-            <button class="chip"><i style="background:#2E4BD8;height:8px"></i>Moved the wrong way</button>
-            <button class="chip"><i style="background:#C9CED6;height:8px"></i>No right direction</button>
-          </div>
-          <div class="plotzone" id="plot-direction"></div>
+          <div class="plotzone" id="plot-direction" set:html={CH["direction"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-4 and NFHS-5 fact sheets (IIPS, MoHFW), via MoSPI. India, rural and urban together. NFHS-4 lines MoSPI misfiles are left out. Which way is right is our judgement: more anaemia, stunting, unmet need or child marriage is worse; caesarean births, family-planning methods and the sex ratio of the population have no right direction here.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -338,7 +333,7 @@ const asOf = "NFHS-5";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>One bar for each measure, the change in percentage points from the first round to the second. A bar to the right means the share rose. Whether a rise is good depends on the measure: more vaccinated children is good, more anaemic children is not. The blue bars are the ones that went the wrong way for the family.</p>
+            <p>One bar for each measure, the change in percentage points from the first round to the second. A bar to the right means the share rose. Whether a rise is good depends on the measure: more vaccinated children is good, more anaemic children is not. The red bars are the ones that went the wrong way for the family.</p>
             <p>A point is a point of the whole population, not a per cent change. Ten points on a measure that starts at 20 is a large change; ten points on one that starts at 80 is a smaller one in proportion.</p>
           </div>
           <div class="now">
@@ -358,16 +353,12 @@ const asOf = "NFHS-5";
         <div class="plate-head">
           <div class="t">
             <h3>Two in three young children and more than half of women are anaemic, and every group measured twice got worse</h3>
-            <div class="sub">Share anaemic, India, NFHS-4 (grey) and NFHS-5 (blue). MoSPI's copy has no NFHS-4 figure for men and boys, and its figure for girls 15-19 is withheld.</div>
+            <div class="sub">Share anaemic, India, NFHS-4 and NFHS-5. MoSPI's copy has no NFHS-4 figure for men and boys, and its figure for girls 15-19 is withheld.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-anaemia">{f1(an5)}<span class="pc">%</span></div><div class="c">children 6-59 months, NFHS-5</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#5F6675"></i>NFHS-4, 2015-16</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>NFHS-5, 2019-21</button>
-          </div>
-          <div class="plotzone" id="plot-anaemia"></div>
+          <div class="plotzone" id="plot-anaemia" set:html={CH["anaemia"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-4 and NFHS-5 (IIPS, MoHFW), via MoSPI. Anaemic: haemoglobin below 11 g/dl for children and pregnant women, 12 for other women, 13 for men, adjusted for altitude and, for adults, smoking. The NFHS-4 figure for girls 15-19 is withheld (MoSPI files the men's figure under it).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -390,12 +381,12 @@ const asOf = "NFHS-5";
         <div class="plate-head">
           <div class="t">
             <h3>From {anBot.geo} at {f1(anBot.v)}% to {anTop.geo} at {f1(anTop.v)}%, and higher than in NFHS-4 in {anRose.length} of {anBoth.length} states</h3>
-            <div class="sub">Children 6-59 months anaemic, by state and UT, NFHS-5 (blue) with NFHS-4 (grey) where the state existed in both rounds. Sorted by NFHS-5.</div>
+            <div class="sub">Children 6-59 months anaemic, by state and UT, NFHS-5 with NFHS-4 where the state existed in both rounds. Sorted by NFHS-5.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-anaemia-states">{anRose.length} of {anBoth.length}</div><div class="c">states where it rose</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-anaemia-states"></div>
+          <div class="plotzone" id="plot-anaemia-states" set:html={CH["anaemia-states"](DATA, { a: an4, b: an5 })} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-4 and NFHS-5 state fact sheets (IIPS, MoHFW), via MoSPI. * an estimate on 25 to 49 children. Ladakh and Dadra and Nagar Haveli and Daman and Diu have no NFHS-4 figure of their own.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -404,7 +395,7 @@ const asOf = "NFHS-5";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Each row is a state; the blue dot is NFHS-5 and the grey dot, where there is one, NFHS-4. The dashed rule is India. Anaemia does not sort states the way income does: some richer states sit near the top and several north-eastern states near the bottom. Diet, water and sanitation, worm infections, inherited blood disorders and the reach of iron supplements all play a part.</p>
+            <p>Each row is a state; the solid dot is NFHS-5 and the open dot, where there is one, NFHS-4. The shaded row at the top is India. Anaemia does not sort states the way income does: some richer states sit near the top and several north-eastern states near the bottom. Diet, water and sanitation, worm infections, inherited blood disorders and the reach of iron supplements all play a part.</p>
           </div>
           <div class="now">
             <span class="mk">As of {asOf}</span>
@@ -423,12 +414,12 @@ const asOf = "NFHS-5";
         <div class="plate-head">
           <div class="t">
             <h3>Stunting fell {f1(st4 - st5)} points, but a third of children under five are still too short for their age</h3>
-            <div class="sub">Nutrition of children under 5 and how they are fed, India, NFHS-4 (grey) and NFHS-5 (blue). MoSPI's copy has no NFHS-4 figure for overweight children.</div>
+            <div class="sub">Nutrition of children under 5 and how they are fed, India, NFHS-4 and NFHS-5. MoSPI's copy has no NFHS-4 figure for overweight children.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-nutrition">{f1(st5)}<span class="pc">%</span></div><div class="c">stunted, NFHS-5</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-nutrition"></div>
+          <div class="plotzone" id="plot-nutrition" set:html={CH["nutrition"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-4 and NFHS-5 (IIPS, MoHFW), via MoSPI. Stunted, wasted and underweight against the WHO child growth standards. Adequate diet: enough meals and enough kinds of food for the child's age.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -451,12 +442,12 @@ const asOf = "NFHS-5";
         <div class="plate-head">
           <div class="t">
             <h3>Infant deaths fell from {f0(imr4)} to {f0(imr5)} for every 1,000 births</h3>
-            <div class="sub">Deaths per 1,000 live births in the five years before each survey, India, NFHS-4 (grey) and NFHS-5 (blue). MoSPI's copy has no NFHS-4 newborn rate.</div>
+            <div class="sub">Deaths per 1,000 live births in the five years before each survey, India, NFHS-4 and NFHS-5. MoSPI's copy has no NFHS-4 newborn rate.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-mortality">{f1(imr5)}</div><div class="c">infant deaths per 1,000, NFHS-5</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-mortality"></div>
+          <div class="plotzone" id="plot-mortality" set:html={CH["mortality"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-4 and NFHS-5 (IIPS, MoHFW), via MoSPI. NFHS-4 rates are printed to the whole number. The Sample Registration System's annual rates are in the Women and men guide.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -484,12 +475,12 @@ const asOf = "NFHS-5";
         <div class="plate-head">
           <div class="t">
             <h3>Three in four children are fully vaccinated; the newer vaccines reach far fewer</h3>
-            <div class="sub">Vaccination of children 12-23 months and treatment of childhood illness, India, NFHS-4 (grey) and NFHS-5 (blue). Rotavirus, the second measles dose and the NFHS-5 definition of full vaccination have no NFHS-4 figure.</div>
+            <div class="sub">Vaccination of children 12-23 months and treatment of childhood illness, India, NFHS-4 and NFHS-5. Rotavirus, the second measles dose and the NFHS-5 definition of full vaccination have no NFHS-4 figure.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-vaccines">{f1(fv5)}<span class="pc">%</span></div><div class="c">fully vaccinated, NFHS-5</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-vaccines"></div>
+          <div class="plotzone" id="plot-vaccines" set:html={CH["vaccines"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-4 and NFHS-5 (IIPS, MoHFW), via MoSPI. Fully vaccinated: BCG, measles and three doses each of polio and DPT, from the vaccination card or the mother's recall.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -517,12 +508,12 @@ const asOf = "NFHS-5";
         <div class="plate-head">
           <div class="t">
             <h3>Nine in ten babies are now born in a health facility; the care before and after birth lags</h3>
-            <div class="sub">Care before, during and after birth, India, NFHS-4 (grey) and NFHS-5 (blue). Lines with only a blue dot have no NFHS-4 figure in MoSPI's copy, or it is withheld.</div>
+            <div class="sub">Care before, during and after birth, India, NFHS-4 and NFHS-5. Rows with only a solid dot have no NFHS-4 figure in MoSPI's copy, or it is withheld.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-births">{f1(ib5)}<span class="pc">%</span></div><div class="c">born in a health facility</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-births"></div>
+          <div class="plotzone" id="plot-births" set:html={CH["births"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-4 and NFHS-5 (IIPS, MoHFW), via MoSPI. Postnatal checks: a doctor, nurse, ANM or other health worker within two days of the birth.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -544,16 +535,12 @@ const asOf = "NFHS-5";
         <div class="plate-head">
           <div class="t">
             <h3>Almost half of private-hospital births are by caesarean, against {f1(csu5)}% in public hospitals</h3>
-            <div class="sub">Share of births in each kind of facility delivered by caesarean section, by state and UT, NFHS-5: private (marigold) and public (blue).</div>
+            <div class="sub">Share of births in each kind of facility delivered by caesarean section, by state and UT, NFHS-5: private and public.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-cs">{f1(csp5)}<span class="pc">%</span></div><div class="c">of private-facility births</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#C47A16"></i>Private facilities</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>Public facilities</button>
-          </div>
-          <div class="plotzone" id="plot-cs-states"></div>
+          <div class="plotzone" id="plot-cs-states" set:html={CH["cs-states"](DATA, { a: csu5, b: csp5 })} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-5 state fact sheets (IIPS, MoHFW), via MoSPI. * an estimate on 25 to 49 births.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -581,16 +568,12 @@ const asOf = "NFHS-5";
         <div class="plate-head">
           <div class="t">
             <h3>One adult in five has high blood pressure, and towns run higher than villages on every measure</h3>
-            <div class="sub">Adults with high blood pressure or blood sugar (or taking medicine for it), and overweight and waist measures, India, NFHS-5: villages (grey) and towns (blue).</div>
+            <div class="sub">Adults with high blood pressure or blood sugar (or taking medicine for it), and overweight and waist measures, India, NFHS-5: villages and towns.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-ncd">{f1(bpm)}<span class="pc">%</span></div><div class="c">men with high blood pressure or on medicine</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#5F6675"></i>Villages</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>Towns</button>
-          </div>
-          <div class="plotzone" id="plot-ncd"></div>
+          <div class="plotzone" id="plot-ncd" set:html={CH["ncd"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-5 (IIPS, MoHFW), via MoSPI. High blood pressure: 140/90 mm Hg or above, or on medicine. High blood sugar: above 140 mg/dl at a random reading, or on medicine. Weight and waist: ages 15-49. NFHS-4 measured ages 15-49 only, so it is not shown.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -613,16 +596,12 @@ const asOf = "NFHS-5";
         <div class="plate-head">
           <div class="t">
             <h3>High blood pressure ranges from {f1(ncdRows.at(-1).women)}% of women in {ncdRows.at(-1).geo} to {f1(ncdRows[0].women)}% in {ncdRows[0].geo}</h3>
-            <div class="sub">Adults 15 and over with high blood pressure or on medicine, by state and UT, NFHS-5: women (blue) and men (marigold). Sorted by women.</div>
+            <div class="sub">Adults 15 and over with high blood pressure or on medicine, by state and UT, NFHS-5: women and men. Sorted by women.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-ncd-states">{f1(ncdRows[0].women)}<span class="pc">%</span></div><div class="c">women, {ncdRows[0].geo}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>Women</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#C47A16"></i>Men</button>
-          </div>
-          <div class="plotzone" id="plot-ncd-states"></div>
+          <div class="plotzone" id="plot-ncd-states" set:html={CH["ncd-states"](DATA, { a: bpm, b: bpw })} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-5 state fact sheets (IIPS, MoHFW), via MoSPI.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -650,16 +629,12 @@ const asOf = "NFHS-5";
         <div class="plate-head">
           <div class="t">
             <h3>Fewer than two women in a hundred have ever been screened for cervical cancer</h3>
-            <div class="sub">Women 30-49 who have ever had a screening test for cervical cancer (blue) or a breast examination (marigold), by state and UT, NFHS-5.</div>
+            <div class="sub">Women 30-49 who have ever had a screening test for cervical cancer or a breast examination, by state and UT, NFHS-5.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-cancer">{f1(cv5)}<span class="pc">%</span></div><div class="c">women 30-49 ever screened for cervical cancer</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>Cervical</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#C47A16"></i>Breast</button>
-          </div>
-          <div class="plotzone" id="plot-cancer-states"></div>
+          <div class="plotzone" id="plot-cancer-states" set:html={CH["cancer-states"](DATA, { a: br5, b: cv5 })} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-5 state fact sheets (IIPS, MoHFW), via MoSPI. NFHS-4 asked women 15-49 about any examination of the cervix or breast, a different question, so it is not shown.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -687,16 +662,12 @@ const asOf = "NFHS-5";
         <div class="plate-head">
           <div class="t">
             <h3>Four in five women have a bank account they use; half have a phone, and village women lag furthest on phones and the internet</h3>
-            <div class="sub">Women 15-49, India, NFHS-5: villages (grey) and towns (blue).</div>
+            <div class="sub">Women 15-49, India, NFHS-5: villages and towns.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-women">{f1(bank5)}<span class="pc">%</span></div><div class="c">have a bank account they use</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#5F6675"></i>Villages</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>Towns</button>
-          </div>
-          <div class="plotzone" id="plot-women"></div>
+          <div class="plotzone" id="plot-women" set:html={CH["women"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-5 (IIPS, MoHFW), via MoSPI. Household decisions: married women who usually take part in decisions on their own health care, large purchases and visits to family. MoSPI's NFHS-4 figures for the bank, phone, property and period lines are withheld; the NFHS-5 national report puts bank accounts at 53 per cent in NFHS-4.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -718,16 +689,12 @@ const asOf = "NFHS-5";
         <div class="plate-head">
           <div class="t">
             <h3>A woman's phone depends on her state: {f1(womenRows.at(-1).phone)}% in {womenRows.at(-1).geo}, {f1(womenRows[0].phone)}% in {womenRows[0].geo}</h3>
-            <div class="sub">Women 15-49 with a phone (blue) and a bank account (marigold) they themselves use, by state and UT, NFHS-5. Sorted by phone.</div>
+            <div class="sub">Women 15-49 with a phone and a bank account they themselves use, by state and UT, NFHS-5. Sorted by phone.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-women-states">{f1(phone5)}<span class="pc">%</span></div><div class="c">India, phone</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>Phone</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#C47A16"></i>Bank account</button>
-          </div>
-          <div class="plotzone" id="plot-women-states"></div>
+          <div class="plotzone" id="plot-women-states" set:html={CH["women-states"](DATA, { a: bank5, b: phone5 })} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-5 state fact sheets (IIPS, MoHFW), via MoSPI.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -760,7 +727,7 @@ const asOf = "NFHS-5";
           <div class="plate-val"><div class="v acc" id="pv-violence">{f1(sv5)}<span class="pc">%</span></div><div class="c">India, NFHS-5</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-violence-states"></div>
+          <div class="plotzone" id="plot-violence-states" set:html={CH["violence-states"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-5 state fact sheets (IIPS, MoHFW), via MoSPI. MoSPI's NFHS-4 figures for this table are misfiled and withheld; the Women and Men in India compendium prints NFHS-4 for physical or sexual violence by a husband (see the Women and men guide).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -788,16 +755,12 @@ const asOf = "NFHS-5";
         <div class="plate-head">
           <div class="t">
             <h3>{f1(tm5)}% of men use tobacco; among women it is {f1(tw5)}% nationally but {f1(twTop.value)}% in {twTop.geo}</h3>
-            <div class="sub">Adults 15 and over who use any kind of tobacco, men (marigold) and women (blue), by state and UT, NFHS-5. Sorted by men.</div>
+            <div class="sub">Adults 15 and over who use any kind of tobacco, men and women, by state and UT, NFHS-5. Sorted by men.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-tobacco">{f1(tm5)}<span class="pc">%</span></div><div class="c">men using tobacco</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#C47A16"></i>Men</button>
-            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>Women</button>
-          </div>
-          <div class="plotzone" id="plot-tobacco-states"></div>
+          <div class="plotzone" id="plot-tobacco-states" set:html={CH["tobacco-states"](DATA, { a: tw5, b: tm5 })} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-5 state fact sheets (IIPS, MoHFW), via MoSPI. Tobacco includes smoking, chewing, gutkha, khaini and snuff. NFHS-4 asked ages 15-49, so it is not shown.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -825,12 +788,12 @@ const asOf = "NFHS-5";
         <div class="plate-head">
           <div class="t">
             <h3>Toilets spread fastest: improved sanitation rose from {f1(san4)}% to {f1(san5)}%</h3>
-            <div class="sub">Household conditions, India, NFHS-4 (grey) and NFHS-5 (blue). MoSPI's copy has no NFHS-4 figure for death registration or pre-school.</div>
+            <div class="sub">Household conditions, India, NFHS-4 and NFHS-5. MoSPI's copy has no NFHS-4 figure for death registration or pre-school.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-household">{f1(san5)}<span class="pc">%</span></div><div class="c">live with an improved toilet</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-household"></div>
+          <div class="plotzone" id="plot-household" set:html={CH["household"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-4 and NFHS-5 (IIPS, MoHFW), via MoSPI. Improved toilet: one that separates waste from human contact, such as a flush to a septic tank or a pit with a slab. Clean fuel: electricity, LPG, natural gas or biogas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -858,12 +821,12 @@ const asOf = "NFHS-5";
         <div class="plate-head">
           <div class="t">
             <h3>India fell below two children per woman; {tfAbove.length} states and UTs are still above replacement</h3>
-            <div class="sub">Total fertility rate, by state and UT, NFHS-5 (blue) and NFHS-4 (grey). Replacement is about 2.1 children per woman.</div>
+            <div class="sub">Total fertility rate, by state and UT, NFHS-5 and NFHS-4. Replacement is about 2.1 children per woman.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-tfr">{f2(tfr5)}</div><div class="c">children per woman, NFHS-5</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-tfr-states"></div>
+          <div class="plotzone" id="plot-tfr-states" set:html={CH["tfr-states"](DATA, { a: tfr4, b: tfr5 })} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-4 and NFHS-5 state fact sheets (IIPS, MoHFW), via MoSPI. Fertility from births in the three years before the survey. NFHS-4 rates are printed to one decimal.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -885,12 +848,12 @@ const asOf = "NFHS-5";
         <div class="plate-head">
           <div class="t">
             <h3>Family planning still means a woman's operation: female sterilisation at {f1(fst5)}%, male at {f1(mst5)}%</h3>
-            <div class="sub">Currently married women 15-49 using each method, and unmet need, India, NFHS-4 (grey) and NFHS-5 (blue).</div>
+            <div class="sub">Currently married women 15-49 using each method, and unmet need, India, NFHS-4 and NFHS-5.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-fp">{f1(fst5)}<span class="pc">%</span></div><div class="c">rely on female sterilisation</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-fp"></div>
+          <div class="plotzone" id="plot-fp" set:html={CH["fp"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-4 and NFHS-5 (IIPS, MoHFW), via MoSPI. Unmet need: married women who want no more children, or want to wait, and use nothing. MoSPI's NFHS-4 figure for total unmet need is misfiled and withheld; the Women and Men in India compendium prints 12.9% for NFHS-4.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -918,12 +881,12 @@ const asOf = "NFHS-5";
         <div class="plate-head">
           <div class="t">
             <h3>The widest gap between town and village is {gapTop.short.replace(/^[A-Z](?![A-Z])/, (c) => c.toLowerCase())}, {f1(gapTop.gap)} points; {ruralAhead.length} measures run higher in villages</h3>
-            <div class="sub">Every per-cent measure in NFHS-5, India: the urban figure minus the rural one. Bars to the right are higher in towns; marigold bars are higher in villages.</div>
+            <div class="sub">Every per-cent measure in NFHS-5, India: the urban figure minus the rural one. Bars to the right are higher in towns; red bars, to the left, are higher in villages.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-gap">{f1(gapTop.gap)}</div><div class="c">points, the widest gap</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-gap"></div>
+          <div class="plotzone" id="plot-gap" set:html={CH["gap"](DATA)} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-5 (IIPS, MoHFW), via MoSPI. Rural and urban as the survey's sample defines them.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -956,7 +919,7 @@ const asOf = "NFHS-5";
           <div class="plate-val"><div class="v" id="pv-table">{table.rows.length}</div><div class="c">states and UTs</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-table"></div>
+          <div class="plotzone" id="plot-table" set:html={CH.table(DATA.table)} />
           <div class="plotfoot">
             <span class="src">Source: NFHS-5 state fact sheets (IIPS, MoHFW), via MoSPI. Every other measure, for every state, village and town, is in the table at the end of this guide and in the downloads.</span>
             <span class="dl"><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
@@ -1045,6 +1008,5 @@ const asOf = "NFHS-5";
 </div>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/nfhs.client.js";
 </script>
 </Base>

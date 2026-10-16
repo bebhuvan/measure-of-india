@@ -36,6 +36,31 @@ const searchIndex = {
   },
 };
 
+// Chart kit (src/kit/figure.js): the wide and mid chart drawings a page's placeholders name
+// (data-k, a content hash) are written beside the page as kit.json ({ hash: svg }) and fetched by
+// src/kit/enhance.js only on screens that show them. A placeholder with no drawing fails the build.
+const kitDrawings = {
+  name: "atlas-kit-drawings",
+  hooks: { "astro:build:done": ({ dir }) => {
+    const root = fileURLToPath(dir), ALT = globalThis.__akAlt ?? new Map();
+    let files = 0, drawings = 0;
+    const walk = (d) => { for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+      const p = d + "/" + e.name;
+      if (e.isDirectory()) walk(p);
+      else if (e.name.endsWith(".html")) {
+        const keys = [...new Set([...fs.readFileSync(p, "utf8").matchAll(/data-k="([0-9a-f]{16})"/g)].map((m) => m[1]))];
+        if (!keys.length) continue;
+        const missing = keys.filter((k) => !ALT.has(k));
+        if (missing.length) throw new Error(`kit: ${p} names ${missing.length} drawings the build never made`);
+        const out = e.name === "index.html" ? d + "/kit.json" : p.replace(/\.html$/, ".kit.json");
+        fs.writeFileSync(out, JSON.stringify(Object.fromEntries(keys.map((k) => [k, ALT.get(k)])))); files++; drawings += keys.length;
+      }
+    } };
+    walk(root.replace(/\/$/, ""));
+    console.log(`kit: ${drawings} drawings in ${files} kit.json files`);
+  } },
+};
+
 // Guides lived at /dossiers/<slug>/ before the 2026-10 redesign; old links keep working.
 const redirects = Object.fromEntries(DOSSIERS.map((d) => [`/dossiers/${d.slug}`, `/guides/${d.slug}/`]));
 
@@ -43,7 +68,7 @@ export default defineConfig({
   output: "static",
   site: "https://atlas.thisindianlife.today",
   redirects,
-  integrations: [sitemap({ filter: (page) => !page.includes("/dossiers/") }), explorerIndex, searchIndex],
+  integrations: [sitemap({ filter: (page) => !page.includes("/dossiers/") }), kitDrawings, explorerIndex, searchIndex],
   build: { inlineStylesheets: "auto" },
   vite: {
     plugins: [rawGz],

@@ -298,7 +298,7 @@ const PAGES = [
     ["n-ger", (b) => fmt.pct1(b["aishe-headline"].series.ger.data.at(-1))],
     ["n-gpi", (b) => fmt.num2(b["aishe-headline"].series.gpi.data.at(-1))],
     ["n-ptr", (b) => fmt.count(b["aishe-headline"].series.ptr.data.at(-1))],
-    // counts in words a reader can hold (aishe.client.js countWords): crore, lakh, else digits
+    // counts in words a reader can hold (aishe.charts.js countWords): crore, lakh, else digits
     ["cr-enrol", (b) => { const v = b["aishe-headline"].series.enrolment.data.at(-1); return v >= 1e7 ? (v / 1e7).toFixed(2) + " crore" : v >= 1e5 ? (v / 1e5).toFixed(1) + " lakh" : fmt.inr(v); }],
     ["pv-comp", (b) => fmt.pct0(b["aishe-composition"].series.under_graduate.data.at(-1) / b["aishe-headline"].series.enrolment.data.at(-1) * 100)],
     ["pv-enrol", (b) => {
@@ -601,8 +601,9 @@ const PAGES = [
     ["prov-vintage", (b) => b["trade-total"].meta.vintage],
   ]},
   // --- end trade ---
-  // --- payments (lb/payments): every rendered figure through src/dossiers/payments.fmt.js, the client's own formatters ---
-  { url: "/guides/payments/", slug: null, minPlots: 30, checks: [
+  // --- payments (lb/payments): every rendered figure through src/dossiers/payments.fmt.js, the page's own formatters ---
+  // 15 plates, each one kit figure (a plate of small multiples or a side-by-side pair counts once), and the title spark
+  { url: "/guides/payments/", slug: null, minPlots: 16, checks: [
     ["n-upi", (b) => PF.crore(b["payments-monthly"].series.upi_volume.data.at(-1))],
     ["rb-upi", (b) => PF.crore(b["payments-monthly"].series.upi_volume.data.at(-1))],
     ["n-upiv", (b) => PF.lakhCrore(b["payments-monthly"].series.upi_value.data.at(-1))],
@@ -889,25 +890,21 @@ for (const page of PAGES) {
   if (nPlots < minPlots) fail(`${page.url}: expected >=${minPlots} SVGs, got ${nPlots}`);
   else ok(`${page.url}: ${nPlots} charts rendered`);
 
-  // download card composition: title + source + brand, valid SVG
+  // download card: the kit plate carries what src/kit/enhance.js composes the SVG/PNG from, the
+  // drawing (a named .akf figure), the plate head's title and the source line, plus the CSV data
   if (page.url === "/guides/cpi/") {
-    const { composeCardSVG } = await import(pathToFileURL(path.join(ROOT, "src/charts/plumbing.js")).href);
-    const raw = doc.querySelector("#plot-main svg");
-    const card = composeCardSVG(raw, {
-      title: doc.querySelector("#cb-main .plate-head h3").textContent.trim(),
-      sub: doc.querySelector("#cb-main .plate-head .sub").textContent.trim(),
-      foot: doc.querySelector("#cb-main .plotfoot .src").textContent.trim().replace(/\s+/g, " "),
-    });
-    const parsed = new window.DOMParser().parseFromString(card.svg, "image/svg+xml");
-    const text = parsed.documentElement.textContent;
-    if (parsed.querySelector("parsererror")) fail("download card: SVG does not parse");
-    else {
-      // v2 card: sentence-case source line, brand set as "India Atlas" plus the address
-      for (const needle of ["cost of living", "MoSPI", "India Atlas", "atlas.thisindianlife.today"]) {
-        if (!text.includes(needle)) fail(`download card: missing "${needle}"`);
-      }
-      ok(`download card composes (${card.width}×${card.height}, ${ (card.svg.length/1024).toFixed(0) } KB svg)`);
-    }
+    const plate = doc.querySelector("#cb-main"), akf = plate?.querySelector("#plot-main .akf");
+    const name = akf?.querySelector(".akf-plot")?.getAttribute("aria-label")?.trim();
+    const title = plate?.querySelector(".plate-head h3")?.textContent.trim() ?? "";
+    const src = plate?.querySelector(".plotfoot .src")?.textContent.replace(/\s+/g, " ").trim() ?? "";
+    const svgs = akf ? akf.querySelectorAll(".akf-plot svg.ak").length : 0;
+    if (!akf) fail("download card: #plot-main holds no kit figure (.akf)");
+    else if (!name) fail("download card: the kit figure in #plot-main has no accessible label");
+    else if (svgs !== 3) fail(`download card: #plot-main has ${svgs} drawings, expected 3 (wide, mid, phone)`);
+    else if (!title.includes("cost of living")) fail("download card: plate head title missing");
+    else if (!src.includes("MoSPI")) fail("download card: .plotfoot .src source line missing");
+    else if (!akf.querySelector(".akf-data")) fail("download card: the kit figure carries no CSV data");
+    else ok(`download card: kit plate named, titled and sourced (${svgs} drawings)`);
   }
   // small-multiple grid panels are decorative (aria-hidden) — their accessible
   // name lives on the grid container's aria-label, so they carry no <title>

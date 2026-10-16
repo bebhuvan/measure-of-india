@@ -1,5 +1,7 @@
 ---
 import Learn from "../layouts/Learn.astro";
+import * as CH from "./index-numbers.charts.js";
+const NUM = CH.NUM;
 ---
 <Learn
   title="Index numbers and the base of 100 · India Atlas"
@@ -27,7 +29,7 @@ import Learn from "../layouts/Learn.astro";
         <p>Prices are messy to compare. Rice sells by the kilo, bus fares by the trip, school fees by the term. To make one number out of three hundred such prices, statisticians perform a small act of violence: they abolish the rupee. In its place they build an index, a scale with no unit at all, anchored to a single year set equal to 100.</p>
         <aside class="defbox">
           <div class="term">Index number <span class="sub">a unitless scale, base = 100</span></div>
-          <p>A way of expressing change without money. The value of a series in a chosen base period is set to 100, and every other period is shown relative to it. India's consumer price index used 2012 as its base until 2025 (it now uses 2024), so a reading of <b id="in-def-lvl">–</b> means the basket costs <b id="in-def-pc">–</b> more than it did in 2012.</p>
+          <p>A way of expressing change without money. The value of a series in a chosen base period is set to 100, and every other period is shown relative to it. India's consumer price index used 2012 as its base until 2025 (it now uses 2024), so a reading of <b id="in-def-lvl" set:html={NUM["in-def-lvl"]}></b> means the basket costs <b id="in-def-pc" set:html={NUM["in-def-pc"]}></b> more than it did in 2012.</p>
           <div class="eg"><b>In plain words:</b> the 100 is the ruler's zero mark, not a claim that things were cheap then.</div>
         </aside>
         <p style="margin-top:1.4em">The choice of base year is exactly that: a choice. Nothing about 2012 was normal, average or specially blessed. It was simply the year the statisticians picked to stand on, helped by a fresh household spending survey that told them what the basket should contain. Any other year would serve; the ruler would just be marked differently.</p>
@@ -49,7 +51,7 @@ import Learn from "../layouts/Learn.astro";
         </aside>
         <aside class="margin-note">
           <span class="mk">Margin note, iii</span>
-          <b>Compare changes, not levels.</b> <span id="in-mn-pub">–</span> against <span id="in-mn-reb">–</span> is ruler talk. The percentage rise is identical on both rulers.
+          <b>Compare changes, not levels.</b> <span id="in-mn-pub" set:html={NUM["in-mn-pub"]}></span> against <span id="in-mn-reb" set:html={NUM["in-mn-reb"]}></span> is ruler talk. The percentage rise is identical on both rulers.
         </aside>
       </div>
     </div>
@@ -66,12 +68,12 @@ import Learn from "../layouts/Learn.astro";
             <h3>Two rulers, one decade: the shape never moves</h3>
             <div class="sub">CPI combined, published, 2012 = 100, rebased, January 2016 = 100, Jan 2016 to Dec 2025</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-in">–</div><div class="c">Dec 2025, published level</div></div>
+          <div class="plate-val"><div class="v" id="pv-in" set:html={NUM["pv-in"]}></div><div class="c">Dec 2025, published level</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-rulers"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-rulers" set:html={CH.rulers()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, CPI combined, base 2012=100, vintage <span id="pf-in">–</span>, rebased series: same data ÷ Jan 2016 × 100</span>
+            <span class="src">Source: MoSPI, CPI combined, base 2012=100, vintage <span id="pf-in" set:html={NUM["pf-in"]}></span>, rebased series: same data ÷ Jan 2016 × 100</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -88,7 +90,7 @@ import Learn from "../layouts/Learn.astro";
           </div>
           <div class="now">
             <span class="mk">The December 2025 case</span>
-            <p>On the published ruler the decade ends at <b id="in-end-pub">–</b>. On the rebased ruler it ends at <b id="in-end-reb">–</b>. Both lines report the same rise since January 2016: <b id="in-rise">–</b>. Two different numbers, one fact.</p>
+            <p>On the published ruler the decade ends at <b id="in-end-pub" set:html={NUM["in-end-pub"]}></b>. On the rebased ruler it ends at <b id="in-end-reb" set:html={NUM["in-end-reb"]}></b>. Both lines report the same rise since January 2016: <b id="in-rise" set:html={NUM["in-rise"]}></b>. Two different numbers, one fact.</p>
             <p>Whoever quotes you a level without naming its base is selling you a ruler as if it were the world.</p>
           </div>
         </div>
@@ -100,12 +102,12 @@ import Learn from "../layouts/Learn.astro";
   <section>
     <div class="sec-head"><span class="no">03</span><h2>The arithmetic of a new ruler</h2><span class="line"></span><span class="unit">A worked example, Jan 2016 → Dec 2025</span></div>
     <div class="numbers">
-      <div class="num"><div class="l">Published, Jan 2016</div><div class="v" id="in-n-pub0">–</div><div class="d">index points, 2012 = 100</div></div>
-      <div class="num"><div class="l">Rebased, Jan 2016</div><div class="v" id="in-n-reb0">–</div><div class="d">100 by construction</div></div>
-      <div class="num"><div class="l">Published, Dec 2025</div><div class="v" id="in-n-pub1">–</div><div class="d">index points, 2012 = 100</div></div>
-      <div class="num"><div class="l">Rebased, Dec 2025</div><div class="v acc" id="in-n-reb1">–</div><div class="d">published ÷ base month × 100</div></div>
+      <div class="num"><div class="l">Published, Jan 2016</div><div class="v" id="in-n-pub0" set:html={NUM["in-n-pub0"]}></div><div class="d">index points, 2012 = 100</div></div>
+      <div class="num"><div class="l">Rebased, Jan 2016</div><div class="v" id="in-n-reb0" set:html={NUM["in-n-reb0"]}></div><div class="d">100 by construction</div></div>
+      <div class="num"><div class="l">Published, Dec 2025</div><div class="v" id="in-n-pub1" set:html={NUM["in-n-pub1"]}></div><div class="d">index points, 2012 = 100</div></div>
+      <div class="num"><div class="l">Rebased, Dec 2025</div><div class="v acc" id="in-n-reb1" set:html={NUM["in-n-reb1"]}></div><div class="d">published ÷ base month × 100</div></div>
     </div>
-    <p style="margin-top:40px">Rebasing is one division and one multiplication. Divide every reading by the base-month reading, <b id="in-base">–</b>, and multiply by 100. Nothing is gained and nothing is lost: the new series reports the same changes as the old, month for month. This is why pure rebasing can never move an inflation rate; only the labels move.</p>
+    <p style="margin-top:40px">Rebasing is one division and one multiplication. Divide every reading by the base-month reading, <b id="in-base" set:html={NUM["in-base"]}></b>, and multiply by 100. Nothing is gained and nothing is lost: the new series reports the same changes as the old, month for month. This is why pure rebasing can never move an inflation rate; only the labels move.</p>
     <p style="margin-top:1.4em">One honesty note. When India revises an official base year, more changes than the zero mark: the basket and the weights are updated too, and then the rates themselves can shift. That is a real revision. The exercise on this page is the pure kind, arithmetic only, and it proves the point: the base is a choice of ruler, not a fact about the world.</p>
   </section>
 
@@ -131,7 +133,7 @@ import Learn from "../layouts/Learn.astro";
         <span class="no">iii.</span>
         <div>
           <h3>“Two indices can be compared by their levels.”</h3>
-          <p>Only if they share a base. An index at <b id="in-mis-pub">–</b> on a 2012 base and another at <b id="in-mis-reb">–</b> on a 2016 base can be reporting the very same decade, as the chart above shows. Compare the percentage changes, or rebase one series to the other. The levels are ruler talk.</p>
+          <p>Only if they share a base. An index at <b id="in-mis-pub" set:html={NUM["in-mis-pub"]}></b> on a 2012 base and another at <b id="in-mis-reb" set:html={NUM["in-mis-reb"]}></b> on a 2016 base can be reporting the very same decade, as the chart above shows. Compare the percentage changes, or rebase one series to the other. The levels are ruler talk.</p>
         </div>
       </li>
     </ul>
@@ -152,7 +154,4 @@ import Learn from "../layouts/Learn.astro";
     <p>Companion guide: <a href="/guides/cpi/">Consumer Price Index</a>.</p>
   </div>
 
-<script>
-  import "./index-numbers.client.js";
-</script>
 </Learn>

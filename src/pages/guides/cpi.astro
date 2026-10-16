@@ -10,6 +10,7 @@ const D = bySlug["cpi"];
 import { period, word } from "../../dossiers/periods.js";
 import b24 from "../../../data/series/cpi-2024.json";
 import * as CH from "../../dossiers/cpi.charts.js";
+const NUM = CH.NUM;
 import sec24 from "../../../data/series/cpi-2024-sectors.json";
 // periods named in the copy, read from the bundles (src/dossiers/periods.js)
 const P24 = period("cpi-2024"), PS24 = period("cpi-2024-sectors"), PG24 = period("cpi-2024-groups");
@@ -58,8 +59,8 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
       <span>Released <b>{P24.releaseShort}</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Headline CPI, y/y, base 2024</div><div class="v acc" id="n-head">–</div><div class="d" id="d-head">–</div><div class="nspark" id="nspark-head"></div></div>
-      <div class="num"><div class="l">Food &amp; beverages, y/y, base 2024</div><div class="v" id="n-food">–</div><div class="d" id="d-food">–</div></div>
+      <div class="num"><div class="l">Headline CPI, y/y, base 2024</div><div class="v acc" id="n-head" set:html={NUM["n-head"]}></div><div class="d" id="d-head" set:html={NUM["d-head"]}></div><div class="nspark" id="nspark-head"></div></div>
+      <div class="num"><div class="l">Food &amp; beverages, y/y, base 2024</div><div class="v" id="n-food" set:html={NUM["n-food"]}></div><div class="d" id="d-food" set:html={NUM["d-food"]}></div></div>
     </div>
   </div>
 
@@ -67,9 +68,9 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
   <section>
     <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">Recorded {P24.releaseShort}</span></div>
     <div class="reading-top">
-      <div><span class="rk">Current reading</span><div class="big" id="rb-big">–</div></div>
+      <div><span class="rk">Current reading</span><div class="big" id="rb-big" set:html={NUM["rb-big"]}></div></div>
       <p class="rt-cap">Headline CPI inflation, {P24.long}, on the rebased 2024=100 index{aboveSince ? `: above the RBI's 4% target since ${aboveSince}.` : "."}</p>
-      <div><div class="band-scale" id="rb-scale"></div><div class="band-chip" id="rb-band">Position in RBI band: <b>–</b></div></div>
+      <div><div class="band-scale" id="rb-scale" set:html={CH.rbScale}></div><div class="band-chip" id="rb-band" set:html={NUM["rb-band"]}></div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -93,7 +94,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3>One continuous headline on the new ruler</h3>
             <div class="sub">Headline CPI, year-on-year, one continuous series on base 2024=100: the NSO's back-cast (2014 to 2024, drawn lighter as reconstructed history) joined to the live print (2025 to 2026, solid), the retired 2012 ruler shown faint for comparison, never spliced across bases</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-nb">–</div><div class="c">{P24.short}, base 2024, y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-nb" set:html={NUM["pv-nb"]}></div><div class="c">{P24.short}, base 2024, y/y</div></div>
         </div>
         <div class="frame">
           <div class="plotzone" id="plot-nb" set:html={CH.nb()} />
@@ -116,7 +117,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of {P24.stamp}</span>
-            <p>The continuous headline stands at <b id="nb-new">–</b> in {P24.month}, having firmed every month since it opened the year at <b id="nb-jan">–</b>. The old ruler's last reading was <b id="nb-old-final">–</b> in December; over the years both describe, the two part by at most <b id="nb-shadow">–</b>: the new basket reads the old decade almost identically, then carries on alone.</p>
+            <p>The continuous headline stands at <b id="nb-new" set:html={NUM["nb-new"]}></b> in {P24.month}, having firmed every month since it opened the year at <b id="nb-jan" set:html={NUM["nb-jan"]}></b>. The old ruler's last reading was <b id="nb-old-final" set:html={NUM["nb-old-final"]}></b> in December; over the years both describe, the two part by at most <b id="nb-shadow" set:html={NUM["nb-shadow"]}></b>: the new basket reads the old decade almost identically, then carries on alone.</p>
           </div>
         </div>
       </figure>
@@ -134,12 +135,12 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3>Twelve divisions: what the new ruler is made of</h3>
             <div class="sub">Every COICOP-2018 division of the 2024 base, year-on-year, per cent, {P24.long}, sorted, the six-group taxonomy of the old base is gone; services are seen separately for the first time</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-div">–</div><div class="c">hottest division, {P24.short}</div></div>
+          <div class="plate-val"><div class="v" id="pv-div" set:html={NUM["pv-div"]}></div><div class="c">hottest division, {P24.short}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-div"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-div" set:html={CH.div()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, release of {P24.releaseShort}, base 2024=100, the API serves no division weights, so divisions are shown as a ranked strip, not a weighted split, dashed rule: the published all-groups headline, personal care carries gold, priced in world markets</span>
+            <span class="src">Source: MoSPI, release of {P24.releaseShort}, base 2024=100, the API serves no division weights, so divisions are shown as a ranked strip, not a weighted split, the rule: the published all-groups headline, personal care carries gold, priced in world markets</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
@@ -147,12 +148,12 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           <div class="ev">
             <span class="mk">How to read this</span>
             <p>The old base squeezed the whole service economy, rents, health, education, transport, phones, restaurants, gold, into a single 28-per-cent "miscellaneous" block. The 2024 rebase splits that block open along the international COICOP-2018 lines, and for the first time each service division gets its own reading. Read the strip as a league table of what is actually firming the new basket.</p>
-            <p>One division sits in a different country from the rest. Personal care, which carries gold, runs at <b id="div-gold">–</b>: gold is set in world markets and moves to none of the logic that governs the other eleven. Treat it as a spectator; the basket's story lives in the cluster below.</p>
+            <p>One division sits in a different country from the rest. Personal care, which carries gold, runs at <b id="div-gold" set:html={NUM["div-gold"]}></b>: gold is set in world markets and moves to none of the logic that governs the other eleven. Treat it as a spectator; the basket's story lives in the cluster below.</p>
           </div>
           <div class="now">
             <span class="mk">As of {P24.stamp}</span>
-            <p><b id="div-above">–</b> divisions run above the headline. One is gold: personal care, a world-market spectator; the rest are the domestic economy, led by restaurants and hotels at <b id="div-rest">–</b>, the line that tracks Indians eating out. Near the floor, information &amp; communication sits at <b id="div-info">–</b>: phones and data are getting dearer more slowly than most of the basket.</p>
-            <p>The spread runs from <b id="div-top">–</b> down to <b id="div-bot">–</b>: <b id="div-spread">–</b> end to end. The headline is the weighted average of these twelve, and the weights are not yet published. So the headline stays the published all-groups index, and the divisions stay a ranking, honestly unweighted.</p>
+            <p><b id="div-above" set:html={NUM["div-above"]}></b> divisions run above the headline. One is gold: personal care, a world-market spectator; the rest are the domestic economy, led by restaurants and hotels at <b id="div-rest" set:html={NUM["div-rest"]}></b>, the line that tracks Indians eating out. Near the floor, information &amp; communication sits at <b id="div-info" set:html={NUM["div-info"]}></b>: phones and data are getting dearer more slowly than most of the basket.</p>
+            <p>The spread runs from <b id="div-top" set:html={NUM["div-top"]}></b> down to <b id="div-bot" set:html={NUM["div-bot"]}></b>: <b id="div-spread" set:html={NUM["div-spread"]}></b> end to end. The headline is the weighted average of these twelve, and the weights are not yet published. So the headline stays the published all-groups index, and the divisions stay a ranking, honestly unweighted.</p>
           </div>
         </div>
       </figure>
@@ -165,14 +166,10 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3>The village and the town, on the new ruler</h3>
             <div class="sub">Headline CPI, rural and urban, year-on-year, per cent, base 2024=100, {PS24.span}</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-ru24">–</div><div class="c">rural y/y, {PS24.short}</div></div>
+          <div class="plate-val"><div class="v" id="pv-ru24" set:html={NUM["pv-ru24"]}></div><div class="c">rural y/y, {PS24.short}</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-ru24">
-            <button class="chip" data-key="rural"><i style="background:#2E4BD8"></i>Rural</button>
-            <button class="chip" data-key="urban"><i style="background:#A3A9B4"></i>Urban</button>
-          </div>
-          <div class="plotzone" id="plot-ru24"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-ru24" set:html={CH.ru24()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, release of {P24.releaseShort}, base 2024=100, only {PS24.nWord} prints exist; the new base opened January 2026, the rural basket still carries the heavier food weight</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -185,7 +182,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of {PS24.stamp}</span>
-            <p>Rural inflation closed {PS24.month} at <b id="ru24-r">–</b> against urban <b id="ru24-u">–</b>: a gap of <b id="ru24-gap">–</b>. The ordering is the same as on the old base, which means the structural cause, food weighing more in the village, survived the rebase. {cap(PS24.nWord)} months is too short to call a trend.</p>
+            <p>Rural inflation closed {PS24.month} at <b id="ru24-r" set:html={NUM["ru24-r"]}></b> against urban <b id="ru24-u" set:html={NUM["ru24-u"]}></b>: a gap of <b id="ru24-gap" set:html={NUM["ru24-gap"]}></b>. The ordering is the same as on the old base, which means the structural cause, food weighing more in the village, survived the rebase. {cap(PS24.nWord)} months is too short to call a trend.</p>
           </div>
         </div>
       </figure>
@@ -195,17 +192,13 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
       <figure id="cb-divru" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3 id="divru-title">Village and town, division by division</h3>
+            <h3 id="divru-title" set:html={NUM["divru-title"]}></h3>
             <div class="sub">Rural against urban, every division of the 2024 base, year-on-year, per cent, {PDR.long}, sorted by the gap</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-divru">–</div><div class="c" id="pc-divru">–</div></div>
+          <div class="plate-val"><div class="v" id="pv-divru" set:html={NUM["pv-divru"]}></div><div class="c" id="pc-divru" set:html={NUM["pc-divru"]}></div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-divru">
-            <button class="chip" data-key="rural"><i style="background:#2E4BD8"></i>Rural</button>
-            <button class="chip" data-key="urban"><i style="background:#A3A9B4"></i>Urban</button>
-          </div>
-          <div class="plotzone" id="plot-divru"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-divru" set:html={CH.divruChart()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, base 2024=100, rural and urban indices as published, each sector weighted by its own spending, so the two dots are separate measurements, not a split of the headline</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -218,7 +211,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of {PDR.stamp}</span>
-            <p>In {PDR.month} rural prices ran ahead of urban in <b id="divru-rhi">–</b> of the twelve divisions. The widest gap is in <b id="divru-top">–</b>; the two sectors agree most on <b id="divru-bot">–</b>.</p>
+            <p>In {PDR.month} rural prices ran ahead of urban in <b id="divru-rhi" set:html={NUM["divru-rhi"]}></b> of the twelve divisions. The widest gap is in <b id="divru-top" set:html={NUM["divru-top"]}></b>; the two sectors agree most on <b id="divru-bot" set:html={NUM["divru-bot"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -231,13 +224,13 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3>The forty-three groups: the divisions, opened further</h3>
             <div class="sub">Every group of the 2024 basket, one rung beneath the twelve divisions, year-on-year, per cent, {PG24.span}, ordered by the latest print, blue where the group runs above the headline</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-grid24">–</div><div class="c" id="pc-grid24">–</div></div>
+          <div class="plate-val"><div class="v" id="pv-grid24" set:html={NUM["pv-grid24"]}></div><div class="c" id="pc-grid24" set:html={NUM["pc-grid24"]}></div></div>
         </div>
         <div class="frame">
-          <div class="sm-grid" id="grid24"></div>
+          <div class="plotzone" id="plot-grid24" set:html={CH.grid24()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, base 2024=100, 43 groups, the COICOP level beneath the 13 divisions, every y/y computed from index levels, only {PG24.nWord} prints exist, so read positions, not slopes, <b id="ex-g24-n">–</b> of 43 run above the headline</span>
-            <span class="dl"><button data-dl="csv">CSV, all 43</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src">Source: MoSPI, base 2024=100, 43 groups, the COICOP level beneath the 13 divisions, every y/y computed from index levels, only {PG24.nWord} prints exist, so read positions, not slopes, <b id="ex-g24-n" set:html={NUM["ex-g24-n"]}></b> of 43 run above the headline</span>
+            <span class="dl"><a href="/data/cpi-2024-groups.csv" download>Data</a><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
         <div class="explain">
@@ -247,7 +240,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of {PG24.stamp}</span>
-            <p>The hottest group is <b id="ex-g24-hi">–</b>; the coolest <b id="ex-g24-lo">–</b>. The gold-carrying group sits at the top of the field, a world-market price passing through the basket: set it aside and the rest of the grid tells the domestic story.</p>
+            <p>The hottest group is <b id="ex-g24-hi" set:html={NUM["ex-g24-hi"]}></b>; the coolest <b id="ex-g24-lo" set:html={NUM["ex-g24-lo"]}></b>. The gold-carrying group sits at the top of the field, a world-market price passing through the basket: set it aside and the rest of the grid tells the domestic story.</p>
           </div>
         </div>
       </figure>
@@ -260,7 +253,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3>The new basket, item by item: fifteen hottest, fifteen coldest</h3>
             <div class="sub">All 358 items of the 2024 basket, the deepest level the NSO publishes, year-on-year, per cent, {PI24.long}, {PI24.nWord} same-base prints exist; the level column shows the climb since the 2024 average</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-tail24">–</div><div class="c" id="pc-tail24">–</div></div>
+          <div class="plate-val"><div class="v" id="pv-tail24" set:html={NUM["pv-tail24"]}></div><div class="c" id="pc-tail24" set:html={NUM["pc-tail24"]}></div></div>
         </div>
         <div class="frame">
           <div class="ledger tail-ledger">
@@ -268,12 +261,12 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
               <thead>
                 <tr><th>Item</th><th>Latest y/y</th><th>vs prev. month</th><th>Level, 2024=100</th><th class="spark">{PI24.span}</th></tr>
               </thead>
-              <tbody id="tail24-body"></tbody>
+              <tbody id="tail24-body" set:html={CH.tail24Rows}></tbody>
             </table>
           </div>
           <div class="plotfoot">
-            <span class="src"><span>Source: MoSPI, ranked by {PI24.long} y/y, computed from index levels, <span id="pf-tail24">–</span>, every item row served so far is directly priced (imputation flag N), CSV carries all 358 items, {PI24.span}</span></span>
-            <span class="dl"><button data-dl="csv">CSV, all 358</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src"><span>Source: MoSPI, ranked by {PI24.long} y/y, computed from index levels, <span id="pf-tail24" set:html={NUM["pf-tail24"]}></span>, every item row served so far is directly priced (imputation flag N), CSV carries all 358 items, {PI24.span}</span></span>
+            <span class="dl"><a href="/data/cpi-2024-items.csv" download>Data</a><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
         <div class="explain">
@@ -284,8 +277,8 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of {PI24.stamp}</span>
-            <p>The {PI24.month} spread runs <b id="ex-t24span">–</b> points end to end: <span id="ex-t24topn">–</span> at <b id="ex-t24top">–</b> down to <span id="ex-t24botn">–</span> at <b id="ex-t24bot">–</b>. The median item sits at <b id="ex-t24med">–</b>, and <b id="ex-t24neg">–</b> of the 358 print below zero, in a month the headline stood at <b>{h24.at(-1).toFixed(1)}%</b>.</p>
-            <p>The level column has its own leader: <span id="ex-t24lvln">–</span> stands at <b id="ex-t24lvl">–</b> against a 2024 average of 100. And a disclosure the API makes possible: none of the 358 item indices has yet needed imputation at the all-India level: every figure in this table was compiled from collected prices.</p>
+            <p>The {PI24.month} spread runs <b id="ex-t24span" set:html={NUM["ex-t24span"]}></b> points end to end: <span id="ex-t24topn" set:html={NUM["ex-t24topn"]}></span> at <b id="ex-t24top" set:html={NUM["ex-t24top"]}></b> down to <span id="ex-t24botn" set:html={NUM["ex-t24botn"]}></span> at <b id="ex-t24bot" set:html={NUM["ex-t24bot"]}></b>. The median item sits at <b id="ex-t24med" set:html={NUM["ex-t24med"]}></b>, and <b id="ex-t24neg" set:html={NUM["ex-t24neg"]}></b> of the 358 print below zero, in a month the headline stood at <b>{h24.at(-1).toFixed(1)}%</b>.</p>
+            <p>The level column has its own leader: <span id="ex-t24lvln" set:html={NUM["ex-t24lvln"]}></span> stands at <b id="ex-t24lvl" set:html={NUM["ex-t24lvl"]}></b> against a 2024 average of 100. And a disclosure the API makes possible: none of the 358 item indices has yet needed imputation at the all-India level: every figure in this table was compiled from collected prices.</p>
           </div>
         </div>
       </figure>
@@ -300,7 +293,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
         <thead>
           <tr><th>Series</th><th>Weight</th><th>Latest y/y</th><th>vs prev. month</th><th>Year ago</th><th class="spark">Series span</th></tr>
         </thead>
-        <tbody id="ledger-body"></tbody>
+        <tbody id="ledger-body" set:html={CH.ledgerRows}></tbody>
       </table>
     </div>
   </section>
@@ -309,8 +302,8 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
   <section>
     <div class="sec-head"><span class="no">05</span><h2>What is in the basket</h2><span class="line"></span><span class="unit">Weights, per cent, CES 2011–12</span></div>
     <div class="break basket">
-      <div class="bar" id="basket-bar"></div>
-      <div class="labels" id="basket-labels"></div>
+      <div class="bar" id="basket-bar" style="display:block;height:auto;border:none;padding:0;background:none" set:html={CH.basketBar}></div>
+      <div class="labels" id="basket-labels" set:html={CH.basketLabels}></div>
       <p class="note">Three baskets on the 2011–12 Consumer Expenditure Survey weights: the only weights the API serves. The 2024 rebase publishes the headline and its twelve divisions but no component weights yet, so this basket cannot move to the new ruler. The structural story is the split itself: the rural basket has no housing group at all and loads fifty-four per cent onto food; the urban basket spends a fifth on housing and barely a third on food. One bad onion crop moves the village index far more than the town's.</p>
       <p class="note">What follows is the last complete picture on the old ruler. The food/fuel/core split, the twenty-one sub-groups and the state indices below exist only on the 2012 base, frozen at its final reading, December 2025: the new base has not published them. They migrate when the NSO releases the detail; until then the seam in §02 is the only place the two rulers meet.</p>
     </div>
@@ -322,8 +315,8 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
     <div class="part-h">The retired 2012 base: the last complete picture</div>
     <div class="part-sub">Everything below lives on the old ruler, frozen at its final reading, December 2025. The 2024 rebase publishes the headline and its divisions, but no component weights yet: so the food/fuel/core split, the sub-groups and the state indices exist only here. They migrate when the NSO releases the detail; until then the seam in §02 is the only place the two rulers meet.</div>
     <div class="numbers part-numbers">
-      <div class="num"><div class="l">Headline, base 2012, final print</div><div class="v" id="n-old">–</div><div class="d" id="d-old">–</div></div>
-      <div class="num"><div class="l">Core, year on year, base 2012, to Dec 2025</div><div class="v" id="n-core">–</div><div class="d" id="d-core">–</div></div>
+      <div class="num"><div class="l">Headline, base 2012, final print</div><div class="v" id="n-old" set:html={NUM["n-old"]}></div><div class="d" id="d-old" set:html={NUM["d-old"]}></div></div>
+      <div class="num"><div class="l">Core, year on year, base 2012, to Dec 2025</div><div class="v" id="n-core" set:html={NUM["n-core"]}></div><div class="d" id="d-core" set:html={NUM["d-core"]}></div></div>
     </div>
   </div>
 
@@ -337,18 +330,12 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3>A decade of the cost of living, and the three currents beneath it</h3>
             <div class="sub">CPI combined and components, year-on-year, per cent, Jan 2016 to Dec 2025, base 2012=100, retired</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-main">–</div><div class="c">Dec 2025, headline y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-main" set:html={NUM["pv-main"]}></div><div class="c">Dec 2025, headline y/y</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-main">
-            <button class="chip" data-key="headline"><i style="background:#2E4BD8"></i>Headline</button>
-            <button class="chip" data-key="food"><i style="background:#5F6675"></i>Food &amp; beverages</button>
-            <button class="chip" data-key="fuel"><i style="background:#A3A9B4"></i>Fuel &amp; light</button>
-            <button class="chip" data-key="core"><i class="dash"></i>Core, derived</button>
-          </div>
-          <div class="plotzone" id="plot-main"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-main" set:html={CH.main()} />
           <div class="plotfoot">
-            <span class="src">Source: <a href="https://www.mospi.gov.in" target="_blank" rel="noopener">MoSPI</a>, press release of 12 Jan 2026, band: RBI tolerance 2–6%, dashed: 4% target, headline &amp; core computed from group indices</span>
+            <span class="src">Source: <a href="https://www.mospi.gov.in" target="_blank" rel="noopener">MoSPI</a>, press release of 12 Jan 2026, band: RBI tolerance 2–6%, dotted: 4% target, headline &amp; core computed from group indices</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -365,7 +352,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of January 2026</span>
-            <p>Inflation fell through 2025: from <b id="ex-hjan">–</b> in January to <b id="ex-hdec">–</b> in December, with the last four prints below the 2% floor of the band, ground occupied only once before, in June 2017. The food line tells you why: the vegetables that drove the 2019 and 2023 spikes have been cheap for two consecutive winters.</p>
+            <p>Inflation fell through 2025: from <b id="ex-hjan" set:html={NUM["ex-hjan"]}></b> in January to <b id="ex-hdec" set:html={NUM["ex-hdec"]}></b> in December, with the last four prints below the 2% floor of the band, ground occupied only once before, in June 2017. The food line tells you why: the vegetables that drove the 2019 and 2023 spikes have been cheap for two consecutive winters.</p>
             <p>Watch the wedge between core and headline. While the dashed line sits above the blue one, the average is being flattered by volatile items, and the flattery expires with the next bad monsoon.</p>
           </div>
         </div>
@@ -410,12 +397,12 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3>Food &amp; beverages: half the basket, all of the drama</h3>
             <div class="sub">Weight 45.86, year-on-year, per cent, 2016–2025, base 2012=100, retired</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-food">–</div><div class="c">Dec 2025, y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-food" set:html={NUM["pv-food"]}></div><div class="c">Dec 2025, y/y</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-food"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-food" set:html={CH.food()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, <span id="pf-food">–</span></span>
+            <span class="src">Source: MoSPI, <span id="pf-food" set:html={NUM["pf-food"]}></span></span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
@@ -426,7 +413,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of January 2026</span>
-            <p>At <b id="ex-food">–</b>, food inflation is more than nine points below its level of a year ago (<b id="ex-food-y">–</b>): partly arithmetic: the autumn 2024 spike above 10% is now in the denominator, flattering the present. A base effect lasts twelve months: once the spike leaves the comparison, the gift is gone.</p>
+            <p>At <b id="ex-food" set:html={NUM["ex-food"]}></b>, food inflation is more than nine points below its level of a year ago (<b id="ex-food-y" set:html={NUM["ex-food-y"]}></b>): partly arithmetic: the autumn 2024 spike above 10% is now in the denominator, flattering the present. A base effect lasts twelve months: once the spike leaves the comparison, the gift is gone.</p>
           </div>
         </div>
       </figure>
@@ -439,12 +426,12 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3>Fuel &amp; light: loud, but says very little</h3>
             <div class="sub">Weight 6.84, year-on-year, per cent, 2016–2025, base 2012=100, retired</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-fuel">–</div><div class="c">Dec 2025, y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-fuel" set:html={NUM["pv-fuel"]}></div><div class="c">Dec 2025, y/y</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-fuel"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-fuel" set:html={CH.fuel()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, <span id="pf-fuel">–</span></span>
+            <span class="src">Source: MoSPI, <span id="pf-fuel" set:html={NUM["pf-fuel"]}></span></span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
@@ -455,7 +442,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of January 2026</span>
-            <p>Now <b id="ex-fuel">–</b>, after eighteen consecutive months underwater from September 2023 to February 2025. That deflation was LPG price cuts washing through the year-ago comparison: nobody's bill actually fell during it.</p>
+            <p>Now <b id="ex-fuel" set:html={NUM["ex-fuel"]}></b>, after eighteen consecutive months underwater from September 2023 to February 2025. That deflation was LPG price cuts washing through the year-ago comparison: nobody's bill actually fell during it.</p>
           </div>
         </div>
       </figure>
@@ -468,12 +455,12 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3>Core: the line the RBI actually watches</h3>
             <div class="sub">Ex food, ex fuel, derived, weight 47.30, year-on-year, per cent, 2016–2025, base 2012=100, retired</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-core">–</div><div class="c">Dec 2025, y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-core" set:html={NUM["pv-core"]}></div><div class="c">Dec 2025, y/y</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-core"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-core" set:html={CH.core()} />
           <div class="plotfoot">
-            <span class="src">Source: derived from MoSPI group indices, not an official series, <span id="pf-core">–</span></span>
+            <span class="src">Source: derived from MoSPI group indices, not an official series, <span id="pf-core" set:html={NUM["pf-core"]}></span></span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
@@ -484,7 +471,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of January 2026</span>
-            <p>At <b id="ex-core">–</b>, core has climbed through 2025 while the headline collapsed around it. Whatever is cooling the blue line, it is not underlying demand. For rate-setters, this unremarkable line is the argument against declaring victory.</p>
+            <p>At <b id="ex-core" set:html={NUM["ex-core"]}></b>, core has climbed through 2025 while the headline collapsed around it. Whatever is cooling the blue line, it is not underlying demand. For rate-setters, this unremarkable line is the argument against declaring victory.</p>
           </div>
         </div>
       </figure>
@@ -497,16 +484,10 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3 id="other-title">The rest of the old basket: housing, clothing, pan and the services block</h3>
             <div class="sub">The four groups of the 2012 base beyond food and fuel, All India combined, year-on-year, per cent, {P12.firstShort} to {P12.short}, base 2012=100, retired</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-other">–</div><div class="c" id="pc-other">–</div></div>
+          <div class="plate-val"><div class="v" id="pv-other" set:html={NUM["pv-other"]}></div><div class="c" id="pc-other" set:html={NUM["pc-other"]}></div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-other">
-            <button class="chip" data-key="miscellaneous"><i style="background:#2E4BD8"></i>Miscellaneous</button>
-            <button class="chip" data-key="housing"><i style="background:#5F6675"></i>Housing</button>
-            <button class="chip" data-key="clothing_and_footwear"><i style="background:#A3A9B4"></i>Clothing and footwear</button>
-            <button class="chip" data-key="pan_tobacco_and_intoxicants"><i style="background:#C9CED6"></i>Pan, tobacco</button>
-          </div>
-          <div class="plotzone" id="plot-other"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-other" set:html={CH.other()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, group indices, base 2012=100, y/y computed from published levels, housing has no rural index: villagers mostly own their homes, so the rural basket carries no rent</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -519,7 +500,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of January 2026</span>
-            <p>The old base closed in {P12.month} with miscellaneous at <b id="oth-misc">–</b>, housing at <b id="oth-housing">–</b>, clothing at <b id="oth-cloth">–</b> and pan at <b id="oth-pan">–</b>. Over the whole span the steadiest of the four was <b id="oth-steady">–</b>, and the most changeable <b id="oth-wild">–</b>.</p>
+            <p>The old base closed in {P12.month} with miscellaneous at <b id="oth-misc" set:html={NUM["oth-misc"]}></b>, housing at <b id="oth-housing" set:html={NUM["oth-housing"]}></b>, clothing at <b id="oth-cloth" set:html={NUM["oth-cloth"]}></b> and pan at <b id="oth-pan" set:html={NUM["oth-pan"]}></b>. Over the whole span the steadiest of the four was <b id="oth-steady" set:html={NUM["oth-steady"]}></b>, and the most changeable <b id="oth-wild" set:html={NUM["oth-wild"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -536,16 +517,16 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3>Twenty-one dials behind the six groups</h3>
             <div class="sub">Every published sub-index, year-on-year, per cent, Jan 2016 to Dec 2025, base 2012=100, retired, shaded band: RBI tolerance 2–6%, drawn to scale in every panel</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-sub">–</div><div class="c">of 21 outside 2–6%, Dec 2025</div></div>
+          <div class="plate-val"><div class="v" id="pv-sub" set:html={NUM["pv-sub"]}></div><div class="c">of 21 outside 2–6%, Dec 2025</div></div>
         </div>
         <div class="frame">
           <div class="sm-cap">The wild eleven: shared scale −30 to +62%</div>
-          <div class="sm-grid" id="sm-wild"></div>
+          <div class="plotzone" id="plot-sub-wild" set:html={CH.subWild()} />
           <div class="sm-cap">The quiet ten: shared scale −4 to +16%</div>
-          <div class="sm-grid" id="sm-quiet"></div>
+          <div class="plotzone" id="plot-sub-quiet" set:html={CH.subQuiet()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, one shared axis would iron the quiet panels flat, so the grid is split by volatility and each half discloses its own scale, housing, fuel &amp; light and pan publish no sub-indices, figures in bold sit outside the 2–6% band</span>
-            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="dl"><a href="/data/cpi-subgroups.csv" download>Data</a><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
         <div class="explain">
@@ -556,8 +537,8 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of January 2026</span>
-            <p><b id="sub-n">–</b> of the twenty-one sub-indices ended 2025 outside the tolerance band: <b id="sub-lo">–</b> below its floor, <b id="sub-hi">–</b> above its ceiling. The deflation holding the headline down is concentrated where you would guess: vegetables at <b id="sub-veg">–</b>, pulses at <b id="sub-pulses">–</b>.</p>
-            <p>The loudest dial is not food at all. Personal care &amp; effects, the sub-index that carries gold, is running at <b id="sub-gold">–</b>, the highest reading in the grid by a wide margin. And oils &amp; fats, at <b id="sub-oils">–</b>, show that not every food item joined the glut.</p>
+            <p><b id="sub-n" set:html={NUM["sub-n"]}></b> of the twenty-one sub-indices ended 2025 outside the tolerance band: <b id="sub-lo" set:html={NUM["sub-lo"]}></b> below its floor, <b id="sub-hi" set:html={NUM["sub-hi"]}></b> above its ceiling. The deflation holding the headline down is concentrated where you would guess: vegetables at <b id="sub-veg" set:html={NUM["sub-veg"]}></b>, pulses at <b id="sub-pulses" set:html={NUM["sub-pulses"]}></b>.</p>
+            <p>The loudest dial is not food at all. Personal care &amp; effects, the sub-index that carries gold, is running at <b id="sub-gold" set:html={NUM["sub-gold"]}></b>, the highest reading in the grid by a wide margin. And oils &amp; fats, at <b id="sub-oils" set:html={NUM["sub-oils"]}></b>, show that not every food item joined the glut.</p>
           </div>
         </div>
       </figure>
@@ -567,10 +548,10 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
       <figure id="cb-items12" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3 id="items12-title">Thirteen years of the old basket, item by item</h3>
+            <h3 id="items12-title" set:html={NUM["items12-title"]}></h3>
             <div class="sub">All {N12} items of the 2012 basket ranked by their index level in {PIT12.long}: the price then against the 2012 average, which the base fixes at 100; fifteen dearest-grown and fifteen cheapest-grown shown</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-items12">–</div><div class="c" id="pc-items12">–</div></div>
+          <div class="plate-val"><div class="v" id="pv-items12" set:html={NUM["pv-items12"]}></div><div class="c" id="pc-items12" set:html={NUM["pc-items12"]}></div></div>
         </div>
         <div class="frame">
           <div class="ledger tail-ledger">
@@ -578,12 +559,12 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
               <thead>
                 <tr><th>Item</th><th>Level, 2012=100</th><th>Latest y/y</th><th class="spark">{PIT12.span}, y/y</th></tr>
               </thead>
-              <tbody id="items12-body"></tbody>
+              <tbody id="items12-body" set:html={CH.items12Rows}></tbody>
             </table>
           </div>
           <div class="plotfoot">
             <span class="src">Source: MoSPI, item indices, base 2012=100 (retired), All India combined, items carry no weights in the API, so this is a ranking, not a recomposition; the CSV carries all items</span>
-            <span class="dl"><button data-dl="csv">CSV, all items</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="dl"><a href="/data/cpi-items-2012.csv" download>Data</a><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
         <div class="explain">
@@ -593,7 +574,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of January 2026</span>
-            <p>By {PIT12.month} the dearest-grown item was <span id="it12-topn">–</span> at <b id="it12-top">–</b>; at the other end <span id="it12-botn">–</span> stood at <b id="it12-bot">–</b>. The median item stood at <b id="it12-med">–</b>, and <b id="it12-below">–</b> cheaper than in 2012.</p>
+            <p>By {PIT12.month} the dearest-grown item was <span id="it12-topn" set:html={NUM["it12-topn"]}></span> at <b id="it12-top" set:html={NUM["it12-top"]}></b>; at the other end <span id="it12-botn" set:html={NUM["it12-botn"]}></span> stood at <b id="it12-bot" set:html={NUM["it12-bot"]}></b>. The median item stood at <b id="it12-med" set:html={NUM["it12-med"]}></b>, and <b id="it12-below" set:html={NUM["it12-below"]}></b> cheaper than in 2012.</p>
           </div>
         </div>
       </figure>
@@ -610,15 +591,10 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3>The village and the town pay different prices</h3>
             <div class="sub">Headline CPI, rural and urban against combined, year-on-year, per cent, Jan 2016 to Dec 2025</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-ru">–</div><div class="c">Dec 2025, rural y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-ru" set:html={NUM["pv-ru"]}></div><div class="c">Dec 2025, rural y/y</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-ru">
-            <button class="chip" data-key="combined"><i style="background:#2E4BD8"></i>Combined</button>
-            <button class="chip" data-key="rural"><i style="background:#5F6675"></i>Rural</button>
-            <button class="chip" data-key="urban"><i style="background:#A3A9B4"></i>Urban</button>
-          </div>
-          <div class="plotzone" id="plot-ru"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-ru" set:html={CH.ru()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, press release of 12 Jan 2026, band: RBI tolerance 2–6%, the sector weights differ by design, the rural basket has no housing group</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -632,8 +608,8 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of January 2026</span>
-            <p>December closed with rural inflation at <b id="ex-ru-r">–</b> and urban at <b id="ex-ru-u">–</b>: a gap of <b id="ex-ru-gap">–</b>. A year earlier the ordering was reversed: <b id="ex-ru-ry">–</b> rural against <b id="ex-ru-uy">–</b> urban. Nothing about either economy flipped. Food did: rural food is at <b id="ex-ru-rf">–</b>, urban food at <b id="ex-ru-uf">–</b>, and the heavier rural food weight turns the same glut into a bigger discount.</p>
-            <p>Strip food and fuel out and the ordering flips back: rural core runs at <b id="ex-ru-rc">–</b>, urban core at <b id="ex-ru-uc">–</b>. The village's calm is entirely a food story, and food stories end.</p>
+            <p>December closed with rural inflation at <b id="ex-ru-r" set:html={NUM["ex-ru-r"]}></b> and urban at <b id="ex-ru-u" set:html={NUM["ex-ru-u"]}></b>: a gap of <b id="ex-ru-gap" set:html={NUM["ex-ru-gap"]}></b>. A year earlier the ordering was reversed: <b id="ex-ru-ry" set:html={NUM["ex-ru-ry"]}></b> rural against <b id="ex-ru-uy" set:html={NUM["ex-ru-uy"]}></b> urban. Nothing about either economy flipped. Food did: rural food is at <b id="ex-ru-rf" set:html={NUM["ex-ru-rf"]}></b>, urban food at <b id="ex-ru-uf" set:html={NUM["ex-ru-uf"]}></b>, and the heavier rural food weight turns the same glut into a bigger discount.</p>
+            <p>Strip food and fuel out and the ordering flips back: rural core runs at <b id="ex-ru-rc" set:html={NUM["ex-ru-rc"]}></b>, urban core at <b id="ex-ru-uc" set:html={NUM["ex-ru-uc"]}></b>. The village's calm is entirely a food story, and food stories end.</p>
           </div>
         </div>
       </figure>
@@ -650,12 +626,12 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3>One month, thirty-six readings: on the new ruler</h3>
             <div class="sub">State &amp; UT inflation, {PST24.long}, published General index, base 2024=100, year-on-year, per cent, sorted, blue: outside the 2–6% band</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-st24">–</div><div class="c">spread, highest minus lowest</div></div>
+          <div class="plate-val"><div class="v" id="pv-st24" set:html={NUM["pv-st24"]}></div><div class="c">spread, highest minus lowest</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-st24"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-st24" set:html={CH.st24Chart()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, release of {P24.releaseShort}, the published General index of each state on the 2024 base, state baskets differ and are not recomputed on all-India weights, dashed rule: All-India, <span id="pf-st24-ai">–</span>, the strip below shows the retired base's final month; different rulers, never spliced</span>
+            <span class="src">Source: MoSPI, release of {P24.releaseShort}, the published General index of each state on the 2024 base, state baskets differ and are not recomputed on all-India weights, the rule: All-India, <span id="pf-st24-ai" set:html={NUM["pf-st24-ai"]}></span>, the strip below shows the retired base's final month; different rulers, never spliced</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
@@ -667,7 +643,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of {PST24.stamp}</span>
-            <p>The highest reading is <b id="st24-top">–</b>; the lowest is <b id="st24-bot">–</b>. The spread between them is <b id="st24-spread">–</b>, in a month when the national rate was <b id="st24-ai">–</b>. <b id="st24-above">–</b> of the thirty-six sit above the band's ceiling; <b id="st24-below">–</b> sit below its floor; <b id="st24-neg">–</b> print below zero.</p>
+            <p>The highest reading is <b id="st24-top" set:html={NUM["st24-top"]}></b>; the lowest is <b id="st24-bot" set:html={NUM["st24-bot"]}></b>. The spread between them is <b id="st24-spread" set:html={NUM["st24-spread"]}></b>, in a month when the national rate was <b id="st24-ai" set:html={NUM["st24-ai"]}></b>. <b id="st24-above" set:html={NUM["st24-above"]}></b> of the thirty-six sit above the band's ceiling; <b id="st24-below" set:html={NUM["st24-below"]}></b> sit below its floor; <b id="st24-neg" set:html={NUM["st24-neg"]}></b> print below zero.</p>
             <p>Set against December's strip below, where deflation reached from the east to a Kerala print above nine, the new ruler's field is tighter. How much of that narrowing is the fresh basket and how much is the {word(PST24.since("2025-12-01"))} months between the two strips, we do not know; the strips are shown apart so no one has to pretend to.</p>
           </div>
         </div>
@@ -678,16 +654,16 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
       <figure id="cb-stdiv" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3 id="stdiv-title">Your state, division by division</h3>
+            <h3 id="stdiv-title" set:html={NUM["stdiv-title"]}></h3>
             <div class="sub">Every state and union territory against every division of the 2024 base, year-on-year, per cent, {PSD.long}, combined rural and urban; rows sorted by the state's General index, deeper tint for faster price rises</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-stdiv">–</div><div class="c" id="pc-stdiv">–</div></div>
+          <div class="plate-val"><div class="v" id="pv-stdiv" set:html={NUM["pv-stdiv"]}></div><div class="c" id="pc-stdiv" set:html={NUM["pc-stdiv"]}></div></div>
         </div>
         <div class="frame">
-          <div class="ledger stdiv-wrap"><table class="stdiv" id="stdiv-table"></table></div>
+          <div class="ledger stdiv-wrap"><table class="stdiv" id="stdiv-table" aria-label={CH.stdivTable.label} set:html={CH.stdivTable.html}></table></div>
           <div class="plotfoot">
             <span class="src">Source: MoSPI, base 2024=100, published state indices (state baskets differ; no all-India weights applied), every cell is a year-on-year change computed from index levels; first column: the state's General index</span>
-            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="dl"><a href="/data/cpi-2024-states-divisions.csv" download>Data</a><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
         <div class="explain">
@@ -697,7 +673,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of {PSD.stamp}</span>
-            <p>Ranked by how far apart the middle half of states sit, the division that differs most from state to state is <b id="stdiv-wide">–</b>: its middle half runs <b id="stdiv-wide-iqr">–</b>, and its extremes are <b id="stdiv-wide-hi">–</b> and <b id="stdiv-wide-lo">–</b>. The division states agree on most is <b id="stdiv-narrow">–</b>. <b id="stdiv-negcells">–</b> of the <b id="stdiv-cells">–</b> state-division cells show prices lower than a year earlier.</p>
+            <p>Ranked by how far apart the middle half of states sit, the division that differs most from state to state is <b id="stdiv-wide" set:html={NUM["stdiv-wide"]}></b>: its middle half runs <b id="stdiv-wide-iqr" set:html={NUM["stdiv-wide-iqr"]}></b>, and its extremes are <b id="stdiv-wide-hi" set:html={NUM["stdiv-wide-hi"]}></b> and <b id="stdiv-wide-lo" set:html={NUM["stdiv-wide-lo"]}></b>. The division states agree on most is <b id="stdiv-narrow" set:html={NUM["stdiv-narrow"]}></b>. <b id="stdiv-negcells" set:html={NUM["stdiv-negcells"]}></b> of the <b id="stdiv-cells" set:html={NUM["stdiv-cells"]}></b> state-division cells show prices lower than a year earlier.</p>
           </div>
         </div>
       </figure>
@@ -710,12 +686,12 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3>One month, thirty-five readings: the old ruler's last</h3>
             <div class="sub">State &amp; UT inflation, December 2025, published General index, base 2012=100, retired, year-on-year, per cent, sorted, blue: outside the 2–6% band</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-states">–</div><div class="c">spread, highest minus lowest</div></div>
+          <div class="plate-val"><div class="v" id="pv-states" set:html={NUM["pv-states"]}></div><div class="c">spread, highest minus lowest</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-states"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-states" set:html={CH.statesChart()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, the published General index of each state, state baskets differ and are not recomputed on all-India weights, dashed rule: All-India, <span id="pf-st-ai">–</span>, several state indices were not published in the lockdown months of 2020–21; those gaps are disclosed in the data</span>
+            <span class="src">Source: MoSPI, the published General index of each state, state baskets differ and are not recomputed on all-India weights, the rule: All-India, <span id="pf-st-ai" set:html={NUM["pf-st-ai"]}></span>, several state indices were not published in the lockdown months of 2020–21; those gaps are disclosed in the data</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
@@ -727,8 +703,8 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of January 2026</span>
-            <p>The highest reading is <b id="st-top">–</b>; the lowest is <b id="st-bot">–</b>. The spread between them is <b id="st-spread">–</b>: in a month when the national rate was <b id="st-ai">–</b>. Deflation is not a statistical curiosity here: <b id="st-neg">–</b> states printed below zero.</p>
-            <p><b id="st-below">–</b> of the thirty-five sit below the 2% floor, and only <b id="st-above">–</b> sit above the ceiling. The all-India number is not a typical state experience so much as a midpoint between deflation in the east and a Kerala print above nine.</p>
+            <p>The highest reading is <b id="st-top" set:html={NUM["st-top"]}></b>; the lowest is <b id="st-bot" set:html={NUM["st-bot"]}></b>. The spread between them is <b id="st-spread" set:html={NUM["st-spread"]}></b>: in a month when the national rate was <b id="st-ai" set:html={NUM["st-ai"]}></b>. Deflation is not a statistical curiosity here: <b id="st-neg" set:html={NUM["st-neg"]}></b> states printed below zero.</p>
+            <p><b id="st-below" set:html={NUM["st-below"]}></b> of the thirty-five sit below the 2% floor, and only <b id="st-above" set:html={NUM["st-above"]}></b> sit above the ceiling. The all-India number is not a typical state experience so much as a midpoint between deflation in the east and a Kerala print above nine.</p>
           </div>
         </div>
       </figure>
@@ -741,16 +717,12 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3>Where the village and the town disagree most</h3>
             <div class="sub">Rural and urban inflation, December 2025, the five states with the widest gap, per cent, published General index</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-stgap">–</div><div class="c">widest rural–urban gap</div></div>
+          <div class="plate-val"><div class="v" id="pv-stgap" set:html={NUM["pv-stgap"]}></div><div class="c">widest rural–urban gap</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-stgap">
-            <button class="chip" data-key="rural"><i style="background:#5F6675"></i>Rural</button>
-            <button class="chip" data-key="urban"><i style="background:#A3A9B4"></i>Urban</button>
-          </div>
-          <div class="plotzone" id="plot-stgap"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-stgap" set:html={CH.stgapChart()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, shaded band: RBI tolerance 2–6%, the gap runs both ways: <span id="pf-stgap">–</span></span>
+            <span class="src">Source: MoSPI, shaded band: RBI tolerance 2–6%, the gap runs both ways: <span id="pf-stgap" set:html={NUM["pf-stgap"]}></span></span>
             <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
@@ -768,14 +740,10 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3>Two rural populations, two inflation rates</h3>
             <div class="sub">CPI-AL (farm-labour households) against CPI-rural (all rural households), year-on-year, per cent, Jan 2016 to May 2025, trimmed to the shared window: never spliced</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-alcpi">–</div><div class="c">CPI-AL, May 2025, y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-alcpi" set:html={NUM["pv-alcpi"]}></div><div class="c">CPI-AL, May 2025, y/y</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-alcpi">
-            <button class="chip" data-key="al"><i style="background:#2E4BD8"></i>CPI-AL, farm-labour households</button>
-            <button class="chip" data-key="rural"><i style="background:#A3A9B4"></i>CPI, rural (all households)</button>
-          </div>
-          <div class="plotzone" id="plot-alcpi"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-alcpi" set:html={CH.alcpiChart()} />
           <div class="plotfoot">
             <span class="src">Source: Labour Bureau (CPI-AL, base 1986-87) and MoSPI/NSO (CPI-rural, base 2012), via eSankhyiki, two surveys of two different rural populations, the farm-labour basket is heavier in food, so it swings wider</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -785,11 +753,11 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           <div class="ev">
             <span class="mk">How to read this</span>
             <p>Both lines are rural, but they describe different people. The grey line is the rural half of the national CPI: every rural household, weighted by how it spends. The blue line is the agricultural labourer alone: a poorer household, whose basket the Labour Bureau weights far more heavily toward food, and whose index reprices the floor wages that MGNREGA and state rate-cards pay.</p>
-            <p>Because food dominates the labourer's basket, the blue line is the more violent one: it rises faster in a bad monsoon and falls further in a glut. Over the decade they part by <b id="alcpi-avgap">–</b> on average, and by as much as <b id="alcpi-maxgap">–</b> in a single month.</p>
+            <p>Because food dominates the labourer's basket, the blue line is the more violent one: it rises faster in a bad monsoon and falls further in a glut. Over the decade they part by <b id="alcpi-avgap" set:html={NUM["alcpi-avgap"]}></b> on average, and by as much as <b id="alcpi-maxgap" set:html={NUM["alcpi-maxgap"]}></b> in a single month.</p>
           </div>
           <div class="now">
             <span class="mk">As of May 2025, the overlap's end</span>
-            <p>At the old AL base's final reading the labourer's index stood at <b id="alcpi-al">–</b> against CPI-rural's <b id="alcpi-rural">–</b>: unusually close. The two populations live in the same villages but in different baskets, and the gap between them blows wide whenever a food spike hits the labourer's heavier weighting first. The index that sets the farm wage tracks the broader village's: until the harvest breaks.</p>
+            <p>At the old AL base's final reading the labourer's index stood at <b id="alcpi-al" set:html={NUM["alcpi-al"]}></b> against CPI-rural's <b id="alcpi-rural" set:html={NUM["alcpi-rural"]}></b>: unusually close. The two populations live in the same villages but in different baskets, and the gap between them blows wide whenever a food spike hits the labourer's heavier weighting first. The index that sets the farm wage tracks the broader village's: until the harvest breaks.</p>
           </div>
         </div>
       </figure>
@@ -802,14 +770,10 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3>The index that sets the farm wage</h3>
             <div class="sub">CPI-AL, year-on-year, base 1986-87 (Jul 2000 to May 2025), base 2019=100 ({PAL.span}, publisher's y/y): side by side, never spliced</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-al">–</div><div class="c">{PAL.short}, base 2019, y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-al" set:html={NUM["pv-al"]}></div><div class="c">{PAL.short}, base 2019, y/y</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-al">
-            <button class="chip" data-key="al_old"><i style="background:#878D99"></i>Base 1986-87</button>
-            <button class="chip" data-key="al_new"><i style="background:#2E4BD8"></i>Base 2019=100</button>
-          </div>
-          <div class="plotzone" id="plot-al"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-al" set:html={CH.alChart()} />
           <div class="plotfoot">
             <span class="src">Source: Labour Bureau, via MoSPI eSankhyiki, y/y on the new base is the Bureau's own, computed on a linked back-series it does not publish, the two bases price different baskets</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -823,8 +787,8 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of {PAL.stamp}</span>
-            <p>The old ruler retired at <b id="al-old-final">–</b> in May 2025; {PAL.nWord} months into the new series, the reading is <b id="al-new">–</b>. Farm-labour inflation has firmed through the new base's first year, while the national index on the 2012 base fell below its 2% floor in late 2025.</p>
-            <p>The old series' peak: <b id="al-peak">–</b> in January 2010, in the wake of a failed monsoon: is what a food-heavy basket does when the harvest goes wrong. That exposure has not gone anywhere; only the ruler is new.</p>
+            <p>The old ruler retired at <b id="al-old-final" set:html={NUM["al-old-final"]}></b> in May 2025; {PAL.nWord} months into the new series, the reading is <b id="al-new" set:html={NUM["al-new"]}></b>. Farm-labour inflation has firmed through the new base's first year, while the national index on the 2012 base fell below its 2% floor in late 2025.</p>
+            <p>The old series' peak: <b id="al-peak" set:html={NUM["al-peak"]}></b> in January 2010, in the wake of a failed monsoon: is what a food-heavy basket does when the harvest goes wrong. That exposure has not gone anywhere; only the ruler is new.</p>
           </div>
         </div>
       </figure>
@@ -837,14 +801,10 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3>Two labourers, rarely apart</h3>
             <div class="sub">CPI-AL and CPI-RL, year-on-year (publisher's), base 2019=100, {PAL.span}</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-alrl">–</div><div class="c">{PAL.short}, RL y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-alrl" set:html={NUM["pv-alrl"]}></div><div class="c">{PAL.short}, RL y/y</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-alrl">
-            <button class="chip" data-key="al"><i style="background:#2E4BD8"></i>Agricultural labourers</button>
-            <button class="chip" data-key="rl"><i style="background:#5F6675"></i>Rural labourers</button>
-          </div>
-          <div class="plotzone" id="plot-alrl"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-alrl" set:html={CH.alrlChart()} />
           <div class="plotfoot">
             <span class="src">Source: Labour Bureau, via MoSPI eSankhyiki, RL is the wider net: rural labourer households of every trade, agricultural labourers among them</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -857,7 +817,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of {PAL.stamp}</span>
-            <p>AL at <b id="alrl-al">–</b>, RL at <b id="alrl-rl">–</b>: a gap of <b id="alrl-gap">–</b>, with AL on top for most of the new base's first year. Both have climbed steadily from their low in late 2025. Set beside the national CPI's rural reading of <b id="alrl-cpirural">–</b> in December, the labourers' indices describe a different year: different basket, later months, and no band to answer to.</p>
+            <p>AL at <b id="alrl-al" set:html={NUM["alrl-al"]}></b>, RL at <b id="alrl-rl" set:html={NUM["alrl-rl"]}></b>: a gap of <b id="alrl-gap" set:html={NUM["alrl-gap"]}></b>, with AL on top for most of the new base's first year. Both have climbed steadily from their low in late 2025. Set beside the national CPI's rural reading of <b id="alrl-cpirural" set:html={NUM["alrl-cpirural"]}></b> in December, the labourers' indices describe a different year: different basket, later months, and no band to answer to.</p>
           </div>
         </div>
       </figure>
@@ -870,17 +830,10 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3>What the labourer's rupee buys</h3>
             <div class="sub">CPI-AL group indices, year-on-year (publisher's), base 2019=100, {PAL.span}</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-algrp">–</div><div class="c">{PAL.short}, food y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-algrp" set:html={NUM["pv-algrp"]}></div><div class="c">{PAL.short}, food y/y</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-algrp">
-            <button class="chip" data-key="food"><i style="background:#2E4BD8"></i>Food</button>
-            <button class="chip" data-key="pan"><i style="background:#C9CED6"></i>Pan &amp; tobacco</button>
-            <button class="chip" data-key="fuel"><i style="background:#878D99"></i>Fuel &amp; light</button>
-            <button class="chip" data-key="clothing"><i style="background:#A3A9B4"></i>Clothing &amp; footwear</button>
-            <button class="chip" data-key="misc"><i style="background:#5F6675"></i>Miscellaneous</button>
-          </div>
-          <div class="plotzone" id="plot-algrp"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-algrp" set:html={CH.algrpChart()} />
           <div class="plotfoot">
             <span class="src">Source: Labour Bureau, via MoSPI eSankhyiki, five groups, not six, like the rural CPI, the labourer's basket has no housing group</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -893,7 +846,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of {PAL.stamp}</span>
-            <p>Food leads at <b id="alg-food">–</b>, then fuel &amp; light at <b id="alg-fuel">–</b>; clothing (<b id="alg-cloth">–</b>) and miscellaneous (<b id="alg-misc">–</b>) trail. Note the inversion: the national CPI's food group was in deflation, at <b id="alg-cpifood">–</b>, when the 2012 base closed in December 2025, while the labourer's food group was still firming {word(PAL.since("2025-12-01"))} months later. Different basket, different shops, different answer.</p>
+            <p>Food leads at <b id="alg-food" set:html={NUM["alg-food"]}></b>, then fuel &amp; light at <b id="alg-fuel" set:html={NUM["alg-fuel"]}></b>; clothing (<b id="alg-cloth" set:html={NUM["alg-cloth"]}></b>) and miscellaneous (<b id="alg-misc" set:html={NUM["alg-misc"]}></b>) trail. Note the inversion: the national CPI's food group was in deflation, at <b id="alg-cpifood" set:html={NUM["alg-cpifood"]}></b>, when the 2012 base closed in December 2025, while the labourer's food group was still firming {word(PAL.since("2025-12-01"))} months later. Different basket, different shops, different answer.</p>
           </div>
         </div>
       </figure>
@@ -906,12 +859,12 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3>Where the farm worker's rupee stretched: twenty states</h3>
             <div class="sub">CPI-AL by state, year-on-year, per cent, May 2025, base 1986-87 (retired), sorted, the final state reading of the old ruler</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-alst">–</div><div class="c">highest state, May 2025</div></div>
+          <div class="plate-val"><div class="v" id="pv-alst" set:html={NUM["pv-alst"]}></div><div class="c">highest state, May 2025</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-alst"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-alst" set:html={CH.alstChart()} />
           <div class="plotfoot">
-            <span class="src">Source: Labour Bureau, via eSankhyiki, base 1986-87, the final state reading of the retired ruler; the new base's states are on the next plate, dashed rule: All-India CPI-AL, state baskets differ and are not recomputed</span>
+            <span class="src">Source: Labour Bureau, via eSankhyiki, base 1986-87, the final state reading of the retired ruler; the new base's states are on the next plate, the rule: All-India CPI-AL, state baskets differ and are not recomputed</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
@@ -922,7 +875,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of May 2025, final reading</span>
-            <p><b id="alst-above">–</b> of the twenty states sat above the All-India CPI-AL. The spread runs from <b id="alst-top">–</b> down to <b id="alst-bot">–</b>: <b id="alst-spread">–</b> end to end. This is the old ruler's last word on its twenty states; the next plate reads thirty-four on the new base.</p>
+            <p><b id="alst-above" set:html={NUM["alst-above"]}></b> of the twenty states sat above the All-India CPI-AL. The spread runs from <b id="alst-top" set:html={NUM["alst-top"]}></b> down to <b id="alst-bot" set:html={NUM["alst-bot"]}></b>: <b id="alst-spread" set:html={NUM["alst-spread"]}></b> end to end. This is the old ruler's last word on its twenty states; the next plate reads thirty-four on the new base.</p>
           </div>
         </div>
       </figure>
@@ -935,14 +888,10 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3 id="alst19-title">The farm and rural labourer, state by state, on the new base</h3>
             <div class="sub">CPI-AL and CPI-RL by state, year-on-year, per cent, {PALS.long}, base 2019=100, computed from the Bureau's published levels (the new base now has a full year of them), sorted by CPI-AL</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-alst19">–</div><div class="c" id="pc-alst19">–</div></div>
+          <div class="plate-val"><div class="v" id="pv-alst19" set:html={NUM["pv-alst19"]}></div><div class="c" id="pc-alst19" set:html={NUM["pc-alst19"]}></div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-alst19">
-            <button class="chip" data-key="al"><i style="background:#2E4BD8"></i>Agricultural labourers</button>
-            <button class="chip" data-key="rl"><i style="background:#A3A9B4"></i>Rural labourers</button>
-          </div>
-          <div class="plotzone" id="plot-alst19"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-alst19" set:html={CH.alst19Chart()} />
           <div class="plotfoot">
             <span class="src">Source: Labour Bureau, via MoSPI eSankhyiki, base 2019=100, 34 states and union territories against 20 on the old base, y/y from levels a year apart on the same base; the state baskets differ</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -955,7 +904,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of {PALS.stamp}</span>
-            <p>The farm labourer's index rose fastest in <b id="alst19-top">–</b> and slowest in <b id="alst19-bot">–</b>. In <b id="alst19-alhi">–</b> of the <b id="alst19-n">–</b> states the agricultural labourer's inflation ran above the rural labourer's.</p>
+            <p>The farm labourer's index rose fastest in <b id="alst19-top" set:html={NUM["alst19-top"]}></b> and slowest in <b id="alst19-bot" set:html={NUM["alst19-bot"]}></b>. In <b id="alst19-alhi" set:html={NUM["alst19-alhi"]}></b> of the <b id="alst19-n" set:html={NUM["alst19-n"]}></b> states the agricultural labourer's inflation ran above the rural labourer's.</p>
           </div>
         </div>
       </figure>
@@ -973,16 +922,10 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3 id="iw-title">The factory worker's index, on four rulers</h3>
             <div class="sub">CPI for industrial workers, All India, General Index, year-on-year, per cent, {PIW60.firstShort} to {PIW.short}: bases 1960, 1982, 2001 and 2016, each computed inside its own base, drawn side by side, never joined</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-iw">–</div><div class="c">{PIW.short}, base 2016, y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-iw" set:html={NUM["pv-iw"]}></div><div class="c">{PIW.short}, base 2016, y/y</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-iw">
-            <button class="chip" data-key="b1960"><i style="background:#C9CED6"></i>Base 1960</button>
-            <button class="chip" data-key="b1982"><i style="background:#A3A9B4"></i>Base 1982</button>
-            <button class="chip" data-key="b2001"><i style="background:#5F6675"></i>Base 2001</button>
-            <button class="chip" data-key="b2016"><i style="background:#2E4BD8"></i>Base 2016</button>
-          </div>
-          <div class="plotzone" id="plot-iw"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-iw" set:html={CH.iwChart()} />
           <div class="plotfoot">
             <span class="src">Source: Labour Bureau, via RBI DBIE (report 699), year-on-year computed from published index levels inside each base; the Bureau's linking factors between bases are not in the report, so no line crosses a seam</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -996,7 +939,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of {PIW.stamp}</span>
-            <p>On the 2016 basket the worker's index rose <b id="iw-now">–</b> in the year to {PIW.month}, against <b id="iw-yago">–</b> a year earlier. The current basket's high so far is <b id="iw-peak16">–</b>; the whole record's high is <b id="iw-peak">–</b>. Dearness allowance is revised twice a year from this index, so a high reading here reaches pay packets within months.</p>
+            <p>On the 2016 basket the worker's index rose <b id="iw-now" set:html={NUM["iw-now"]}></b> in the year to {PIW.month}, against <b id="iw-yago" set:html={NUM["iw-yago"]}></b> a year earlier. The current basket's high so far is <b id="iw-peak16" set:html={NUM["iw-peak16"]}></b>; the whole record's high is <b id="iw-peak" set:html={NUM["iw-peak"]}></b>. Dearness allowance is revised twice a year from this index, so a high reading here reaches pay packets within months.</p>
           </div>
         </div>
       </figure>
@@ -1009,18 +952,10 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3 id="iwgrp-title">What the factory worker's rupee buys</h3>
             <div class="sub">CPI-IW group indices, All India, year-on-year, per cent, base 2016, {PIW.span}</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-iwgrp">–</div><div class="c" id="pc-iwgrp">–</div></div>
+          <div class="plate-val"><div class="v" id="pv-iwgrp" set:html={NUM["pv-iwgrp"]}></div><div class="c" id="pc-iwgrp" set:html={NUM["pc-iwgrp"]}></div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-iwgrp">
-            <button class="chip" data-key="food"><i style="background:#2E4BD8"></i>Food</button>
-            <button class="chip" data-key="housing"><i style="background:#5F6675"></i>Housing</button>
-            <button class="chip" data-key="fuel"><i style="background:#878D99"></i>Fuel and light</button>
-            <button class="chip" data-key="clothing"><i style="background:#A3A9B4"></i>Clothing, bedding, footwear</button>
-            <button class="chip" data-key="pan"><i style="background:#C9CED6"></i>Pan, tobacco</button>
-            <button class="chip" data-key="misc"><i style="background:#C9CED6"></i>Miscellaneous</button>
-          </div>
-          <div class="plotzone" id="plot-iwgrp"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-iwgrp" set:html={CH.iwgrpChart()} />
           <div class="plotfoot">
             <span class="src">Source: Labour Bureau, via RBI DBIE (report 699), base 2016=100, unlike the farm labourer's basket, this one has a housing group: industrial workers rent</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -1033,7 +968,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of {PIW.stamp}</span>
-            <p>In {PIW.month} the fastest group was <b id="iwg-top">–</b> and the slowest <b id="iwg-bot">–</b>. Food stood at <b id="iwg-food">–</b>, against <b id="iwg-food-y">–</b> a year earlier: <span id="iwg-food-dir">–</span>.</p>
+            <p>In {PIW.month} the fastest group was <b id="iwg-top" set:html={NUM["iwg-top"]}></b> and the slowest <b id="iwg-bot" set:html={NUM["iwg-bot"]}></b>. Food stood at <b id="iwg-food" set:html={NUM["iwg-food"]}></b>, against <b id="iwg-food-y" set:html={NUM["iwg-food-y"]}></b> a year earlier: <span id="iwg-food-dir" set:html={NUM["iwg-food-dir"]}></span>.</p>
           </div>
         </div>
       </figure>
@@ -1046,23 +981,23 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3 id="iwcen-title">Eighty-eight towns, one index</h3>
             <div class="sub">CPI-IW by centre, year-on-year, per cent, {PIWC.long}, base 2016, sorted: every industrial centre the Labour Bureau prices, from mill towns to tea gardens</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-iwcen">–</div><div class="c">spread across centres, {PIWC.short}</div></div>
+          <div class="plate-val"><div class="v" id="pv-iwcen" set:html={NUM["pv-iwcen"]}></div><div class="c">spread across centres, {PIWC.short}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-iwcen"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-iwcen" set:html={CH.iwcenChart()} />
           <div class="plotfoot">
-            <span class="src">Source: Labour Bureau, via RBI DBIE (report 1168), base 2016=100, each centre is priced in its own markets with its own basket, dashed rule: All India; a centre is a town, not a state, so a state can appear several times</span>
+            <span class="src">Source: Labour Bureau, via RBI DBIE (report 1168), base 2016=100, each centre is priced in its own markets with its own basket, the rule: All India; a centre is a town, not a state, so a state can appear several times</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Each dot is a town where the Bureau sends price collectors to the markets an industrial worker uses. The centres are chosen for their factories and mines, not to cover a state, so read them as places: Jamshedpur, Coimbatore, Kolkata. Dearness allowance is paid on the All-India figure, so a worker in a centre well above the dashed rule is falling behind on an allowance that averages the country.</p>
+            <p>Each dot is a town where the Bureau sends price collectors to the markets an industrial worker uses. The centres are chosen for their factories and mines, not to cover a state, so read them as places: Jamshedpur, Coimbatore, Kolkata. Dearness allowance is paid on the All-India figure, so a worker in a centre well above the All India rule is falling behind on an allowance that averages the country.</p>
           </div>
           <div class="now">
             <span class="mk">As of {PIWC.stamp}</span>
-            <p>The spread runs from <b id="iwc-top">–</b> to <b id="iwc-bot">–</b>: <b id="iwc-spread">–</b> end to end. <b id="iwc-above">–</b> of <b id="iwc-n">–</b> centres ran above the All-India rate of <b id="iwc-ai">–</b>, and <b id="iwc-neg">–</b> saw prices fall over the year.</p>
+            <p>The spread runs from <b id="iwc-top" set:html={NUM["iwc-top"]}></b> to <b id="iwc-bot" set:html={NUM["iwc-bot"]}></b>: <b id="iwc-spread" set:html={NUM["iwc-spread"]}></b> end to end. <b id="iwc-above" set:html={NUM["iwc-above"]}></b> of <b id="iwc-n" set:html={NUM["iwc-n"]}></b> centres ran above the All-India rate of <b id="iwc-ai" set:html={NUM["iwc-ai"]}></b>, and <b id="iwc-neg" set:html={NUM["iwc-neg"]}></b> saw prices fall over the year.</p>
           </div>
         </div>
       </figure>
@@ -1073,16 +1008,12 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
         <div class="plate-head">
           <div class="t">
             <h3 id="wage-title">Did the farm wage keep up with farm prices?</h3>
-            <div class="sub">Daily wage of a man working as a general agricultural labourer, All India, growth on a year earlier, per cent, against CPI-AL inflation (base 1986-87), <span id="wage-span">–</span>: both are Labour Bureau series</div>
+            <div class="sub">Daily wage of a man working as a general agricultural labourer, All India, growth on a year earlier, per cent, against CPI-AL inflation (base 1986-87), <span id="wage-span" set:html={NUM["wage-span"]}></span>: both are Labour Bureau series</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-wage">–</div><div class="c">wage, {PWG.short}, rupees a day</div></div>
+          <div class="plate-val"><div class="v" id="pv-wage" set:html={NUM["pv-wage"]}></div><div class="c">wage, {PWG.short}, rupees a day</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-wage">
-            <button class="chip" data-key="wage"><i style="background:#2E4BD8"></i>Wage growth, general farm labourer</button>
-            <button class="chip" data-key="al"><i style="background:#C47A16"></i>CPI-AL inflation</button>
-          </div>
-          <div class="plotzone" id="plot-wage"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-wage" set:html={CH.wageChart()} />
           <div class="plotfoot">
             <span class="src">Source: Labour Bureau, Wage Rates in Rural India (RBI DBIE report 664) and CPI-AL (eSankhyiki), wage growth computed from the published daily wage; the occupation list was redrawn in November 2013, so the line starts a year later; ends where the old CPI-AL base ends, May 2025</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -1096,7 +1027,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of {PWG.stamp}</span>
-            <p>A day of general farm labour paid <b id="wg-now">–</b> in {PWG.long}, up from <b id="wg-first">–</b> in {PWG.firstLong}. Over the <b id="wg-n">–</b> months both series cover, the wage grew faster than farm prices in <b id="wg-above">–</b>; on average, wage growth ran <b id="wg-gap">–</b> above farm-price inflation. That is a slow gain in what a day's work buys, and it says nothing about the number of days.</p>
+            <p>A day of general farm labour paid <b id="wg-now" set:html={NUM["wg-now"]}></b> in {PWG.long}, up from <b id="wg-first" set:html={NUM["wg-first"]}></b> in {PWG.firstLong}. Over the <b id="wg-n" set:html={NUM["wg-n"]}></b> months both series cover, the wage grew faster than farm prices in <b id="wg-above" set:html={NUM["wg-above"]}></b>; on average, wage growth ran <b id="wg-gap" set:html={NUM["wg-gap"]}></b> above farm-price inflation. That is a slow gain in what a day's work buys, and it says nothing about the number of days.</p>
           </div>
         </div>
       </figure>
@@ -1109,12 +1040,12 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <h3 id="wagest-title">A day's farm wage, state by state</h3>
             <div class="sub">Daily wage of a general agricultural labourer, rupees, latest month each state reports, {PWGS.long} or earlier, sorted</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-wagest">–</div><div class="c">highest to lowest state</div></div>
+          <div class="plate-val"><div class="v" id="pv-wagest" set:html={NUM["pv-wagest"]}></div><div class="c">highest to lowest state</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-wagest"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-wagest" set:html={CH.wagestChart()} />
           <div class="plotfoot">
-            <span class="src">Source: Labour Bureau, Wage Rates in Rural India (RBI DBIE report 664), men's wages, rupees per day, nominal: not adjusted for each state's prices, dashed rule: All India</span>
+            <span class="src">Source: Labour Bureau, Wage Rates in Rural India (RBI DBIE report 664), men's wages, rupees per day, nominal: not adjusted for each state's prices, the rule: All India</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
@@ -1125,7 +1056,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of {PWG.stamp}</span>
-            <p>The wage runs from <b id="wgs-top">–</b> down to <b id="wgs-bot">–</b>: the best-paid state pays <b id="wgs-ratio">–</b> times the lowest for the same work. The All-India figure is <b id="wgs-ai">–</b>.</p>
+            <p>The wage runs from <b id="wgs-top" set:html={NUM["wgs-top"]}></b> down to <b id="wgs-bot" set:html={NUM["wgs-bot"]}></b>: the best-paid state pays <b id="wgs-ratio" set:html={NUM["wgs-ratio"]}></b> times the lowest for the same work. The All-India figure is <b id="wgs-ai" set:html={NUM["wgs-ai"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -1204,12 +1135,12 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. "Consumer Price Index Numbers on Base 2024=100 for Rural, Urban &amp; Combined: {P24.long}." Press release, {P24.release}. Division indices retrieved via the eSankhyiki API, vintage <b id="prov-vintage24">–</b>. The rebased series prices a redrawn basket, classified into twelve COICOP-2018-style divisions in place of the 2012 base's six groups; its index history begins January 2025, so the first same-base year-on-year rates are the 2026 prints. The API serves no component weights for this base yet: the 2024-base headline is the published all-groups index, and the weights recomputation applied to the 2012 base, the cross-check that series gets, is not yet possible here. The API's own published inflation rate is kept as a crosscheck instead (worst deviation 0.01 pt). The dashed line in §02 is the NSO's own back-cast of the new index, 2013–2024, baked as its own bundle. The two bases are never spliced.</p>
+        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. "Consumer Price Index Numbers on Base 2024=100 for Rural, Urban &amp; Combined: {P24.long}." Press release, {P24.release}. Division indices retrieved via the eSankhyiki API, vintage <b id="prov-vintage24" set:html={NUM["prov-vintage24"]}></b>. The rebased series prices a redrawn basket, classified into twelve COICOP-2018-style divisions in place of the 2012 base's six groups; its index history begins January 2025, so the first same-base year-on-year rates are the 2026 prints. The API serves no component weights for this base yet: the 2024-base headline is the published all-groups index, and the weights recomputation applied to the 2012 base, the cross-check that series gets, is not yet possible here. The API's own published inflation rate is kept as a crosscheck instead (worst deviation 0.01 pt). The dashed line in §02 is the NSO's own back-cast of the new index, 2013–2024, baked as its own bundle. The two bases are never spliced.</p>
         <p>Coverage of the 2024 base is now complete to the API's floor, audited level by level against the source's own row counts: below CPI General and the 13 divisions sit 43 groups, 92 classes, 162 sub-classes and 358 items: 668 all-India rows per month, every month from January 2025. The groups and the full item basket are baked (§03); the classes and sub-classes, intermediate aggregates between them, are archived raw. The General index of all 36 states and UTs on the new base (§11) is baked for combined, rural and urban. Every year-on-year figure is computed from index levels and only where a same-base year-ago level exists: nothing is computed across the seam. Each item row carries the API's imputation flag; every all-India combined row served so far is N, meaning compiled from collected prices. Because the API serves no weights for this base, groups and items are shown unweighted and no recomposition is asserted at any level. A base-2010 fragment also exists in the API (January 2011 to December 2014, on the pre-2012 scheme); its span predates this guide's window and it is archived, not baked.</p>
-        <p>The retired series: "Consumer Price Index Numbers on Base 2012=100 for Rural, Urban &amp; Combined, December 2025." Press release, 12 January 2026, the final print on that base. Group indices retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>.</p>
+        <p>The retired series: "Consumer Price Index Numbers on Base 2012=100 for Rural, Urban &amp; Combined, December 2025." Press release, 12 January 2026, the final print on that base. Group indices retrieved via the eSankhyiki API, vintage <b id="prov-vintage" set:html={NUM["prov-vintage"]}></b>.</p>
         <p>Headline and core inflation are computed by India Atlas from the published group indices using the official weights; the computed headline tracks the published one within 0.14 pt across the decade. Core is not an official series. Housing group indices for December 2018 to September 2019 were never published; those months are linearly interpolated and flagged in the series metadata. The rural and urban headline and core series (§10) are computed the same way, on the sector weights.</p>
         <p>The 21 sub-group indices (§09, Jan 2016 to Dec 2025) and the state series (§11) are the published MoSPI series, same vintage. State figures are the published General index of each state: state baskets differ, and nothing is recomputed on all-India weights. Several state indices were not published in April–June 2020 and April–June 2021; those months, and their year-on-year knock-on a year later, are gaps in the data, not zeros.</p>
-        <p>The CPI for Agricultural Labourers and Rural Labourers (§12) is compiled by the Labour Bureau, Ministry of Labour &amp; Employment, retrieved via eSankhyiki, vintage <b id="prov-vintage3">–</b>. The base 1986-87=100 series ends with the May 2025 print; the base 2019=100 series begins June 2025 (coverage here: Jul 2000 to {PAL.short}). The two bases price different baskets and are never spliced. Year-on-year rates on the new base are the Bureau's own, computed on a linked back-series it does not publish.</p>
+        <p>The CPI for Agricultural Labourers and Rural Labourers (§12) is compiled by the Labour Bureau, Ministry of Labour &amp; Employment, retrieved via eSankhyiki, vintage <b id="prov-vintage3" set:html={NUM["prov-vintage3"]}></b>. The base 1986-87=100 series ends with the May 2025 print; the base 2019=100 series begins June 2025 (coverage here: Jul 2000 to {PAL.short}). The two bases price different baskets and are never spliced. Year-on-year rates on the new base are the Bureau's own, computed on a linked back-series it does not publish.</p>
       </div>
       <div>
         <h6>Revisions &amp; uncertainty</h6>
@@ -1223,7 +1154,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
     </div>
     <div class="fine">
       <span>India Atlas, CPI</span>
-      <span>Vintage <span id="prov-vintage2">–</span>, Bases 2024=100 &amp; 2012=100 (retired), AL/RL 1986-87 &amp; 2019=100</span>
+      <span>Vintage <span id="prov-vintage2" set:html={NUM["prov-vintage2"]}></span>, Bases 2024=100 &amp; 2012=100 (retired), AL/RL 1986-87 &amp; 2019=100</span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
@@ -1246,31 +1177,6 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
   }
   .sm-cap:first-child{margin-top:4px}
   .sm-cap::after{content:"";flex:1;border-top:1px solid var(--rule)}
-  .sm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px 28px}
-  .sm-panel{background:#FFFFFF;padding:0 0 18px;position:relative;border-top:1px solid var(--rule);padding-top:10px}
-  .sm-panel .sm-t{
-    font-family:var(--sans);font-size:.78rem;color:var(--grey1);line-height:1.55;
-    padding-right:58px;min-height:2.05em;
-  }
-  .sm-panel .sm-v{
-    position:absolute;top:10px;right:0;
-    font-family:var(--sans);font-size:.8rem;color:var(--ink-soft);
-    font-variant-numeric:tabular-nums;
-  }
-  .sm-panel .sm-v.acc{color:var(--ink);font-weight:600}
-  /* the panel's y-range at the baseline — the scale disclosure the
-   * normalized shape cannot carry. Two-sided: time window on the left,
-   * value range on the right. */
-  .sm-panel .sm-r{
-    position:absolute;bottom:1px;right:0;
-    font-family:var(--sans);font-size:.75rem;
-    color:var(--muted);font-variant-numeric:tabular-nums;
-  }
-  .sm-panel .sm-r .x{float:left;margin-right:auto}
-  .sm-panel .sm-r{left:0;display:flex;justify-content:space-between;gap:8px}
-  .sm-panel svg{display:block;width:100%;height:auto}
-  @media (max-width:900px){.sm-grid{grid-template-columns:repeat(2,1fr)}}
-  @media (max-width:520px){.sm-grid{grid-template-columns:1fr}}
   /* §03 358-item extremes ledger — layout only */
   .tail-ledger td.val{font-size:1.5rem}
   .tail-mid td{padding:16px 0;border-bottom:1px solid var(--rule);text-align:center;font-family:var(--sans);font-size:.8rem;color:var(--muted)}
@@ -1302,6 +1208,5 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
  </style>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/cpi.client.js";
 </script>
 </Base>

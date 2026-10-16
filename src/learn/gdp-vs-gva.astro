@@ -1,5 +1,7 @@
 ---
 import Learn from "../layouts/Learn.astro";
+import * as CH from "./gdp-vs-gva.charts.js";
+const NUM = CH.NUM;
 ---
 <Learn
   title="GDP versus GVA: the tax wedge · India Atlas"
@@ -66,12 +68,12 @@ import Learn from "../layouts/Learn.astro";
             <h3>Two lines for one economy: the gap between them is the tax wedge</h3>
             <div class="sub">Real GDP and real GVA, year-on-year, constant 2011-12 prices, Q1 FY17 to Q2 FY26</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-gg">–</div><div class="c">Q2 FY26, GDP y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-gg" set:html={NUM["pv-gg"]}></div><div class="c">Q2 FY26, GDP y/y</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-gg"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-gg" set:html={CH.gg()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, National Accounts, base 2011-12, vintage <span id="pf-gg">–</span>, the vertical gap is taxes on products net of subsidies</span>
+            <span class="src">Source: MoSPI, National Accounts, base 2011-12, vintage <span id="pf-gg" set:html={NUM["pf-gg"]}></span>, the vertical gap is taxes on products net of subsidies</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -87,7 +89,7 @@ import Learn from "../layouts/Learn.astro";
           </div>
           <div class="now">
             <span class="mk">The FY21 case</span>
-            <p>In Q4 FY21 the lines crossed in an instructive way. GVA grew <b id="fy21-gva">–</b> while GDP grew only <b id="fy21-gdp">–</b>. Production was recovering, but the wedge had swung: subsidy payouts rose sharply in the pandemic year even as tax collections fell.</p>
+            <p>In Q4 FY21 the lines crossed in an instructive way. GVA grew <b id="fy21-gva" set:html={NUM["fy21-gva"]}></b> while GDP grew only <b id="fy21-gdp" set:html={NUM["fy21-gdp"]}></b>. Production was recovering, but the wedge had swung: subsidy payouts rose sharply in the pandemic year even as tax collections fell.</p>
             <p>Same economy, same quarter, two true numbers. Anyone quoting only one of them that quarter told half the story.</p>
           </div>
         </div>
@@ -99,10 +101,10 @@ import Learn from "../layouts/Learn.astro";
   <section>
     <div class="sec-head"><span class="no">03</span><h2>Which one to quote, and when</h2><span class="line"></span><span class="unit">A rule of thumb</span></div>
     <div class="numbers">
-      <div class="num"><div class="l">GDP, Q2 FY26</div><div class="v acc" id="n-gdp">–</div><div class="d">market prices, the headline</div></div>
-      <div class="num"><div class="l">GVA, Q2 FY26</div><div class="v" id="n-gva">–</div><div class="d">basic prices, the producers' side</div></div>
-      <div class="num"><div class="l">The gap</div><div class="v" id="n-gap">–</div><div class="d">GDP minus GVA, points</div></div>
-      <div class="num"><div class="l">The wedge in levels</div><div class="v" id="n-wedge">–</div><div class="d">net taxes, share of GDP, Q2 FY26</div></div>
+      <div class="num"><div class="l">GDP, Q2 FY26</div><div class="v acc" id="n-gdp" set:html={NUM["n-gdp"]}></div><div class="d">market prices, the headline</div></div>
+      <div class="num"><div class="l">GVA, Q2 FY26</div><div class="v" id="n-gva" set:html={NUM["n-gva"]}></div><div class="d">basic prices, the producers' side</div></div>
+      <div class="num"><div class="l">The gap</div><div class="v" id="n-gap" set:html={NUM["n-gap"]}></div><div class="d">GDP minus GVA, points</div></div>
+      <div class="num"><div class="l">The wedge in levels</div><div class="v" id="n-wedge" set:html={NUM["n-wedge"]}></div><div class="d">net taxes, share of GDP, Q2 FY26</div></div>
     </div>
     <p style="margin-top:40px">For the size and growth of the whole economy, quote GDP. It is the international standard, the budget is framed in it, and the RBI's models consume it. For the health of farms, factories and services, quote GVA: the sector detail lives on the producers' side, and the tax wedge adds nothing to that question.</p>
     <p>The everyday error is quoting one when the question belongs to the other. Asking how manufacturing fared and answering with GDP imports the government's tax slice into a question about factory gates. Asking how fast the economy is growing and answering with GVA understates what buyers actually paid. Match the number to the question, and the two headlines stop competing.</p>
@@ -151,7 +153,4 @@ import Learn from "../layouts/Learn.astro";
     <p>Companion guide: <a href="/guides/gdp/">National Accounts</a>.</p>
   </div>
 
-<script>
-  import "./gdp-vs-gva.client.js";
-</script>
 </Learn>

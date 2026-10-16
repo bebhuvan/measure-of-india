@@ -7,6 +7,8 @@ import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["consumption"];
+import * as CH from "../../dossiers/consumption.charts.js";
+const TX = CH.numbers();
 ---
 <Base
   title="Consumption · India Atlas"
@@ -35,10 +37,10 @@ const D = bySlug["consumption"];
       <span>Convention <b>Without imputation</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Rural MPCE, 2023-24</div><div class="v acc" id="n-rural">–</div><div class="d" id="d-rural">–</div></div>
-      <div class="num"><div class="l">Urban MPCE, 2023-24</div><div class="v" id="n-urban">–</div><div class="d" id="d-urban">–</div></div>
-      <div class="num"><div class="l">Urban ÷ rural</div><div class="v" id="n-ratio">–</div><div class="d" id="d-ratio">–</div></div>
-      <div class="num"><div class="l">Consumption Gini, rural</div><div class="v" id="n-gini">–</div><div class="d" id="d-gini">–</div></div>
+      <div class="num"><div class="l">Rural MPCE, 2023-24</div><div class="v acc" id="n-rural" set:html={TX["n-rural"]}></div><div class="d" id="d-rural" set:html={TX["d-rural"]}></div></div>
+      <div class="num"><div class="l">Urban MPCE, 2023-24</div><div class="v" id="n-urban" set:html={TX["n-urban"]}></div><div class="d" id="d-urban" set:html={TX["d-urban"]}></div></div>
+      <div class="num"><div class="l">Urban ÷ rural</div><div class="v" id="n-ratio" set:html={TX["n-ratio"]}></div><div class="d" id="d-ratio" set:html={TX["d-ratio"]}></div></div>
+      <div class="num"><div class="l">Consumption Gini, rural</div><div class="v" id="n-gini" set:html={TX["n-gini"]}></div><div class="d" id="d-gini" set:html={TX["d-gini"]}></div></div>
     </div>
   </div>
 
@@ -46,9 +48,9 @@ const D = bySlug["consumption"];
   <section>
     <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">Survey round, 2023-24</span></div>
     <div class="reading-top">
-      <div><span class="rk">Current reading: rural</span><div class="big" id="rb-big">–</div></div>
+      <div><span class="rk">Current reading: rural</span><div class="big" id="rb-big" set:html={TX["rb-big"]}></div></div>
       <p class="rt-cap">Average monthly consumption expenditure per person, 2023-24 round, without imputation. A survey mean in the rupees of the day: it is not income, and it is not adjusted for prices.</p>
-      <div class="rt-side"><span class="rk">Urban, same round</span><div class="rt-side-v" id="rb-first">–</div></div>
+      <div class="rt-side"><span class="rk">Urban, same round</span><div class="rt-side-v" id="rb-first" set:html={TX["rb-first"]}></div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -70,7 +72,7 @@ const D = bySlug["consumption"];
         <thead>
           <tr><th>Series</th><th>2023-24</th><th>vs 2022-23</th><th>2022-23</th></tr>
         </thead>
-        <tbody id="ledger-body"></tbody>
+        <tbody id="ledger-body" set:html={TX["ledger-body"]}></tbody>
       </table>
     </div>
   </section>
@@ -85,15 +87,10 @@ const D = bySlug["consumption"];
             <h3>Twelve rungs, two ladders</h3>
             <div class="sub">Average MPCE by fractile class of the MPCE distribution, rural and urban, 2023-24, with 2022-23 in pale dots, class widths are unequal (5, 5, 10 … 5), plotted evenly</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-lad">–</div><div class="c">2023-24, top 5%, urban</div></div>
+          <div class="plate-val"><div class="v" id="pv-lad" set:html={TX["pv-lad"]}></div><div class="c">2023-24, top 5%, urban</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Rural, 2023-24</button>
-            <button class="chip"><i style="background:#5F6675"></i>Urban, 2023-24</button>
-            <button class="chip"><i style="background:#C9CED6"></i>2022-23 round</button>
-          </div>
-          <div class="plotzone" id="plot-ladder"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-ladder" set:html={CH.ladder()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NSO, HCES, average MPCE within each fractile class, without imputation, the two rounds are comparable by design and are shown, never chained</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -107,7 +104,7 @@ const D = bySlug["consumption"];
           </div>
           <div class="now">
             <span class="mk">As of 2023-24</span>
-            <p>The bottom rung of rural India spends <b id="ex-lad-bot">–</b> a head a month; the top rung of urban India, <b id="ex-lad-top">–</b>: <b id="ex-lad-mult">–</b> apart. And the top urban rung fell between the rounds, by <b id="ex-lad-drop">–</b> as published; the rural top fell <b id="ex-lad-rdrop">–</b>. Whether the rich trimmed their spending or the survey caught different rich households, we do not know.</p>
+            <p>The bottom rung of rural India spends <b id="ex-lad-bot" set:html={TX["ex-lad-bot"]}></b> a head a month; the top rung of urban India, <b id="ex-lad-top" set:html={TX["ex-lad-top"]}></b>: <b id="ex-lad-mult" set:html={TX["ex-lad-mult"]}></b> apart. And the top urban rung fell between the rounds, by <b id="ex-lad-drop" set:html={TX["ex-lad-drop"]}></b> as published; the rural top fell <b id="ex-lad-rdrop" set:html={TX["ex-lad-rdrop"]}></b>. Whether the rich trimmed their spending or the survey caught different rich households, we do not know.</p>
           </div>
         </div>
       </figure>
@@ -125,15 +122,10 @@ const D = bySlug["consumption"];
             <h3>Four groups, two Indias</h3>
             <div class="sub">Average MPCE by social group, rural and urban paired per group, sorted by rural, 2023-24, with 2022-23 in pale dots, dashed rules mark the all-India means</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-social">–</div><div class="c">rural, Others ÷ Scheduled Tribe</div></div>
+          <div class="plate-val"><div class="v" id="pv-social" set:html={TX["pv-social"]}></div><div class="c">rural, Others ÷ Scheduled Tribe</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Rural, 2023-24</button>
-            <button class="chip"><i style="background:#5F6675"></i>Urban, 2023-24</button>
-            <button class="chip"><i style="background:#C9CED6"></i>2022-23 round</button>
-          </div>
-          <div class="plotzone" id="plot-social"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-social" set:html={CH.social()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NSO, HCES, average MPCE by social group, without imputation, the "All" row is the national mean and is drawn as the dashed rules, not repeated</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -147,7 +139,7 @@ const D = bySlug["consumption"];
           </div>
           <div class="now">
             <span class="mk">As of 2023-24</span>
-            <p>Rural Scheduled Tribe households average <b id="ex-so-st">–</b> a head against <b id="ex-so-oth">–</b> for the Others group: <b id="ex-so-mult">–</b> apart. The gap narrowed a step: the ST figure grew <b id="ex-so-stg">–</b> on the round before, the Others figure <b id="ex-so-othg">–</b>. And the floor changes between the two Indias: in towns the lowest average belongs to Scheduled Caste households, at <b id="ex-so-scu">–</b>.</p>
+            <p>Rural Scheduled Tribe households average <b id="ex-so-st" set:html={TX["ex-so-st"]}></b> a head against <b id="ex-so-oth" set:html={TX["ex-so-oth"]}></b> for the Others group: <b id="ex-so-mult" set:html={TX["ex-so-mult"]}></b> apart. The gap narrowed a step: the ST figure grew <b id="ex-so-stg" set:html={TX["ex-so-stg"]}></b> on the round before, the Others figure <b id="ex-so-othg" set:html={TX["ex-so-othg"]}></b>. And the floor changes between the two Indias: in towns the lowest average belongs to Scheduled Caste households, at <b id="ex-so-scu" set:html={TX["ex-so-scu"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -160,15 +152,10 @@ const D = bySlug["consumption"];
             <h3>The household's work, the household's rupee</h3>
             <div class="sub">Average MPCE by household employment type, rural published with a farm/non-farm split, urban aggregated, 2022-23 (pale) and 2023-24 (filled), without imputation</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-hht">–</div><div class="c">2023-24, casual labour, urban</div></div>
+          <div class="plate-val"><div class="v" id="pv-hht" set:html={TX["pv-hht"]}></div><div class="c">2023-24, casual labour, urban</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Rural types</button>
-            <button class="chip"><i style="background:#5F6675"></i>Urban types</button>
-            <button class="chip"><i style="background:#C9CED6"></i>2022-23 round</button>
-          </div>
-          <div class="plotzone" id="plot-hhtype"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-hhtype" set:html={CH.hhtype()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NSO, HCES, average MPCE by household employment type, without imputation, rows sorted within each sector, dashed rules mark the all-India sector means</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -182,7 +169,7 @@ const D = bySlug["consumption"];
           </div>
           <div class="now">
             <span class="mk">As of 2023-24</span>
-            <p>A casual-labour household in town spends <b id="ex-ht-casu">–</b> a head: well under the urban mean of <b id="ex-ht-um">–</b>, and below even rural regular-wage non-farm work at <b id="ex-ht-regnf">–</b>. A regular wage buys <b id="ex-ht-ratio">–</b> the casual rupee in towns. And the top urban row is "others", at <b id="ex-ht-oth">–</b>: the earner-less households are the biggest spenders per head.</p>
+            <p>A casual-labour household in town spends <b id="ex-ht-casu" set:html={TX["ex-ht-casu"]}></b> a head: well under the urban mean of <b id="ex-ht-um" set:html={TX["ex-ht-um"]}></b>, and below even rural regular-wage non-farm work at <b id="ex-ht-regnf" set:html={TX["ex-ht-regnf"]}></b>. A regular wage buys <b id="ex-ht-ratio" set:html={TX["ex-ht-ratio"]}></b> the casual rupee in towns. And the top urban row is "others", at <b id="ex-ht-oth" set:html={TX["ex-ht-oth"]}></b>: the earner-less households are the biggest spenders per head.</p>
           </div>
         </div>
       </figure>
@@ -194,12 +181,12 @@ const D = bySlug["consumption"];
     <div class="sec-head"><span class="no">05</span><h2>Engel's law, observed</h2><span class="line"></span><span class="unit">share of MPCE, per cent, 2023-24</span></div>
 
     <div class="break basket">
-      <div class="bar" id="bk-r-bar"></div>
-      <div class="labels" id="bk-r-labels"></div>
+      <div class="bar" id="bk-r-bar" set:html={TX["bk-r-bar"]}></div>
+      <div class="labels" id="bk-r-labels" set:html={TX["bk-r-labels"]}></div>
     </div>
     <div class="break basket" style="margin-top:26px">
-      <div class="bar" id="bk-u-bar"></div>
-      <div class="labels" id="bk-u-labels"></div>
+      <div class="bar" id="bk-u-bar" set:html={TX["bk-u-bar"]}></div>
+      <div class="labels" id="bk-u-labels" set:html={TX["bk-u-labels"]}></div>
       <p class="note">Two rupees, split. The poorer the setting, the larger the share that eats: Engel's law, visible in a single pair of bars.</p>
     </div>
 
@@ -210,14 +197,10 @@ const D = bySlug["consumption"];
             <h3>Where the rupee goes: thirteen categories, two Indias</h3>
             <div class="sub">Share of MPCE by item category, rural vs urban, 2023-24, without imputation, the thirteen largest of 29 detail categories</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-engel">–</div><div class="c">2023-24, rural food share</div></div>
+          <div class="plate-val"><div class="v" id="pv-engel" set:html={TX["pv-engel"]}></div><div class="c">2023-24, rural food share</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Rural</button>
-            <button class="chip"><i style="background:#5F6675"></i>Urban</button>
-          </div>
-          <div class="plotzone" id="plot-engel"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-engel" set:html={CH.engel()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NSO, HCES, percentage share of MPCE by broad item category, 30-day recall basis, without imputation, rows sorted by the rural share</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -231,7 +214,7 @@ const D = bySlug["consumption"];
           </div>
           <div class="now">
             <span class="mk">As of 2023-24</span>
-            <p>Food takes <b id="ex-en-fr">–</b> of the rural rupee and <b id="ex-en-fu">–</b> of the urban. The widest split is rent: <b id="ex-en-rent-u">–</b> of urban spending against <b id="ex-en-rent-r">–</b> rural, since the village mostly owns its roof: and education nearly doubles in the city, <b id="ex-en-edu-u">–</b> against <b id="ex-en-edu-r">–</b>.</p>
+            <p>Food takes <b id="ex-en-fr" set:html={TX["ex-en-fr"]}></b> of the rural rupee and <b id="ex-en-fu" set:html={TX["ex-en-fu"]}></b> of the urban. The widest split is rent: <b id="ex-en-rent-u" set:html={TX["ex-en-rent-u"]}></b> of urban spending against <b id="ex-en-rent-r" set:html={TX["ex-en-rent-r"]}></b> rural, since the village mostly owns its roof: and education nearly doubles in the city, <b id="ex-en-edu-u" set:html={TX["ex-en-edu-u"]}></b> against <b id="ex-en-edu-r" set:html={TX["ex-en-edu-r"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -244,15 +227,10 @@ const D = bySlug["consumption"];
             <h3>What moved between the two rounds</h3>
             <div class="sub">Change in each category's share of MPCE, 2022-23 → 2023-24, rural (blue/grey) beside urban (pale), sorted by the rural change, all 29 detail categories</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-shift">–</div><div class="c">food share, rural, 2022-23 → 2023-24</div></div>
+          <div class="plate-val"><div class="v" id="pv-shift" set:html={TX["pv-shift"]}></div><div class="c">food share, rural, 2022-23 → 2023-24</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip" style="cursor:default"><i style="background:#2E4BD8;width:9px;height:9px;border-radius:50%"></i>Rural, 2023-24 change (≥ 0.5 pt)</span>
-            <span class="chip" style="cursor:default"><i style="background:#5F6675;width:9px;height:9px;border-radius:50%"></i>Rural, smaller moves</span>
-            <span class="chip" style="cursor:default"><i style="background:#A3A9B4;width:9px;height:9px;border-radius:50%"></i>Urban, 2023-24 change</span>
-          </div>
-          <div class="plotzone" id="plot-shift"></div>
+          <div class="plotzone" id="plot-shift" set:html={CH.shift()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, HCES 2022-23 &amp; 2023-24, percentage-point change in share of MPCE (without imputation), all 29 detail categories, including fruits, pulses, intoxicants, medical and household services previously baked but not charted, the zero rule separates categories that gained share (right) from those that lost it (left)</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -262,11 +240,11 @@ const D = bySlug["consumption"];
           <div class="ev">
             <span class="mk">How to read this</span>
             <p>Each row is one category; the dots show how many percentage points its budget share gained or lost between the two survey rounds. The dark dot is rural (blue where the move is half a point or more), the pale dot urban. Read the zero rule as the dividing line: right is a category that grew as a share of spending, left is one that shrank.</p>
-            <p>The surprise is at the aggregate. Food's share rose in both sectors: <b id="ex-sh-food-r">–</b> rural, <b id="ex-sh-food-u">–</b> urban: the wrong direction for Engel's law in a single year of rising incomes. The drivers are visible on the strip: vegetables and processed food climbed, edible oil fell hardest in villages and fuel and light in towns. The oil fall is most likely a price story: cooking oil got cheaper through 2023-24, as the oils-and-fats line in the CPI guide shows. The cereal plate in §06 is the opposite case, a staple that got dearer.</p>
+            <p>The surprise is at the aggregate. Food's share rose in both sectors: <b id="ex-sh-food-r" set:html={TX["ex-sh-food-r"]}></b> rural, <b id="ex-sh-food-u" set:html={TX["ex-sh-food-u"]}></b> urban: the wrong direction for Engel's law in a single year of rising incomes. The drivers are visible on the strip: vegetables and processed food climbed, edible oil fell hardest in villages and fuel and light in towns. The oil fall is most likely a price story: cooking oil got cheaper through 2023-24, as the oils-and-fats line in the CPI guide shows. The cereal plate in §06 is the opposite case, a staple that got dearer.</p>
           </div>
           <div class="now">
             <span class="mk">Between the rounds</span>
-            <p>Edible oil: <b id="ex-sh-oil">–</b> rural. Vegetables: <b id="ex-sh-veg">–</b> rural. Fuel and light: <b id="ex-sh-fuel-r">–</b> rural and <b id="ex-sh-fuel-u">–</b> urban, the largest move in towns. Beyond these few, the basket barely shifted: rent, education and conveyance each moved under a quarter of a point in both sectors, a sign of how sticky a household budget is over one year.</p>
+            <p>Edible oil: <b id="ex-sh-oil" set:html={TX["ex-sh-oil"]}></b> rural. Vegetables: <b id="ex-sh-veg" set:html={TX["ex-sh-veg"]}></b> rural. Fuel and light: <b id="ex-sh-fuel-r" set:html={TX["ex-sh-fuel-r"]}></b> rural and <b id="ex-sh-fuel-u" set:html={TX["ex-sh-fuel-u"]}></b> urban, the largest move in towns. Beyond these few, the basket barely shifted: rent, education and conveyance each moved under a quarter of a point in both sectors, a sign of how sticky a household budget is over one year.</p>
           </div>
         </div>
       </figure>
@@ -283,15 +261,10 @@ const D = bySlug["consumption"];
             <h3>The shrinking staple</h3>
             <div class="sub">Average monthly quantity of cereals per person, rural and urban, 2022-23 (pale) and 2023-24 (filled), other cereals (~0.01 kg) omitted from the plate, present in the CSV</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-plate">–</div><div class="c">2023-24, rural, all cereals</div></div>
+          <div class="plate-val"><div class="v" id="pv-plate" set:html={TX["pv-plate"]}></div><div class="c">2023-24, rural, all cereals</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Rural, 2023-24</button>
-            <button class="chip"><i style="background:#5F6675"></i>Urban, 2023-24</button>
-            <button class="chip"><i style="background:#C9CED6"></i>2022-23 round</button>
-          </div>
-          <div class="plotzone" id="plot-plate"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-plate" set:html={CH.plate()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NSO, HCES, average per-capita monthly quantity of cereals, kg, published without imputation only, rice + wheat + coarse grains + other cereals = all cereals</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -305,7 +278,7 @@ const D = bySlug["consumption"];
           </div>
           <div class="now">
             <span class="mk">As of 2023-24</span>
-            <p>A rural Indian consumes <b id="ex-q-rt1">–</b> of cereals a month, down from <b id="ex-q-rt0">–</b> in the round before; a city-dweller <b id="ex-q-ut1">–</b>, near flat. The rupees moved the other way: the rural cereal bill rose <b id="ex-q-vg">–</b> to <b id="ex-q-vr1">–</b> a head: dearer grain, not more of it. Rice still outweighs wheat in the village, <b id="ex-q-rice">–</b> to <b id="ex-q-wheat">–</b>, and the fall is almost all rice: <b id="ex-q-riced">–</b> round on round, against <b id="ex-q-wheatd">–</b> for wheat.</p>
+            <p>A rural Indian consumes <b id="ex-q-rt1" set:html={TX["ex-q-rt1"]}></b> of cereals a month, down from <b id="ex-q-rt0" set:html={TX["ex-q-rt0"]}></b> in the round before; a city-dweller <b id="ex-q-ut1" set:html={TX["ex-q-ut1"]}></b>, near flat. The rupees moved the other way: the rural cereal bill rose <b id="ex-q-vg" set:html={TX["ex-q-vg"]}></b> to <b id="ex-q-vr1" set:html={TX["ex-q-vr1"]}></b> a head: dearer grain, not more of it. Rice still outweighs wheat in the village, <b id="ex-q-rice" set:html={TX["ex-q-rice"]}></b> to <b id="ex-q-wheat" set:html={TX["ex-q-wheat"]}></b>, and the fall is almost all rice: <b id="ex-q-riced" set:html={TX["ex-q-riced"]}></b> round on round, against <b id="ex-q-wheatd" set:html={TX["ex-q-wheatd"]}></b> for wheat.</p>
           </div>
         </div>
       </figure>
@@ -318,10 +291,10 @@ const D = bySlug["consumption"];
             <h3>The same cereals, priced in rupees</h3>
             <div class="sub">Average per-capita monthly value of cereals, ₹, both rounds, read against the kilogram plate above: kg fell while ₹ rose</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-val">–</div><div class="c">rural cereals, 2023-24, ₹/head/month</div></div>
+          <div class="plate-val"><div class="v" id="pv-val" set:html={TX["pv-val"]}></div><div class="c">rural cereals, 2023-24, ₹/head/month</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-val"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-val" set:html={CH.val()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NSO, HCES, per-capita monthly value of cereals, ₹, without imputation, the counterpart to the kilogram plate: the same baskets, a different unit</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -334,7 +307,7 @@ const D = bySlug["consumption"];
           </div>
           <div class="now">
             <span class="mk">As of 2023-24</span>
-            <p>The rural cereal bill reached <b id="ex-v-rt1">–</b> a head, up from <b id="ex-v-rt0">–</b> the round before: a rise of <b id="ex-v-pct">–</b> on a quantity that fell. Every additional rupee here bought less grain than it did, not more.</p>
+            <p>The rural cereal bill reached <b id="ex-v-rt1" set:html={TX["ex-v-rt1"]}></b> a head, up from <b id="ex-v-rt0" set:html={TX["ex-v-rt0"]}></b> the round before: a rise of <b id="ex-v-pct" set:html={TX["ex-v-pct"]}></b> on a quantity that fell. Every additional rupee here bought less grain than it did, not more.</p>
           </div>
         </div>
       </figure>
@@ -378,14 +351,10 @@ const D = bySlug["consumption"];
             <h3>Thirty-six states, and two Indias in each</h3>
             <div class="sub">Average MPCE by state/UT, rural and urban paired per state, sorted by rural, 2023-24, without imputation, dashed rules mark the all-India means</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-states">–</div><div class="c">rural spread, highest ÷ lowest</div></div>
+          <div class="plate-val"><div class="v" id="pv-states" set:html={TX["pv-states"]}></div><div class="c">rural spread, highest ÷ lowest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Rural</button>
-            <button class="chip"><i style="background:#5F6675"></i>Urban</button>
-          </div>
-          <div class="plotzone" id="plot-states"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-states" set:html={CH.states()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NSO, HCES, state/UT average MPCE, without imputation, all-India rules from the national series, not the state average</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -399,7 +368,7 @@ const D = bySlug["consumption"];
           </div>
           <div class="now">
             <span class="mk">As of 2023-24</span>
-            <p>Rural Sikkim spends <b id="ex-st-hi">–</b> a head; rural Chhattisgarh, <b id="ex-st-lo">–</b>: a spread of <b id="ex-st-mult">–</b>. Rural Delhi, at <b id="ex-st-del">–</b>, outspends the average Indian city-dweller (<b id="ex-st-urb">–</b>). The urban column runs from <b id="ex-st-uhi">–</b> down to <b id="ex-st-ulo">–</b>.</p>
+            <p>Rural Sikkim spends <b id="ex-st-hi" set:html={TX["ex-st-hi"]}></b> a head; rural Chhattisgarh, <b id="ex-st-lo" set:html={TX["ex-st-lo"]}></b>: a spread of <b id="ex-st-mult" set:html={TX["ex-st-mult"]}></b>. Rural Delhi, at <b id="ex-st-del" set:html={TX["ex-st-del"]}></b>, outspends the average Indian city-dweller (<b id="ex-st-urb" set:html={TX["ex-st-urb"]}></b>). The urban column runs from <b id="ex-st-uhi" set:html={TX["ex-st-uhi"]}></b> down to <b id="ex-st-ulo" set:html={TX["ex-st-ulo"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -412,14 +381,10 @@ const D = bySlug["consumption"];
             <h3>Engel's law across the map</h3>
             <div class="sub">Share of MPCE going to food, by state/UT, rural and urban paired, sorted by the rural share, 2023-24, without imputation, dashed rules mark the all-India shares</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-food">–</div><div class="c">2023-24, rural Ladakh, the top row</div></div>
+          <div class="plate-val"><div class="v" id="pv-food" set:html={TX["pv-food"]}></div><div class="c">2023-24, rural Ladakh, the top row</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Rural</button>
-            <button class="chip"><i style="background:#5F6675"></i>Urban</button>
-          </div>
-          <div class="plotzone" id="plot-food"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-food" set:html={CH.food()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NSO, HCES, Food Total share of MPCE by state/UT, 30-day recall, without imputation, all-India rules from the national series, not the state average</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -433,7 +398,7 @@ const D = bySlug["consumption"];
           </div>
           <div class="now">
             <span class="mk">As of 2023-24</span>
-            <p>Rural Ladakh gives food <b id="ex-fs-hi">–</b> of its rupee; rural Kerala and rural Delhi, tied at the bottom, <b id="ex-fs-lo">–</b>. Bihar's towns give food a larger share (<b id="ex-fs-bu">–</b>) than Kerala's villages. In every state but one the dark dot sits left of the blue: the exception is Lakshadweep, whose towns hand food <b id="ex-fs-lk">–</b> against <b id="ex-fs-lkr">–</b> in its villages.</p>
+            <p>Rural Ladakh gives food <b id="ex-fs-hi" set:html={TX["ex-fs-hi"]}></b> of its rupee; rural Kerala and rural Delhi, tied at the bottom, <b id="ex-fs-lo" set:html={TX["ex-fs-lo"]}></b>. Bihar's towns give food a larger share (<b id="ex-fs-bu" set:html={TX["ex-fs-bu"]}></b>) than Kerala's villages. In every state but one the dark dot sits left of the blue: the exception is Lakshadweep, whose towns hand food <b id="ex-fs-lk" set:html={TX["ex-fs-lk"]}></b> against <b id="ex-fs-lkr" set:html={TX["ex-fs-lkr"]}></b> in its villages.</p>
           </div>
         </div>
       </figure>
@@ -446,10 +411,10 @@ const D = bySlug["consumption"];
             <h3>Inequality, measured in what people spend</h3>
             <div class="sub">Gini coefficient of per-capita consumption expenditure, sector × imputation convention, 2022-23 (pale) and 2023-24 (filled)</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-gini">–</div><div class="c">2023-24, rural, headline</div></div>
+          <div class="plate-val"><div class="v" id="pv-gini" set:html={TX["pv-gini"]}></div><div class="c">2023-24, rural, headline</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-gini"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-gini" set:html={CH.gini()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NSO, HCES, Gini of the per-capita consumption distribution, 0 is perfect equality, 1 is one person spending everything</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -463,7 +428,7 @@ const D = bySlug["consumption"];
           </div>
           <div class="now">
             <span class="mk">Between the rounds</span>
-            <p>Every dot moved left. The rural Gini fell from <b id="ex-gi-r0">–</b> to <b id="ex-gi-r1">–</b>, the urban from <b id="ex-gi-u0">–</b> to <b id="ex-gi-u1">–</b>. Counting free welfare goods lowers each figure a little further, because that grain and those goods go mostly to poorer households; they add <b id="ex-gi-impr">–</b> to the rural mean and <b id="ex-gi-impu">–</b> to the urban.</p>
+            <p>Every dot moved left. The rural Gini fell from <b id="ex-gi-r0" set:html={TX["ex-gi-r0"]}></b> to <b id="ex-gi-r1" set:html={TX["ex-gi-r1"]}></b>, the urban from <b id="ex-gi-u0" set:html={TX["ex-gi-u0"]}></b> to <b id="ex-gi-u1" set:html={TX["ex-gi-u1"]}></b>. Counting free welfare goods lowers each figure a little further, because that grain and those goods go mostly to poorer households; they add <b id="ex-gi-impr" set:html={TX["ex-gi-impr"]}></b> to the rural mean and <b id="ex-gi-impu" set:html={TX["ex-gi-impu"]}></b> to the urban.</p>
           </div>
         </div>
       </figure>
@@ -481,10 +446,10 @@ const D = bySlug["consumption"];
             <h3>In the countryside, food is the biggest bill in every state; health and schooling vary several times over</h3>
             <div class="sub">Rural India, 2023-24: what a person spends in a month on each kind of thing, ₹, without imputation. States ranked by total spending; a darker cell is a higher figure within its column.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-spend-rural">–</div><div class="c">rural food bill, highest state</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-spend-rural" set:html={TX["pv-spend-rural"]}></div><div class="c">rural food bill, highest state</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-spend-rural" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-spend-rural" set:html={CH.spendRural()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, HCES 2023-24, average monthly per capita consumption expenditure by broad category (30-day recall), ₹, without imputation. "Medicines and doctor" is medical spending outside hospital; "Hospital" is spending on stays. Every one of the 31 categories, for both rounds and both conventions, is in the data.</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -498,7 +463,7 @@ const D = bySlug["consumption"];
           </div>
           <div class="now">
             <span class="mk">As of 2023-24</span>
-            <p>Food: <b id="ex-sp-rural-food">–</b>. Schooling: <b id="ex-sp-rural-edu">–</b>. Medicines and doctor: <b id="ex-sp-rural-med">–</b>. Across India, a rural person spends <b id="ex-sp-rural-ai">–</b> a month on food, <b id="ex-sp-rural-aiedu">–</b> on schooling and <b id="ex-sp-rural-aimed">–</b> on medicines and doctors.</p>
+            <p>Food: <b id="ex-sp-rural-food" set:html={TX["ex-sp-rural-food"]}></b>. Schooling: <b id="ex-sp-rural-edu" set:html={TX["ex-sp-rural-edu"]}></b>. Medicines and doctor: <b id="ex-sp-rural-med" set:html={TX["ex-sp-rural-med"]}></b>. Across India, a rural person spends <b id="ex-sp-rural-ai" set:html={TX["ex-sp-rural-ai"]}></b> a month on food, <b id="ex-sp-rural-aiedu" set:html={TX["ex-sp-rural-aiedu"]}></b> on schooling and <b id="ex-sp-rural-aimed" set:html={TX["ex-sp-rural-aimed"]}></b> on medicines and doctors.</p>
           </div>
         </div>
       </figure>
@@ -510,10 +475,10 @@ const D = bySlug["consumption"];
             <h3>In the towns, rent, travel and schooling join food as the big bills</h3>
             <div class="sub">Urban India, 2023-24: what a person spends in a month on each kind of thing, ₹, without imputation. States ranked by total spending; a darker cell is a higher figure within its column.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-spend-urban">–</div><div class="c">urban food bill, highest state</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-spend-urban" set:html={TX["pv-spend-urban"]}></div><div class="c">urban food bill, highest state</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-spend-urban" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-spend-urban" set:html={CH.spendUrban()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, HCES 2023-24, average monthly per capita consumption expenditure by broad category (30-day recall), ₹, without imputation. "Medicines and doctor" is medical spending outside hospital; "Hospital" is spending on stays. Every one of the 31 categories, for both rounds and both conventions, is in the data.</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -527,7 +492,7 @@ const D = bySlug["consumption"];
           </div>
           <div class="now">
             <span class="mk">As of 2023-24</span>
-            <p>Food: <b id="ex-sp-urban-food">–</b>. Schooling: <b id="ex-sp-urban-edu">–</b>. Medicines and doctor: <b id="ex-sp-urban-med">–</b>. Across India, an urban person spends <b id="ex-sp-urban-ai">–</b> a month on food, <b id="ex-sp-urban-aiedu">–</b> on schooling and <b id="ex-sp-urban-aimed">–</b> on medicines and doctors.</p>
+            <p>Food: <b id="ex-sp-urban-food" set:html={TX["ex-sp-urban-food"]}></b>. Schooling: <b id="ex-sp-urban-edu" set:html={TX["ex-sp-urban-edu"]}></b>. Medicines and doctor: <b id="ex-sp-urban-med" set:html={TX["ex-sp-urban-med"]}></b>. Across India, an urban person spends <b id="ex-sp-urban-ai" set:html={TX["ex-sp-urban-ai"]}></b> a month on food, <b id="ex-sp-urban-aiedu" set:html={TX["ex-sp-urban-aiedu"]}></b> on schooling and <b id="ex-sp-urban-aimed" set:html={TX["ex-sp-urban-aimed"]}></b> on medicines and doctors.</p>
           </div>
         </div>
       </figure>
@@ -540,10 +505,10 @@ const D = bySlug["consumption"];
             <h3>Counting free grain and goods raises rural spending by up to 7%, most in Chhattisgarh and West Bengal</h3>
             <div class="sub">Rural India, 2023-24: how much higher a person's monthly spending is when the value of food and goods received free through government schemes is counted ("with imputation"), by state, per cent and ₹. States above the all-India rural figure are in blue.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-impute">–</div><div class="c">added, rural All India</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-impute" set:html={TX["pv-impute"]}></div><div class="c">added, rural All India</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-impute" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-impute" set:html={CH.impute()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, HCES 2023-24, MPCE with and without imputation, by state. The survey values free items at local prices; the public distribution system's free grain is most of it.</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -556,7 +521,7 @@ const D = bySlug["consumption"];
           </div>
           <div class="now">
             <span class="mk">As of 2023-24</span>
-            <p>Most added: <b id="ex-imp-hi">–</b>. All India, rural: <b id="ex-imp-ai">–</b> a person a month; urban: <b id="ex-imp-aiu">–</b>. In <b id="ex-imp-zero">–</b> states and union territories the two figures are the same.</p>
+            <p>Most added: <b id="ex-imp-hi" set:html={TX["ex-imp-hi"]}></b>. All India, rural: <b id="ex-imp-ai" set:html={TX["ex-imp-ai"]}></b> a person a month; urban: <b id="ex-imp-aiu" set:html={TX["ex-imp-aiu"]}></b>. In <b id="ex-imp-zero" set:html={TX["ex-imp-zero"]}></b> states and union territories the two figures are the same.</p>
           </div>
         </div>
       </figure>
@@ -569,10 +534,10 @@ const D = bySlug["consumption"];
             <h3>Spending is more unequal in towns than in villages in 31 of 36 states</h3>
             <div class="sub">Gini coefficient of per-capita consumption spending, rural (blue) and urban (grey), by state, 2023-24, without imputation. 0 means everyone spends the same; higher means more unequal. Labels read urban / rural.</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-ginist">–</div><div class="c">states where the town is more unequal</div></div>
+          <div class="plate-val"><div class="v" id="pv-ginist" set:html={TX["pv-ginist"]}></div><div class="c">states where the town is more unequal</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-ginist" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-ginist" set:html={CH.ginist()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, HCES 2023-24, Gini coefficient of per capita consumption expenditure by state and sector. Both conventions and both rounds are in the data.</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -585,7 +550,7 @@ const D = bySlug["consumption"];
           </div>
           <div class="now">
             <span class="mk">As of 2023-24</span>
-            <p>Most unequal: <b id="ex-gs-hi">–</b>. Least: <b id="ex-gs-lo">–</b>. All India: rural <b id="ex-gs-air">–</b>, urban <b id="ex-gs-aiu">–</b>.</p>
+            <p>Most unequal: <b id="ex-gs-hi" set:html={TX["ex-gs-hi"]}></b>. Least: <b id="ex-gs-lo" set:html={TX["ex-gs-lo"]}></b>. All India: rural <b id="ex-gs-air" set:html={TX["ex-gs-air"]}></b>, urban <b id="ex-gs-aiu" set:html={TX["ex-gs-aiu"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -598,8 +563,8 @@ const D = bySlug["consumption"];
       <li>
         <span class="no">i.</span>
         <div>
-          <h3>"The average family lives on <b id="mr-rural">–</b> a month."</h3>
-          <p>MPCE is per <em>person</em>, not per household. A rural family of five at the average spends about <b id="mr-fam">–</b> a month. Still modest: but a different number, and the one to use when the headline gets compared to a salary.</p>
+          <h3>"The average family lives on <b id="mr-rural" set:html={TX["mr-rural"]}></b> a month."</h3>
+          <p>MPCE is per <em>person</em>, not per household. A rural family of five at the average spends about <b id="mr-fam" set:html={TX["mr-fam"]}></b> a month. Still modest: but a different number, and the one to use when the headline gets compared to a salary.</p>
         </div>
       </li>
       <li>
@@ -612,7 +577,7 @@ const D = bySlug["consumption"];
       <li>
         <span class="no">iii.</span>
         <div>
-          <h3>"Urban India is <b id="mr-ratio">–</b> richer."</h3>
+          <h3>"Urban India is <b id="mr-ratio" set:html={TX["mr-ratio"]}></b> richer."</h3>
           <p>The gap is in nominal spending, not welfare. City prices, above all rent, are higher, so a rupee buys less there; and spending is not income in either place. The real gap in living standards is smaller than the raw ratio, though how much smaller depends on a price deflator this survey does not provide.</p>
         </div>
       </li>
@@ -642,7 +607,7 @@ const D = bySlug["consumption"];
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. Household Consumption Expenditure Survey, 2022-23 and 2023-24 rounds, retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>.</p>
+        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. Household Consumption Expenditure Survey, 2022-23 and 2023-24 rounds, retrieved via the eSankhyiki API, vintage <b id="prov-vintage" set:html={TX["prov-vintage"]}></b>.</p>
         <p>Two disclosures carry through every chart. First, the headline convention is "without imputation"; the with-imputation variants are shown and named where used. Cereal quantities are published in that convention only. Second, only these two rounds exist in the API: the 2011-12 and earlier NSS consumption rounds use a different method, are not served, and are never spliced or compared here.</p>
         <p>All nine indicator families of the HCES release are baked into this guide's data, every one by state and for both conventions where the survey publishes both. The broad-category table in rupees feeds the state spending tables; its shares twin feeds the food-share map.</p>
         <p><b>A misprint at source.</b> In the rupee table for 2022-23, rural, without imputation, the rows printed under Goa, Gujarat, Haryana, Himachal Pradesh, Jharkhand and Karnataka are those of Andhra Pradesh, Arunachal Pradesh, Assam, Bihar, Chhattisgarh and Delhi: each block adds up to the other state's MPCE to the rupee. Those six cells are left out; the same cells of the share table are consistent and are kept. The 2023-24 round is unaffected.</p>
@@ -659,7 +624,7 @@ const D = bySlug["consumption"];
     </div>
     <div class="fine">
       <span>India Atlas, HCES</span>
-      <span>Vintage <span id="prov-vintage2">–</span>, never spliced with 2011-12</span>
+      <span>Vintage <span id="prov-vintage2" set:html={TX["prov-vintage2"]}></span>, never spliced with 2011-12</span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
@@ -667,6 +632,5 @@ const D = bySlug["consumption"];
 </div>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/consumption.client.js";
 </script>
 </Base>

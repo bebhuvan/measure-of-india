@@ -1,208 +1,234 @@
-// src/dossiers/health-gender.charts.js: the chart helpers the Family health (NFHS) and Women
-// and men guides share. Plot marks only, drawn once; every rule in src/charts/plumbing.js's
-// header holds: one text mark per label side, labels outside dumbbells and never struck by a
-// rule, ticks as strings, no smoothing.
-import * as Plot from "@observablehq/plot";
-import { MONO as mono, a11y, downloadSVG, downloadPNG, saveBlob, seamMarks, tint, SEAM_RULE } from "../charts/plumbing.js";
+// src/dossiers/health-gender.charts.js: the plates of the Women and men (gender) and Family health
+// (NFHS) guides, drawn at build time with the chart kit (src/kit/). Each function returns a bare
+// figure for a plate's .plotzone; the plate's title, source line and buttons stay in the page.
+// The pages compute every figure in their frontmatter (gender.data.js, nfhs.data.js) and pass
+// it here; nothing reaches the reader's browser but finished SVG and the CSV rows.
+//
+// Two rules these plates keep: separate instruments are separate series (the PLFS designs,
+// census and NSS literacy, two NFHS rounds), never one line; and a missing figure is a gap (a
+// row with no earlier round shows its later dot alone), never a zero.
+import * as K from "../kit/kit.js";
+import { figure } from "../kit/figure.js";
 
-export const ACC = "#2E4BD8", INK = "#161A22", G1 = "#5F6675", G2 = "#A3A9B4", G3 = "#C9CED6", GOLD = "#C47A16", GRID = "#F0F2F5";
-export const W = 1184;
-export const f1 = (v) => (v == null ? "—" : v.toFixed(1));
-export const csvEsc = (s) => /[",\n]/.test(String(s)) ? `"${String(s).replace(/"/g, '""')}"` : String(s);
-export const toCsv = (head, rows) => [head.join(","), ...rows.map((r) => r.map((x) => (x == null ? "" : csvEsc(x))).join(","))].join("\n") + "\n";
-
-// downloads: the plate's own title, subtitle and source travel with the image (composeCardSVG)
-export function wire(id, plot, file, csv) {
-  const fig = document.getElementById(id);
-  if (!fig) return;
-  const meta = { title: fig.querySelector(".plate-head h3")?.textContent.trim(), sub: fig.querySelector(".plate-head .sub")?.textContent.trim(),
-    foot: fig.querySelector(".plotfoot .src")?.textContent.trim().replace(/\s+/g, " ") };
-  fig.querySelectorAll("[data-dl]").forEach((btn) => btn.addEventListener("click", () => {
-    const k = btn.dataset.dl;
-    if (k === "svg" && plot) downloadSVG(plot, file, meta);
-    if (k === "png" && plot) downloadPNG(plot, file, meta);
-    if (k === "csv") saveBlob(new Blob([csv], { type: "text/csv" }), file + ".csv");
-  }));
-}
-export const mount = (id) => document.getElementById(id);
-
-/* ---------- dumbbell: NFHS-4 (grey) and NFHS-5 (blue) for each row ----------
- * rows: { label, a (NFHS-4 or null), b (NFHS-5) }. Labels sit outside the pair, never between
- * the dots (plumbing.js rule 2): the left dot's value to its left, the right dot's to its right.
- * A row with no NFHS-4 figure shows the NFHS-5 dot alone. */
-export function dumbbell(el, rows, o = {}) {
-  rows = rows.filter((r) => r.b != null);
-  const vals = rows.flatMap((r) => [r.a, r.b]).filter((v) => v != null);
-  const lo = o.lo ?? Math.min(0, ...vals), hi = o.hi ?? Math.max(...vals);
-  const ml = o.ml ?? 330, mr = o.mr ?? 70;
-  const fmt = o.fmt ?? f1;
-  const left = rows.map((r) => (r.a != null && r.a < r.b ? { ...r, x: r.a, v: r.a, c: G1 } : { ...r, x: r.b, v: r.b, c: INK }));
-  const right = rows.map((r) => (r.a != null && r.a > r.b ? { ...r, x: r.a, v: r.a, c: G1 } : { ...r, x: r.b, v: r.b, c: INK }));
-  const onlyB = rows.filter((r) => r.a == null);
-  const ticks = o.ticks ?? niceTicks(lo, hi, 5);
-  const plot = Plot.plot({
-    width: W, height: o.h ?? 34 + rows.length * 30 + 34, marginLeft: ml, marginRight: mr, marginTop: 10, marginBottom: 30,
-    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
-    x: { domain: [lo, Math.max(hi + (hi - lo) * 0.06, ticks.at(-1))], ticks, tickSize: 0, tickPadding: 8, tickFormat: (d) => String(o.tick ? o.tick(d) : d), label: o.xLabel ?? null, labelAnchor: "right", labelArrow: false },
-    y: { domain: rows.map((r) => r.label), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s), label: null },
-    marks: [
-      Plot.gridX(ticks, { stroke: GRID }),
-      ...(o.ref != null ? [Plot.ruleX([o.ref], { stroke: G2, strokeDasharray: "3,3" })] : []),
-      Plot.link(rows.filter((r) => r.a != null), { y1: "label", y2: "label", x1: "a", x2: "b", stroke: G3, strokeWidth: 2 }),
-      Plot.dot(rows.filter((r) => r.a != null), { y: "label", x: "a", r: 4.5, fill: G1, stroke: "#fff", strokeWidth: 1.5 }),
-      Plot.dot(rows, { y: "label", x: "b", r: 4.5, fill: ACC, stroke: "#fff", strokeWidth: 1.5 }),
-      // the lower value labelled to its left, the higher to its right (one mark per side)
-      Plot.text(left.filter((r) => !(r.a == null)), { y: "label", x: "x", text: (d) => fmt(d.v), dx: -10, textAnchor: "end", fill: (d) => d.c, fontSize: 12 }),
-      Plot.text([...right.filter((r) => r.a != null), ...onlyB.map((r) => ({ ...r, x: r.b, v: r.b, c: INK }))], { y: "label", x: "x", text: (d) => fmt(d.v), dx: 10, textAnchor: "start", fill: (d) => d.c, fontSize: 12 }),
-    ],
-  });
-  a11y(plot, o.title, o.desc);
-  el.append(plot);
-  return plot;
-}
-export function niceTicks(lo, hi, n) {
-  const span = hi - lo, raw = span / n, mag = 10 ** Math.floor(Math.log10(raw || 1));
-  const step = [1, 2, 2.5, 5, 10].map((m) => m * mag).find((s) => span / s <= n) ?? raw;
-  const out = [];
-  // the last tick reaches past the largest value, so no mark sits beyond the scale
-  for (let v = Math.ceil(lo / step) * step; v < hi + step - 1e-9; v += step) out.push(Math.round(v * 1000) / 1000);
-  return out;
-}
-
-/* ---------- state strip: one row per state, ranked; India as a labelled rule ----------
- * series: [{ key, label, color, hollow }] read from each row; the first is the one ranked. */
-// the one state name too long for a chart's label column
+const PCT = { suffix: "%" };
+const f0 = (v) => (v == null ? "–" : Math.round(v).toLocaleString("en-IN"));
+const f1 = (v) => (v == null ? "–" : v.toFixed(1));
+// the state names too long for a chart's label column
 const SHORT_GEO = { "Dadra & Nagar Haveli and Daman & Diu": "DNH and Daman & Diu", "Andaman & Nicobar  Islands": "Andaman & Nicobar Islands" };
-export function stateStrip(el, rows, series, o = {}) {
-  const k0 = series[0].key;
-  rows = rows.map((r) => ({ ...r, geo: SHORT_GEO[r.geo] ?? r.geo }));
-  rows = rows.filter((r) => r[k0] != null).sort((a, b) => b[k0] - a[k0]);
-  const vals = rows.flatMap((r) => series.map((s) => r[s.key])).filter((v) => v != null);
-  const hi = o.hi ?? Math.max(...vals, o.ref ?? 0), lo = o.lo ?? 0;
-  const ticks = o.ticks ?? niceTicks(lo, hi, 5);
-  const fmt = o.fmt ?? f1;
-  const plot = Plot.plot({
-    width: W, height: 40 + rows.length * 19 + 34, marginLeft: 230, marginRight: 70, marginTop: 30, marginBottom: 28,
-    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
-    x: { domain: [lo, Math.max(hi * 1.02, ticks.at(-1))], ticks, tickSize: 0, tickPadding: 8, tickFormat: (d) => String(o.tick ? o.tick(d) : d), label: null },
-    y: { domain: rows.map((r) => r.geo), tickSize: 0, tickPadding: 10, tickFormat: (s) => String(s), label: null },
-    marks: [
-      Plot.gridX(ticks, { stroke: GRID }),
-      ...(o.ref != null ? [
-        Plot.ruleX([o.ref], { stroke: G1, strokeWidth: 1, strokeDasharray: "3,3" }),
-        // the rule's label sits above the first row, clear of every dot
-        Plot.text([{ x: o.ref }], { x: "x", frameAnchor: "top", dy: -18, text: () => `${o.refLabel ?? "India"} ${fmt(o.ref)}`, fill: G1, fontSize: 12 }),
-      ] : []),
-      ...(series.length > 1 ? [Plot.link(rows.filter((r) => series.every((s) => r[s.key] != null)), { y1: "geo", y2: "geo", x1: series[0].key, x2: series[1].key, stroke: G3, strokeWidth: 1.5 })] : []),
-      ...series.slice().reverse().map((s) => Plot.dot(rows.filter((r) => r[s.key] != null), { y: "geo", x: s.key, r: 4, fill: s.hollow ? "#fff" : s.color, stroke: s.hollow ? s.color : "#fff", strokeWidth: 1.5 })),
-      // the ranked value, at the row's right edge (outside the plot: no mark crosses it)
-      Plot.text(rows, { y: "geo", frameAnchor: "right", dx: 58, text: (d) => fmt(d[k0]) + (d.caution ? "*" : ""), textAnchor: "end", fill: INK, fontSize: 12 }),
-    ],
+const geo = (g) => SHORT_GEO[g] ?? g;
+const P = (points) => points.map((p) => [p.iso, p.value]);
+const role = (s, i) => (i === 0 ? "lead" : i === 1 ? "ctx" : "ctx2");
+
+/* ---------- shared shapes ---------- */
+
+/** a ranked bar per state, India as the reference rule */
+function stateBars(S, { file, label, dp = 1, unit = {}, refName = "India", from = null }) {
+  const rows = S.rows.map((r) => ({ name: geo(r.geo) + (r.caution ? "*" : ""), value: r.v }));
+  return figure({
+    bare: true, file, label,
+    data: { cols: ["State", "Value"], rows: S.rows.map((r) => [r.geo, r.v]) },
+    draw: (width) => K.bars({ width, rows, dp, unit, ...(from != null ? { dots: true, from } : {}), ref: { value: S.ref, label: `${refName} ${K.num(S.ref, { dp, suffix: unit.suffix ?? "" })}` } }),
   });
-  a11y(plot, o.title, o.desc);
-  el.append(plot);
-  return plot;
 }
 
-/* ---------- diverging bars: a change or a gap in points, one row each ---------- */
-export function divBars(el, rows, o = {}) {
-  const vals = rows.map((r) => r.v);
-  const lo = Math.min(0, ...vals), hi = Math.max(0, ...vals);
-  const pad = (hi - lo) * 0.14;
-  const ticks = niceTicks(lo, hi, 6);
-  const fmt = (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(1);
-  const plot = Plot.plot({
-    width: W, height: 30 + rows.length * 21 + 34, marginLeft: o.ml ?? 360, marginRight: 30, marginTop: 10, marginBottom: 30,
-    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
-    x: { domain: [lo - pad, hi + pad], ticks, tickSize: 0, tickPadding: 8, tickFormat: (d) => (d > 0 ? "+" : d < 0 ? "−" : "") + Math.abs(d), label: o.xLabel ?? null, labelAnchor: "right", labelArrow: false },
-    y: { domain: rows.map((r) => r.label), tickSize: 0, tickPadding: 10, tickFormat: (s) => String(s), label: null },
-    marks: [
-      Plot.gridX(ticks, { stroke: GRID }),
-      Plot.barX(rows, { y: "label", x1: 0, x2: "v", fill: (d) => d.c ?? G2, insetTop: 4, insetBottom: 4 }),
-      Plot.ruleX([0], { stroke: "#B5BAC4" }),
-      Plot.text(rows.filter((r) => r.v >= 0), { y: "label", x: "v", text: (d) => fmt(d.v), dx: 6, textAnchor: "start", fill: INK, fontSize: 11.5 }),
-      Plot.text(rows.filter((r) => r.v < 0), { y: "label", x: "v", text: (d) => fmt(d.v), dx: -6, textAnchor: "end", fill: INK, fontSize: 11.5 }),
-    ],
+/** two values per state (b the one ranked, in the lead colour), India as a shaded row on top */
+function stateDumbbell(S, { file, label, a, b, keys, india, dp = 1, unit = {}, fmt = null, sortBy = "b" }) {
+  const rows = S.rows.filter((r) => r[b] != null).map((r) => ({ name: geo(r.geo) + (r.caution ? "*" : ""), a: r[a] ?? null, b: r[b] }));
+  const ranked = rows.slice().sort((p, q) => (sortBy === "a" ? q.a - p.a : q.b - p.b));
+  ranked[0].label = true; ranked.at(-1).label = true;
+  const all = [{ name: "India", a: india.a, b: india.b, highlight: true }, ...ranked];
+  return figure({
+    bare: true, file, label,
+    data: { cols: ["State", keys.b, keys.a], rows: [["India", india.b, india.a], ...S.rows.map((r) => [r.geo, r[b], r[a] ?? null])] },
+    draw: (width) => K.dumbbell({ width, rows: all, keys, dp, unit, sortBy: "none", ...(fmt ? { fmt } : {}) }),
   });
-  a11y(plot, o.title, o.desc);
-  el.append(plot);
-  return plot;
 }
 
+/** a short list of measures, two values each, in the page's own order, every value labelled */
+function pairPlate(rows, { file, label, keys, dp = 1, unit = PCT, fmt = null, cols }) {
+  const R = rows.filter((r) => r.b != null).map((r) => ({ name: r.label, a: r.a ?? null, b: r.b }));
+  return figure({
+    bare: true, file, label,
+    data: { cols: cols ?? ["Measure", keys.a, keys.b], rows: rows.map((r) => [r.label, r.a ?? null, r.b ?? null]) },
+    draw: (width) => K.dumbbell({ width, rows: R, keys, dp, unit, sortBy: "none", labelAll: true, ...(fmt ? { fmt } : {}) }),
+  });
+}
 
-/* ---------- lines: one or more series over time, end-labelled ----------
- * series: [{ label, color, points: [{ date: Date, value }], width, est: Set(iso) of estimated
- * dates (drawn in a pale tint, CONTRACT-series 2b) }]. With `rulers`, the series are separate
- * instruments drawn through seamMarks("side"), never one line. */
-export function lines(el, series, o = {}) {
-  // the scales cover every point drawn, including the ruler groups seamMarks draws
-  const all = [...series, ...(o.rulers?.flat() ?? [])].flatMap((s) => s.points);
-  const vals = all.map((p) => p.value);
-  const lo = o.lo ?? Math.min(0, ...vals), hi = o.hi ?? Math.max(...vals);
-  const ticks = o.ticks ?? niceTicks(lo, hi, 5);
-  const dates = all.map((p) => p.date);
-  const x0 = new Date(Math.min(...dates)), x1 = new Date(Math.max(...dates));
-  // xTicks "points": tick the observations themselves (census years, not every eighth year)
-  const years = o.xTicks === "points" ? [...new Map(dates.map((d) => [+d, d])).values()].sort((a, b) => a - b) : o.xTicks ?? (() => { const a = x0.getUTCFullYear(), b = x1.getUTCFullYear(), step = Math.max(1, Math.ceil((b - a) / 8)); const t = []; for (let y = a; y <= b; y += step) t.push(new Date(Date.UTC(y, 0, 1))); return t; })();
-  const fmt = o.fmt ?? f1;
-  const marks = [Plot.gridY(ticks, { stroke: GRID }), Plot.ruleY([lo], { stroke: "#D3D7DE" })];
-  if (o.ref != null) marks.push(Plot.ruleY([o.ref], { stroke: G2, strokeDasharray: "3,3" }), Plot.text([{ date: x0, value: o.ref }], { x: "date", y: "value", text: () => o.refLabel ?? String(o.ref), dy: -8, textAnchor: "start", fill: G1, fontSize: 12 }));
-  for (const s of series) {
-    const meas = s.points.filter((p) => !s.est?.has(p.iso)), est = s.points.filter((p, i, a) => s.est?.has(p.iso) || (i < a.length - 1 && s.est?.has(a[i + 1].iso)));
-    if (s.ruler) continue;   // drawn by seamMarks below
-    marks.push(Plot.lineY(meas, { x: "date", y: "value", stroke: s.color, strokeWidth: s.width ?? 2, strokeLinejoin: "round", strokeLinecap: "round" }));
-    if (est.length > 1) marks.push(Plot.lineY(est, { x: "date", y: "value", stroke: tint(s.color), strokeWidth: s.width ?? 2, strokeLinejoin: "round", strokeLinecap: "round" }));
-    marks.push(Plot.dot(s.points, { x: "date", y: "value", r: s.points.length > 20 ? 0 : 2.5, fill: (p) => (s.est?.has(p.iso) ? tint(s.color) : s.color) }));
-  }
-  if (o.rulers) {
-    // separate instruments, drawn side by side with the changeover marked (plumbing.js seamMarks)
-    o.rulers.forEach((group, gi) => {
-      // the changeover marker once per plate, on the first group; every group gets its lines
-      marks.push(...seamMarks("side", group.map((s) => ({ data: s.points, color: s.color, width: s.width ?? 2 })), gi === 0 ? (o.seamMarker ?? { text: o.seamText, y: hi * 0.97 }) : false));
-      // a group of three or more rulers: seamMarks marks the last changeover; the earlier ones get the same hairline
-      if (gi === 0) for (const s of group.slice(1, -1)) marks.push(Plot.ruleX([s.points[0].date], { stroke: SEAM_RULE, strokeWidth: 1, strokeDasharray: "2,3" }));
-      for (const s of group) marks.push(Plot.dot(s.points, { x: "date", y: "value", r: 3, fill: s.color, stroke: "#fff", strokeWidth: 1 }));
+/** one value per measure, ranked or in the given order */
+function measureBars(rows, { file, label, dp = 1, unit = PCT, sort = true, ref = null, highlight = null }) {
+  const R = rows.map((r) => ({ name: r.label, value: r.v, highlight: r.label === highlight }));
+  return figure({
+    bare: true, file, label,
+    data: { cols: ["Measure", "Value"], rows: rows.map((r) => [r.label, r.v]) },
+    draw: (width) => K.bars({ width, rows: R, dp, unit, sort, ...(ref ? { ref } : {}) }),
+  });
+}
+
+/** change or gap in points, one bar per measure, coloured by what the plate asks */
+function divergingBars(rows, { file, label, cols, csv }) {
+  return figure({
+    bare: true, file, label, data: { cols, rows: csv },
+    draw: (width) => K.bars({ width, rows, dp: 1, sign: true, sort: false, unit: { suffix: "" }, nameMax: 320 }),
+  });
+}
+
+/** series over time: the first the lead, the rest context; estimated stretches split off pale */
+function linePlate(D, { file, label, dp = 0, unit = {}, names = null, notes = [], endNotes = false }) {
+  const series = [], shade = [];
+  D.series.forEach((s, i) => {
+    const est = new Set(s.est ?? []), pts = P(s.points), r = role(s, i);
+    const measured = pts.filter(([d]) => !est.has(d));
+    series.push({ name: names?.[i] ?? s.label, short: s.label, data: measured, role: r, ...(endNotes ? { label: false } : {}) });
+    // with a projection beyond, the last measured point is named where it is, not at the far edge
+    if (endNotes) { const [d, v] = measured.at(-1); notes.push({ d, v, text: `${s.label}, ${D.periods?.[d] ?? d.slice(0, 4)}\n${K.num(v, { dp, suffix: unit.suffix ?? "" })}`, side: "left", below: i > 0 }); }
+    if (est.size) { // the projection: its own series, drawn pale from the last measured point, unlabelled
+      const k = pts.findIndex(([d]) => est.has(d));
+      series.push({ name: (names?.[i] ?? s.label) + ", projected", data: pts.slice(Math.max(0, k - 1)), color: i === 0 ? K.C.leadSoft : K.C.ctx2, label: false });
+      if (i === 0) shade.push({ from: pts[k - 1][0], to: pts.at(-1)[0], label: "Projected" });
+    }
+  });
+  return figure({
+    bare: true, file, label,
+    // on a phone the shaded stretch keeps its meaning from the subtitle; its word would sit on the line
+    draw: (width) => K.line({ width, freq: "year", unit, endDp: dp, hoverDp: dp, series, notes, shade: width < 520 ? shade.map((sh) => ({ ...sh, label: "" })) : shade }),
+  });
+}
+
+/* ================================================================ Women and men */
+export const GENDER = {
+  srb: (D) => linePlate(D.srb, { file: "india-atlas_gender-srb", label: "Sex ratio at birth, girls born per 1,000 boys, India, towns and villages, three-year SRS windows" }),
+  census: (D) => linePlate(D.census, { file: "india-atlas_gender-census", label: "Women per 1,000 men in each census, 1951 to 2011" }),
+  imr: (D) => linePlate(D.imr, { file: "india-atlas_gender-imr", label: "Infant deaths per 1,000 live births, girls and boys, India" }),
+  mmr: (D) => linePlate(D.mmr, { file: "india-atlas_gender-mmr", label: "Maternal deaths per 1,00,000 live births, India, three-year SRS windows" }),
+  life: (D) => linePlate(D.life, { file: "india-atlas_gender-life", dp: 1, endNotes: true, label: "Life expectancy at birth, women and men, India, with the official projection drawn pale" }),
+  "lok-sabha": (D) => linePlate(D["lok-sabha"], { file: "india-atlas_gender-lok-sabha", dp: 1, unit: PCT, label: "Women's share of Lok Sabha seats at each general election since 1957" }),
+
+  // census literacy and the NSS survey are two instruments: the census lines end in 2011, the
+  // NSS figures stand alone beyond a seam
+  literacy: (D) => {
+    const [cw, cm] = D.literacy.census, [nw, nm] = D.literacy.nss;
+    const lastW = cw.points.at(-1), lastM = cm.points.at(-1);
+    return figure({
+      bare: true, file: "india-atlas_gender-literacy",
+      label: "Literacy of women and men in the censuses of 1981 to 2011, and the separate NSS survey of 2017-18",
+      data: { cols: ["Period", "Women, census", "Men, census", "Women, NSS", "Men, NSS"],
+        rows: [...cw.points.map((p, i) => [p.iso.slice(0, 4), p.value, cm.points[i]?.value ?? null, null, null]), ["2017-18", null, null, nw.points[0].value, nm.points[0].value]] },
+      draw: (width) => K.line({
+        width, freq: "year", unit: PCT, endDp: 1, hoverDp: 1, yDomain: [0, 100],
+        series: [
+          { name: "Women, census", data: P(cw.points), role: "lead", label: false },
+          { name: "Men, census", data: P(cm.points), role: "ctx", label: false },
+          { name: "Women, NSS 2017-18", short: "Women", data: P(nw.points), role: "lead" },
+          { name: "Men, NSS 2017-18", short: "Men", data: P(nm.points), role: "ctx" },
+        ],
+        seam: { t: "2014-01-01", before: "Census", after: "NSS survey" },
+        notes: width < 520
+          ? [{ d: lastW.iso, v: lastW.value, text: `${f1(lastW.value)}%`, side: "left", below: true }, { d: lastM.iso, v: lastM.value, text: `${f1(lastM.value)}%`, side: "left" }]
+          : [{ d: lastW.iso, v: lastW.value, text: `Women, 2011\n${f1(lastW.value)}%`, side: "left", below: true }, { d: lastM.iso, v: lastM.value, text: `Men, 2011\n${f1(lastM.value)}%`, side: "left" }],
+      }),
     });
-  }
-  // end labels, dodged so two lines ending close together never overlap
-  // a series that runs on into a projection is labelled at its last measured point, so the label
-  // states what was measured (the pale projection carries no number)
-  const ends = series.filter((s) => !s.noLabel).map((s) => ({ s, p: s.points.filter((p) => !s.est?.has(p.iso)).at(-1) ?? s.points.at(-1) })).sort((a, b) => b.p.value - a.p.value);
-  const gap = (hi - lo) * 0.06;
-  ends.forEach((e, i) => { e.y = i && ends[i - 1].y - e.p.value < gap ? ends[i - 1].y - gap : e.p.value; });
-  marks.push(Plot.text(ends, { x: (e) => e.p.date, y: "y", text: (e) => `${e.s.label} ${fmt(e.p.value)}`, dx: 10, textAnchor: "start", fill: INK, fontSize: 12 }));
-  const plot = Plot.plot({
-    width: W, height: o.h ?? 420, marginLeft: 48, marginRight: o.mr ?? 210, marginTop: 20, marginBottom: 30,
-    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
-    // windowed periods (three-year SRS averages) are labelled by their own names, not the middle year
-    x: { type: "utc", domain: [x0, x1], ticks: o.periods ? [...new Set(all.map((p) => p.iso))].sort().filter((_, i, a) => a.length <= 9 || i % Math.ceil(a.length / 9) === 0 || i === a.length - 1).map((i) => new Date(i + "T00:00:00Z")) : years,
-      tickSize: 0, tickPadding: 8, tickFormat: (d) => String(o.periods?.[d.toISOString().slice(0, 10)] ?? d.getUTCFullYear()) },
-    y: { domain: [lo, Math.max(hi * 1.02, ticks.at(-1))], ticks, tickSize: 0, tickPadding: 8, tickFormat: (d) => String(o.tick ? o.tick(d) : d), label: o.yLabel ?? null, labelAnchor: "top", labelArrow: false },
-    marks,
-  });
-  a11y(plot, o.title, o.desc);
-  el.append(plot);
-  return plot;
-}
+  },
 
-/* ---------- bars: one horizontal bar per row, value at the bar's end ---------- */
-export function bars(el, rows, o = {}) {
-  const hi = o.hi ?? Math.max(...rows.map((r) => r.v));
-  const ticks = o.ticks ?? niceTicks(0, hi, 5);
-  const fmt = o.fmt ?? f1;
-  const plot = Plot.plot({
-    width: W, height: 30 + rows.length * 26 + 34, marginLeft: o.ml ?? 330, marginRight: 80, marginTop: 10, marginBottom: 30,
-    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
-    x: { domain: [0, Math.max(hi * 1.05, ticks.at(-1))], ticks, tickSize: 0, tickPadding: 8, tickFormat: (d) => String(o.tick ? o.tick(d) : d), label: o.xLabel ?? null, labelAnchor: "right", labelArrow: false },
-    y: { domain: rows.map((r) => r.label), tickSize: 0, tickPadding: 10, tickFormat: (s) => String(s), label: null },
-    marks: [
-      Plot.gridX(ticks, { stroke: GRID }),
-      ...(o.ref != null ? [Plot.ruleX([o.ref], { stroke: G1, strokeDasharray: "3,3" }), Plot.text([{ x: o.ref }], { x: "x", frameAnchor: "top", dy: -2, text: () => o.refLabel ?? String(o.ref), fill: G1, fontSize: 12, textAnchor: "start", dx: 4 })] : []),
-      Plot.barX(rows, { y: "label", x1: 0, x2: "v", fill: (d) => d.c ?? ACC, insetTop: 5, insetBottom: 5 }),
-      Plot.text(rows, { y: "label", x: "v", text: (d) => fmt(d.v), dx: 6, textAnchor: "start", fill: INK, fontSize: 12 }),
-    ],
-  });
-  a11y(plot, o.title, o.desc);
-  el.append(plot);
-  return plot;
-}
+  // three PLFS rulers for each sex, each its own series; the changeovers marked
+  work: (D) => {
+    const [W3, M3] = D.work.rulers, names = ["agricultural years", "calendar years", "revamped 2025"];
+    const series = [
+      ...M3.map((s, i) => ({ name: `Men, ${names[i]}`, short: "Men", data: P(s.points), role: "ctx", label: i === 2 })),
+      ...W3.map((s, i) => ({ name: `Women, ${names[i]}`, short: "Women", data: P(s.points), role: "lead", label: i === 2 })),
+    ];
+    return figure({
+      bare: true, file: "india-atlas_gender-wpr",
+      label: "Worker population ratio of women and men, 15 and over, on three PLFS rulers: agricultural years, calendar years and the revamped 2025 design",
+      data: { cols: ["Ruler", "Period", "Women", "Men"], rows: W3.flatMap((s, g) => s.points.map((p, i) => [names[g], p.iso, p.value, M3[g].points[i]?.value ?? null])) },
+      draw: (width) => K.line({
+        width, freq: "year", unit: PCT, endDp: 1, hoverDp: 1, yDomain: [0, 90], series,
+        events: [{ t: W3[1].points[0].iso, label: "Calendar years", short: "Calendar yrs" }, { t: W3[2].points[0].iso, label: "Revamped survey", short: "Revamped", side: "left" }],
+      }),
+    });
+  },
+
+  "srb-states": (D) => stateBars(D["srb-states"], { file: "india-atlas_gender-srb-states", dp: 0, from: 850, label: "Sex ratio at birth by state, girls per 1,000 boys, ranked, India marked" }),
+  "mmr-states": (D) => stateBars(D["mmr-states"], { file: "india-atlas_gender-mmr-states", dp: 0, label: "Maternal mortality ratio by state, ranked, India marked" }),
+  "marriage-states": (D) => stateBars(D["marriage-states"], { file: "india-atlas_gender-marriage-states", from: 18, label: "Women's mean age at marriage by state, ranked, India marked" }),
+  "crime-states": (D) => stateBars(D["crime-states"], { file: "india-atlas_gender-crime-states", label: "Crimes against women per 1,00,000 women by state, ranked, India marked" }),
+
+  "schooling-states": (D, india) => stateDumbbell(D["schooling-states"], { file: "india-atlas_gender-schooling-states", a: "men", b: "women", keys: { a: "Men", b: "Women" }, india,
+    label: "Mean years of schooling, people 15 and over, women and men, by state, ranked by women" }),
+  "lfpr-states": (D, india) => stateDumbbell(D["lfpr-states"], { file: "india-atlas_gender-lfpr-states", a: "men", b: "women", keys: { a: "Men", b: "Women" }, india, unit: PCT,
+    label: "Labour force participation, 15 and over, women and men, by state, 2025, ranked by women" }),
+  "wage-states": (D, india) => stateDumbbell(D["wage-states"], { file: "india-atlas_gender-wage-states", a: "men", b: "women", keys: { a: "Men", b: "Women" }, india, dp: 0,
+    fmt: (v) => "₹" + f0(v), label: "Rural casual daily wage, women and men, by state, 2025, rupees, ranked by women" }),
+
+  "tfr-edu": (D) => measureBars(D["tfr-edu"].rows, { file: "india-atlas_gender-tfr-edu", unit: {}, sort: false, ref: { value: D["tfr-edu"].ref, label: `All literate women ${f1(D["tfr-edu"].ref)}` },
+    label: "Children per woman by the mother's schooling, from never at school to graduate" }),
+  money: (D) => measureBars(D.money, { file: "india-atlas_gender-money", label: "Women's share of accounts and holders in each scheme or market, per cent" }),
+  voice: (D) => measureBars(D.voice, { file: "india-atlas_gender-voice", label: "Women's share of each office, per cent" }),
+  conviction: (D) => measureBars(D.conviction, { file: "india-atlas_gender-conviction", highlight: "All crimes against women", label: "Convictions as a share of cases due for trial, by crime head, per cent" }),
+
+  school: (D) => pairPlate(D.school, { file: "india-atlas_gender-school", keys: { a: "Boys", b: "Girls" }, label: "Gross enrolment by level and dropout by stage, boys and girls, per cent" }),
+  time: (D) => pairPlate(D.time, { file: "india-atlas_gender-time", keys: { a: "2019", b: "2024" }, dp: 0, unit: { suffix: " min" }, label: "Minutes a day per person on unpaid work at home and paid work, women and men, 2019 and 2024" }),
+  "crime-heads": (D, years) => pairPlate(D["crime-heads"], { file: "india-atlas_gender-crime-heads", keys: { a: years.from, b: years.to }, dp: 0, unit: {}, fmt: f0, label: "Crimes against women registered under each head, two years compared" }),
+  causes: (D) => pairPlate(D.causes, { file: "india-atlas_gender-causes", keys: { a: "Men", b: "Women" }, label: "Share of deaths by broad cause, men and women, per cent" }),
+};
+
+/* ================================================================ Family health (NFHS) */
+const R45 = { a: "NFHS-4, 2015-16", b: "NFHS-5, 2019-21" };
+const RU = { a: "Villages", b: "Towns" };
+const pair45 = (k, label, o = {}) => (D) => pairPlate(D[k], { file: "india-atlas_nfhs-" + k, keys: R45, label, cols: ["Measure", "NFHS-4", "NFHS-5"], ...o });
+const pairRU = (k, label) => (D) => pairPlate(D[k].map((r) => ({ label: r.label, a: r.rural, b: r.urban })), { file: "india-atlas_nfhs-" + k, keys: RU, label, cols: ["Measure", "Rural", "Urban"] });
+
+export const NFHS = {
+  nfhs6: (D) => pairPlate(D.nfhs6, { file: "india-atlas_nfhs-6", keys: { a: "NFHS-5", b: "NFHS-6, 2023-24" }, cols: ["Measure", "NFHS-5", "NFHS-6"], label: "Selected measures, India, NFHS-5 and NFHS-6, as printed in the NFHS-6 fact sheets" }),
+  anaemia: pair45("anaemia", "Share anaemic by group, India, NFHS-4 and NFHS-5"),
+  nutrition: pair45("nutrition", "Children's nutrition and feeding, India, NFHS-4 and NFHS-5"),
+  mortality: pair45("mortality", "Deaths per 1,000 live births, India, NFHS-4 and NFHS-5", { dp: 0, unit: {} }),
+  vaccines: pair45("vaccines", "Vaccination and treatment of childhood illness, India, NFHS-4 and NFHS-5"),
+  births: pair45("births", "Care before, during and after birth, India, NFHS-4 and NFHS-5"),
+  household: pair45("household", "Household conditions, India, NFHS-4 and NFHS-5"),
+  fp: pair45("fp", "Family planning methods and unmet need, married women 15-49, NFHS-4 and NFHS-5"),
+  ncd: pairRU("ncd", "Blood pressure, blood sugar and weight, villages and towns, NFHS-5"),
+  women: pairRU("women", "Women's lives, villages and towns, NFHS-5"),
+
+  // every per-cent measure taken twice: the wrong way in sindoor, no right direction in grey
+  direction: (D) => divergingBars(D.direction.map((r) => ({ name: r.short, value: r.change, color: r.dir === 0 ? K.C.ctx2 : r.dir * r.change < 0 ? K.C.comp : K.C.leadTint })), {
+    file: "india-atlas_nfhs-change", label: "Change between NFHS-4 and NFHS-5 in percentage points for every per-cent measure taken both times, the ones that moved the wrong way picked out",
+    cols: ["Measure", "NFHS-4", "NFHS-5", "Change, points", "Direction"],
+    csv: D.direction.map((r) => [r.label, r.a, r.b, r.change, r.dir === 0 ? "no direction" : r.dir * r.change < 0 ? "worse" : "better"]),
+  }),
+  // town minus village: the measures higher in villages picked out
+  gap: (D) => divergingBars(D.gap.map((r) => ({ name: r.short, value: r.gap, color: r.gap < 0 ? K.C.comp : K.C.leadTint })), {
+    file: "india-atlas_nfhs-rural-urban", label: "Town figure minus village figure for every per-cent measure in NFHS-5, the ones higher in villages picked out",
+    cols: ["Measure", "Rural", "Urban", "Urban minus rural"], csv: D.gap.map((r) => [r.label, r.rural, r.urban, r.gap]),
+  }),
+
+  "anaemia-states": (D, india) => stateDumbbell(D["anaemia-states"], { file: "india-atlas_nfhs-anaemia-states", a: "v4", b: "v", keys: { a: "NFHS-4", b: "NFHS-5" }, india, unit: PCT,
+    label: "Children 6-59 months anaemic by state, NFHS-5 with NFHS-4, ranked by NFHS-5" }),
+  "ncd-states": (D, india) => stateDumbbell(D["ncd-states"], { file: "india-atlas_nfhs-ncd-states", a: "men", b: "women", keys: { a: "Men", b: "Women" }, india, unit: PCT,
+    label: "High blood pressure or on medicine, women and men, by state, NFHS-5, ranked by women" }),
+  "cancer-states": (D, india) => stateDumbbell(D["cancer-states"], { file: "india-atlas_nfhs-cancer-states", a: "breast", b: "cervical", keys: { a: "Breast", b: "Cervical" }, india, unit: PCT,
+    label: "Women 30-49 ever screened for cervical cancer and given a breast examination, by state, NFHS-5" }),
+  "women-states": (D, india) => stateDumbbell(D["women-states"], { file: "india-atlas_nfhs-women-states", a: "bank", b: "phone", keys: { a: "Bank account", b: "Phone" }, india, unit: PCT,
+    label: "Women with a phone and a bank account they use, by state, NFHS-5, ranked by phone" }),
+  "tobacco-states": (D, india) => stateDumbbell(D["tobacco-states"], { file: "india-atlas_nfhs-tobacco-states", a: "women", b: "men", keys: { a: "Women", b: "Men" }, india, unit: PCT,
+    label: "Tobacco use, men and women, by state, NFHS-5, ranked by men" }),
+  "tfr-states": (D, india) => stateDumbbell(D["tfr-states"], { file: "india-atlas_nfhs-tfr-states", a: "v4", b: "v", keys: { a: "NFHS-4", b: "NFHS-5" }, india, dp: 2,
+    label: "Children per woman by state, NFHS-5 with NFHS-4, ranked by NFHS-5" }),
+  "cs-states": (D, india) => stateDumbbell(D["cs-states"], { file: "india-atlas_nfhs-cs-states", a: "public", b: "private", keys: { a: "Public facilities", b: "Private facilities" }, india, unit: PCT,
+    label: "Share of births by caesarean in private and public facilities, by state, NFHS-5, ranked by private" }),
+  "violence-states": (D) => stateBars(D["violence-states"], { file: "india-atlas_nfhs-violence-states", unit: PCT, label: "Married women ever hurt by a husband, by state, NFHS-5, ranked, India marked" }),
+
+  /** the state table: an HTML grid, each column shaded on its own range, darker at the worse end */
+  table: (T) => {
+    const ranges = T.cols.map((c, j) => { const vs = T.rows.map((r) => r.v[j]).filter((v) => v != null); return [Math.min(...vs), Math.max(...vs)]; });
+    const tint = (v, [lo, hi], bad) => {
+      if (v == null || bad == null) return "transparent";
+      const t = (v - lo) / (hi - lo || 1), w = bad ? t : 1 - t;
+      return `rgba(46,75,216,${(0.03 + 0.27 * w).toFixed(3)})`;
+    };
+    const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    const csv = { cols: ["State", ...T.cols.map((c) => c.label)], rows: [T.india, ...T.rows].map((r) => [r.geo, ...r.v]) };
+    return `<div class="akf akf-bare" data-file="india-atlas_nfhs-states-table"><div class="nf-table-wrap"><table class="nf-table"><thead><tr><th>State or UT</th>${T.cols.map((c) => `<th>${esc(c.short)}</th>`).join("")}</tr></thead><tbody>` +
+      [T.india, ...T.rows].map((r, i) => `<tr${i === 0 ? ' class="ai"' : ""}><td>${esc(r.geo)}</td>${r.v.map((v, j) => `<td style="background:${i === 0 ? "transparent" : tint(v, ranges[j], T.cols[j].bad)}">${v == null ? "—" : f1(v)}</td>`).join("")}</tr>`).join("") +
+      `</tbody></table></div><script type="application/json" class="akf-data">${JSON.stringify(csv).replace(/</g, "\\u003c")}</script></div>`;
+  },
+};

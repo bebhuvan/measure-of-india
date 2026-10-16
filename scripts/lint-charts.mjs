@@ -193,6 +193,12 @@ for (const url of PAGES) {
     const where = `${url} #${svg.closest("[id]")?.id || "(anon)"} (${svg.parentElement.className})`;
     for (const f of lintSVG(svg.outerHTML)) issues.push({ url: where, kind: "kit", detail: f });
   });
+  // the page's wide and mid kit drawings, shipped beside it as kit.json
+  const kitFile = path.join(DIST, url, "kit.json");
+  if (!VW && fs.existsSync(kitFile)) for (const [k, svg] of Object.entries(JSON.parse(fs.readFileSync(kitFile, "utf8")))) {
+    chartsSeen++;
+    for (const f of lintSVG(svg)) issues.push({ url: `${url} kit.json ${k}`, kind: "kit", detail: f });
+  }
   doc.querySelectorAll(".plotzone svg, .frontis svg").forEach((svg) => {
     if (svg.closest(".akf")) return;
     chartsSeen++;

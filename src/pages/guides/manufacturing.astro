@@ -6,6 +6,9 @@ import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["manufacturing"];
+import * as CH from "../../dossiers/manufacturing.charts.js";
+// every number on the page, computed at build time from the bundles (was the client's setTxt)
+const N = CH.numbers();
 // review-a (2026-10): the growth plate's title and its list of falls are counted from the
 // bundle, not typed (the typed "three falls" missed 2022 once the vintage showed -1.7%)
 import fs from "node:fs";
@@ -52,13 +55,13 @@ const X_STAND = XS[XL] >= XS[XL - 1]
       <span>Base <b>Constant 2015 US$ (levels)</b></span>
       <span>Coverage <b>India, 1960–2025</b></span>
       <span>Latest <b>2025</b></span>
-      <span>WDI vintage <b id="meta-vintage">–</b></span>
+      <span>WDI vintage <b id="meta-vintage" set:html={N["meta-vintage"]} /></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">MVA, share of GDP</div><div class="v acc" id="n-share">–</div><div class="d" id="d-share">–</div><div class="nspark" id="nspark-share"></div></div>
-      <div class="num"><div class="l">MVA, constant 2015 US$</div><div class="v" id="n-level">–</div><div class="d" id="d-level">–</div></div>
-      <div class="num"><div class="l">MVA growth, 2025</div><div class="v" id="n-growth">–</div><div class="d" id="d-growth">–</div></div>
-      <div class="num"><div class="l">Medium- &amp; high-tech share</div><div class="v" id="n-tech">–</div><div class="d" id="d-tech">–</div></div>
+      <div class="num"><div class="l">MVA, share of GDP</div><div class="v acc" id="n-share" set:html={N["n-share"]} /><div class="d" id="d-share" set:html={N["d-share"]} /><div class="nspark" id="nspark-share" set:html={N["nspark-share"]} /></div>
+      <div class="num"><div class="l">MVA, constant 2015 US$</div><div class="v" id="n-level" set:html={N["n-level"]} /><div class="d" id="d-level" set:html={N["d-level"]} /></div>
+      <div class="num"><div class="l">MVA growth, 2025</div><div class="v" id="n-growth" set:html={N["n-growth"]} /><div class="d" id="d-growth" set:html={N["d-growth"]} /></div>
+      <div class="num"><div class="l">Medium- &amp; high-tech share</div><div class="v" id="n-tech" set:html={N["n-tech"]} /><div class="d" id="d-tech" set:html={N["d-tech"]} /></div>
     </div>
   </div>
 
@@ -66,15 +69,15 @@ const X_STAND = XS[XL] >= XS[XL - 1]
   <section>
     <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">WDI vintage 13 July 2026, calendar 2025</span></div>
     <div class="reading-top">
-      <div><span class="rk">Manufacturing value added, 2025</span><div class="big" id="cr-share">–</div></div>
+      <div><span class="rk">Manufacturing value added, 2025</span><div class="big" id="cr-share" set:html={N["cr-share"]} /></div>
       <p class="rt-cap">Manufacturing's share of GDP in calendar 2025, on the World Bank's ruler: below where it stood in 1960, and well below the 1995 peak beside it. The level, over the same sixty-five years, multiplied nearly forty-four-fold.</p>
-      <div class="rt-side"><span class="rk">The peak, 1995</span><div class="rt-side-v" id="rb-peak">–</div></div>
+      <div class="rt-side"><span class="rk">The peak, 1995</span><div class="rt-side-v" id="rb-peak" set:html={N["rb-peak"]} /></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
         <span class="mk">What the print says</span>
-        <p>The WDI vintage of 13 July 2026 puts manufacturing value added at <b id="cr-share2">–</b> of GDP in calendar 2025, up from <b id="cr-share-2024">–</b> in 2024: the 2024 print was the lowest share on the entire series. Industry including construction stood at <b id="cr-industry">–</b>. In volume terms, factories added <b id="cr-level">–</b> of output in 2025, against <b id="cr-level-1960">–</b> in 1960, and value added grew <b id="cr-growth">–</b> in 2025 after <b id="cr-growth-2024">–</b> in 2024.</p>
-        <p>Around the headline: manufactures were <b id="cr-exports">–</b> of merchandise exports in 2024; machinery &amp; transport equipment was <b id="cr-mach">–</b> of manufacturing value added in 2023, against textiles' <b id="cr-tex">–</b>; and the medium- &amp; high-tech share last printed <b id="cr-tech">–</b>: in 2022, where that series ends.</p>
+        <p>The WDI vintage of 13 July 2026 puts manufacturing value added at <b id="cr-share2" set:html={N["cr-share2"]} /> of GDP in calendar 2025, up from <b id="cr-share-2024" set:html={N["cr-share-2024"]} /> in 2024: the 2024 print was the lowest share on the entire series. Industry including construction stood at <b id="cr-industry" set:html={N["cr-industry"]} />. In volume terms, factories added <b id="cr-level" set:html={N["cr-level"]} /> of output in 2025, against <b id="cr-level-1960" set:html={N["cr-level-1960"]} /> in 1960, and value added grew <b id="cr-growth" set:html={N["cr-growth"]} /> in 2025 after <b id="cr-growth-2024" set:html={N["cr-growth-2024"]} /> in 2024.</p>
+        <p>Around the headline: manufactures were <b id="cr-exports" set:html={N["cr-exports"]} /> of merchandise exports in 2024; machinery &amp; transport equipment was <b id="cr-mach" set:html={N["cr-mach"]} /> of manufacturing value added in 2023, against textiles' <b id="cr-tex" set:html={N["cr-tex"]} />; and the medium- &amp; high-tech share last printed <b id="cr-tech" set:html={N["cr-tech"]} />: in 2022, where that series ends.</p>
       </div>
       <div class="reading-col now">
         <span class="mk">What it does not say</span>
@@ -93,7 +96,7 @@ const X_STAND = XS[XL] >= XS[XL - 1]
         <thead>
           <tr><th>Series</th><th>Latest</th><th>Year ago</th><th>First</th><th class="spark">1960 to 2025</th></tr>
         </thead>
-        <tbody id="reg-manufacturing"></tbody>
+        <tbody id="reg-manufacturing" set:html={N["reg-manufacturing"]} />
       </table>
       <p style="margin-top:16px;font-size:.98rem;color:var(--muted);font-style:italic;max-width:62ch">The four bundles end in different years: the headline accounts reach 2025, exports 2024, the UNIDO composition 2023, and the technology share 2022. The lags are shown, not filled.</p>
     </div>
@@ -109,16 +112,12 @@ const X_STAND = XS[XL] >= XS[XL - 1]
             <h3>Sixty-five years, and the slice is smaller than where it began</h3>
             <div class="sub">Manufacturing value added and industry (including construction), per cent of GDP, calendar years 1960–2025</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-share">–</div><div class="c">2025, MVA share of GDP</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-share" set:html={N["pv-share"]} /><div class="c">2025, MVA share of GDP</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-share">
-            <button class="chip" data-key="mva_pct_gdp"><i style="background:#2E4BD8"></i>Manufacturing</button>
-            <button class="chip" data-key="industry_pct_gdp"><i style="background:#878D99"></i>Industry incl. construction</button>
-          </div>
-          <div class="plotzone" id="plot-share"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-share" set:html={CH.share()} />
           <div class="plotfoot">
-            <span class="src">Source: World Bank, World Development Indicators, vintage <span id="src-vintage-share">–</span>, manufacturing = ISIC Section C, national accounts, industry adds mining, utilities and construction, calendar years, revised freely</span>
+            <span class="src">Source: World Bank, World Development Indicators, vintage <span id="src-vintage-share" set:html={N["src-vintage-share"]} />, manufacturing = ISIC Section C, national accounts, industry adds mining, utilities and construction, calendar years, revised freely</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -130,12 +129,12 @@ const X_STAND = XS[XL] >= XS[XL - 1]
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>The blue line is manufacturing alone; the grey line is the wider industry sector, which adds mining, utilities and construction. The gap between them is everything industrial that is not a factory. Manufacturing peaked at <b id="ex-share-peak">–</b> in 1995, in the first flush of the 1991 liberalisation, and has spent three decades sliding back.</p>
-            <p>The pandemic did not dent the annual share: it rose in calendar 2020, because services fell faster than factories. The lowest point of the whole series is recent: <b id="ex-share-low">–</b> in 2024.</p>
+            <p>The blue line is manufacturing alone; the grey line is the wider industry sector, which adds mining, utilities and construction. The gap between them is everything industrial that is not a factory. Manufacturing peaked at <b id="ex-share-peak" set:html={N["ex-share-peak"]} /> in 1995, in the first flush of the 1991 liberalisation, and has spent three decades sliding back.</p>
+            <p>The pandemic did not dent the annual share: it rose in calendar 2020, because services fell faster than factories. The lowest point of the whole series is recent: <b id="ex-share-low" set:html={N["ex-share-low"]} /> in 2024.</p>
           </div>
           <div class="now">
             <span class="mk">As of the 13 July 2026 vintage</span>
-            <p>Manufacturing <b id="ex-share-now">–</b> in 2025, industry <b id="ex-share-ind">–</b>. In 1960 manufacturing was <b id="ex-share-1960">–</b>: the share ends the sixty-five years below where it began, while the wider industry share rose. The factories never took the slice the planners promised; construction and utilities took it instead.</p>
+            <p>Manufacturing <b id="ex-share-now" set:html={N["ex-share-now"]} /> in 2025, industry <b id="ex-share-ind" set:html={N["ex-share-ind"]} />. In 1960 manufacturing was <b id="ex-share-1960" set:html={N["ex-share-1960"]} />: the share ends the sixty-five years below where it began, while the wider industry share rose. The factories never took the slice the planners promised; construction and utilities took it instead.</p>
           </div>
         </div>
       </figure>
@@ -152,12 +151,12 @@ const X_STAND = XS[XL] >= XS[XL - 1]
             <h3>A shrinking slice of a much larger loaf</h3>
             <div class="sub">Manufacturing value added, billions of constant 2015 US dollars, calendar years 1960–2025</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-level">–</div><div class="c">2025, constant 2015 US$</div></div>
+          <div class="plate-val"><div class="v" id="pv-level" set:html={N["pv-level"]} /><div class="c">2025, constant 2015 US$</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-level"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-level" set:html={CH.level()} />
           <div class="plotfoot">
-            <span class="src">Source: World Bank, World Development Indicators, vintage <span id="src-vintage-level">–</span>, constant 2015 US$: volumes converted at the 2015 exchange rate, a fixed-rate convention, displayed in billions (converted for display only)</span>
+            <span class="src">Source: World Bank, World Development Indicators, vintage <span id="src-vintage-level" set:html={N["src-vintage-level"]} />, constant 2015 US$: volumes converted at the 2015 exchange rate, a fixed-rate convention, displayed in billions (converted for display only)</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -169,7 +168,7 @@ const X_STAND = XS[XL] >= XS[XL - 1]
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>The same sixty-five years as Plate 1, in volume instead of share. Indian factories added <b id="ex-level-first">–</b> of output in 1960 and <b id="ex-level-now">–</b> in 2025: a <b id="ex-level-mult">–</b> multiplication. The share can fall while the level rises, because GDP grew even faster. Both charts are true; they answer different questions.</p>
+            <p>The same sixty-five years as Plate 1, in volume instead of share. Indian factories added <b id="ex-level-first" set:html={N["ex-level-first"]} /> of output in 1960 and <b id="ex-level-now" set:html={N["ex-level-now"]} /> in 2025: a <b id="ex-level-mult" set:html={N["ex-level-mult"]} /> multiplication. The share can fall while the level rises, because GDP grew even faster. Both charts are true; they answer different questions.</p>
             <p>"Constant 2015 US$" means every year's volume is priced at the 2015 exchange rate. It is a measuring convention, not a market valuation: the rupee's 2015 rate is simply the ruler the World Bank laid down.</p>
           </div>
           <div class="now">
@@ -191,12 +190,12 @@ const X_STAND = XS[XL] >= XS[XL - 1]
             <h3>{cap(NUMW(FALLS.length))} falls in {yearsW} years, and one whipsaw</h3>
             <div class="sub">Manufacturing value added, annual growth, per cent, calendar years 1961–2025, the zero line is drawn strong</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-growth">–</div><div class="c">2025, annual growth</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-growth" set:html={N["pv-growth"]} /><div class="c">2025, annual growth</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-growth"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-growth" set:html={CH.growth()} />
           <div class="plotfoot">
-            <span class="src">Source: World Bank, World Development Indicators, vintage <span id="src-vintage-growth">–</span>, annual growth of real MVA, calendar years smear the 2020 lockdown quarters across 2019–2022: read that stretch as a whipsaw, not a crash</span>
+            <span class="src">Source: World Bank, World Development Indicators, vintage <span id="src-vintage-growth" set:html={N["src-vintage-growth"]} />, annual growth of real MVA, calendar years smear the 2020 lockdown quarters across 2019–2022: read that stretch as a whipsaw, not a crash</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -208,12 +207,12 @@ const X_STAND = XS[XL] >= XS[XL - 1]
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>One point per calendar year, growth over the year before. The line has crossed below zero only {NUMW(FALLS.length)} times on this vintage, in {listW(FALLS.map((f) => f.y))}; the deepest fall on record is <b id="ex-growth-trough">–</b>. The peak was <b id="ex-growth-peak">–</b> in 2006, the height of the 2000s boom.</p>
-            <p>The pandemic does not appear as one clean crash. Annual calendar data smears the lockdown quarters (March–June 2020, in India's fiscal Q1) across neighbouring years, so 2019–2023 reads as a whipsaw: <b id="ex-growth-whipsaw">–</b>. No single annual point is "the lockdown".</p>
+            <p>One point per calendar year, growth over the year before. The line has crossed below zero only {NUMW(FALLS.length)} times on this vintage, in {listW(FALLS.map((f) => f.y))}; the deepest fall on record is <b id="ex-growth-trough" set:html={N["ex-growth-trough"]} />. The peak was <b id="ex-growth-peak" set:html={N["ex-growth-peak"]} /> in 2006, the height of the 2000s boom.</p>
+            <p>The pandemic does not appear as one clean crash. Annual calendar data smears the lockdown quarters (March–June 2020, in India's fiscal Q1) across neighbouring years, so 2019–2023 reads as a whipsaw: <b id="ex-growth-whipsaw" set:html={N["ex-growth-whipsaw"]} />. No single annual point is "the lockdown".</p>
           </div>
           <div class="now">
             <span class="mk">As of the 13 July 2026 vintage</span>
-            <p>Growth printed <b id="ex-growth-latest">–</b> in 2025, a third straight strong year after the 2022 dip. The post-2022 average is well above the sixty-five-year norm: whether it is a new trend or a rebound's tail, this series alone cannot say.</p>
+            <p>Growth printed <b id="ex-growth-latest" set:html={N["ex-growth-latest"]} /> in 2025, a third straight strong year after the 2022 dip. The post-2022 average is well above the sixty-five-year norm: whether it is a new trend or a rebound's tail, this series alone cannot say.</p>
           </div>
         </div>
       </figure>
@@ -230,19 +229,12 @@ const X_STAND = XS[XL] >= XS[XL - 1]
             <h3>The mix climbed the ladder, then stalled halfway</h3>
             <div class="sub">Shares of manufacturing value added by technology group, UNIDO, five groups, summing to 100, 1963–2023</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-composition">–</div><div class="c">machinery &amp; transport, 2023</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-composition" set:html={N["pv-composition"]} /><div class="c">machinery &amp; transport, 2023</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-composition">
-            <button class="chip" data-key="machinery_transport"><i style="background:#2E4BD8"></i>Machinery &amp; transport</button>
-            <button class="chip" data-key="chemicals"><i style="background:#5F6675"></i>Chemicals</button>
-            <button class="chip" data-key="food_beverages_tobacco"><i style="background:#878D99"></i>Food, beverages &amp; tobacco</button>
-            <button class="chip" data-key="textiles_clothing"><i style="background:#A3A9B4"></i>Textiles &amp; clothing</button>
-            <button class="chip" data-key="other"><i style="background:#C9CED6"></i>Other manufacturing</button>
-          </div>
-          <div class="plotzone" id="plot-composition"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-composition" set:html={CH.composition()} />
           <div class="plotfoot">
-            <span class="src">Source: World Bank, World Development Indicators (UNIDO), vintage <span id="src-vintage-composition">–</span>, shares of manufacturing value added, summing to ~100, "other" is the residual: metals, wood, paper, furniture and the unclassified rest, series ends 2023</span>
+            <span class="src">Source: World Bank, World Development Indicators (UNIDO), vintage <span id="src-vintage-composition" set:html={N["src-vintage-composition"]} />, shares of manufacturing value added, summing to ~100, "other" is the residual: metals, wood, paper, furniture and the unclassified rest, series ends 2023</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -254,12 +246,12 @@ const X_STAND = XS[XL] >= XS[XL - 1]
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Five lines that always sum to 100: one group's gain is arithmetically another's loss. The story is the long swap at the edges: textiles &amp; clothing fell from <b id="ex-comp-tex0">–</b> of factory value added in 1963 to <b id="ex-comp-tex">–</b> in 2023, while machinery &amp; transport rose from <b id="ex-comp-mach0">–</b> to <b id="ex-comp-mach">–</b>. Chemicals climbed to a 1998 peak of <b id="ex-comp-chem-peak">–</b> and has eased since.</p>
+            <p>Five lines that always sum to 100: one group's gain is arithmetically another's loss. The story is the long swap at the edges: textiles &amp; clothing fell from <b id="ex-comp-tex0" set:html={N["ex-comp-tex0"]} /> of factory value added in 1963 to <b id="ex-comp-tex" set:html={N["ex-comp-tex"]} /> in 2023, while machinery &amp; transport rose from <b id="ex-comp-mach0" set:html={N["ex-comp-mach0"]} /> to <b id="ex-comp-mach" set:html={N["ex-comp-mach"]} />. Chemicals climbed to a 1998 peak of <b id="ex-comp-chem-peak" set:html={N["ex-comp-chem-peak"]} /> and has eased since.</p>
             <p>These are shares of value added, not of output tonnage and not of jobs. A group can shrink here while employing more people than ever: value per worker is exactly what differs across the five.</p>
           </div>
           <div class="now">
             <span class="mk">As of the 13 July 2026 vintage</span>
-            <p>The 2023 print: machinery &amp; transport <b id="ex-comp-mach2">–</b>, its highest share on record; chemicals <b id="ex-comp-chem">–</b>; food, beverages &amp; tobacco <b id="ex-comp-food">–</b>; textiles <b id="ex-comp-tex2">–</b>. The residual "other", basic metals, wood, paper and the unclassified rest, remains the largest block at <b id="ex-comp-other">–</b>.</p>
+            <p>The 2023 print: machinery &amp; transport <b id="ex-comp-mach2" set:html={N["ex-comp-mach2"]} />, its highest share on record; chemicals <b id="ex-comp-chem" set:html={N["ex-comp-chem"]} />; food, beverages &amp; tobacco <b id="ex-comp-food" set:html={N["ex-comp-food"]} />; textiles <b id="ex-comp-tex2" set:html={N["ex-comp-tex2"]} />. The residual "other", basic metals, wood, paper and the unclassified rest, remains the largest block at <b id="ex-comp-other" set:html={N["ex-comp-other"]} />.</p>
           </div>
         </div>
       </figure>
@@ -276,12 +268,12 @@ const X_STAND = XS[XL] >= XS[XL - 1]
             <h3>Two export dollars in three come from factories</h3>
             <div class="sub">Manufactures' share of merchandise exports, per cent, UN Comtrade via the WDI, 1962–2024</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-exports">–</div><div class="c">2024, share of merchandise exports</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-exports" set:html={N["pv-exports"]} /><div class="c">2024, share of merchandise exports</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-exports"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-exports" set:html={CH.exportShare()} />
           <div class="plotfoot">
-            <span class="src">Source: World Bank, World Development Indicators (UN Comtrade), vintage <span id="src-vintage-exports">–</span>, manufactures = SITC sections 5–8, the denominator is merchandise only: services, India's strongest export, are not in this chart, series ends 2024</span>
+            <span class="src">Source: World Bank, World Development Indicators (UN Comtrade), vintage <span id="src-vintage-exports" set:html={N["src-vintage-exports"]} />, manufactures = SITC sections 5–8, the denominator is merchandise only: services, India's strongest export, are not in this chart, series ends 2024</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -293,12 +285,12 @@ const X_STAND = XS[XL] >= XS[XL - 1]
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Of every hundred dollars of goods India sells abroad, how many are manufactures: chemicals, machinery, textiles, gems and jewellery worked, not raw. The share rose from <b id="ex-exp-first">–</b> in 1962 to a peak of <b id="ex-exp-peak">–</b> in 1999, then gave some back as petroleum products and commodities swelled the denominator.</p>
+            <p>Of every hundred dollars of goods India sells abroad, how many are manufactures: chemicals, machinery, textiles, gems and jewellery worked, not raw. The share rose from <b id="ex-exp-first" set:html={N["ex-exp-first"]} /> in 1962 to a peak of <b id="ex-exp-peak" set:html={N["ex-exp-peak"]} /> in 1999, then gave some back as petroleum products and commodities swelled the denominator.</p>
             <p>A falling share here does not mean falling factory exports: the numerator can grow while petroleum grows faster. And services, the sector where India is genuinely world-class, are outside this ledger entirely.</p>
           </div>
           <div class="now">
             <span class="mk">As of the 13 July 2026 vintage</span>
-            <p>The 2024 print: <b id="ex-exp-now">–</b>, against <b id="ex-exp-prev">–</b> in 2023{X_STAND}. The goods ledger is two-thirds factory-made; the remaining third is petroleum, agriculture, minerals and gems in the rough.</p>
+            <p>The 2024 print: <b id="ex-exp-now" set:html={N["ex-exp-now"]} />, against <b id="ex-exp-prev" set:html={N["ex-exp-prev"]} /> in 2023{X_STAND}. The goods ledger is two-thirds factory-made; the remaining third is petroleum, agriculture, minerals and gems in the rough.</p>
           </div>
         </div>
       </figure>
@@ -315,12 +307,12 @@ const X_STAND = XS[XL] >= XS[XL - 1]
             <h3>Two-fifths high-tech, and stuck there for three decades</h3>
             <div class="sub">Medium- &amp; high-technology share of manufacturing value added, UNIDO, 1990–2022, the series ends 2022</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-tech">–</div><div class="c">2022, the last print of this series</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-tech" set:html={N["pv-tech"]} /><div class="c">2022, the last print of this series</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-tech"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-tech" set:html={CH.techShare()} />
           <div class="plotfoot">
-            <span class="src">Source: World Bank, World Development Indicators (UNIDO), vintage <span id="src-vintage-tech">–</span>, medium- &amp; high-technology industries as classified by UNIDO, the series ends 2022: the UNIDO lag, shown not filled, later years: we do not know</span>
+            <span class="src">Source: World Bank, World Development Indicators (UNIDO), vintage <span id="src-vintage-tech" set:html={N["src-vintage-tech"]} />, medium- &amp; high-technology industries as classified by UNIDO, the series ends 2022: the UNIDO lag, shown not filled, later years: we do not know</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -332,12 +324,12 @@ const X_STAND = XS[XL] >= XS[XL - 1]
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>UNIDO sorts manufacturing into technology tiers; this line is the share of value added made by the top two: machinery, electronics, vehicles, chemicals and their kin. It opened the 1990s at <b id="ex-tech-first">–</b>, spiked to <b id="ex-tech-peak">–</b> in 1995, sank to a trough of <b id="ex-tech-trough">–</b> in 2007, and has crept back since.</p>
+            <p>UNIDO sorts manufacturing into technology tiers; this line is the share of value added made by the top two: machinery, electronics, vehicles, chemicals and their kin. It opened the 1990s at <b id="ex-tech-first" set:html={N["ex-tech-first"]} />, spiked to <b id="ex-tech-peak" set:html={N["ex-tech-peak"]} /> in 1995, sank to a trough of <b id="ex-tech-trough" set:html={N["ex-tech-trough"]} /> in 2007, and has crept back since.</p>
             <p>The series ends in 2022. UNIDO's technology decomposition arrives years late, and the WDI serves it as-is. For 2023, 2024 and 2025: we do not know. The plateau is the finding: three decades, and the share is within two points of where it began.</p>
           </div>
           <div class="now">
             <span class="mk">As of the 13 July 2026 vintage</span>
-            <p>The last print is <b id="ex-tech-now">–</b> for 2022, up from <b id="ex-tech-prev">–</b> in 2021 but still below the 1995 spike. The climb out of the 2007 trough is real and slow: a point a decade, not a point a year.</p>
+            <p>The last print is <b id="ex-tech-now" set:html={N["ex-tech-now"]} /> for 2022, up from <b id="ex-tech-prev" set:html={N["ex-tech-prev"]} /> in 2021 but still below the 1995 spike. The climb out of the 2007 trough is real and slow: a point a decade, not a point a year.</p>
           </div>
         </div>
       </figure>
@@ -419,7 +411,7 @@ const X_STAND = XS[XL] >= XS[XL - 1]
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>World Bank, World Development Indicators, data.worldbank.org: manufacturing value added (share of GDP, constant 2015 US$ level, annual growth) and industry share from national accounts via UNIDO/OECD; the technology decomposition from UNIDO; manufactures' share of merchandise exports from UN Comtrade. Vintage <b id="prov-vintage">–</b> (the WDI database last-updated stamp, not the fetch date). Four bundles are baked: the headline accounts (1960–2025), the UNIDO composition (1963–2023), the technology share (1990–2022) and the export share (1962–2024).</p>
+        <p>World Bank, World Development Indicators, data.worldbank.org: manufacturing value added (share of GDP, constant 2015 US$ level, annual growth) and industry share from national accounts via UNIDO/OECD; the technology decomposition from UNIDO; manufactures' share of merchandise exports from UN Comtrade. Vintage <b id="prov-vintage" set:html={N["prov-vintage"]} /> (the WDI database last-updated stamp, not the fetch date). Four bundles are baked: the headline accounts (1960–2025), the UNIDO composition (1963–2023), the technology share (1990–2022) and the export share (1962–2024).</p>
         <p><b>Coverage note.</b> This is the atlas's first World Bank guide; the twelve others are Indian official statistics. Manufacturing here is ISIC Section C from the national accounts: a different ruler from the Annual Survey of Industries' registered factories (Guide 08), and the two are never compared level-for-level.</p>
       </div>
       <div>
@@ -433,7 +425,7 @@ const X_STAND = XS[XL] >= XS[XL - 1]
     </div>
     <div class="fine">
       <span>India Atlas, Manufacturing, World Bank WDI</span>
-      <span>Vintage <span id="prov-vintage2">–</span>, history revised freely</span>
+      <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]} />, history revised freely</span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
@@ -441,6 +433,5 @@ const X_STAND = XS[XL] >= XS[XL - 1]
 </div>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/manufacturing.client.js";
 </script>
 </Base>

@@ -1,5 +1,7 @@
 ---
 import Learn from "../layouts/Learn.astro";
+import * as CH from "./base-effects.charts.js";
+const NUM = CH.NUM;
 ---
 <Learn
   title="Every number has a denominator · India Atlas"
@@ -61,13 +63,13 @@ import Learn from "../layouts/Learn.astro";
             <h3>The spike of 2024 became the calm of 2025: same months, two readings</h3>
             <div class="sub">Food &amp; beverages, above: index level, 2012 = 100, below: year-on-year rate, Jan 2023 to Dec 2025, shaded: the base</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-be">–</div><div class="c">Dec 2025, food y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-be" set:html={NUM["pv-be"]}></div><div class="c">Dec 2025, food y/y</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-be-level"><div class="cb-tip"></div></div>
-          <div class="plotzone" id="plot-be-rate" style="margin-top:34px"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-be-level" set:html={CH.level()} />
+          <div class="plotzone" id="plot-be-rate" style="margin-top:34px" set:html={CH.rateChart()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, CPI food &amp; beverages group index, base 2012=100, vintage <span id="pf-be">–</span>, shaded band: the autumn-2024 spike, the base for the late-2025 prints</span>
+            <span class="src">Source: MoSPI, CPI food &amp; beverages group index, base 2012=100, vintage <span id="pf-be" set:html={NUM["pf-be"]}></span>, shaded band: the autumn-2024 spike, the base for the late-2025 prints</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -84,8 +86,8 @@ import Learn from "../layouts/Learn.astro";
           </div>
           <div class="now">
             <span class="mk">The 2025 case</span>
-            <p>In autumn 2024 food prices surged: the level climbed from <b id="ex-jul24">–</b> in July to a peak of <b id="ex-peak">–</b> in October, the highest reading in this window. Twelve months later those months were the denominator. December 2025 printed <b id="ex-print">–</b>, the sixth negative food reading in seven months: not because food had become cheap, but because the comparison was with the most expensive winter on record.</p>
-            <p>A year earlier the same arithmetic had run the other way, with December 2024 printing <b id="ex-y24">–</b> against an ordinary winter base. The spike made 2024 look worse than the present and 2025 look better. Both times, the base was doing part of the talking.</p>
+            <p>In autumn 2024 food prices surged: the level climbed from <b id="ex-jul24" set:html={NUM["ex-jul24"]}></b> in July to a peak of <b id="ex-peak" set:html={NUM["ex-peak"]}></b> in October, the highest reading in this window. Twelve months later those months were the denominator. December 2025 printed <b id="ex-print" set:html={NUM["ex-print"]}></b>, the sixth negative food reading in seven months: not because food had become cheap, but because the comparison was with the most expensive winter on record.</p>
+            <p>A year earlier the same arithmetic had run the other way, with December 2024 printing <b id="ex-y24" set:html={NUM["ex-y24"]}></b> against an ordinary winter base. The spike made 2024 look worse than the present and 2025 look better. Both times, the base was doing part of the talking.</p>
           </div>
         </div>
       </figure>
@@ -96,13 +98,13 @@ import Learn from "../layouts/Learn.astro";
   <section>
     <div class="sec-head"><span class="no">03</span><h2>The arithmetic of the base</h2><span class="line"></span><span class="unit">A worked example, Dec 2024 → Dec 2025</span></div>
     <div class="numbers">
-      <div class="num"><div class="l">The base, Dec 2024</div><div class="v" id="n-then">–</div><div class="d">food index level, 2012 = 100</div></div>
-      <div class="num"><div class="l">The level, Dec 2025</div><div class="v" id="n-now">–</div><div class="d">food index level, 2012 = 100</div></div>
-      <div class="num"><div class="l">The ratio, Dec 2025</div><div class="v acc" id="n-rate">–</div><div class="d">the two levels divided, minus one</div></div>
-      <div class="num"><div class="l">What ₹1,000 became</div><div class="v" id="n-rupee">–</div><div class="d">same basket of food, one year later</div></div>
+      <div class="num"><div class="l">The base, Dec 2024</div><div class="v" id="n-then" set:html={NUM["n-then"]}></div><div class="d">food index level, 2012 = 100</div></div>
+      <div class="num"><div class="l">The level, Dec 2025</div><div class="v" id="n-now" set:html={NUM["n-now"]}></div><div class="d">food index level, 2012 = 100</div></div>
+      <div class="num"><div class="l">The ratio, Dec 2025</div><div class="v acc" id="n-rate" set:html={NUM["n-rate"]}></div><div class="d">the two levels divided, minus one</div></div>
+      <div class="num"><div class="l">What ₹1,000 became</div><div class="v" id="n-rupee" set:html={NUM["n-rupee"]}></div><div class="d">same basket of food, one year later</div></div>
     </div>
-    <p style="margin-top:40px">Divide <b id="ar-now">–</b> by <b id="ar-then">–</b> and the result is <b id="ar-ratio3">–</b>: the <b id="ar-print">–</b> of the print. Nothing in that division knows about harvests or gluts. It knows two levels and their ratio, and it is exactly as truthful as the month it divides by.</p>
-    <p>Now change only the denominator. Hold December 2025 where it is and compare it with December 2023, when the food level stood at <b id="ar-23">–</b>. The same month, the same level, prints <b id="ar-alt">–</b>. One reading says food is getting cheaper; the other says it has been getting more expensive for two years. Both are correct arithmetic. The difference is entirely the base.</p>
+    <p style="margin-top:40px">Divide <b id="ar-now" set:html={NUM["ar-now"]}></b> by <b id="ar-then" set:html={NUM["ar-then"]}></b> and the result is <b id="ar-ratio3" set:html={NUM["ar-ratio3"]}></b>: the <b id="ar-print" set:html={NUM["ar-print"]}></b> of the print. Nothing in that division knows about harvests or gluts. It knows two levels and their ratio, and it is exactly as truthful as the month it divides by.</p>
+    <p>Now change only the denominator. Hold December 2025 where it is and compare it with December 2023, when the food level stood at <b id="ar-23" set:html={NUM["ar-23"]}></b>. The same month, the same level, prints <b id="ar-alt" set:html={NUM["ar-alt"]}></b>. One reading says food is getting cheaper; the other says it has been getting more expensive for two years. Both are correct arithmetic. The difference is entirely the base.</p>
     <p>That is why the prints of a spike year, and of the year that follows it, deserve extra scepticism. The number is real. What it means depends on a month you have probably forgotten.</p>
   </section>
 
@@ -114,14 +116,14 @@ import Learn from "../layouts/Learn.astro";
         <span class="no">i.</span>
         <div>
           <h3>“The number fell, so things improved.”</h3>
-          <p>Not necessarily. Food inflation slid from <b id="mr-y24">–</b> to <b id="mr-y25">–</b> in twelve months, and part of that slide is the denominator rising between the two readings. Ask what happened to the level: it fell <b id="mr-lvl">–</b> from its peak, which is real relief, but a smaller story than the prints suggest.</p>
+          <p>Not necessarily. Food inflation slid from <b id="mr-y24" set:html={NUM["mr-y24"]}></b> to <b id="mr-y25" set:html={NUM["mr-y25"]}></b> in twelve months, and part of that slide is the denominator rising between the two readings. Ask what happened to the level: it fell <b id="mr-lvl" set:html={NUM["mr-lvl"]}></b> from its peak, which is real relief, but a smaller story than the prints suggest.</p>
         </div>
       </li>
       <li>
         <span class="no">ii.</span>
         <div>
           <h3>“The base doesn't matter.”</h3>
-          <p>Change nothing but the base and the same month prints <b id="mr-a1">–</b> or <b id="mr-a2">–</b>. A ratio has two inputs. Ignoring one of them is not scepticism about statistics; it is bad arithmetic.</p>
+          <p>Change nothing but the base and the same month prints <b id="mr-a1" set:html={NUM["mr-a1"]}></b> or <b id="mr-a2" set:html={NUM["mr-a2"]}></b>. A ratio has two inputs. Ignoring one of them is not scepticism about statistics; it is bad arithmetic.</p>
         </div>
       </li>
       <li>
@@ -148,7 +150,4 @@ import Learn from "../layouts/Learn.astro";
     <p>Companion guide: <a href="/guides/cpi/">Consumer Price Index</a>.</p>
   </div>
 
-<script>
-  import "./base-effects.client.js";
-</script>
 </Learn>

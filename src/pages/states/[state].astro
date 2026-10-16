@@ -7,6 +7,7 @@
 import Base from "../../layouts/Base.astro";
 import { STATES } from "../../dossiers/states-key.js";
 import { page, FMT, figHTML, rankPhrase, rowHref } from "../../dossiers/profiles.js";
+import * as CH from "../../dossiers/profiles.charts.js";
 
 export function getStaticPaths() {
   return STATES.map((u) => ({ params: { state: u.slug } }));
@@ -18,7 +19,6 @@ const F = (f) => figHTML(f.text, f.fmt, f.src)+(f.sourceQuality?.canInterpret===
 const I = (f) => (f.india ? figHTML(f.india.text, f.fmt, f.india.src) + (f.india.same ? "" : ` <small>${f.india.period}</small>`) : "<span class=\"na\">no figure</span>");
 const rk = (f) => (f.rank ? rankPhrase(f.rank) : "<span class=\"na\">not ranked</span>");
 const nb = (s) => P.nameOf(s);
-const chartsJSON = JSON.stringify(P.charts).replace(/</g, "\\u003c");
 const fmtN = (n) => n.toLocaleString("en-IN");
 const vintages = [...new Set(P.sources.map((s) => s.vintage).filter(Boolean))].sort();
 const latestVintage = vintages.at(-1);
@@ -90,14 +90,14 @@ const kindNote = u.kind === "ut" ? "A union territory without a legislature: the
   <section id="where">
     <div class="sec-head"><span class="no">01</span><h2>Where {N} stands</h2><span class="line"></span></div>
     <div class="prose pf-lead">
-      <p>Each row puts every state and union territory with a figure for the same period on one line, lowest on the left and highest on the right. {N} is the blue dot; India, where the source gives an all-India figure for that period, is the gold tick. Rows read on their own scales: a dot near the right of one row and the left of another says where {N} ranks, not how big the numbers are.</p>
+      <p>Each row puts every state and union territory with a figure for the same period on one line, lowest on the left and highest on the right. {N} is the blue dot; India, where the source gives an all-India figure for that period, is the red tick. Rows read on their own scales: a dot near the right of one row and the left of another says where {N} ranks, not how big the numbers are.</p>
       {kindNote && <p>{kindNote}</p>}
     </div>
     <div class="break">
       <figure id="cb-where" style="margin:0">
         <div class="plate-head"><div class="t"><h3>{N} among the states and union territories</h3><div class="sub">Each measure at its comparison period, the latest that at least three in four units have published.</div></div></div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-where" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-where" set:html={CH.where(P.charts, u.slug, N)} />
           <div class="plotfoot">
             <span class="src">Source: India Atlas, from the bundles named under each section below. Ranks count only units with a figure for the same period.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button></span>
@@ -120,42 +120,42 @@ const kindNote = u.kind === "ut" ? "A union territory without a legislature: the
       {s.id === "income" && P.charts.income && (
         <div class="break"><figure id="cb-income" style="margin:0">
           <div class="plate-head"><div class="t"><h3>Income per person in {N}, each year</h3><div class="sub">Per-capita net state domestic product, ₹ a year at current prices, base 2011-12, against the middle state of the 31 that report every year.</div></div></div>
-          <div class="frame"><div class="plotzone"><div id="plot-income" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="frame"><div class="plotzone" id="plot-income" set:html={CH.income(P.charts, u.slug, N)} />
             <div class="plotfoot"><span class="src">Source: MoSPI, regional accounts (states-pcnsdp-current, states-spread). Each state's own population, as published.</span><span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/data/states-pcnsdp-current.csv">Data</a></span></div></div>
         </figure></div>
       )}
       {s.id === "income" && P.charts.growth && (
         <div class="break"><figure id="cb-growth" style="margin:0">
-          <div class="plate-head"><div class="t"><h3>How fast {N}'s economy grew, after inflation</h3><div class="sub">Real growth of GSDP each year, per cent, at constant 2011-12 prices; the line is India's GDP on the same base, computed from MoSPI's levels.</div></div></div>
-          <div class="frame"><div class="plotzone"><div id="plot-growth" style="position:relative"></div></div>
+          <div class="plate-head"><div class="t"><h3>How fast {N}'s economy grew, after inflation</h3><div class="sub">Real growth of GSDP each year, per cent, at constant 2011-12 prices; the red tick on each year is India's GDP on the same base, computed from MoSPI's levels. The latest year is an early estimate, revised later.</div></div></div>
+          <div class="frame"><div class="plotzone" id="plot-growth" set:html={CH.growth(P.charts, u.slug, N)} />
             <div class="plotfoot"><span class="src">Source: MoSPI, regional accounts (states-growth-real) and national accounts, base 2011-12 (gdp-annual-levels).</span><span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button></span></div></div>
         </figure></div>
       )}
       {s.id === "structure" && P.charts.structure && (
         <div class="break"><figure id="cb-structure" style="margin:0">
           <div class="plate-head"><div class="t"><h3>What {N}'s output is made of, against India</h3><div class="sub">Shares of gross value added at current prices, per cent, {P.charts.structure.period}. Base 2011-12.</div></div></div>
-          <div class="frame"><div class="plotzone"><div id="plot-structure" style="position:relative"></div></div>
+          <div class="frame"><div class="plotzone" id="plot-structure" set:html={CH.structure(P.charts, u.slug, N)} />
             <div class="plotfoot"><span class="src">Source: MoSPI, regional accounts (states-structure) and national accounts, base 2011-12 (gdp-annual-industries).</span><span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button></span></div></div>
         </figure></div>
       )}
       {s.id === "prices" && P.charts.prices && (
         <div class="break"><figure id="cb-prices" style="margin:0">
           <div class="plate-head"><div class="t"><h3>Prices in {N} against a year earlier, on two rulers</h3><div class="sub">Consumer Price Index, combined, per cent change on the same month a year earlier: base 2012 to December 2025, base 2024 from January 2026. The two are different indices and are not joined. Grey: All India.</div></div></div>
-          <div class="frame"><div class="plotzone"><div id="plot-prices" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="frame"><div class="plotzone" id="plot-prices" set:html={CH.prices(P.charts, u.slug, N)} />
             <div class="plotfoot"><span class="src">Source: MoSPI, NSO, CPI (cpi-states, cpi-2024-states, cpi, cpi-2024).</span><span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button></span></div></div>
         </figure></div>
       )}
       {s.id === "work" && P.charts.work && (
         <div class="break"><figure id="cb-work" style="margin:0">
-          <div class="plate-head"><div class="t"><h3>Women and men at work in {N}, against India</h3><div class="sub">Per cent, age 15 and above, usual status, calendar year {P.charts.work.period}. Gold ticks: All India.</div></div></div>
-          <div class="frame"><div class="plotzone"><div id="plot-work" style="position:relative"></div></div>
+          <div class="plate-head"><div class="t"><h3>Women and men at work in {N}, against India</h3><div class="sub">Per cent, age 15 and above, usual status, calendar year {P.charts.work.period}. Hollow circles: All India.</div></div></div>
+          <div class="frame"><div class="plotzone" id="plot-work" set:html={CH.work(P.charts, u.slug, N)} />
             <div class="plotfoot"><span class="src">Source: MoSPI, Periodic Labour Force Survey, calendar-year estimates (plfs-cy25-states-ur, -lfpr, -wpr; plfs-cy25-india).</span><span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button></span></div></div>
         </figure></div>
       )}
       {s.id === "climate" && P.charts.climate && (
         <div class="break"><figure id="cb-climate" style="margin:0">
           <div class="plate-head"><div class="t"><h3>How warm {N}'s years have been since 1950</h3><div class="sub">Average air temperature over the year, °C, across the state's area. The rule is its own average for {P.charts.climate.span}.</div></div></div>
-          <div class="frame"><div class="plotzone"><div id="plot-climate" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="frame"><div class="plotzone" id="plot-climate" set:html={CH.climate(P.charts, u.slug, N)} />
             <div class="plotfoot"><span class="src">Source: World Bank Climate Change Knowledge Portal, ERA5 reanalysis (climate-era5-states-temp).</span><span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button></span></div></div>
         </figure></div>
       )}
@@ -304,9 +304,7 @@ const kindNote = u.kind === "ut" ? "A union territory without a legislature: the
   </footer>
 
 </div>
-<script type="application/json" id="pf-data" set:html={chartsJSON}></script>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/profiles.client.js";
 </script>
 </Base>

@@ -2,9 +2,12 @@
 import { mastheadStamp } from "../../dossiers/headline.js";
 // Guide 26, how Indians pay. Data: data/series/payments-*.json (RBI payment system statistics
 // via the local Data Bank, scripts/lib/products/payments.mjs) and, read-only, the credit guide's
-// credit-money bundle for currency with the public. The plates' series are cut here at build
-// time and embedded as one JSON block (#payments-data); the client never fetches a series.
+// credit-money bundle for currency with the public. Every number is written here at build time
+// and every plate is drawn at build time by the chart kit (src/dossiers/payments.charts.js), so
+// the page ships no bundle and no chart code beyond the kit's hover and downloads.
 import fs from "node:fs";
+import * as F from "../../dossiers/payments.fmt.js";
+import * as CH from "../../dossiers/payments.charts.js";
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
 import GuideData from "../../components/GuideData.astro";
@@ -21,26 +24,100 @@ const PM = period("payments-monthly");
 const m = B("payments-monthly"), t = B("payments-ticket"), inf = B("payments-infra"), a = B("payments-annual");
 const o = B("payments-monthly-2004"), h = B("payments-cheques-1970"), c = B("payments-cheques-centres");
 const ch = B("payments-clearing-houses"), e = B("payments-erupee"), cash = B("credit-money");
-const pick = (b, keys) => Object.fromEntries(keys.map((k) => [k, b.series[k].data]));
+// currency with the public, every reporting fortnight since January 2016 (the credit guide's bundle)
+const P = { cash: (() => { const i0 = cash.dates.findIndex((d) => d >= "2016-01-01"); return { dates: cash.dates.slice(i0), cwp: cash.series.currency_with_public.data.slice(i0) }; })() };
 
-/* ---- the plates' data ---- */
-const LINES = ["upi", "imps", "neft", "rtgs", "cards", "credit_cards", "debit_cards", "credit_cards_pos", "credit_cards_other", "debit_cards_pos", "debit_cards_other",
-  "ppi", "ppi_wallets", "ppi_cards", "paper", "nach_cr", "nach_dr", "apbs", "netc", "bhim_aadhaar_pay", "upi_ussd", "aeps_transfer", "microatm_cash", "atm_cash",
-  "mobile", "internet", "retail_total", "total", "digital_total", "retail_credit", "debits", "ecs_cr", "ecs_dr"];
-const P = {
-  vintage: m.meta.vintage,
-  m: { dates: m.dates, ...pick(m, LINES.flatMap((k) => [k + "_volume", k + "_value"])) },
-  t: { dates: t.dates, ...pick(t, Object.keys(t.series)) },
-  i: { dates: inf.dates, ...pick(inf, Object.keys(inf.series)) },
-  a: { dates: a.dates, ...pick(a, ["upi_volume", "upi_value", "total_volume", "digital_total_volume", "retail_total_volume", "paper_volume", "cards_volume", "neft_volume", "imps_volume", "rtgs_value", "total_value"]) },
-  o: { dates: o.dates, ...pick(o, ["neft_volume", "credit_cards_pos_volume", "debit_cards_pos_volume", "debit_cards_atm_volume", "cards_volume", "imps_volume", "mobile_banking_volume", "paper_volume"]) },
-  h: { dates: h.dates, ...pick(h, ["all_india_number", "all_india_amount"]) },
-  c: { dates: c.dates, ...pick(c, ["mumbai_number", "new_delhi_number", "chennai_number", "national_grid_number"]) },
-  ch: { dates: ch.dates, ...pick(ch, ["total", "micr"]) },
-  e: { dates: e.dates, ...pick(e, Object.keys(e.series)) },
-  // currency with the public, every reporting fortnight since January 2016 (the credit guide's bundle)
-  cash: (() => { const i0 = cash.dates.findIndex((d) => d >= "2016-01-01"); return { dates: cash.dates.slice(i0), cwp: cash.series.currency_with_public.data.slice(i0), vintage: cash.meta.vintage }; })(),
-};
+/* ---- every number on the page, written at build time by the guide's own renderers ---- */
+const S = (b, k) => b.series[k].data;
+const L = m.dates.length - 1, Y = L - 12;
+const mv = (k, i = L) => m.series[k]?.data[i] ?? null;
+const monthOf = (iso) => `${MONTHS[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}`;
+const yearAgoMonth = monthOf(m.dates[Y]), firstMonth = monthOf(m.dates[0]);
+const lastNN = (arr) => { for (let i = arr.length - 1; i >= 0; i--) if (arr[i] != null) return i; return -1; };
+const pcU = (txt) => txt.replace(/^(₹?[\d,.]+)( .+)$/, '$1<span class="pc">$2</span>');
+const lakhRs = (v) => (v >= 1e5 ? "₹" + (v / 1e5).toFixed(1) + " lakh" : F.rupees(v));
+const upiN = mv("upi_volume"), upiV = mv("upi_value"), TU = S(t, "upi"), upiAvg = TU.at(-1), tk = (k) => S(t, k).at(-1);
+const N = {};
+Object.assign(N, {
+  "n-upi": pcU(F.crore(upiN)), "d-upi": `<b>${F.growth(upiN, mv("upi_volume", Y))}</b> on ${yearAgoMonth}`,
+  "n-upiv": pcU(F.lakhCrore(upiV)), "d-upiv": `<b>${F.growth(upiV, mv("upi_value", Y))}</b> on ${yearAgoMonth}`,
+  "n-avg": F.rupees(upiAvg), "d-avg": `<b>${F.rupees(TU[0])}</b> in ${firstMonth}`,
+  "n-atm": pcU(F.crore(mv("atm_cash_volume"))), "d-atm": `<b>${F.growth(mv("atm_cash_volume"), mv("atm_cash_volume", Y))}</b> on ${yearAgoMonth}`,
+  "rb-upi": pcU(F.crore(upiN)), "rb-share": F.share(upiN, mv("retail_total_volume")), "mr-avg": F.rupees(upiAvg),
+  "prov-vintage": m.meta.vintage, "prov-vintage2": m.meta.vintage,
+});
+// § 02
+Object.assign(N, {
+  "h-ticket": `An average UPI payment is ${F.rupees(tk("upi"))}; an average RTGS transfer is ${lakhRs(tk("rtgs"))}`,
+  "pv-ticket": F.rupees(tk("upi")), "ex-tk-upi": F.rupees(tk("upi")), "ex-tk-dc": F.rupees(tk("debit_cards")), "ex-tk-cc": F.rupees(tk("credit_cards")),
+  "ex-tk-atm": F.rupees(tk("atm_cash")), "ex-tk-netc": F.rupees(tk("netc")), "ex-tk-neft": F.rupees(tk("neft")), "ex-tk-chq": lakhRs(tk("paper")), "ex-tk-rtgs": lakhRs(tk("rtgs")),
+});
+{
+  let mi = TU.findIndex((v) => v != null); TU.forEach((v, i) => { if (v != null && v > TU[mi]) mi = i; });
+  const e0 = TU.find((v) => v != null), eL = TU[lastNN(TU)];
+  Object.assign(N, { "pv-upi-ticket": F.rupees(eL), "ex-ut-now": F.rupees(eL), "ex-ut-first": F.rupees(e0), "ex-ut-max": F.rupees(TU[mi]), "ex-ut-maxm": monthOf(t.dates[mi]) });
+}
+// § 04
+Object.assign(N, {
+  "pv-upi": F.crore(upiN), "ex-upi-n": F.crore(upiN), "ex-upi-v": F.lakhCrore(upiV), "ex-upi-n0": F.crore(S(m, "upi_volume")[0]),
+  "ex-upi-rest": F.crore(mv("retail_total_volume") - upiN), "ex-upi-g": F.growth(upiN, mv("upi_volume", Y)),
+});
+{
+  const tot = { volume: mv("total_volume"), value: mv("total_value") }, sh = (k, f) => F.share(mv(`${k}_${f}`), tot[f]);
+  Object.assign(N, { "pv-share": sh("rtgs", "value"), "ex-sh-upi-n": sh("upi", "volume"), "ex-sh-upi-v": sh("upi", "value"), "ex-sh-rtgs-n": sh("rtgs", "volume"), "ex-sh-rtgs-v": sh("rtgs", "value"), "ex-sh-neft-v": sh("neft", "value") });
+}
+N["pv-value"] = F.lakhCrore(mv("rtgs_value"));
+for (const [id, k] of [["ex-v-rtgs", "rtgs"], ["ex-v-neft", "neft"], ["ex-v-upi", "upi"], ["ex-v-imps", "imps"], ["ex-v-chq", "paper"]]) N[id] = F.lakhCrore(mv(k + "_value"));
+// § 05
+const IS = (k, i = inf.dates.length - 1) => S(inf, k)[i];
+Object.assign(N, {
+  "pv-cards": F.crore(mv("credit_cards_volume")), "ex-cd-cc": F.crore(mv("credit_cards_volume")), "ex-cd-dc": F.crore(mv("debit_cards_volume")),
+  "ex-cd-cc0": F.crore(S(m, "credit_cards_volume")[0]), "ex-cd-dc0": F.crore(S(m, "debit_cards_volume")[0]), "ex-cd-ncc": F.crore(IS("credit_cards")), "ex-cd-ndc": F.crore(IS("debit_cards")),
+});
+{
+  const cw = P.cash, iL = lastNN(cw.cwp), iNov = cw.dates.findIndex((d, i) => d >= "2019-11-01" && cw.cwp[i] != null);
+  const lc = (v) => "₹" + v.toFixed(1) + " lakh crore";
+  Object.assign(N, { "pv-cash": lc(cw.cwp[iL]), "ex-cs-n": F.crore(mv("atm_cash_volume")), "ex-cs-n0": F.crore(S(m, "atm_cash_volume")[0]), "ex-cs-v": F.lakhCrore(mv("atm_cash_value")), "ex-cs-cwp": lc(cw.cwp[iL]), "ex-cs-cwp0": lc(cw.cwp[iNov]) });
+}
+{
+  const IL = inf.dates.length - 1;
+  Object.assign(N, {
+    "h-machines": `${F.count(IS("upi_qr"))} UPI QR codes, ${F.count(IS("pos"))} card machines, ${F.count(IS("atms"))} ATMs`,
+    "pv-machines": F.count(IS("upi_qr")), "ex-mc-qr": F.count(IS("upi_qr")), "ex-mc-pos": F.count(IS("pos")), "ex-mc-atm": F.count(IS("atms")),
+    "ex-mc-wl": F.count(IS("atms_white_label")), "ex-mc-micro": F.count(IS("micro_atms")), "ex-mc-posg": F.growth(IS("pos"), IS("pos", IL - 12)),
+  });
+}
+// § 06
+N["pv-systems"] = F.count(mv("nach_dr_volume"));
+for (const [id, k] of [["ex-sy-nachdr", "nach_dr"], ["ex-sy-apbs", "apbs"], ["ex-sy-aeps", "microatm_cash"], ["ex-sy-imps", "imps"], ["ex-sy-neft", "neft"], ["ex-sy-wallets", "ppi_wallets"], ["ex-sy-netc", "netc"]]) N[id] = F.count(mv(k + "_volume"));
+N["ex-sy-impsg"] = F.growth(mv("imps_volume"), mv("imps_volume", Y));
+Object.assign(N, { "pv-channels": F.lakhCrore(mv("mobile_value")), "ex-ch-mv": F.lakhCrore(mv("mobile_value")), "ex-ch-mn": F.crore(mv("mobile_volume")), "ex-ch-iv": F.lakhCrore(mv("internet_value")), "ex-ch-in": F.crore(mv("internet_volume")) });
+// § 07
+{
+  const n = a.dates.length - 1;
+  Object.assign(N, { "pv-annual": F.crore(S(a, "upi_volume")[n]), "ex-an-tot": F.crore(S(a, "total_volume")[n]), "ex-an-upi": F.crore(S(a, "upi_volume")[n]), "ex-an-tot0": F.crore(S(a, "total_volume")[0]) });
+  const posNew = S(m, "credit_cards_pos_volume").map((v, i) => (v == null || S(m, "debit_cards_pos_volume")[i] == null ? null : v + S(m, "debit_cards_pos_volume")[i]));
+  Object.assign(N, { "pv-long": F.crore(mv("neft_volume")), "ex-lg-neft": F.crore(mv("neft_volume")), "ex-lg-neft0": F.count(S(o, "neft_volume")[0]), "ex-lg-pos": F.crore(posNew[lastNN(posNew)]) });
+  // cheques: the Handbook series to 2015-16, then the payment table's paper instruments; the high across both
+  const pts = [...h.dates.map((d, i) => [d, S(h, "all_india_number")[i]]), ...a.dates.map((d, i) => [d, S(a, "paper_volume")[i]])].filter((q) => q[1] != null);
+  const mx = pts.reduce((x, y) => (y[1] > x[1] ? y : x)), pL = S(a, "paper_volume")[lastNN(S(a, "paper_volume"))];
+  Object.assign(N, { "h-cheques": `Cheques peaked in ${fyOf(mx[0])} and have been falling since`, "pv-cheques": F.crore(pL), "ex-cq-now": F.crore(pL), "ex-cq-max": F.crore(mx[1]), "ex-cq-maxy": fyOf(mx[0]), "ex-cq-0": F.crore(S(h, "all_india_number")[0]) });
+  const houses = S(ch, "total").filter((v) => v != null), n0 = houses[0], nL = houses.at(-1), g = S(c, "national_grid_number");
+  Object.assign(N, {
+    "h-clearing": `From ${n0.toLocaleString("en-IN")} clearing houses to ${nL === 1 ? "one national grid" : nL.toLocaleString("en-IN")}`,
+    "pv-clearing": nL.toLocaleString("en-IN"), "ex-cl-n": `${nL.toLocaleString("en-IN")} clearing house${nL === 1 ? "" : "s"}`, "ex-cl-n0": n0.toLocaleString("en-IN"), "ex-cl-grid": F.crore(g[lastNN(g)]),
+  });
+}
+// § 08: the e-rupee, and its share of currency with the public on the reporting date nearest 31 March
+{
+  const E = (k) => S(e, k), n = e.dates.length - 1, eDate = Date.parse(e.dates[n].slice(0, 4) + "-03-31");
+  let ci = 0; P.cash.dates.forEach((d, i) => { if (Math.abs(Date.parse(d) - eDate) < Math.abs(Date.parse(P.cash.dates[ci]) - eDate)) ci = i; });
+  Object.assign(N, {
+    "pv-erupee": F.rsCrore(E("total")[n]), "ex-er-now": F.rsCrore(E("total")[n]), "ex-er-prev": F.rsCrore(E("total")[n - 1]),
+    "ex-er-share": (100 * E("total")[n] / (P.cash.cwp[ci] * 1e12)).toFixed(3) + "%",
+    "ex-er-one": F.share(E("retail_1")[n], E("retail")[n]), "ex-er-500": F.share(E("retail_500")[n], E("retail")[n]), "ex-er-500p": F.share(E("retail_500")[n - 1], E("retail")[n - 1]),
+  });
+}
 const lastFy = fyOf(a.dates.at(-1)), firstFy = fyOf(a.dates[0]);
 const erLast = `March ${e.dates.at(-1).slice(0, 4)}`;
 const chFirst = ch.dates[0].slice(0, 4), chLast = ch.dates.at(-1).slice(0, 4), gridFy = fyOf(c.dates.at(-1));
@@ -72,10 +149,10 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
       <span>Unit <b>Number of payments; rupees</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">UPI payments, {PM.long}</div><div class="v acc" id="n-upi">–</div><div class="d" id="d-upi">–</div><div class="nspark" id="nspark-upi"></div></div>
-      <div class="num"><div class="l">Money moved by UPI, {PM.long}</div><div class="v" id="n-upiv">–</div><div class="d" id="d-upiv">–</div></div>
-      <div class="num"><div class="l">The average UPI payment</div><div class="v" id="n-avg">–</div><div class="d" id="d-avg">–</div></div>
-      <div class="num"><div class="l">Cash withdrawals at ATMs</div><div class="v" id="n-atm">–</div><div class="d" id="d-atm">–</div></div>
+      <div class="num"><div class="l">UPI payments, {PM.long}</div><div class="v acc" id="n-upi" set:html={N["n-upi"]}></div><div class="d" id="d-upi" set:html={N["d-upi"]}></div><div class="nspark" id="nspark-upi" set:html={CH.sparkUpi()} /></div>
+      <div class="num"><div class="l">Money moved by UPI, {PM.long}</div><div class="v" id="n-upiv" set:html={N["n-upiv"]}></div><div class="d" id="d-upiv" set:html={N["d-upiv"]}></div></div>
+      <div class="num"><div class="l">The average UPI payment</div><div class="v" id="n-avg" set:html={N["n-avg"]}></div><div class="d" id="d-avg" set:html={N["d-avg"]}></div></div>
+      <div class="num"><div class="l">Cash withdrawals at ATMs</div><div class="v" id="n-atm" set:html={N["n-atm"]}></div><div class="d" id="d-atm" set:html={N["d-atm"]}></div></div>
     </div>
   </div>
 
@@ -83,9 +160,9 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
   <section>
     <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">{PM.long}, RBI payment system indicators</span></div>
     <div class="reading-top">
-      <div><span class="rk">UPI payments in {PM.month}</span><div class="big" id="rb-upi">–</div></div>
+      <div><span class="rk">UPI payments in {PM.month}</span><div class="big" id="rb-upi" set:html={N["rb-upi"]}></div></div>
       <p class="rt-cap">Payments made over the Unified Payments Interface in {PM.long}: scans of a QR code at a shop, transfers to a friend's phone number, bills paid from an app. Each one is counted once, whatever its size.</p>
-      <div class="rt-side"><span class="rk">Of all retail payments</span><div class="rt-side-v" id="rb-share">–</div></div>
+      <div class="rt-side"><span class="rk">Of all retail payments</span><div class="rt-side-v" id="rb-share" set:html={N["rb-share"]}></div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -110,13 +187,13 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
       <figure id="cb-ticket" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3 id="h-ticket">UPI carries small payments; RTGS carries very large ones</h3>
+            <h3 id="h-ticket" set:html={N["h-ticket"]}></h3>
             <div class="sub">Average value of one transaction, by payment system, {PM.long}. Value divided by the number of transactions; the scale is logarithmic, each step ten times the last.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-ticket">–</div><div class="c">the average UPI payment</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-ticket" set:html={N["pv-ticket"]}></div><div class="c">the average UPI payment</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-ticket" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-ticket" set:html={CH.ticket()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Payment System Indicators (Bulletin Table 45, DBIE report 612). Averages derived by India Atlas: the value of each line divided by its number of transactions in the same month.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -130,7 +207,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
           </div>
           <div class="now">
             <span class="mk">As of {PM.long}</span>
-            <p>An average UPI payment was <b id="ex-tk-upi">–</b>, a debit card payment <b id="ex-tk-dc">–</b>, a credit card payment <b id="ex-tk-cc">–</b>, a cash withdrawal at an ATM <b id="ex-tk-atm">–</b>, a FASTag toll <b id="ex-tk-netc">–</b>, a NEFT transfer <b id="ex-tk-neft">–</b>, a cheque <b id="ex-tk-chq">–</b> and an RTGS transfer <b id="ex-tk-rtgs">–</b>.</p>
+            <p>An average UPI payment was <b id="ex-tk-upi" set:html={N["ex-tk-upi"]}></b>, a debit card payment <b id="ex-tk-dc" set:html={N["ex-tk-dc"]}></b>, a credit card payment <b id="ex-tk-cc" set:html={N["ex-tk-cc"]}></b>, a cash withdrawal at an ATM <b id="ex-tk-atm" set:html={N["ex-tk-atm"]}></b>, a FASTag toll <b id="ex-tk-netc" set:html={N["ex-tk-netc"]}></b>, a NEFT transfer <b id="ex-tk-neft" set:html={N["ex-tk-neft"]}></b>, a cheque <b id="ex-tk-chq" set:html={N["ex-tk-chq"]}></b> and an RTGS transfer <b id="ex-tk-rtgs" set:html={N["ex-tk-rtgs"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -142,10 +219,10 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
             <h3>As UPI spread, the average payment got smaller</h3>
             <div class="sub">Average value of one UPI payment, rupees, monthly, {PM.firstLong} to {PM.long}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-upi-ticket">–</div><div class="c">{PM.long}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-upi-ticket" set:html={N["pv-upi-ticket"]}></div><div class="c">{PM.long}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-upi-ticket" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-upi-ticket" set:html={CH.upiTicket()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Payment System Indicators (DBIE report 612). UPI value divided by the number of UPI transactions, India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -158,7 +235,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
           </div>
           <div class="now">
             <span class="mk">As of {PM.long}</span>
-            <p>The average was <b id="ex-ut-now">–</b> in {PM.month}, against <b id="ex-ut-first">–</b> in {PM.firstLong} and a high of <b id="ex-ut-max">–</b> in <span id="ex-ut-maxm">–</span>.</p>
+            <p>The average was <b id="ex-ut-now" set:html={N["ex-ut-now"]}></b> in {PM.month}, against <b id="ex-ut-first" set:html={N["ex-ut-first"]}></b> in {PM.firstLong} and a high of <b id="ex-ut-max" set:html={N["ex-ut-max"]}></b> in <span id="ex-ut-maxm" set:html={N["ex-ut-maxm"]}></span>.</p>
           </div>
         </div>
       </figure>
@@ -186,14 +263,10 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
             <h3>UPI now carries more payments than every other system put together, many times over</h3>
             <div class="sub">Number of payments a month, crore: UPI, and all other retail payment systems combined (cards, wallets, IMPS, NEFT, NACH, Aadhaar payments, cheques), {PM.firstLong} to {PM.long}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-upi">–</div><div class="c">UPI payments, {PM.long}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-upi" set:html={N["pv-upi"]}></div><div class="c">UPI payments, {PM.long}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>UPI</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>All other retail systems</button>
-          </div>
-          <div class="plotzone"><div id="plot-upi" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-upi" set:html={CH.upi()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Payment System Indicators (DBIE report 612). "All other retail systems" is total retail payments less UPI, India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -207,7 +280,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
           </div>
           <div class="now">
             <span class="mk">As of {PM.long}</span>
-            <p>UPI carried <b id="ex-upi-n">–</b> payments in {PM.month} worth <b id="ex-upi-v">–</b>, against <b id="ex-upi-n0">–</b> in {PM.firstLong}. All other retail systems together carried <b id="ex-upi-rest">–</b>. UPI's number of payments was <b id="ex-upi-g">–</b> on a year earlier.</p>
+            <p>UPI carried <b id="ex-upi-n" set:html={N["ex-upi-n"]}></b> payments in {PM.month} worth <b id="ex-upi-v" set:html={N["ex-upi-v"]}></b>, against <b id="ex-upi-n0" set:html={N["ex-upi-n0"]}></b> in {PM.firstLong}. All other retail systems together carried <b id="ex-upi-rest" set:html={N["ex-upi-rest"]}></b>. UPI's number of payments was <b id="ex-upi-g" set:html={N["ex-upi-g"]}></b> on a year earlier.</p>
           </div>
         </div>
       </figure>
@@ -219,10 +292,10 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
             <h3>UPI carries most of the payments; RTGS carries most of the money</h3>
             <div class="sub">Each system's share of the number of payments, and of their value, {PM.long}, per cent. Retail systems and RTGS; CCIL's securities and foreign exchange settlement left out.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-share">–</div><div class="c">RTGS's share of the money</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-share" set:html={N["pv-share"]}></div><div class="c">RTGS's share of the money</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-share" class="sm-grid two" role="img" aria-label="Shares of the number and value of payments by system"></div></div>
+          <div class="plotzone" id="plot-share" set:html={CH.share()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Payment System Indicators (DBIE report 612). Shares of total payments (RTGS and retail), India Atlas. "Bulk and Aadhaar" is NACH credit and debit, APBS, AePS, BHIM Aadhaar Pay, ECS and NETC.</span>
             <span class="dl"><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -235,7 +308,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
           </div>
           <div class="now">
             <span class="mk">As of {PM.long}</span>
-            <p>UPI was <b id="ex-sh-upi-n">–</b> of all payments by number and <b id="ex-sh-upi-v">–</b> by value. RTGS was <b id="ex-sh-rtgs-n">–</b> by number and <b id="ex-sh-rtgs-v">–</b> by value. NEFT was <b id="ex-sh-neft-v">–</b> of the money.</p>
+            <p>UPI was <b id="ex-sh-upi-n" set:html={N["ex-sh-upi-n"]}></b> of all payments by number and <b id="ex-sh-upi-v" set:html={N["ex-sh-upi-v"]}></b> by value. RTGS was <b id="ex-sh-rtgs-n" set:html={N["ex-sh-rtgs-n"]}></b> by number and <b id="ex-sh-rtgs-v" set:html={N["ex-sh-rtgs-v"]}></b> by value. NEFT was <b id="ex-sh-neft-v" set:html={N["ex-sh-neft-v"]}></b> of the money.</p>
           </div>
         </div>
       </figure>
@@ -247,10 +320,10 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
             <h3>Where the money moves: RTGS, then NEFT, then UPI</h3>
             <div class="sub">Value of payments a month, ₹ lakh crore, {PM.firstLong} to {PM.long}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-value">–</div><div class="c">moved by RTGS, {PM.long}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-value" set:html={N["pv-value"]}></div><div class="c">moved by RTGS, {PM.long}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-value" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-value" set:html={CH.value()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Payment System Indicators (DBIE report 612). Cheques: the Cheque Truncation System and other paper instruments.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -264,7 +337,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
           </div>
           <div class="now">
             <span class="mk">As of {PM.long}</span>
-            <p>In {PM.month}, RTGS moved <b id="ex-v-rtgs">–</b>, NEFT <b id="ex-v-neft">–</b>, UPI <b id="ex-v-upi">–</b>, IMPS <b id="ex-v-imps">–</b> and cheques <b id="ex-v-chq">–</b>.</p>
+            <p>In {PM.month}, RTGS moved <b id="ex-v-rtgs" set:html={N["ex-v-rtgs"]}></b>, NEFT <b id="ex-v-neft" set:html={N["ex-v-neft"]}></b>, UPI <b id="ex-v-upi" set:html={N["ex-v-upi"]}></b>, IMPS <b id="ex-v-imps" set:html={N["ex-v-imps"]}></b> and cheques <b id="ex-v-chq" set:html={N["ex-v-chq"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -281,14 +354,10 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
             <h3>Credit cards overtook debit cards, as debit card payments shrank</h3>
             <div class="sub">Card payments a month, crore, by kind of card, {PM.firstLong} to {PM.long}. Payments at shops' card machines (PoS) and elsewhere, mostly online; cash withdrawals not included.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-cards">–</div><div class="c">credit card payments, {PM.long}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-cards" set:html={N["pv-cards"]}></div><div class="c">credit card payments, {PM.long}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Credit cards</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Debit cards</button>
-          </div>
-          <div class="plotzone"><div id="plot-cards" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-cards" set:html={CH.cards()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Payment System Indicators (DBIE report 612), lines 4.1 and 4.2. Cards in issue: the infrastructure lines of the same table.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -301,7 +370,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
           </div>
           <div class="now">
             <span class="mk">As of {PM.long}</span>
-            <p>Credit cards carried <b id="ex-cd-cc">–</b> payments in {PM.month} and debit cards <b id="ex-cd-dc">–</b>, against <b id="ex-cd-cc0">–</b> and <b id="ex-cd-dc0">–</b> in {PM.firstLong}. Banks had issued <b id="ex-cd-ncc">–</b> credit cards and <b id="ex-cd-ndc">–</b> debit cards.</p>
+            <p>Credit cards carried <b id="ex-cd-cc" set:html={N["ex-cd-cc"]}></b> payments in {PM.month} and debit cards <b id="ex-cd-dc" set:html={N["ex-cd-dc"]}></b>, against <b id="ex-cd-cc0" set:html={N["ex-cd-cc0"]}></b> and <b id="ex-cd-dc0" set:html={N["ex-cd-dc0"]}></b> in {PM.firstLong}. Banks had issued <b id="ex-cd-ncc" set:html={N["ex-cd-ncc"]}></b> credit cards and <b id="ex-cd-ndc" set:html={N["ex-cd-ndc"]}></b> debit cards.</p>
           </div>
         </div>
       </figure>
@@ -313,10 +382,10 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
             <h3>Fewer trips to the ATM, but more cash in people's hands</h3>
             <div class="sub">Left: cash withdrawals at ATMs, number a month, crore, {PM.firstLong} to {PM.long}. Right: currency with the public, ₹ lakh crore, every reporting fortnight from January 2016 to {cashLast}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-cash">–</div><div class="c">currency with the public</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-cash" set:html={N["pv-cash"]}></div><div class="c">currency with the public</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-cash" class="sm-grid two" role="img" aria-label="ATM cash withdrawals a month and currency with the public"></div></div>
+          <div class="plotzone" id="plot-cash" set:html={CH.cash()} />
           <div class="plotfoot">
             <span class="src">Source: RBI. ATM withdrawals: Payment System Indicators (DBIE report 612), line 3. Currency with the public: RBI money supply statistics, the same series the credit guide draws.</span>
             <span class="dl"><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -330,7 +399,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
           </div>
           <div class="now">
             <span class="mk">As of {PM.long}</span>
-            <p>Indians drew cash from ATMs <b id="ex-cs-n">–</b> times in {PM.month}, against <b id="ex-cs-n0">–</b> in {PM.firstLong}, taking out <b id="ex-cs-v">–</b>. Currency with the public was <b id="ex-cs-cwp">–</b> on {cashLast}, against <b id="ex-cs-cwp0">–</b> in November 2019.</p>
+            <p>Indians drew cash from ATMs <b id="ex-cs-n" set:html={N["ex-cs-n"]}></b> times in {PM.month}, against <b id="ex-cs-n0" set:html={N["ex-cs-n0"]}></b> in {PM.firstLong}, taking out <b id="ex-cs-v" set:html={N["ex-cs-v"]}></b>. Currency with the public was <b id="ex-cs-cwp" set:html={N["ex-cs-cwp"]}></b> on {cashLast}, against <b id="ex-cs-cwp0" set:html={N["ex-cs-cwp0"]}></b> in November 2019.</p>
           </div>
         </div>
       </figure>
@@ -339,13 +408,13 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
       <figure id="cb-machines" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3 id="h-machines">Many more QR codes than card machines, and far more card machines than ATMs</h3>
+            <h3 id="h-machines" set:html={N["h-machines"]}></h3>
             <div class="sub">The payment infrastructure at the end of each month, {PM.firstLong} to {PM.long}. Each panel has its own scale.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-machines">–</div><div class="c">UPI QR codes, {PM.long}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-machines" set:html={N["pv-machines"]}></div><div class="c">UPI QR codes, {PM.long}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-machines" class="sm-grid" role="img" aria-label="Eight small line charts of payment infrastructure"></div></div>
+          <div class="plotzone" id="plot-machines" set:html={CH.machines()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Payment System Indicators (DBIE report 612), infrastructure lines. UPI QR codes reported from September 2020.</span>
             <span class="dl"><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -359,7 +428,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
           </div>
           <div class="now">
             <span class="mk">As of {PM.long}</span>
-            <p>There were <b id="ex-mc-qr">–</b> UPI QR codes, <b id="ex-mc-pos">–</b> card machines, <b id="ex-mc-atm">–</b> ATMs (<b id="ex-mc-wl">–</b> of them white-label) and <b id="ex-mc-micro">–</b> micro ATMs. Card machines were <b id="ex-mc-posg">–</b> on a year earlier.</p>
+            <p>There were <b id="ex-mc-qr" set:html={N["ex-mc-qr"]}></b> UPI QR codes, <b id="ex-mc-pos" set:html={N["ex-mc-pos"]}></b> card machines, <b id="ex-mc-atm" set:html={N["ex-mc-atm"]}></b> ATMs (<b id="ex-mc-wl" set:html={N["ex-mc-wl"]}></b> of them white-label) and <b id="ex-mc-micro" set:html={N["ex-mc-micro"]}></b> micro ATMs. Card machines were <b id="ex-mc-posg" set:html={N["ex-mc-posg"]}></b> on a year earlier.</p>
           </div>
         </div>
       </figure>
@@ -376,10 +445,10 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
             <h3>Twelve payment systems, each on its own scale</h3>
             <div class="sub">Number of payments a month, {PM.firstLong} to {PM.long}. Each panel has its own scale; the figure in the corner is the latest month.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-systems">–</div><div class="c">NACH debits (EMIs, SIPs), {PM.long}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-systems" set:html={N["pv-systems"]}></div><div class="c">NACH debits (EMIs, SIPs), {PM.long}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-systems" class="sm-grid" role="img" aria-label="Twelve small line charts, one per payment system"></div></div>
+          <div class="plotzone" id="plot-systems" set:html={CH.systems()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Payment System Indicators (DBIE report 612).</span>
             <span class="dl"><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -392,7 +461,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
           </div>
           <div class="now">
             <span class="mk">As of {PM.long}</span>
-            <p>In {PM.month}: NACH debits <b id="ex-sy-nachdr">–</b>, APBS benefit credits <b id="ex-sy-apbs">–</b>, AePS cash withdrawals <b id="ex-sy-aeps">–</b>, IMPS <b id="ex-sy-imps">–</b>, NEFT <b id="ex-sy-neft">–</b>, wallets <b id="ex-sy-wallets">–</b> and FASTag tolls <b id="ex-sy-netc">–</b>. IMPS was <b id="ex-sy-impsg">–</b> on a year earlier.</p>
+            <p>In {PM.month}: NACH debits <b id="ex-sy-nachdr" set:html={N["ex-sy-nachdr"]}></b>, APBS benefit credits <b id="ex-sy-apbs" set:html={N["ex-sy-apbs"]}></b>, AePS cash withdrawals <b id="ex-sy-aeps" set:html={N["ex-sy-aeps"]}></b>, IMPS <b id="ex-sy-imps" set:html={N["ex-sy-imps"]}></b>, NEFT <b id="ex-sy-neft" set:html={N["ex-sy-neft"]}></b>, wallets <b id="ex-sy-wallets" set:html={N["ex-sy-wallets"]}></b> and FASTag tolls <b id="ex-sy-netc" set:html={N["ex-sy-netc"]}></b>. IMPS was <b id="ex-sy-impsg" set:html={N["ex-sy-impsg"]}></b> on a year earlier.</p>
           </div>
         </div>
       </figure>
@@ -404,14 +473,10 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
             <h3>Phones carry the payments; net banking still carries more of the money</h3>
             <div class="sub">Value of payments a month, ₹ lakh crore, by channel: mobile apps and internet banking (browser), {PM.firstLong} to {PM.long}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-channels">–</div><div class="c">mobile payments, {PM.long}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-channels" set:html={N["pv-channels"]}></div><div class="c">mobile payments, {PM.long}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>Mobile</button>
-            <button class="chip"><i style="background:#A3A9B4"></i>Internet banking</button>
-          </div>
-          <div class="plotzone"><div id="plot-channels" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-channels" set:html={CH.channels()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Payment System Indicators (DBIE report 612), "other payment channels". The channel lines count payments by how they were started; they overlap with the system lines above.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -424,7 +489,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
           </div>
           <div class="now">
             <span class="mk">As of {PM.long}</span>
-            <p>Mobile payments moved <b id="ex-ch-mv">–</b> in <b id="ex-ch-mn">–</b> transactions; internet banking moved <b id="ex-ch-iv">–</b> in <b id="ex-ch-in">–</b>.</p>
+            <p>Mobile payments moved <b id="ex-ch-mv" set:html={N["ex-ch-mv"]}></b> in <b id="ex-ch-mn" set:html={N["ex-ch-mn"]}></b> transactions; internet banking moved <b id="ex-ch-iv" set:html={N["ex-ch-iv"]}></b> in <b id="ex-ch-in" set:html={N["ex-ch-in"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -441,14 +506,10 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
             <h3>A decade of payments, year by year: UPI from almost nothing to most of the count</h3>
             <div class="sub">Number of payments in each fiscal year, crore, {firstFy} to {lastFy}: UPI and every other payment (RTGS and retail). The RBI's Handbook, in the classification it adopted in November 2019, restated to {firstFy}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-annual">–</div><div class="c">UPI payments, {lastFy}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-annual" set:html={N["pv-annual"]}></div><div class="c">UPI payments, {lastFy}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i class="sq" style="background:#2E4BD8;width:10px;height:10px"></i>UPI</span>
-            <span class="chip"><i class="sq" style="background:#C9CED6;width:10px;height:10px"></i>Every other payment</span>
-          </div>
-          <div class="plotzone"><div id="plot-annual" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-annual" set:html={CH.annual()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics on the Indian Economy, Payment System Indicators (DBIE report 907). From 2020-21 each year equals the sum of the monthly table's twelve months.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -461,7 +522,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
           </div>
           <div class="now">
             <span class="mk">As of {lastFy}</span>
-            <p>Indians made <b id="ex-an-tot">–</b> payments in {lastFy}, <b id="ex-an-upi">–</b> of them by UPI. In {firstFy} they made <b id="ex-an-tot0">–</b>.</p>
+            <p>Indians made <b id="ex-an-tot" set:html={N["ex-an-tot"]}></b> payments in {lastFy}, <b id="ex-an-upi" set:html={N["ex-an-upi"]}></b> of them by UPI. In {firstFy} they made <b id="ex-an-tot0" set:html={N["ex-an-tot0"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -473,14 +534,10 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
             <h3>Fifteen years before UPI: NEFT and card payments at shops since 2004</h3>
             <div class="sub">Number of payments a month, crore: NEFT, and card payments at shops' card machines (PoS), April 2004 to {PM.long}. Two tables: the RBI's old layout to October 2019 (pale) and the re-organised one from November 2019 (solid), drawn side by side, never joined.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-long">–</div><div class="c">NEFT payments, {PM.long}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-long" set:html={N["pv-long"]}></div><div class="c">NEFT payments, {PM.long}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip"><i style="background:#2E4BD8"></i>NEFT</button>
-            <button class="chip"><i style="background:#5F6675"></i>Card payments at shops (PoS)</button>
-          </div>
-          <div class="plotzone"><div id="plot-long" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-long" set:html={CH.long()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Payment System Indicators (DBIE report 612), old layout (lines 4.3, 5.1.2, 5.2.2) and re-organised layout (lines 2.6, 4.1.1, 4.2.1). The old table repeats July 2010 to June 2011 in the rows for August 2006 to July 2007, so that year is left blank.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -493,7 +550,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
           </div>
           <div class="now">
             <span class="mk">As of {PM.long}</span>
-            <p>NEFT carried <b id="ex-lg-neft">–</b> payments in {PM.month}, against <b id="ex-lg-neft0">–</b> in April 2004. Card payments at shops were <b id="ex-lg-pos">–</b>.</p>
+            <p>NEFT carried <b id="ex-lg-neft" set:html={N["ex-lg-neft"]}></b> payments in {PM.month}, against <b id="ex-lg-neft0" set:html={N["ex-lg-neft0"]}></b> in April 2004. Card payments at shops were <b id="ex-lg-pos" set:html={N["ex-lg-pos"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -502,13 +559,13 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
       <figure id="cb-cheques" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3 id="h-cheques">Cheques peaked and have been falling since</h3>
+            <h3 id="h-cheques" set:html={N["h-cheques"]}></h3>
             <div class="sub">Cheques cleared in each fiscal year, crore, 1970-71 to {lastFy}. The RBI Handbook's cheque clearance series to 2015-16, then the paper instruments line of its payment system table, drawn side by side.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-cheques">–</div><div class="c">cheques cleared, {lastFy}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-cheques" set:html={N["pv-cheques"]}></div><div class="c">cheques cleared, {lastFy}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-cheques" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotzone" id="plot-cheques" set:html={CH.cheques()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics on the Indian Economy: cheque clearances (DBIE report 907, to 2015-16) and Payment System Indicators, paper instruments (from 2015-16). The two agree on 2015-16.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -521,7 +578,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
           </div>
           <div class="now">
             <span class="mk">As of {lastFy}</span>
-            <p><b id="ex-cq-now">–</b> cheques were cleared in {lastFy}, against a high of <b id="ex-cq-max">–</b> in <span id="ex-cq-maxy">–</span> and <b id="ex-cq-0">–</b> in 1970-71.</p>
+            <p><b id="ex-cq-now" set:html={N["ex-cq-now"]}></b> cheques were cleared in {lastFy}, against a high of <b id="ex-cq-max" set:html={N["ex-cq-max"]}></b> in <span id="ex-cq-maxy" set:html={N["ex-cq-maxy"]}></span> and <b id="ex-cq-0" set:html={N["ex-cq-0"]}></b> in 1970-71.</p>
           </div>
         </div>
       </figure>
@@ -530,13 +587,13 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
       <figure id="cb-clearing" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3 id="h-clearing">From city clearing houses to one national grid</h3>
+            <h3 id="h-clearing" set:html={N["h-clearing"]}></h3>
             <div class="sub">Left: cheque clearing houses in India, end-March, {chFirst} to {chLast}. Right: cheques cleared at the three largest centres, crore, and at the single national grid from 2024-25.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-clearing">–</div><div class="c">clearing houses, March {chLast}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-clearing" set:html={N["pv-clearing"]}></div><div class="c">clearing houses, March {chLast}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-clearing" class="sm-grid two" role="img" aria-label="Clearing houses by year and cheques by clearing centre"></div></div>
+          <div class="plotzone" id="plot-clearing" set:html={CH.clearing()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Statistical Tables Relating to Banks in India: Table 27, number of clearing houses (DBIE report 936), and Table 22, cheque clearances by centre (DBIE report 678).</span>
             <span class="dl"><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -549,7 +606,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
           </div>
           <div class="now">
             <span class="mk">As of March {chLast}</span>
-            <p>India had <b id="ex-cl-n">–</b> in March {chLast}, against <b id="ex-cl-n0">–</b> in March {chFirst}. The national grid cleared <b id="ex-cl-grid">–</b> cheques in {gridFy}.</p>
+            <p>India had <b id="ex-cl-n" set:html={N["ex-cl-n"]}></b> in March {chLast}, against <b id="ex-cl-n0" set:html={N["ex-cl-n0"]}></b> in March {chFirst}. The national grid cleared <b id="ex-cl-grid" set:html={N["ex-cl-grid"]}></b> cheques in {gridFy}.</p>
           </div>
         </div>
       </figure>
@@ -569,14 +626,10 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
             <h3>The e-rupee is a rounding error beside cash</h3>
             <div class="sub">e₹ in circulation on 31 March, ₹ crore, retail and wholesale, 2023 to {e.dates.at(-1).slice(0, 4)}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-erupee">–</div><div class="c">e₹ in circulation, {erLast}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-erupee" set:html={N["pv-erupee"]}></div><div class="c">e₹ in circulation, {erLast}</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip"><i class="sq" style="background:#2E4BD8;width:10px;height:10px"></i>Retail</span>
-            <span class="chip"><i class="sq" style="background:#C9CED6;width:10px;height:10px"></i>Wholesale</span>
-          </div>
-          <div class="plotzone"><div id="plot-erupee" style="position:relative"></div></div>
+          <div class="plotzone" id="plot-erupee" set:html={CH.erupee()} />
           <div class="plotfoot">
             <span class="src">Source: RBI, Handbook of Statistics on the Indian Economy, e₹ in Circulation (DBIE report 1404). The RBI Innovation Hub's copy of the same table matches it cell for cell.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -589,7 +642,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
           </div>
           <div class="now">
             <span class="mk">As of {erLast}</span>
-            <p>e₹ in circulation was <b id="ex-er-now">–</b> in {erLast}, against <b id="ex-er-prev">–</b> a year earlier: <b id="ex-er-share">–</b> of the currency the public held. The RBI's table for {erLast} puts <b id="ex-er-one">–</b> of the retail e-rupee in ₹1 tokens and <b id="ex-er-500">–</b> in ₹500 tokens, where a year earlier ₹500 tokens held <b id="ex-er-500p">–</b>. The table does not say why, and we do not know.</p>
+            <p>e₹ in circulation was <b id="ex-er-now" set:html={N["ex-er-now"]}></b> in {erLast}, against <b id="ex-er-prev" set:html={N["ex-er-prev"]}></b> a year earlier: <b id="ex-er-share" set:html={N["ex-er-share"]}></b> of the currency the public held. The RBI's table for {erLast} puts <b id="ex-er-one" set:html={N["ex-er-one"]}></b> of the retail e-rupee in ₹1 tokens and <b id="ex-er-500" set:html={N["ex-er-500"]}></b> in ₹500 tokens, where a year earlier ₹500 tokens held <b id="ex-er-500p" set:html={N["ex-er-500p"]}></b>. The table does not say why, and we do not know.</p>
           </div>
         </div>
       </figure>
@@ -603,7 +656,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
       <li><span class="no">1</span><div><h3>"UPI has replaced cash."</h3><p>It has replaced a great many cash payments, but the cash the public holds has kept growing. People draw money from ATMs less often and in larger amounts. Both things are true at once, and the RBI's tables cannot say how many payments are still made in notes.</p></div></li>
       <li><span class="no">2</span><div><h3>"Debit card payments collapsed in 2019."</h3><p>Part of the fall is a change in the table. Until October 2019 a debit card's figures included cash drawn at ATMs; from November 2019 those are a separate line. Compare the two layouts only after reading what each line counts.</p></div></li>
       <li><span class="no">3</span><div><h3>"India's digital payments are worth many times its GDP."</h3><p>They are, and it means little. Payment values count every transfer, including banks and companies moving the same money back and forth through RTGS. GDP counts what is produced once. The two are different kinds of number.</p></div></li>
-      <li><span class="no">4</span><div><h3>"The average UPI payment is <span id="mr-avg">–</span>, so that is what a UPI payment looks like."</h3><p>An average is pulled up by a few large transfers, so an ordinary UPI payment may be much smaller. The RBI does not publish the typical payment, so we cannot say how small.</p></div></li>
+      <li><span class="no">4</span><div><h3>"The average UPI payment is <span id="mr-avg" set:html={N["mr-avg"]}></span>, so that is what a UPI payment looks like."</h3><p>An average is pulled up by a few large transfers, so an ordinary UPI payment may be much smaller. The RBI does not publish the typical payment, so we cannot say how small.</p></div></li>
       <li><span class="no">5</span><div><h3>"Payments grew fast, so spending grew as fast."</h3><p>The number of payments grows when the same spending is split into more, smaller payments, as it is when tea and vegetables move to UPI. Growth in payment counts is a sign of a habit changing, not a measure of consumption.</p></div></li>
       <li><span class="no">6</span><div><h3>"The e-rupee is UPI."</h3><p>UPI moves money between bank accounts. The e-rupee is a different form of money, issued by the RBI and held in a separate wallet. The two can work together, but the RBI counts them in separate tables.</p></div></li>
     </ul>
@@ -617,7 +670,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Reserve Bank of India: Payment System Indicators (RBI Bulletin Table 45, monthly, and the Handbook of Statistics on the Indian Economy, yearly), Statistical Tables Relating to Banks in India (Tables 22 and 27) and the Handbook's e₹ table, read from India Atlas's archived copy of the RBI's DBIE database. Currency with the public comes from this site's credit guide. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Reserve Bank of India: Payment System Indicators (RBI Bulletin Table 45, monthly, and the Handbook of Statistics on the Indian Economy, yearly), Statistical Tables Relating to Banks in India (Tables 22 and 27) and the Handbook's e₹ table, read from India Atlas's archived copy of the RBI's DBIE database. Currency with the public comes from this site's credit guide. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]}></b>.</p>
         <p>Checked against the RBI's own publications: UPI in July 2026 (2,36,583.53 lakh transactions, ₹29,87,880.48 crore) and 2,52,508 ATMs (Bulletin Table 45); UPI in 2024-25 (18,587 crore transactions, RBI Annual Report); e₹ in circulation of ₹1,016.5 crore at end-March 2025 (RBI Annual Report).</p>
       </div>
       <div>
@@ -636,28 +689,22 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
     </div>
     <div class="fine">
       <span>India Atlas, how Indians pay</span>
-      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]}></span></span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
 
 </div>
-<script type="application/json" id="payments-data" set:html={JSON.stringify(P)}></script>
 <style is:global>
-  /* payments guide only: small-multiple grids */
+  /* payments guide only: two charts side by side in one plate (src/dossiers/payments.charts.js pair()) */
   .now b{white-space:nowrap}
-  .sm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:26px 30px}
-  .sm-grid.two{grid-template-columns:repeat(2,1fr);gap:26px 48px}
-  .sm-panel{border-top:1px solid var(--rule);padding-top:10px;position:relative;min-width:0}
-  .sm-panel .sm-t{font-family:var(--sans);font-size:.8rem;color:var(--grey1);line-height:1.45;padding-right:96px;min-height:2.4em}
-  .sm-panel .sm-t small{display:block;color:var(--muted)}
-  .sm-panel .sm-v{position:absolute;top:10px;right:0;font-family:var(--sans);font-size:.82rem;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
-  .sm-panel svg{width:100%;height:auto;display:block}
-  @media (max-width:900px){.sm-grid{grid-template-columns:repeat(2,1fr)}.sm-grid.two{grid-template-columns:1fr}}
-  @media (max-width:520px){.sm-grid{grid-template-columns:1fr}}
+  .pm-pair{display:grid;grid-template-columns:1fr;gap:28px 40px}
+  .pm-pair.two{grid-template-columns:1fr 1fr}
+  .pm-cell{min-width:0;border-top:1px solid var(--rule);padding-top:10px}
+  .pm-ph{margin:0 0 10px;font-family:var(--ak-sans);font-size:.875rem;line-height:1.4;color:var(--ak-muted)}
+  .pm-ph b{color:var(--ak-ink);font-weight:600}
 </style>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/payments.client.js";
 </script>
 </Base>

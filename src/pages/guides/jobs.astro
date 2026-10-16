@@ -25,30 +25,14 @@ const q12 = qUr.slice(-12).filter((v) => v != null);
 const q12From = qDates[qDates.length - 12].slice(0, 4);
 
 // ---- the deep bundles the new plates draw, sliced at build time (src/dossiers/jobs.data.js) ----
-import { load as J, pick, stateRows, dateAt, keysOf } from "../../dossiers/jobs.data.js";
+import { load as J, dateAt, jobsData } from "../../dossiers/jobs.data.js";
+import * as CH from "../../dossiers/jobs.charts.js";
 const cyYear = dateAt("plfs-cy25-india").slice(0, 4);          // the latest calendar year, revamped design
 const cyOldYears = J("plfs-cy-india").dates.map((d) => d.slice(0, 4));
 const q25Last = dateAt("plfs-q25"), q25First = J("plfs-q25").dates[0];
 const H = "__person_all__a15plus";
-const DATA = {
-  seam: {
-    ay: pick("plfs-annual", ["lfpr_psss", "ur_psss"]),
-    cy: pick("plfs-cy-india", ["lfpr_psss" + H, "ur_psss" + H]),
-    cy25: pick("plfs-cy25-india", ["lfpr_psss" + H, "ur_psss" + H]),
-  },
-  q25: pick("plfs-q25", ["lfpr", "wpr", "ur"].flatMap((i) => ["all", "rural", "urban"].map((s) => `${i}_cws__person_${s}__a15plus`))),
-  youth: pick("plfs-monthly-age", ["ur_cws__person_all__a15_29", ...["male", "female"].flatMap((g) => ["rural", "urban"].map((s) => `ur_cws__${g}_${s}__a15_29`))]),
-  youthStates: stateRows("plfs-q25-states-ur", { y: "{st}__ur_cws__person_all__a15_29", all: "{st}__ur_cws__person_all__a15plus" }),
-  youthAi: { y: J("plfs-q25").series.ur_cws__person_all__a15_29.data.at(-1), all: J("plfs-q25").series["ur_cws" + H].data.at(-1) },
-  work: stateRows("plfs-cy25-states-wpr", { p: "{st}__wpr_psss__person_all__a15plus", m: "{st}__wpr_psss__male_all__a15plus", f: "{st}__wpr_psss__female_all__a15plus" }),
-  workAi: { p: J("plfs-cy25-india").series["wpr_psss" + H].data.at(-1), m: J("plfs-cy25-india").series.wpr_psss__male_all__a15plus.data.at(-1), f: J("plfs-cy25-india").series.wpr_psss__female_all__a15plus.data.at(-1) },
-  social: pick("plfs-cy25-india", keysOf("plfs-cy25-india", /^lfpr_psss__(male|female)_all__a15plus__(soc|rel)_/)),
-  socialAi: { m: J("plfs-cy25-india").series.lfpr_psss__male_all__a15plus.data.at(-1), f: J("plfs-cy25-india").series.lfpr_psss__female_all__a15plus.data.at(-1) },
-  kinds: stateRows("plfs-cy25-workers-states", { rg: "{st}__regular__person_all__psss", cs: "{st}__casual__person_all__psss", se: "{st}__self_employed__person_all__psss" }),
-  pay: stateRows("plfs-cy25-earnings", { p: "{st}__regular__person_all", f: "{st}__regular__female_all", m: "{st}__regular__male_all", cas: "{st}__casual__person_all" }),
-  payAi: Object.fromEntries(["regular__person_all", "regular__female_all", "regular__male_all", "casual__person_all", "self_employed__person_all"].map((k) => [k, J("plfs-cy25-earnings").series[k].data.at(-1)])),
-  cond: pick("plfs-conditions", ["no_contract", "no_paid_leave", "no_social_security", "none_of_three"].flatMap((c) => [`${c}__person_all`, `${c}__female_all`, `${c}__male_all`])),
-};
+const DATA = jobsData();
+const TX = CH.numbers();
 // figures the hand-written notes name, read from the same slices (asof.mjs governs the notes)
 const byDesc = (rows, k) => [...rows].sort((a, b) => b[k] - a[k]);
 const W = byDesc(DATA.work, "f"), PAY = byDesc(DATA.pay, "p"), CAS = byDesc(DATA.pay, "cas"), KIND = byDesc(DATA.kinds, "rg"), YS = byDesc(DATA.youthStates, "y");
@@ -89,7 +73,6 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
   ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
-<script type="application/json" id="jobs-data" is:inline set:html={JSON.stringify(DATA).replace(/</g, "\\u003c")} />
 
   <div class="titleblock break">
     <div class="kicker">{kicker(D)}</div>
@@ -106,10 +89,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
       <span>Bulletin <b>Monthly, from Apr 2025</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Unemployment, monthly, current weekly status (CWS)</div><div class="v acc" id="n-ur">–</div><div class="d" id="d-ur">–</div><div class="nspark" id="nspark-ur"></div></div>
-       <div class="num"><div class="l">Participation, LFPR</div><div class="v" id="n-lfpr">–</div><div class="d" id="d-lfpr">–</div></div>
-      <div class="num"><div class="l">Urban women, unemployment rate (UR)</div><div class="v" id="n-fur">–</div><div class="d" id="d-fur">–</div></div>
-      <div class="num"><div class="l">Annual UR, usual status</div><div class="v" id="n-psss">–</div><div class="d" id="d-psss">–</div></div>
+      <div class="num"><div class="l">Unemployment, monthly, current weekly status (CWS)</div><div class="v acc" id="n-ur" set:html={TX["n-ur"]}></div><div class="d" id="d-ur" set:html={TX["d-ur"]}></div><div class="nspark" id="nspark-ur" set:html={CH.sparkUr()} /></div>
+       <div class="num"><div class="l">Participation, LFPR</div><div class="v" id="n-lfpr" set:html={TX["n-lfpr"]}></div><div class="d" id="d-lfpr" set:html={TX["d-lfpr"]}></div></div>
+      <div class="num"><div class="l">Urban women, unemployment rate (UR)</div><div class="v" id="n-fur" set:html={TX["n-fur"]}></div><div class="d" id="d-fur" set:html={TX["d-fur"]}></div></div>
+      <div class="num"><div class="l">Annual UR, usual status</div><div class="v" id="n-psss" set:html={TX["n-psss"]}></div><div class="d" id="d-psss" set:html={TX["d-psss"]}></div></div>
     </div>
   </div>
 
@@ -117,9 +100,9 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
   <section>
     <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">Monthly bulletin, {PM.long}</span></div>
     <div class="reading-top">
-      <div><span class="rk">Current reading</span><div class="big" id="rb-big">–</div></div>
+      <div><span class="rk">Current reading</span><div class="big" id="rb-big" set:html={TX["rb-big"]}></div></div>
       <p class="rt-cap">Unemployment rate, {PM.long}: everyone aged 15+ who had no work last week, was looking, and could start. The monthly bulletin is {PM.nWord} months old; treat any single month accordingly.</p>
-      <div class="rt-side"><span class="rk">A year into the bulletin</span><div class="rt-side-v" id="rb-first">–</div></div>
+      <div class="rt-side"><span class="rk">A year into the bulletin</span><div class="rt-side-v" id="rb-first" set:html={TX["rb-first"]}></div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -141,7 +124,7 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
         <thead>
           <tr><th>Series</th><th>Latest</th><th>vs prev.</th><th>Year ago</th><th class="spark">History</th></tr>
         </thead>
-        <tbody id="ledger-body"></tbody>
+        <tbody id="ledger-body" set:html={TX["ledger-body"]}></tbody>
       </table>
     </div>
   </section>
@@ -156,14 +139,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>Last week or last year: the answer depends on the question</h3>
             <div class="sub">All-India unemployment rate, 15+, current weekly status vs usual status (PS+SS), 2017-18 to 2023-24</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-annual">–</div><div class="c">2023-24, usual status</div></div>
+          <div class="plate-val"><div class="v" id="pv-annual" set:html={TX["pv-annual"]}></div><div class="c">2023-24, usual status</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-annual">
-            <button class="chip" data-key="ur_cws"><i style="background:#5F6675"></i>Weekly status, CWS</button>
-            <button class="chip" data-key="ur_psss"><i style="background:#2E4BD8"></i>Usual status, PS+SS</button>
-          </div>
-          <div class="plotzone" id="plot-annual"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-annual" set:html={CH.annual()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS annual reports, agriculture years (Jul–Jun) plotted at July, the gap between the lines is underemployment: work that exists for the year but not for the week</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -177,7 +156,7 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
           </div>
           <div class="now">
             <span class="mk">The annual series ends 2023-24</span>
-            <p>Annual usual-status unemployment has nearly halved in six years, from <b id="ex-p0">–</b> to <b id="ex-p1">–</b>. The weekly measure fell in step and remains near twice the annual one: the recovery closed neither the gap nor the question of job quality.</p>
+            <p>Annual usual-status unemployment has nearly halved in six years, from <b id="ex-p0" set:html={TX["ex-p0"]}></b> to <b id="ex-p1" set:html={TX["ex-p1"]}></b>. The weekly measure fell in step and remains near twice the annual one: the recovery closed neither the gap nor the question of job quality.</p>
           </div>
         </div>
       </figure>
@@ -190,14 +169,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>Seven years of joining the count</h3>
             <div class="sub">All-India labour force participation rate, 15+, usual status (PS+SS) vs weekly status (CWS), 2017-18 to 2023-24</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-lfpr-ann">–</div><div class="c">2023-24, usual status</div></div>
+          <div class="plate-val"><div class="v" id="pv-lfpr-ann" set:html={TX["pv-lfpr-ann"]}></div><div class="c">2023-24, usual status</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-lfpr-ann">
-            <button class="chip" data-key="lfpr_psss"><i style="background:#2E4BD8"></i>Usual status, PS+SS</button>
-            <button class="chip" data-key="lfpr_cws"><i style="background:#5F6675"></i>Weekly status, CWS</button>
-          </div>
-          <div class="plotzone" id="plot-lfpr-ann"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-lfpr-ann" set:html={CH.lfprAnn()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS annual reports, agriculture years (Jul–Jun) plotted at July, the monthly participation plate (§06) runs from Apr 2025; this annual view runs seven years and shows the structural rise the bulletin cannot yet see</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -211,7 +186,7 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
           </div>
           <div class="now">
             <span class="mk">The annual series ends 2023-24</span>
-            <p>Usual-status LFPR rose from <b id="ex-lf0">–</b> to <b id="ex-lf1">–</b>: <b id="ex-lf-d">–</b> in seven years. The weekly measure rose from <b id="ex-lfc0">–</b> to <b id="ex-lfc1">–</b>. No {PC.nWord}-month bulletin could show a shape this clear.</p>
+            <p>Usual-status LFPR rose from <b id="ex-lf0" set:html={TX["ex-lf0"]}></b> to <b id="ex-lf1" set:html={TX["ex-lf1"]}></b>: <b id="ex-lf-d" set:html={TX["ex-lf-d"]}></b> in seven years. The weekly measure rose from <b id="ex-lfc0" set:html={TX["ex-lfc0"]}></b> to <b id="ex-lfc1" set:html={TX["ex-lfc1"]}></b>. No {PC.nWord}-month bulletin could show a shape this clear.</p>
           </div>
         </div>
       </figure>
@@ -224,18 +199,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>{seamTitle}</h3>
             <div class="sub">Participation (left) and unemployment (right), 15+, usual status (PS+SS), All India: agriculture years 2017-18 to 2023-24, calendar years {cyOldYears[0]} to {cyOldYears.at(-1)} on the original design, and {cyYear} on the revamped design, three rulers, never joined</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-seam">–</div><div class="c">{cyYear}, participation, revamped design</div></div>
+          <div class="plate-val"><div class="v" id="pv-seam" set:html={TX["pv-seam"]}></div><div class="c">{cyYear}, participation, revamped design</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip" style="cursor:default"><i style="background:#A3A9B4"></i>Agriculture years (July to June)</span>
-            <span class="chip" style="cursor:default"><i style="background:#5F6675"></i>Calendar years, original design</span>
-            <span class="chip" style="cursor:default"><i style="background:#2E4BD8;width:9px;height:9px;border-radius:50%"></i>Calendar year, revamped design</span>
-          </div>
-          <div class="plotzone" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(570px,1fr));gap:32px">
-            <div id="plot-seam-l"></div>
-            <div id="plot-seam-u"></div>
-          </div>
+          <div class="plotzone" id="plot-seam" set:html={CH.seam()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS annual reports (agriculture years) and calendar-year estimates, each year drawn at its middle, the dashed rule is January 2025, when MoSPI replaced the survey's sample design and estimation; MoSPI publishes no link between the two designs, so the lines never meet</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -266,10 +233,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>Seven years of urban unemployment, including the quarter everything stopped, then a new survey</h3>
             <div class="sub">Urban unemployment rate, 15+, current weekly status: the original quarterly bulletin, Apr–Jun 2018 to {qLabel(qDates.at(-1))}, beside the revamped survey's urban figure from {qn(q25First)}, two rulers, never joined</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-main">–</div><div class="c">{qn(q25Last)}, urban, revamped design</div></div>
+          <div class="plate-val"><div class="v" id="pv-main" set:html={TX["pv-main"]}></div><div class="c">{qn(q25Last)}, urban, revamped design</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-main"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-main" set:html={CH.main()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS quarterly bulletins, gaps: Apr–Jun 2019 (a mislabelled source cell, the published figure is 8.9; quarantined, disclosed in metadata) and Jan–Mar 2025 (never published: the survey was redesigned that quarter), the dashed rule marks January 2025, the redesign</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -283,7 +250,7 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
           </div>
           <div class="now">
             <span class="mk">As of the {qn(q25Last)} quarter</span>
-            <p>On the original design the urban rate ended at <b id="ex-q1">–</b> in {qLabel(qDates.at(-1))}, against <b id="ex-q0">–</b> when the bulletin began; in its last twelve quarters it held between {Math.min(...q12).toFixed(1)}% and {Math.max(...q12).toFixed(1)}%. The revamped survey reads urban unemployment at <b id="ex-q25u">–</b> in {qn(q25Last)}.</p>
+            <p>On the original design the urban rate ended at <b id="ex-q1" set:html={TX["ex-q1"]}></b> in {qLabel(qDates.at(-1))}, against <b id="ex-q0" set:html={TX["ex-q0"]}></b> when the bulletin began; in its last twelve quarters it held between {Math.min(...q12).toFixed(1)}% and {Math.max(...q12).toFixed(1)}%. The revamped survey reads urban unemployment at <b id="ex-q25u" set:html={TX["ex-q25u"]}></b> in {qn(q25Last)}.</p>
           </div>
         </div>
       </figure>
@@ -296,15 +263,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>{q25Title}</h3>
             <div class="sub">Unemployment rate, 15+, current weekly status, rural, urban and all India, revamped design, {qn(q25First)} to {qn(q25Last)}</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-q25">–</div><div class="c">{qn(q25Last)}, all India</div></div>
+          <div class="plate-val"><div class="v" id="pv-q25" set:html={TX["pv-q25"]}></div><div class="c">{qn(q25Last)}, all India</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-q25">
-            <button class="chip" data-key="ur_cws__person_all__a15plus"><i style="background:#2E4BD8"></i>All India</button>
-            <button class="chip" data-key="ur_cws__person_urban__a15plus"><i style="background:#5F6675"></i>Urban</button>
-            <button class="chip" data-key="ur_cws__person_rural__a15plus"><i style="background:#A3A9B4"></i>Rural</button>
-          </div>
-          <div class="plotzone" id="plot-q25"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-q25" set:html={CH.q25()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS quarterly bulletin (revamped design), all India, persons 15+, CWS</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -317,7 +279,7 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
           </div>
           <div class="now">
             <span class="mk">As of {qn(q25Last)}</span>
-            <p>Unemployment reads <b id="ex-q25a">–</b> for the country, <b id="ex-q25r">–</b> in villages and <b id="ex-q25ub">–</b> in towns and cities. Participation is <b id="ex-q25l">–</b>.{q25YearAgo >= 0 ? ` A year earlier, in ${qn(q25Dates[q25YearAgo])}, unemployment read ${f1(q25S["ur_cws" + H].data[q25YearAgo])}% and participation ${f1(q25S["lfpr_cws" + H].data[q25YearAgo])}%: the first comparison the new survey allows that the seasons cannot distort.` : " The series is too young for a same-quarter comparison a year apart."}</p>
+            <p>Unemployment reads <b id="ex-q25a" set:html={TX["ex-q25a"]}></b> for the country, <b id="ex-q25r" set:html={TX["ex-q25r"]}></b> in villages and <b id="ex-q25ub" set:html={TX["ex-q25ub"]}></b> in towns and cities. Participation is <b id="ex-q25l" set:html={TX["ex-q25l"]}></b>.{q25YearAgo >= 0 ? ` A year earlier, in ${qn(q25Dates[q25YearAgo])}, unemployment read ${f1(q25S["ur_cws" + H].data[q25YearAgo])}% and participation ${f1(q25S["lfpr_cws" + H].data[q25YearAgo])}%: the first comparison the new survey allows that the seasons cannot distort.` : " The series is too young for a same-quarter comparison a year apart."}</p>
           </div>
         </div>
       </figure>
@@ -330,14 +292,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>{YS[0].name}'s young people face the longest queue for work; {YS.at(-1).name}'s the shortest</h3>
             <div class="sub">Unemployment rate, ages 15 to 29 (dark dot) beside everyone 15 and above (pale dot), rural + urban, CWS, the {DATA.youthStates.length} states the bulletin publishes, {qn(q25Last)}</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-ystates">–</div><div class="c">{qn(q25Last)}, ages 15 to 29, all India</div></div>
+          <div class="plate-val"><div class="v" id="pv-ystates" set:html={TX["pv-ystates"]}></div><div class="c">{qn(q25Last)}, ages 15 to 29, all India</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip" style="cursor:default"><i style="background:#2E4BD8;width:9px;height:9px;border-radius:50%"></i>Ages 15 to 29</span>
-            <span class="chip" style="cursor:default"><i style="background:#C9CED6;width:9px;height:9px;border-radius:50%"></i>Everyone 15 and above</span>
-          </div>
-          <div class="plotzone" id="plot-ystates"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-ystates" set:html={CH.ystates()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS quarterly bulletin (revamped design), state tables, the vertical rule is the all-India youth rate; state figures rest on smaller samples than all-India ones, so a one-quarter move of a few points can be noise</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -399,10 +357,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>Four labour markets in one country</h3>
             <div class="sub">Unemployment rate by gender × sector, CWS, {PC.span}</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-cuts">–</div><div class="c">{PC.short}, urban women</div></div>
+          <div class="plate-val"><div class="v" id="pv-cuts" set:html={TX["pv-cuts"]}></div><div class="c">{PC.short}, urban women</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-cuts"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-cuts" set:html={CH.cuts()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS monthly bulletin, 15+, current weekly status</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -415,7 +373,7 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
           </div>
           <div class="now">
             <span class="mk">As of {PC.stamp}</span>
-            <p>Urban women: <b id="ex-fu">–</b>. Urban men: <b id="ex-mu">–</b>. {minGap >= 2 ? `The gap has stayed above two points in every one of the bulletin's ${PC.nWord} months: a structure, not a fluctuation.` : `The gap has ranged from ${minGap.toFixed(1)} to ${Math.max(...urGap).toFixed(1)} points over the bulletin's ${PC.nWord} months.`}</p>
+            <p>Urban women: <b id="ex-fu" set:html={TX["ex-fu"]}></b>. Urban men: <b id="ex-mu" set:html={TX["ex-mu"]}></b>. {minGap >= 2 ? `The gap has stayed above two points in every one of the bulletin's ${PC.nWord} months: a structure, not a fluctuation.` : `The gap has ranged from ${minGap.toFixed(1)} to ${Math.max(...urGap).toFixed(1)} points over the bulletin's ${PC.nWord} months.`}</p>
           </div>
         </div>
       </figure>
@@ -428,10 +386,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>The participation chasm</h3>
             <div class="sub">Labour force participation rate by gender × sector, CWS, {PC.span}</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-lfpr">–</div><div class="c">{PC.short}, urban women</div></div>
+          <div class="plate-val"><div class="v" id="pv-lfpr" set:html={TX["pv-lfpr"]}></div><div class="c">{PC.short}, urban women</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-lfpr"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-lfpr" set:html={CH.lfpr()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS monthly bulletin, share of the population working or seeking work</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -444,7 +402,7 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
           </div>
           <div class="now">
             <span class="mk">As of {PC.stamp}</span>
-            <p>Urban women's participation: <b id="ex-fl">–</b>. Over the bulletin's {PC.nWord} months it has moved only between {Math.min(...lfFU).toFixed(1)}% and {Math.max(...lfFU).toFixed(1)}%. Its gap to urban men's participation, {(lastC("lfpr_male_urban") - lastC("lfpr_female_urban")).toFixed(1)} points, is the widest in this cut.</p>
+            <p>Urban women's participation: <b id="ex-fl" set:html={TX["ex-fl"]}></b>. Over the bulletin's {PC.nWord} months it has moved only between {Math.min(...lfFU).toFixed(1)}% and {Math.max(...lfFU).toFixed(1)}%. Its gap to urban men's participation, {(lastC("lfpr_male_urban") - lastC("lfpr_female_urban")).toFixed(1)} points, is the widest in this cut.</p>
           </div>
         </div>
       </figure>
@@ -457,10 +415,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>Who is actually working</h3>
             <div class="sub">Worker population ratio by gender × sector, CWS, {PC.span}, the gap between this line and the participation line above is the unemployment rate</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-wpr">–</div><div class="c">{PC.short}, urban men</div></div>
+          <div class="plate-val"><div class="v" id="pv-wpr" set:html={TX["pv-wpr"]}></div><div class="c">{PC.short}, urban men</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-wpr"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-wpr" set:html={CH.wpr()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS monthly bulletin, the share of the population actually at work, distinct from the share willing to work (LFPR)</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -486,10 +444,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>Young women in cities queue longest for work</h3>
             <div class="sub">Unemployment rate, ages 15 to 29, by gender and sector, current weekly status, monthly bulletin, {PC.span}</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-youth">–</div><div class="c">{PC.short}, young urban women</div></div>
+          <div class="plate-val"><div class="v" id="pv-youth" set:html={TX["pv-youth"]}></div><div class="c">{PC.short}, young urban women</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-youth"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-youth" set:html={CH.youth()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS monthly bulletin, ages 15 to 29, the age band the bulletin publishes beside 15+ and all ages</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -502,7 +460,7 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
           </div>
           <div class="now">
             <span class="mk">As of {PC.stamp}</span>
-            <p>Among the young, urban women print <b id="ex-y-fu">–</b>, urban men <b id="ex-y-mu">–</b>, rural women <b id="ex-y-fr">–</b> and rural men <b id="ex-y-mr">–</b>; all young people together, <b id="ex-y-all">–</b>. Of young urban women looking for work, about one in <b id="ex-y-one">–</b> has none.</p>
+            <p>Among the young, urban women print <b id="ex-y-fu" set:html={TX["ex-y-fu"]}></b>, urban men <b id="ex-y-mu" set:html={TX["ex-y-mu"]}></b>, rural women <b id="ex-y-fr" set:html={TX["ex-y-fr"]}></b> and rural men <b id="ex-y-mr" set:html={TX["ex-y-mr"]}></b>; all young people together, <b id="ex-y-all" set:html={TX["ex-y-all"]}></b>. Of young urban women looking for work, about one in <b id="ex-y-one" set:html={TX["ex-y-one"]}></b> has none.</p>
           </div>
         </div>
       </figure>
@@ -514,12 +472,12 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
     <div class="sec-head"><span class="no">07</span><h2>What work is</h2><span class="line"></span><span class="unit">share of workers, per cent, annual reports</span></div>
 
     <div class="break basket">
-      <div class="bar" id="bk-st-bar"></div>
-      <div class="labels" id="bk-st-labels"></div>
+      <div class="bar" id="bk-st-bar" set:html={TX["bk-st-bar"]}></div>
+      <div class="labels" id="bk-st-labels" set:html={TX["bk-st-labels"]}></div>
     </div>
     <div class="break basket" style="margin-top:26px">
-      <div class="bar" id="bk-in-bar"></div>
-      <div class="labels" id="bk-in-labels"></div>
+      <div class="bar" id="bk-in-bar" set:html={TX["bk-in-bar"]}></div>
+      <div class="labels" id="bk-in-labels" set:html={TX["bk-in-labels"]}></div>
       <p class="note">Two ways to split the same workforce, 2023-24. By status: a majority works for itself. By industry: the farm still employs more Indians than any other place: on the weekly stopwatch, where seasonal work is counted as it happens.</p>
     </div>
 
@@ -530,15 +488,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>The self-employed majority, the salaried minority</h3>
             <div class="sub">Share of workers by broad status in employment, 15+, usual status (PS+SS), 2017-18 to 2023-24</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-status">–</div><div class="c">2023-24, self-employed share</div></div>
+          <div class="plate-val"><div class="v" id="pv-status" set:html={TX["pv-status"]}></div><div class="c">2023-24, self-employed share</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-status">
-            <button class="chip" data-key="self_employed_person"><i style="background:#2E4BD8"></i>Self-employed</button>
-            <button class="chip" data-key="regular_person"><i style="background:#5F6675"></i>Regular wage/salary</button>
-            <button class="chip" data-key="casual_person"><i style="background:#A3A9B4"></i>Casual labour</button>
-          </div>
-          <div class="plotzone" id="plot-status"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-status" set:html={CH.status()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS annual reports, shares of all workers, person, rural + urban, the three statuses sum to 100, agriculture years plotted at July</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -552,7 +505,7 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
           </div>
           <div class="now">
             <span class="mk">The 2023-24 register</span>
-            <p>Self-employment is <b id="ex-st-se">–</b> of all workers: <b id="ex-st-oa">–</b> own-account and employers, <b id="ex-st-hp">–</b> household helpers. Regular wage work is <b id="ex-st-rg">–</b>; casual labour <b id="ex-st-cs">–</b>. Since 2017-18 the self-employed share has risen <b id="ex-st-dse">–</b> while casual work fell <b id="ex-st-dcs">–</b>: the recovery in work has been a movement into working for oneself, not onto payrolls.</p>
+            <p>Self-employment is <b id="ex-st-se" set:html={TX["ex-st-se"]}></b> of all workers: <b id="ex-st-oa" set:html={TX["ex-st-oa"]}></b> own-account and employers, <b id="ex-st-hp" set:html={TX["ex-st-hp"]}></b> household helpers. Regular wage work is <b id="ex-st-rg" set:html={TX["ex-st-rg"]}></b>; casual labour <b id="ex-st-cs" set:html={TX["ex-st-cs"]}></b>. Since 2017-18 the self-employed share has risen <b id="ex-st-dse" set:html={TX["ex-st-dse"]}></b> while casual work fell <b id="ex-st-dcs" set:html={TX["ex-st-dcs"]}></b>: the recovery in work has been a movement into working for oneself, not onto payrolls.</p>
           </div>
         </div>
       </figure>
@@ -565,18 +518,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>The same workforce, asked by gender</h3>
             <div class="sub">Share of workers by status in employment, usual status (PS+SS), men (left) vs women (right), 2017-18 to 2023-24, same colours, same scale</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-gender">–</div><div class="c">2023-24, women self-employed</div></div>
+          <div class="plate-val"><div class="v" id="pv-gender" set:html={TX["pv-gender"]}></div><div class="c">2023-24, women self-employed</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <button class="chip" style="cursor:default"><i style="background:#2E4BD8"></i>Self-employed</button>
-            <button class="chip" style="cursor:default"><i style="background:#5F6675"></i>Regular wage</button>
-            <button class="chip" style="cursor:default"><i style="background:#A3A9B4"></i>Casual labour</button>
-          </div>
-          <div class="plotzone" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(570px,1fr));gap:32px">
-            <div id="plot-gender-male"></div>
-            <div id="plot-gender-female"></div>
-          </div>
+          <div class="plotzone" id="plot-gender" set:html={CH.gender()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS annual reports, shares of all male and all female workers separately, each panel sums to 100, same three colours as the person-level plate above, agriculture years plotted at July</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -590,7 +535,7 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
           </div>
           <div class="now">
             <span class="mk">The 2023-24 register, by gender</span>
-            <p>Self-employment: <b id="ex-g-se-m">–</b> of men, <b id="ex-g-se-f">–</b> of women: up from <b id="ex-g-se-f0">–</b> in 2017-18. Regular wage: <b id="ex-g-rg-m">–</b> of men against <b id="ex-g-rg-f">–</b> of women. Casual labour: <b id="ex-g-cs-m">–</b> of men, <b id="ex-g-cs-f">–</b> of women. The female self-employment line is the structural story behind the participation rise in §03.</p>
+            <p>Self-employment: <b id="ex-g-se-m" set:html={TX["ex-g-se-m"]}></b> of men, <b id="ex-g-se-f" set:html={TX["ex-g-se-f"]}></b> of women: up from <b id="ex-g-se-f0" set:html={TX["ex-g-se-f0"]}></b> in 2017-18. Regular wage: <b id="ex-g-rg-m" set:html={TX["ex-g-rg-m"]}></b> of men against <b id="ex-g-rg-f" set:html={TX["ex-g-rg-f"]}></b> of women. Casual labour: <b id="ex-g-cs-m" set:html={TX["ex-g-cs-m"]}></b> of men, <b id="ex-g-cs-f" set:html={TX["ex-g-cs-f"]}></b> of women. The female self-employment line is the structural story behind the participation rise in §03.</p>
           </div>
         </div>
       </figure>
@@ -603,14 +548,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>In {DATA.kinds.filter((r) => r.rg < 30).length} of {DATA.kinds.length} states and UTs, fewer than three workers in ten draw a regular wage</h3>
             <div class="sub">Share of workers in regular wage or salaried jobs (dark dot) and in casual labour (pale dot), every state and UT, 15+, usual status (PS+SS), rural + urban, {cyYear}; the rest are self-employed</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-kinds">–</div><div class="c">{cyYear}, spread in salaried share, highest to lowest</div></div>
+          <div class="plate-val"><div class="v" id="pv-kinds" set:html={TX["pv-kinds"]}></div><div class="c">{cyYear}, spread in salaried share, highest to lowest</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip" style="cursor:default"><i style="background:#2E4BD8;width:9px;height:9px;border-radius:50%"></i>Regular wage or salary</span>
-            <span class="chip" style="cursor:default"><i style="background:#C9CED6;width:9px;height:9px;border-radius:50%"></i>Casual labour</span>
-          </div>
-          <div class="plotzone" id="plot-kinds"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-kinds" set:html={CH.kinds()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS calendar-year estimates (revamped design), share of all workers in each state, the three statuses add to 100; NIC section, occupation and enterprise-type shares for every state are in the every-cut table below</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -641,16 +582,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>The pay hierarchy: a month of work, four prices</h3>
             <div class="sub">Regular wage/salary earnings (₹ per month) and gross earnings from self-employment (₹ per 30 days), by gender, rural + urban, 2017-18 to 2023-24</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-pay">–</div><div class="c">Apr–Jun 2024, regular wage, person</div></div>
+          <div class="plate-val"><div class="v" id="pv-pay" set:html={TX["pv-pay"]}></div><div class="c">Apr–Jun 2024, regular wage, person</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-pay">
-            <button class="chip" data-key="regular_male"><i style="background:#5F6675"></i>Regular, men</button>
-            <button class="chip" data-key="regular_female"><i style="background:#878D99"></i>Regular, women</button>
-            <button class="chip" data-key="self_employed_male"><i style="background:#A3A9B4"></i>Self-employed, men</button>
-            <button class="chip" data-key="self_employed_female"><i style="background:#2E4BD8"></i>Self-employed, women</button>
-          </div>
-          <div class="plotzone" id="plot-pay"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-pay" set:html={CH.pay()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS annual reports, nominal ₹, all-India, regular wages are per month, self-employment earnings per 30 days, near-equal windows, plotted together; the casual day-rate has its own plate below, 2017-18 all-India aggregates quarantined (see provenance)</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -664,7 +599,7 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
           </div>
           <div class="now">
             <span class="mk">As of Apr–Jun 2024</span>
-            <p>A regular job pays <b id="ex-pay-rg">–</b> a month for men, <b id="ex-pay-rgf">–</b> for women. Self-employment grosses <b id="ex-pay-se">–</b> per 30 days for men and <b id="ex-pay-sef">–</b> for women: the widest gap on the plate, roughly <b id="ex-pay-ratio">–</b> between the salaried man and the self-employed woman. Most of the self-employed majority in §07 lives on the lower two lines.</p>
+            <p>A regular job pays <b id="ex-pay-rg" set:html={TX["ex-pay-rg"]}></b> a month for men, <b id="ex-pay-rgf" set:html={TX["ex-pay-rgf"]}></b> for women. Self-employment grosses <b id="ex-pay-se" set:html={TX["ex-pay-se"]}></b> per 30 days for men and <b id="ex-pay-sef" set:html={TX["ex-pay-sef"]}></b> for women: the widest gap on the plate, roughly <b id="ex-pay-ratio" set:html={TX["ex-pay-ratio"]}></b> between the salaried man and the self-employed woman. Most of the self-employed majority in §07 lives on the lower two lines.</p>
           </div>
         </div>
       </figure>
@@ -677,15 +612,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>The casual day</h3>
             <div class="sub">Average wage per day from casual labour, other than public works, rural + urban, 2017-18 to 2023-24</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-casual">–</div><div class="c">Apr–Jun 2024, person, per day</div></div>
+          <div class="plate-val"><div class="v" id="pv-casual" set:html={TX["pv-casual"]}></div><div class="c">Apr–Jun 2024, person, per day</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-casual">
-            <button class="chip" data-key="casual_person"><i style="background:#2E4BD8"></i>Person</button>
-            <button class="chip" data-key="casual_male"><i style="background:#5F6675"></i>Men</button>
-            <button class="chip" data-key="casual_female"><i style="background:#A3A9B4"></i>Women</button>
-          </div>
-          <div class="plotzone" id="plot-casual"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-casual" set:html={CH.casual()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS annual reports, nominal ₹ per day, all-India, casual work is priced by the day, so it is never drawn on the monthly axis above</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -698,7 +628,7 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
           </div>
           <div class="now">
             <span class="mk">As of Apr–Jun 2024</span>
-            <p>A casual day pays <b id="ex-cas-p">–</b>: <b id="ex-cas-m">–</b> for men, <b id="ex-cas-f">–</b> for women. Seven years earlier it paid <b id="ex-cas-0">–</b>; the rise is <b id="ex-cas-r">–</b> in nominal terms, over years in which the cost of living rose too. At twenty-six days a month, the casual month comes to <b id="ex-cas-mo">–</b>: about half the salaried one.</p>
+            <p>A casual day pays <b id="ex-cas-p" set:html={TX["ex-cas-p"]}></b>: <b id="ex-cas-m" set:html={TX["ex-cas-m"]}></b> for men, <b id="ex-cas-f" set:html={TX["ex-cas-f"]}></b> for women. Seven years earlier it paid <b id="ex-cas-0" set:html={TX["ex-cas-0"]}></b>; the rise is <b id="ex-cas-r" set:html={TX["ex-cas-r"]}></b> in nominal terms, over years in which the cost of living rose too. At twenty-six days a month, the casual month comes to <b id="ex-cas-mo" set:html={TX["ex-cas-mo"]}></b>: about half the salaried one.</p>
           </div>
         </div>
       </figure>
@@ -711,15 +641,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>A regular job pays {inr0(PAY[0].p)} a month in {PAY[0].name} and {inr0(PAY.at(-1).p)} in {PAY.at(-1).name}</h3>
             <div class="sub">Average monthly earnings from regular wage or salaried work, all workers (dark dot) and women (pale dot), every state and UT, rural + urban, {cyYear}, nominal ₹</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-paystates">–</div><div class="c">{cyYear}, all India, regular wage, a month</div></div>
+          <div class="plate-val"><div class="v" id="pv-paystates" set:html={TX["pv-paystates"]}></div><div class="c">{cyYear}, all India, regular wage, a month</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip" style="cursor:default"><i style="background:#5F6675;width:9px;height:9px;border-radius:50%"></i>All regular workers</span>
-            <span class="chip" style="cursor:default"><i style="background:#C9CED6;width:9px;height:9px;border-radius:50%"></i>Women</span>
-            <span class="chip" style="cursor:default"><i style="background:#2E4BD8;width:9px;height:9px;border-radius:50%"></i>Above the all-India average</span>
-          </div>
-          <div class="plotzone" id="plot-paystates"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-paystates" set:html={CH.paystates()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS calendar-year estimates (revamped design), wage or salary earned in the calendar month before the survey, the vertical rule is the all-India average; small UTs rest on few sampled workers; casual day wages and self-employment earnings for every state and sector are in the every-cut table below</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -733,7 +658,7 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
           </div>
           <div class="now">
             <span class="mk">As of the {cyYear} estimates</span>
-            <p>A regular job pays <b id="ex-ps-ai">–</b> a month across India: <b id="ex-ps-m">–</b> for men and <b id="ex-ps-f">–</b> for women. A casual day pays most in {CAS[0].name}, {inr0(CAS[0].cas)}, and least in {CAS.at(-1).name}, {inr0(CAS.at(-1).cas)}: the same day's labour, priced {f1(CAS[0].cas / CAS.at(-1).cas)} times higher in one state than another.</p>
+            <p>A regular job pays <b id="ex-ps-ai" set:html={TX["ex-ps-ai"]}></b> a month across India: <b id="ex-ps-m" set:html={TX["ex-ps-m"]}></b> for men and <b id="ex-ps-f" set:html={TX["ex-ps-f"]}></b> for women. A casual day pays most in {CAS[0].name}, {inr0(CAS[0].cas)}, and least in {CAS.at(-1).name}, {inr0(CAS.at(-1).cas)}: the same day's labour, priced {f1(CAS[0].cas / CAS.at(-1).cas)} times higher in one state than another.</p>
           </div>
         </div>
       </figure>
@@ -746,16 +671,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>More salaried workers have a written contract; the share with no protection at all has {condY("none_of_three__person_all", -1) >= condY("none_of_three__person_all", 0) ? "not fallen" : "barely fallen"}</h3>
             <div class="sub">Per cent of regular wage or salaried employees with no written job contract, not eligible for paid leave, without any social security benefit, and with none of the three, all India, usual status, agriculture years {agri(condFirst)} to {agri(condLast)}</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-cond">–</div><div class="c">{agri(condLast)}, none of the three</div></div>
+          <div class="plate-val"><div class="v" id="pv-cond" set:html={TX["pv-cond"]}></div><div class="c">{agri(condLast)}, none of the three</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-cond">
-            <button class="chip" data-key="none_of_three__person_all"><i style="background:#2E4BD8"></i>None of the three</button>
-            <button class="chip" data-key="no_contract__person_all"><i style="background:#5F6675"></i>No written contract</button>
-            <button class="chip" data-key="no_social_security__person_all"><i style="background:#878D99"></i>No social security</button>
-            <button class="chip" data-key="no_paid_leave__person_all"><i style="background:#A3A9B4"></i>No paid leave</button>
-          </div>
-          <div class="plotzone" id="plot-cond"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-cond" set:html={CH.cond()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS annual reports, regular wage or salaried employees (usual status), agriculture years plotted at July; every state, gender and sector is in the every-cut table below</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -768,7 +687,7 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
           </div>
           <div class="now">
             <span class="mk">As of {agri(condLast)}</span>
-            <p>Regular employees without a written contract fell from <b id="ex-c-nc0">–</b> to <b id="ex-c-nc1">–</b>. Those with none of the three protections were <b id="ex-c-n0">–</b> in {agri(condFirst)} and <b id="ex-c-n1">–</b> in {agri(condLast)}. Of every ten salaried workers, about <b id="ex-c-ten">–</b> still have no contract, no paid leave and no social security. These tables end with the original design: the revamped survey's calendar-year contract table is served without its labels, so it cannot be read (see the provenance notes).</p>
+            <p>Regular employees without a written contract fell from <b id="ex-c-nc0" set:html={TX["ex-c-nc0"]}></b> to <b id="ex-c-nc1" set:html={TX["ex-c-nc1"]}></b>. Those with none of the three protections were <b id="ex-c-n0" set:html={TX["ex-c-n0"]}></b> in {agri(condFirst)} and <b id="ex-c-n1" set:html={TX["ex-c-n1"]}></b> in {agri(condLast)}. Of every ten salaried workers, about <b id="ex-c-ten" set:html={TX["ex-c-ten"]}></b> still have no contract, no paid leave and no social security. These tables end with the original design: the revamped survey's calendar-year contract table is served without its labels, so it cannot be read (see the provenance notes).</p>
           </div>
         </div>
       </figure>
@@ -785,15 +704,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>Unemployment climbs the ladder of degrees</h3>
             <div class="sub">Unemployment rate by general education level, 15+, usual status (PS+SS), 2023-24, with 2017-18 as pale dots</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-edu">–</div><div class="c">2023-24, graduates</div></div>
+          <div class="plate-val"><div class="v" id="pv-edu" set:html={TX["pv-edu"]}></div><div class="c">2023-24, graduates</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip" style="cursor:default"><i style="background:#5F6675;width:9px;height:9px;border-radius:50%"></i>2023-24</span>
-            <span class="chip" style="cursor:default"><i style="background:#C9CED6;width:9px;height:9px;border-radius:50%"></i>2017-18</span>
-            <span class="chip" style="cursor:default"><i style="background:#2E4BD8;width:9px;height:9px;border-radius:50%"></i>Twice the all-India rate or more</span>
-          </div>
-          <div class="plotzone" id="plot-edu"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-edu" set:html={CH.edu()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS annual reports, all-India, person, rural + urban, 15+, rows in ladder order, not sorted by value, the vertical rule is the all-India rate, every level of education together</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -806,7 +720,7 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
           </div>
           <div class="now">
             <span class="mk">The 2023-24 register</span>
-            <p>Graduate unemployment prints at <b id="ex-edu-g">–</b> against <b id="ex-edu-nl">–</b> for those who never learned to read: <b id="ex-edu-x">–</b> the rate, in the same country, the same year. The queue is young as well as educated: among 15-to-29-year-olds the rate is <b id="ex-edu-y">–</b>, against <b id="ex-edu-all">–</b> for everyone 15 and above. The concession the window offers: the graduate rate has fallen from <b id="ex-edu-g0">–</b> in 2017-18, and the youth rate from <b id="ex-edu-y0">–</b>.</p>
+            <p>Graduate unemployment prints at <b id="ex-edu-g" set:html={TX["ex-edu-g"]}></b> against <b id="ex-edu-nl" set:html={TX["ex-edu-nl"]}></b> for those who never learned to read: <b id="ex-edu-x" set:html={TX["ex-edu-x"]}></b> the rate, in the same country, the same year. The queue is young as well as educated: among 15-to-29-year-olds the rate is <b id="ex-edu-y" set:html={TX["ex-edu-y"]}></b>, against <b id="ex-edu-all" set:html={TX["ex-edu-all"]}></b> for everyone 15 and above. The concession the window offers: the graduate rate has fallen from <b id="ex-edu-g0" set:html={TX["ex-edu-g0"]}></b> in 2017-18, and the youth rate from <b id="ex-edu-y0" set:html={TX["ex-edu-y0"]}></b>.</p>
           </div>
         </div>
       </figure>
@@ -819,14 +733,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>{socTitle}</h3>
             <div class="sub">Labour force participation rate, 15+, usual status (PS+SS), rural + urban, by social group and by religion, women (dark dot) beside men (pale dot), all India, {cyYear}</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-social">–</div><div class="c">{cyYear}, all women 15+</div></div>
+          <div class="plate-val"><div class="v" id="pv-social" set:html={TX["pv-social"]}></div><div class="c">{cyYear}, all women 15+</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip" style="cursor:default"><i style="background:#2E4BD8;width:9px;height:9px;border-radius:50%"></i>Women</span>
-            <span class="chip" style="cursor:default"><i style="background:#C9CED6;width:9px;height:9px;border-radius:50%"></i>Men</span>
-          </div>
-          <div class="plotzone" id="plot-social"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-social" set:html={CH.social()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS calendar-year estimates (revamped design), all India; social groups are the survey's: Scheduled Tribe, Scheduled Caste, Other Backward Class and "others", the groups outside the three; religions are the four the survey publishes, the vertical rule is all women</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -857,15 +767,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>Thirty-six markets, one national average</h3>
             <div class="sub">Unemployment rate by State/UT, 15+, usual status (PS+SS) beside weekly status (CWS), 2023-24</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-states">–</div><div class="c">2023-24, spread, highest to lowest, PS+SS</div></div>
+          <div class="plate-val"><div class="v" id="pv-states" set:html={TX["pv-states"]}></div><div class="c">2023-24, spread, highest to lowest, PS+SS</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip" style="cursor:default"><i style="background:#5F6675;width:9px;height:9px;border-radius:50%"></i>Usual status, PS+SS</span>
-            <span class="chip" style="cursor:default"><i style="background:#C9CED6;width:9px;height:9px;border-radius:50%"></i>Weekly status, CWS</span>
-            <span class="chip" style="cursor:default"><i style="background:#2E4BD8;width:9px;height:9px;border-radius:50%"></i>Twice the All-India rate or more</span>
-          </div>
-          <div class="plotzone" id="plot-states"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-states" set:html={CH.states()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS annual report 2023-24, States/UTs, 15+, rural + urban, usual status sorts the strip; the pale dot is the same year on the weekly stopwatch, paired, never averaged, Dadra &amp; Nagar Haveli and Daman &amp; Diu merged in 2020 and appear as one UT</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -879,8 +784,8 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
           </div>
           <div class="now">
             <span class="mk">The 2023-24 register</span>
-            <p>The spread is the story. The highest usual-status rate is <b id="st-max">–</b> and the lowest <b id="st-min">–</b>: <b id="st-spread">–</b> apart, around an All-India figure of <b id="st-ai">–</b>. Kerala stands at <b id="st-kerala">–</b> against Gujarat's <b id="st-gujarat">–</b>: one educated labour force searching, one informal economy absorbing. Of the thirty-six, <b id="st-nout">–</b> cross twice the national rate.</p>
-            <p>Against 2022-23, the largest fall is <b id="st-fall">–</b>; the largest rise is <b id="st-rise">–</b>. A one-year state move in a sample survey deserves suspicion before applause: the small UTs swing hardest for exactly that reason.</p>
+            <p>The spread is the story. The highest usual-status rate is <b id="st-max" set:html={TX["st-max"]}></b> and the lowest <b id="st-min" set:html={TX["st-min"]}></b>: <b id="st-spread" set:html={TX["st-spread"]}></b> apart, around an All-India figure of <b id="st-ai" set:html={TX["st-ai"]}></b>. Kerala stands at <b id="st-kerala" set:html={TX["st-kerala"]}></b> against Gujarat's <b id="st-gujarat" set:html={TX["st-gujarat"]}></b>: one educated labour force searching, one informal economy absorbing. Of the thirty-six, <b id="st-nout" set:html={TX["st-nout"]}></b> cross twice the national rate.</p>
+            <p>Against 2022-23, the largest fall is <b id="st-fall" set:html={TX["st-fall"]}></b>; the largest rise is <b id="st-rise" set:html={TX["st-rise"]}></b>. A one-year state move in a sample survey deserves suspicion before applause: the small UTs swing hardest for exactly that reason.</p>
           </div>
         </div>
       </figure>
@@ -893,14 +798,10 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
             <h3>Men work at much the same rate everywhere; women's work is what separates the states</h3>
             <div class="sub">Worker population ratio (the share of people aged 15+ who are working), women (dark dot) and men (pale dot), every state and UT, usual status (PS+SS), rural + urban, {cyYear}, sorted by women</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-work">–</div><div class="c">{cyYear}, women at work, highest to lowest state</div></div>
+          <div class="plate-val"><div class="v" id="pv-work" set:html={TX["pv-work"]}></div><div class="c">{cyYear}, women at work, highest to lowest state</div></div>
         </div>
         <div class="frame">
-          <div class="legend">
-            <span class="chip" style="cursor:default"><i style="background:#2E4BD8;width:9px;height:9px;border-radius:50%"></i>Women</span>
-            <span class="chip" style="cursor:default"><i style="background:#C9CED6;width:9px;height:9px;border-radius:50%"></i>Men</span>
-          </div>
-          <div class="plotzone" id="plot-work"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-work" set:html={CH.work()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, PLFS calendar-year estimates (revamped design), the vertical rule is all-India women; every state's participation, worker and unemployment rates by gender, sector, age band and education level, on both designs, are in the every-cut table below</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -985,7 +886,7 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office, Periodic Labour Force Survey, retrieved through the eSankhyiki API, vintage <b id="prov-vintage">–</b>. Every indicator MoSPI serves (participation, worker and unemployment rates; the distribution of workers by status, industry, occupation and enterprise; regular employees' job conditions; regular wages, casual wages and self-employment earnings) is fetched whole, at every cut, and archived as served before any bundle is cut from it.</p>
+        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office, Periodic Labour Force Survey, retrieved through the eSankhyiki API, vintage <b id="prov-vintage" set:html={TX["prov-vintage"]}></b>. Every indicator MoSPI serves (participation, worker and unemployment rates; the distribution of workers by status, industry, occupation and enterprise; regular employees' job conditions; regular wages, casual wages and self-employment earnings) is fetched whole, at every cut, and archived as served before any bundle is cut from it.</p>
         <p>Two survey designs. The original design: annual reports on agriculture years 2017-18 to 2023-24, calendar-year estimates {cyOldYears[0]} to {cyOldYears.at(-1)}, and the urban quarterly bulletin to {qLabel(qDates.at(-1))}. The revamped design, from January 2025: the monthly bulletin ({PM.long}), the quarterly bulletin with villages and 22 states ({qn(q25First)} to {qn(q25Last)}), and calendar-year estimates from {cyYear}. Never spliced. Dadra &amp; Nagar Haveli and Daman &amp; Diu report separately to 2019-20 and as one merged UT thereafter.</p>
         <p>Withheld, every case disclosed on its series and kept in the raw archive: values the data service garbles ("l0.8", "IS.2", a worker ratio of 415); cells whose three ratios contradict each other (Apr–Jun 2019 urban unemployment is carried as 21.6 where the bulletin says 8.9); cells with no sampled person; the state tables of Apr–Jun 2025 and the participation table of Jul–Sep 2025 from Jammu &amp; Kashmir on, whose state labels the service shifted one row (checked against the bulletin); and the 2017-18 rural-plus-urban earnings aggregates for regular and self-employed workers, whose implied urban weight contradicts every later year. Jan–Mar 2025 was never published in the quarterly bulletin. The calendar-year job-contract tables are served with their category label missing and cannot be used; the agriculture-year ones are drawn in §08.</p>
       </div>
@@ -1001,7 +902,7 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
     </div>
     <div class="fine">
       <span>India Atlas, PLFS</span>
-      <span>Vintage <span id="prov-vintage2">–</span>, CWS and PS+SS, never spliced</span>
+      <span>Vintage <span id="prov-vintage2" set:html={TX["prov-vintage2"]}></span>, CWS and PS+SS, never spliced</span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
@@ -1009,6 +910,5 @@ const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
 </div>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/jobs.client.js";
 </script>
 </Base>

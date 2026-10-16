@@ -1,8 +1,8 @@
 // src/dossiers/gender.data.js: build-time reader for the Women and men guide
 // (src/pages/guides/gender.astro). The guide draws on about 40 of the compendium's 180 bundles
 // (one per table, split by instrument); the page reads them here at build time, computes the
-// figures its copy names, and embeds only what each plate draws as one inline JSON block that
-// src/dossiers/gender.client.js reads. No runtime fetch; every value is a bundle's own, and a
+// figures its copy names, and hands what each plate draws to src/dossiers/health-gender.charts.js,
+// which draws it at build time. No runtime fetch; every value is a bundle's own, and a
 // derived figure (a share computed from two counts) says so where it is shown.
 import fs from "node:fs";
 import path from "node:path";

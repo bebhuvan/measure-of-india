@@ -1,9 +1,8 @@
 // src/dossiers/jobs.data.js: build-time reader for the jobs guide (src/pages/guides/jobs.astro).
 // The deep PLFS bundles (plfs-ay-states-*, plfs-cy25-states-*, plfs-q25-states-*, the earnings
-// and conditions tables) run to megabytes; importing them into the client would blow the page
-// budget (docs/CONTRACT-render.md). The page reads them here at build time and embeds only the
-// series its plates draw, in bundle shape, as one inline JSON block (#jobs-data) that
-// src/dossiers/jobs.client.js hydrates. No runtime fetch; every value is the bundle's own.
+// and conditions tables) run to megabytes. The page and src/dossiers/jobs.charts.js read the slices
+// they draw here at build time (jobsData()); the reader's browser gets finished charts and numbers,
+// never a bundle. Every value is the bundle's own.
 import fs from "node:fs";
 import path from "node:path";
 
@@ -61,3 +60,29 @@ export function stateRows(slug, cols, { at = -1 } = {}) {
 
 /** A bundle's date at an index (default the last), ISO. */
 export const dateAt = (slug, at = -1) => { const d = load(slug).dates; return d[at < 0 ? d.length + at : at]; };
+
+/** The slices of the deep bundles the jobs plates draw (moved from the page so src/dossiers/jobs.charts.js
+ *  and src/pages/guides/jobs.astro read one object). */
+let memo = null;
+export function jobsData() {
+  const J = load, H = "__person_all__a15plus";
+  return (memo ??= {
+  seam: {
+    ay: pick("plfs-annual", ["lfpr_psss", "ur_psss"]),
+    cy: pick("plfs-cy-india", ["lfpr_psss" + H, "ur_psss" + H]),
+    cy25: pick("plfs-cy25-india", ["lfpr_psss" + H, "ur_psss" + H]),
+  },
+  q25: pick("plfs-q25", ["lfpr", "wpr", "ur"].flatMap((i) => ["all", "rural", "urban"].map((s) => `${i}_cws__person_${s}__a15plus`))),
+  youth: pick("plfs-monthly-age", ["ur_cws__person_all__a15_29", ...["male", "female"].flatMap((g) => ["rural", "urban"].map((s) => `ur_cws__${g}_${s}__a15_29`))]),
+  youthStates: stateRows("plfs-q25-states-ur", { y: "{st}__ur_cws__person_all__a15_29", all: "{st}__ur_cws__person_all__a15plus" }),
+  youthAi: { y: J("plfs-q25").series.ur_cws__person_all__a15_29.data.at(-1), all: J("plfs-q25").series["ur_cws" + H].data.at(-1) },
+  work: stateRows("plfs-cy25-states-wpr", { p: "{st}__wpr_psss__person_all__a15plus", m: "{st}__wpr_psss__male_all__a15plus", f: "{st}__wpr_psss__female_all__a15plus" }),
+  workAi: { p: J("plfs-cy25-india").series["wpr_psss" + H].data.at(-1), m: J("plfs-cy25-india").series.wpr_psss__male_all__a15plus.data.at(-1), f: J("plfs-cy25-india").series.wpr_psss__female_all__a15plus.data.at(-1) },
+  social: pick("plfs-cy25-india", keysOf("plfs-cy25-india", /^lfpr_psss__(male|female)_all__a15plus__(soc|rel)_/)),
+  socialAi: { m: J("plfs-cy25-india").series.lfpr_psss__male_all__a15plus.data.at(-1), f: J("plfs-cy25-india").series.lfpr_psss__female_all__a15plus.data.at(-1) },
+  kinds: stateRows("plfs-cy25-workers-states", { rg: "{st}__regular__person_all__psss", cs: "{st}__casual__person_all__psss", se: "{st}__self_employed__person_all__psss" }),
+  pay: stateRows("plfs-cy25-earnings", { p: "{st}__regular__person_all", f: "{st}__regular__female_all", m: "{st}__regular__male_all", cas: "{st}__casual__person_all" }),
+  payAi: Object.fromEntries(["regular__person_all", "regular__female_all", "regular__male_all", "casual__person_all", "self_employed__person_all"].map((k) => [k, J("plfs-cy25-earnings").series[k].data.at(-1)])),
+  cond: pick("plfs-conditions", ["no_contract", "no_paid_leave", "no_social_security", "none_of_three"].flatMap((c) => [`${c}__person_all`, `${c}__female_all`, `${c}__male_all`])),
+});
+}

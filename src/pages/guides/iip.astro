@@ -7,6 +7,9 @@ import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["iip"];
+import * as CH from "../../dossiers/iip.charts.js";
+// every number the page shows outside the prose, computed at build time from the bundles
+const N = CH.numbers();
 import { period, word } from "../../dossiers/periods.js";
 import b22 from "../../../data/series/iip-2022.json";
 import ind22 from "../../../data/series/iip-industries-2022.json";
@@ -77,10 +80,10 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
       <span>Released <b>quick estimates</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Headline IIP, y/y</div><div class="v acc" id="n-head">–</div><div class="d" id="d-head">–</div><div class="nspark" id="nspark-head"></div></div>
-      <div class="num"><div class="l">Manufacturing, y/y</div><div class="v" id="n-mfg">–</div><div class="d" id="d-mfg">–</div></div>
-      <div class="num"><div class="l">Capital goods, y/y</div><div class="v" id="n-cap">–</div><div class="d" id="d-cap">–</div></div>
-      <div class="num"><div class="l">Electricity &amp; gas, y/y</div><div class="v" id="n-elec">–</div><div class="d" id="d-elec">–</div></div>
+      <div class="num"><div class="l">Headline IIP, y/y</div><div class="v acc" id="n-head" set:html={N["n-head"]} /><div class="d" id="d-head" set:html={N["d-head"]} /><div class="nspark" id="nspark-head" set:html={N["nspark-head"]} /></div>
+      <div class="num"><div class="l">Manufacturing, y/y</div><div class="v" id="n-mfg" set:html={N["n-mfg"]} /><div class="d" id="d-mfg" set:html={N["d-mfg"]} /></div>
+      <div class="num"><div class="l">Capital goods, y/y</div><div class="v" id="n-cap" set:html={N["n-cap"]} /><div class="d" id="d-cap" set:html={N["d-cap"]} /></div>
+      <div class="num"><div class="l">Electricity &amp; gas, y/y</div><div class="v" id="n-elec" set:html={N["n-elec"]} /><div class="d" id="d-elec" set:html={N["d-elec"]} /></div>
     </div>
   </div>
 
@@ -88,9 +91,9 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
   <section>
     <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">Quick estimates, {P.long}</span></div>
     <div class="reading-top">
-      <div><span class="rk">Current reading</span><div class="big" id="rb-big">–</div></div>
+      <div><span class="rk">Current reading</span><div class="big" id="rb-big" set:html={N["rb-big"]} /></div>
       <p class="rt-cap">Industrial production growth, {P.long}{rankWord ? `: the ${rankWord} month on the current base` : ""}.</p>
-      <div class="rt-side"><span class="rk">One month earlier</span><div class="rt-side-v" id="rb-prev">–</div></div>
+      <div class="rt-side"><span class="rk">One month earlier</span><div class="rt-side-v" id="rb-prev" set:html={N["rb-prev"]} /></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
@@ -112,7 +115,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
         <thead>
           <tr><th>Series</th><th>Latest y/y</th><th>vs prev. month</th><th>Year ago</th><th class="spark">2024 to 2026</th></tr>
         </thead>
-        <tbody id="ledger-body"></tbody>
+        <tbody id="ledger-body" set:html={N["ledger-body"]} />
       </table>
     </div>
   </section>
@@ -127,10 +130,10 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
             <h3>Fourteen years of the old ledger, three of the new</h3>
             <div class="sub">IIP general index, year-on-year, base 2011–12 (Apr 2013 to Mar 2026), base 2022–23 (Apr 2024 to {P.short}): plotted side by side, never spliced</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-bases">–</div><div class="c">{P.short}, current base, y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-bases" set:html={N["pv-bases"]} /><div class="c">{P.short}, current base, y/y</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-bases"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-bases" set:html={CH.bases()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NSO, growth computed from index levels, the two bases share no items panel or weights; the gap between them is a change of ruler, not a change of output</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -156,10 +159,10 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
             <h3>The deep ledger: three retired rulers, 1982 to 2017</h3>
             <div class="sub">IIP general index, year-on-year, base 1980–81 (Apr 1982 to Mar 1998), base 1993–94 (Apr 1995 to Jun 2011), base 2004–05 (Apr 2006 to Mar 2017): side by side, never spliced</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-herit">–</div><div class="c">Feb 2009, the one industrial winter</div></div>
+          <div class="plate-val"><div class="v" id="pv-herit" set:html={N["pv-herit"]} /><div class="c">Feb 2009, the one industrial winter</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-herit"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-herit" set:html={CH.herit()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NSO (bases 1993–94 and 2004–05); CSO's base 1980–81 as republished by the RBI (DBIE), which MoSPI's API does not serve. Growth computed from index levels. Where two rulers overlap they read the same months differently, a change of ruler, not of output</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -173,7 +176,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
           </div>
           <div class="now">
             <span class="mk">As of the final prints</span>
-            <p>The sharpest lesson sits in February 2009. The 2004–05 base printed <b id="her-gfc04">–</b>: the deepest reading any of these rulers gave. The 1993–94 base read the same month at <b id="her-gfc93">–</b>, and in seventeen years it never once printed below zero. Same factories, one winter, two verdicts. The 1980–81 base, the oldest, touched its low of <b id="her-low80">–</b> in <span id="her-low80-at">–</span> and signed off in March 1998 at <b id="her-end80">–</b>; the 1993–94 base in June 2011 at <b id="her-end93">–</b>; the 2004–05 base in March 2017 at <b id="her-end04">–</b>.</p>
+            <p>The sharpest lesson sits in February 2009. The 2004–05 base printed <b id="her-gfc04" set:html={N["her-gfc04"]} />: the deepest reading any of these rulers gave. The 1993–94 base read the same month at <b id="her-gfc93" set:html={N["her-gfc93"]} />, and in seventeen years it never once printed below zero. Same factories, one winter, two verdicts. The 1980–81 base, the oldest, touched its low of <b id="her-low80" set:html={N["her-low80"]} /> in <span id="her-low80-at" set:html={N["her-low80-at"]} /> and signed off in March 1998 at <b id="her-end80" set:html={N["her-end80"]} />; the 1993–94 base in June 2011 at <b id="her-end93" set:html={N["her-end93"]} />; the 2004–05 base in March 2017 at <b id="her-end04" set:html={N["her-end04"]} />.</p>
           </div>
         </div>
       </figure>
@@ -190,10 +193,10 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
             <h3>{falls.length === 0 ? "Not one financial year of falling output" : `Output fell in ${word(new Set(falls.map((f) => f.fy)).size)} financial years out of ${fyYears}`}</h3>
             <div class="sub">IIP general index, growth of the financial-year average on the year before, per cent, {fyFirst} to {fyLast}, five bases drawn side by side and never spliced</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-fy">–</div><div class="c">{fyLast}, base 2022–23</div></div>
+          <div class="plate-val"><div class="v" id="pv-fy" set:html={N["pv-fy"]} /><div class="c">{fyLast}, base 2022–23</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-fy"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-fy" set:html={CH.fy()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NSO, annual rows of the IIP (bases 1993–94 to 2022–23); CSO's base 1980–81 as republished by the RBI (DBIE report 219). Each year is the average of its twelve months; growth is the published rate (computed from the averages for 1980–81). The 1993–94 base publishes no growth for 2004–05</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -224,12 +227,10 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
             <h3>What the retired base remembers</h3>
             <div class="sub">All 23 two-digit manufacturing industries, year-on-year, per cent, Apr 2013 to Mar 2026, ordered by the final print</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-old">–</div><div class="c">industries beyond ±10%, Mar 2026</div></div>
+          <div class="plate-val"><div class="v" id="pv-old" set:html={N["pv-old"]} /><div class="c">industries beyond ±10%, Mar 2026</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" style="padding-top:26px">
-            <div id="grid-old" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:28px 36px"></div>
-          </div>
+          <div class="plotzone" id="grid-old" set:html={CH.oldGrid()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NSO, y-axes clipped at −40 / +45: the 2020–21 lockdown prints run to −99% and past +1000%, off scale by design, blue marks a final print beyond ±10%, the disclosed threshold, the final print is March 2026, full values in the CSV</span>
             <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -243,7 +244,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
           </div>
           <div class="now">
             <span class="mk">As of the final prints</span>
-            <p>The old base signed off in March 2026 with the split it had shown for two years: <b id="old-hi-name">–</b> fastest at <b id="old-hi">–</b>, <b id="old-lo-name">–</b> slowest at <b id="old-lo">–</b>. In its last month, <b id="old-n">–</b> of the 23 industries were moving faster than ±10%: the average never described them.</p>
+            <p>The old base signed off in March 2026 with the split it had shown for two years: <b id="old-hi-name" set:html={N["old-hi-name"]} /> fastest at <b id="old-hi" set:html={N["old-hi"]} />, <b id="old-lo-name" set:html={N["old-lo-name"]} /> slowest at <b id="old-lo" set:html={N["old-lo"]} />. In its last month, <b id="old-n" set:html={N["old-n"]} /> of the 23 industries were moving faster than ±10%: the average never described them.</p>
           </div>
         </div>
       </figure>
@@ -260,7 +261,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
             <h3>Mining, manufacturing, power: the three engines, plus the mains</h3>
             <div class="sub">IIP by sector, year-on-year, per cent, Apr 2024 to {P.short}</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-main">–</div><div class="c">{P.short}, headline y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-main" set:html={N["pv-main"]} /><div class="c">{P.short}, headline y/y</div></div>
         </div>
         <div class="frame">
           <div class="legend" id="legend-main">
@@ -270,7 +271,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
             <button class="chip" data-key="sector_electricity_gas_supply"><i style="background:#878D99"></i>Electricity &amp; gas</button>
             <button class="chip" data-key="sector_water_supply_sewerage_waste_management"><i style="background:#C9CED6"></i>Water &amp; waste</button>
           </div>
-          <div class="plotzone" id="plot-main"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-main" set:html={CH.sectors()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NSO, the latest months are quick estimates, revised in later releases, water supply, sewerage &amp; waste management is the fourth sector, new on this base, it runs near the headline but is shown here for completeness</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -312,10 +313,10 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
             <h3>{coreRows[0].label} and {coreRows[1].label.toLowerCase()} carried the core in {coreFy}; {list(coreDown.slice(-2).map((r) => r.label.toLowerCase()))} shrank</h3>
             <div class="sub">The eight core industries, growth of the financial-year average on the year before, per cent, {coreFy}, base 2011–12, with each industry's weight in the IIP</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-core">–</div><div class="c">{coreFy}, composite index</div></div>
+          <div class="plate-val"><div class="v" id="pv-core" set:html={N["pv-core"]} /><div class="c">{coreFy}, composite index</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-core"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-core" set:html={CH.core()} />
           <div class="plotfoot">
             <span class="src">Source: Office of the Economic Adviser, DPIIT, Index of Eight Core Industries, as published by the RBI (DBIE reports 499 and 989). Growth as published. Weights: each industry's weight in the IIP, base 2011–12</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://eaindustry.nic.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -341,10 +342,10 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
             <h3>{coreYears} years of the core, on three rulers: one year of contraction</h3>
             <div class="sub">Composite index of the eight core industries, growth of the financial-year average, per cent, bases 1993–94 (1995–96 to 2010–11), 2004–05 (2005–06 to 2013–14) and 2011–12 (2013–14 to {coreFy}), side by side, never spliced; the IIP general index (base 2011–12) for comparison</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-corelong">–</div><div class="c">2020–21, base 2011–12</div></div>
+          <div class="plate-val"><div class="v" id="pv-corelong" set:html={N["pv-corelong"]} /><div class="c">2020–21, base 2011–12</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-corelong"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-corelong" set:html={CH.coreLong()} />
           <div class="plotfoot">
             <span class="src">Source: OEA, DPIIT, as published by the RBI (DBIE 499, 989); IIP: MoSPI, NSO. The 1993–94 base's first-year growth (1994–95) is measured by the RBI against the 1980–81 base's level and is left out; the 2004–05 base's growth stops in 2013–14 in the RBI's table</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -357,7 +358,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
           </div>
           <div class="now">
             <span class="mk">As of {coreFy}</span>
-            <p>On every ruler, the core grew in every financial year but one: 2020–21, the lockdown year, when the composite fell <b id="core-2020">–</b> and the IIP <b id="iip-2020">–</b>. Where the 1993–94 and 2004–05 rulers overlap, from 2005–06 to 2010–11, they disagree by as much as <b id="core-gap">–</b> in a single year.</p>
+            <p>On every ruler, the core grew in every financial year but one: 2020–21, the lockdown year, when the composite fell <b id="core-2020" set:html={N["core-2020"]} /> and the IIP <b id="iip-2020" set:html={N["iip-2020"]} />. Where the 1993–94 and 2004–05 rulers overlap, from 2005–06 to 2010–11, they disagree by as much as <b id="core-gap" set:html={N["core-gap"]} /> in a single year.</p>
           </div>
         </div>
       </figure>
@@ -401,10 +402,10 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
             <h3>Machines or soap: the use-based read</h3>
             <div class="sub">Capital goods vs consumer goods, year-on-year, per cent, Apr 2024 to {P.short}</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-use">–</div><div class="c">{P.short}, capital goods y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-use" set:html={N["pv-use"]} /><div class="c">{P.short}, capital goods y/y</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-use"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-use" set:html={CH.useBased()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NSO, use-based classification regroups the same factories by what their output is for</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -417,7 +418,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
           </div>
           <div class="now">
             <span class="mk">As of {P.stamp}</span>
-            <p>Capital goods at <b id="ex-cap">–</b> against consumer non-durables at <b id="ex-cnd">–</b>: capital goods have grown faster for {word(capRun)} months running. The consumption line swings from month to month, so read the gap over several prints, not any one of them.</p>
+            <p>Capital goods at <b id="ex-cap" set:html={N["ex-cap"]} /> against consumer non-durables at <b id="ex-cnd" set:html={N["ex-cnd"]} />: capital goods have grown faster for {word(capRun)} months running. The consumption line swings from month to month, so read the gap over several prints, not any one of them.</p>
           </div>
         </div>
       </figure>
@@ -430,10 +431,10 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
             <h3>Inside manufacturing: the fastest and the slowest</h3>
             <div class="sub">The two manufacturing industries with the fastest average growth over the last twelve months, and the two with the slowest, year-on-year, per cent, Apr 2024 to {P.short}</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-ind">–</div><div class="c">{PI.short}, <span id="pc-ind">–</span></div></div>
+          <div class="plate-val"><div class="v" id="pv-ind" set:html={N["pv-ind"]} /><div class="c">{PI.short}, <span id="pc-ind" set:html={N["pc-ind"]} /></div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-ind"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-ind" set:html={CH.industries()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NSO, four of the 23 manufacturing industries on the current base, chosen by their average growth over the last twelve months, recomputed with every print</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -446,7 +447,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
           </div>
           <div class="now">
             <span class="mk">As of {PI.stamp}</span>
-            <p>Over the last twelve months <b id="ind-f1">–</b> grew fastest, averaging <b id="ind-f1a">–</b> a month on a year earlier, followed by <b id="ind-f2">–</b>; <b id="ind-s1">–</b> and <b id="ind-s2">–</b> were the slowest, the last averaging <b id="ind-s2a">–</b>. In {PI.month} the four read <b id="ex-elec">–</b>, <b id="ex-mv">–</b>, <b id="ex-s1">–</b> and <b id="ex-app">–</b>.</p>
+            <p>Over the last twelve months <b id="ind-f1" set:html={N["ind-f1"]} /> grew fastest, averaging <b id="ind-f1a" set:html={N["ind-f1a"]} /> a month on a year earlier, followed by <b id="ind-f2" set:html={N["ind-f2"]} />; <b id="ind-s1" set:html={N["ind-s1"]} /> and <b id="ind-s2" set:html={N["ind-s2"]} /> were the slowest, the last averaging <b id="ind-s2a" set:html={N["ind-s2a"]} />. In {PI.month} the four read <b id="ex-elec" set:html={N["ex-elec"]} />, <b id="ex-mv" set:html={N["ex-mv"]} />, <b id="ex-s1" set:html={N["ex-s1"]} /> and <b id="ex-app" set:html={N["ex-app"]} />.</p>
           </div>
         </div>
       </figure>
@@ -457,12 +458,12 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
         <div class="plate-head">
           <div class="t">
             <h3>Every industry on the current base: the live field, ranked</h3>
-            <div class="sub">All <b id="ind-n">–</b> two-digit industries, year-on-year, per cent, base 2022–23, Apr 2024 to {PI.short}, ordered by the latest print, blue beyond ±10%</div>
+            <div class="sub">All <b id="ind-n" set:html={N["ind-n"]} /> two-digit industries, year-on-year, per cent, base 2022–23, Apr 2024 to {PI.short}, ordered by the latest print, blue beyond ±10%</div>
           </div>
-          <div class="plate-val"><div class="v" id="ind-hot">–</div><div class="c">industries beyond ±10%, {PI.short}</div></div>
+          <div class="plate-val"><div class="v" id="ind-hot" set:html={N["ind-hot"]} /><div class="c">industries beyond ±10%, {PI.short}</div></div>
         </div>
         <div class="frame">
-          <div id="grid-ind22" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:28px 36px;padding:20px 0 8px"></div>
+          <div class="plotzone" id="grid-ind22" set:html={CH.ind22Grid()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, IIP on base 2022–23, every two-digit industry the current base serves, shared clipped scale −20 to +45%; the CSV carries full values, the freshest detail the index offers</span>
             <span class="dl"><button data-dl="csv">CSV, all series</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -475,7 +476,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
           </div>
           <div class="now">
             <span class="mk">As of {PI.stamp}</span>
-            <p>The hottest industry is <b id="ind-hi">–</b>; the coolest <b id="ind-lo">–</b>. The top three are {list(indRank.slice(0, 3).map((x) => x.label))}; the bottom three {list(indRank.slice(-3).map((x) => x.label))}. A panel past the blue threshold is moving at double digits.</p>
+            <p>The hottest industry is <b id="ind-hi" set:html={N["ind-hi"]} />; the coolest <b id="ind-lo" set:html={N["ind-lo"]} />. The top three are {list(indRank.slice(0, 3).map((x) => x.label))}; the bottom three {list(indRank.slice(-3).map((x) => x.label))}. A panel past the blue threshold is moving at double digits.</p>
           </div>
         </div>
       </figure>
@@ -492,7 +493,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
             <h3>A monthly index for services, at last</h3>
             <div class="sub">Index of Services Production, five of nineteen series, index levels, base 2024–25 = 100, {PISP.span}</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-isp">–</div><div class="c">{PISP.short}, retail trade index</div></div>
+          <div class="plate-val"><div class="v" id="pv-isp" set:html={N["pv-isp"]} /><div class="c">{PISP.short}, retail trade index</div></div>
         </div>
         <div class="frame">
           <div class="legend" id="legend-isp">
@@ -502,7 +503,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
             <button class="chip" data-key="telecommunication"><i style="background:#C9CED6"></i>Telecommunication</button>
             <button class="chip" data-key="it_computer_related_services"><i style="background:#A3A9B4"></i>IT &amp; computer services</button>
           </div>
-          <div class="plotzone" id="plot-isp"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-isp" set:html={CH.isp()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, NSO, trial series, first published 2025, methodology may change without notice, dashed rule: 100, the base-year average, levels, not growth rates: no year-on-year exists before Apr 2026</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
@@ -516,7 +517,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
           </div>
           <div class="now">
             <span class="mk">As of {PISP.stamp}</span>
-            <p>Retail trade stood at <b id="isp-rt">–</b> in {PISP.long}: <b id="isp-rt-yy">–</b> above {PISP.month} {+PISP.year - 1}, comparing like month with like, the only comparison the young series supports. Banking read <b id="isp-bk">–</b>. Beyond that the honest commentary runs out fast: insurance printed <b id="isp-ins-mar">–</b> in March and <b id="isp-ins-may">–</b> in {PISP.month}. Year-end accounting, seasonality, or noise: we do not know, because no earlier March exists to compare.</p>
+            <p>Retail trade stood at <b id="isp-rt" set:html={N["isp-rt"]} /> in {PISP.long}: <b id="isp-rt-yy" set:html={N["isp-rt-yy"]} /> above {PISP.month} {+PISP.year - 1}, comparing like month with like, the only comparison the young series supports. Banking read <b id="isp-bk" set:html={N["isp-bk"]} />. Beyond that the honest commentary runs out fast: insurance printed <b id="isp-ins-mar" set:html={N["isp-ins-mar"]} /> in March and <b id="isp-ins-may" set:html={N["isp-ins-may"]} /> in {PISP.month}. Year-end accounting, seasonality, or noise: we do not know, because no earlier March exists to compare.</p>
           </div>
         </div>
       </figure>
@@ -524,9 +525,9 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
       <div class="ledger" style="margin-top:64px">
         <table>
           <thead>
-            <tr><th>Series</th><th id="isp-th-latest">Latest level</th><th id="isp-th-yoy">vs year ago</th><th id="isp-th-year">Year ago</th><th class="spark">{PISP.span}</th></tr>
+            <tr><th>Series</th><th id="isp-th-latest" set:html={N["isp-th-latest"]} /><th id="isp-th-yoy" set:html={N["isp-th-yoy"]} /><th id="isp-th-year" set:html={N["isp-th-year"]} /><th class="spark">{PISP.span}</th></tr>
           </thead>
-          <tbody id="isp-ledger-body"></tbody>
+          <tbody id="isp-ledger-body" set:html={N["isp-ledger-body"]} />
         </table>
       </div>
 
@@ -537,7 +538,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
             <div class="sub">Every ISP series as a small multiple, index levels, base 2024–25 = 100, grouped: trade, logistics, finance, ICT, contact-intensive, professional, {PISP.span}</div>
           </div>
         </div>
-        <div id="grid-isp" style="padding:8px 0"></div>
+        <div id="grid-isp" style="padding:8px 0" set:html={CH.ispGrid()} />
         <p style="font-family:var(--sans);font-size:.8125rem;color:var(--muted);margin-top:16px;line-height:1.8">Each panel: the service's index level over {PISP.nWord} months against 100, the base-year average. The percentage is the change from {PISP.month} {+PISP.year - 1}, the same month a year earlier. Sawtooth is unmodelled seasonality: the series is too young for anyone to know its calendar shape.</p>
       </div>
     </div>
@@ -608,7 +609,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. "Quick Estimates of Index of Industrial Production: {P.long}" (base 2022-23=100). Index levels retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>; growth rates are computed from levels and track the published rates within 0.05 pt.</p>
+        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. "Quick Estimates of Index of Industrial Production: {P.long}" (base 2022-23=100). Index levels retrieved via the eSankhyiki API, vintage <b id="prov-vintage" set:html={N["prov-vintage"]} />; growth rates are computed from levels and track the published rates within 0.05 pt.</p>
         <p>The discontinued base 2011-12=100, including the 23-industry register in §05, is shown separately and never spliced with the current base (the base-year rule). Its March 2025 index, missing from the source for months, was later loaded, so the series closes without a gap.</p>
         <p>The heritage bases 1993-94=100 (Apr 1994 to Jun 2011) and 2004-05=100 (Apr 2005 to Mar 2017), the deep ledger in §03, come from the same API, each on its own ruler. The API serves four bases, monthly and annual, by sector, use and two-digit industry, and nothing finer; every one of those cuts is in the downloads, the annual rows as published (levels and growth) since October 2026.</p>
         <p>The oldest ruler, 1980-81=100 (Apr 1981 to Mar 1998; manufacturing groups to Mar 1994), is not served by MoSPI's API. It comes from the CSO's index as republished by the Reserve Bank of India in its database (DBIE reports 638 and 219), read through the Atlas's local mirror of DBIE. Every other base in those RBI tables is a copy of MoSPI's series and is not used.</p>
@@ -627,7 +628,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
     </div>
     <div class="fine">
       <span>India Atlas, IIP</span>
-      <span>Vintage <span id="prov-vintage2">–</span>, Bases 2022-23, 2011-12, 2004-05, 1993-94 and 1980-81 (each =100), core industries 2011-12, 2004-05 and 1993-94, ISP base 2024-25=100</span>
+      <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]} />, Bases 2022-23, 2011-12, 2004-05, 1993-94 and 1980-81 (each =100), core industries 2011-12, 2004-05 and 1993-94, ISP base 2024-25=100</span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
@@ -635,6 +636,5 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
 </div>
 <script>
   import "../../dossiers/guide.client.js";
-  import "../../dossiers/iip.client.js";
 </script>
 </Base>

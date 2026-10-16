@@ -61,7 +61,7 @@ test("prose flags agree with pipeline/slots.yml", () => {
 // in the registry or a register table where the current bundle's own meta
 // disagrees. Full dates in hand-typed strings are allowed only for FROZEN
 // retired rulers (whose bundles carry no contradicting fact) — live rulers
-// must derive (display.js "release"/"vintage" styles, register.client vintOf).
+// must derive (display.js "release"/"vintage" styles, register.charts vintOf).
 test("hand-typed display dates never contradict the current bundle", () => {
   const MS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const dateShort = (iso) => `${Number(iso.slice(8, 10))} ${MS[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}`;

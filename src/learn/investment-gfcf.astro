@@ -1,5 +1,7 @@
 ---
 import Learn from "../layouts/Learn.astro";
+import * as CH from "./investment-gfcf.charts.js";
+const NUM = CH.NUM;
 ---
 <Learn
   title="Investment: the economy's bet on tomorrow · India Atlas"
@@ -60,12 +62,12 @@ import Learn from "../layouts/Learn.astro";
             <h3>Investment fell two-fifths in one quarter: then warned, and recovered</h3>
             <div class="sub">Real GFCF, year-on-year, constant 2011-12 prices, Q1 FY17 to Q2 FY26</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-gfcf">–</div><div class="c">Q2 FY26, GFCF y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-gfcf" set:html={NUM["pv-gfcf"]}></div><div class="c">Q2 FY26, GFCF y/y</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-gfcf"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-gfcf" set:html={CH.gfcf()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, National Accounts, base 2011-12, vintage <span id="pf-gfcf">–</span>, the dark rule is zero: below it, capacity shrank</span>
+            <span class="src">Source: MoSPI, National Accounts, base 2011-12, vintage <span id="pf-gfcf" set:html={NUM["pf-gfcf"]}></span>, the dark rule is zero: below it, capacity shrank</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -77,12 +79,12 @@ import Learn from "../layouts/Learn.astro";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Above the zero rule, the economy built more than a year earlier; below it, less. The plunge and the spike are one event read twice: building nearly stopped in the lockdown, so the next year, measured against that wreckage, printed <b id="ht-peak">–</b>. Treat both as arithmetic before treating either as news.</p>
+            <p>Above the zero rule, the economy built more than a year earlier; below it, less. The plunge and the spike are one event read twice: building nearly stopped in the lockdown, so the next year, measured against that wreckage, printed <b id="ht-peak" set:html={NUM["ht-peak"]}></b>. Treat both as arithmetic before treating either as news.</p>
             <p>What deserves attention is the quiet part of the line: the stretches below zero with no pandemic anywhere near them. Those are the slumps that foretell slow years.</p>
           </div>
           <div class="now">
             <span class="mk">The FY20 case</span>
-            <p>Investment warned before the pandemic did. Through the second half of FY20, GFCF printed three straight quarters below zero: <b id="fy20-run">–</b>. By the last quarter before COVID-19, GDP growth had slid to <b id="fy20-gdp">–</b>, the weakest of the pre-pandemic years.</p>
+            <p>Investment warned before the pandemic did. Through the second half of FY20, GFCF printed three straight quarters below zero: <b id="fy20-run" set:html={NUM["fy20-run"]}></b>. By the last quarter before COVID-19, GDP growth had slid to <b id="fy20-gdp" set:html={NUM["fy20-gdp"]}></b>, the weakest of the pre-pandemic years.</p>
             <p>The slump in building came first; the slow economy followed. That sequence is what this series exists to reveal.</p>
           </div>
         </div>
@@ -94,12 +96,12 @@ import Learn from "../layouts/Learn.astro";
   <section>
     <div class="sec-head"><span class="no">03</span><h2>What the recovery looks like</h2><span class="line"></span><span class="unit">After the base effects</span></div>
     <div class="numbers">
-      <div class="num"><div class="l">The print, Q2 FY26</div><div class="v acc" id="n-last">–</div><div class="d">real GFCF, year-on-year</div></div>
-      <div class="num"><div class="l">The lockdown trough</div><div class="v" id="n-trough">–</div><div class="d">Q1 FY21, building nearly stopped</div></div>
-      <div class="num"><div class="l">The rebound</div><div class="v" id="n-peak">–</div><div class="d">Q1 FY22, base arithmetic</div></div>
-      <div class="num"><div class="l">Share of GDP</div><div class="v" id="n-share">–</div><div class="d">GFCF in total output, Q2 FY26</div></div>
+      <div class="num"><div class="l">The print, Q2 FY26</div><div class="v acc" id="n-last" set:html={NUM["n-last"]}></div><div class="d">real GFCF, year-on-year</div></div>
+      <div class="num"><div class="l">The lockdown trough</div><div class="v" id="n-trough" set:html={NUM["n-trough"]}></div><div class="d">Q1 FY21, building nearly stopped</div></div>
+      <div class="num"><div class="l">The rebound</div><div class="v" id="n-peak" set:html={NUM["n-peak"]}></div><div class="d">Q1 FY22, base arithmetic</div></div>
+      <div class="num"><div class="l">Share of GDP</div><div class="v" id="n-share" set:html={NUM["n-share"]}></div><div class="d">GFCF in total output, Q2 FY26</div></div>
     </div>
-    <p style="margin-top:40px">The recovery since the pandemic is genuine rather than arithmetical. The last four quarters read <b id="rec-run">–</b>: positive on bases that no longer flatter, and close to the pre-pandemic average of <b id="rec-avg">–</b>. The economy is adding capacity at a steady pace, roughly a third of everything it produces.</p>
+    <p style="margin-top:40px">The recovery since the pandemic is genuine rather than arithmetical. The last four quarters read <b id="rec-run" set:html={NUM["rec-run"]}></b>: positive on bases that no longer flatter, and close to the pre-pandemic average of <b id="rec-avg" set:html={NUM["rec-avg"]}></b>. The economy is adding capacity at a steady pace, roughly a third of everything it produces.</p>
     <p>Two cautions belong with any reading of this series. The accounts count the building, not the borrowing behind it, so a credit-fuelled boom looks identical to an honest one until the loans sour. And GFCF measures how much is built, never whether it was worth building. The number is a quantity, not a judgement.</p>
   </section>
 
@@ -146,7 +148,4 @@ import Learn from "../layouts/Learn.astro";
     <p>Companion guide: <a href="/guides/gdp/">National Accounts</a>.</p>
   </div>
 
-<script>
-  import "./investment-gfcf.client.js";
-</script>
 </Learn>
