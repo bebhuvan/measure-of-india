@@ -1179,7 +1179,8 @@ for (const page of PAGES) {
 // static greps over our own sources (not Plot internals) — the file list is
 // the registry's, so a new dossier's client module is linted from day one
 import { DOSSIERS as QC_DOSSIERS } from "../src/dossiers/registry.js";
-for (const f of [...QC_DOSSIERS.map((d) => `src/dossiers/${d.slug}.client.js`), "src/charts/plumbing.js"]) {
+// guides ported to the chart kit (src/kit/) have no client module and draw no Plot; only the ones still on Plot are grepped
+for (const f of [...QC_DOSSIERS.map((d) => `src/dossiers/${d.slug}.client.js`), "src/charts/plumbing.js"].filter((f) => fs.existsSync(path.join(ROOT, f)))) {
   const src = fs.readFileSync(path.join(ROOT, f), "utf8");
   if (/curve\s*[:=]|catmull|monotone|basis/.test(src.replace(/monetary/g, ""))) fail(`${f}: smoothing curve reference found`);
   for (const m of src.matchAll(/tickFormat:\s*\([^)]*\)\s*=>\s*([^,}\n]+)/g)) {
@@ -1194,6 +1195,25 @@ for (const f of [...QC_DOSSIERS.map((d) => `src/dossiers/${d.slug}.client.js`), 
   }
 }
 ok("static source greps done");
+
+// a page that draws kit figures must load the chart script: without it the wide and mid drawings
+// (fetched from kit.json by src/kit/enhance.js) never arrive. Base.astro leaves it out on charts={false}.
+{
+  let pagesWithFigures = 0, missing = 0;
+  (function walk(dir) {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, e.name);
+      if (e.isDirectory()) walk(p);
+      else if (e.name.endsWith(".html")) {
+        const html = fs.readFileSync(p, "utf8");
+        if (!html.includes('class="akf')) continue;
+        pagesWithFigures++;
+        if (!/<script[^>]+src="[^"]*KitScript[^"]*"|kit\.json/.test(html)) { missing++; if (missing <= 5) fail(`${path.relative(DIST, p)}: draws kit figures but does not load the chart script (charts={false}?)`); }
+      }
+    }
+  })(DIST);
+  if (!missing) ok(`kit: all ${pagesWithFigures} pages with figures load the chart script`);
+}
 
 // ---------------------------------------------------------------------------
 // Prose gates (AGENTS.md rule 3, enforced post-build):

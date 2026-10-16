@@ -1,0 +1,6 @@
+---
+// The chart script (hover readouts, downloads, the wide drawings fetched on demand), as its own
+// component so a page that draws no chart can leave it out: Astro 5 adds a component's script to
+// a page only when the component is rendered there. Base.astro renders it unless `charts={false}`.
+---
+<script>import "./enhance.js";</script>

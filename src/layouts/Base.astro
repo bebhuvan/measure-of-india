@@ -2,6 +2,7 @@
 import "../styles/atlas.css";
 import "../kit/kit.css";
 import FONTS from "../styles/fonts.generated.js";
+import KitScript from "../kit/KitScript.astro";
 
 interface Props {
   title: string;
@@ -12,6 +13,7 @@ interface Props {
   crumbRight?: string;  // html
   canonical?: string;
   ogImage?: string;
+  charts?: boolean;    // false on pages that draw no kit figure (every-cut tables): no chart script
 }
 const {
   title,
@@ -22,6 +24,7 @@ const {
   crumbRight = "",
   canonical,
   ogImage = "/og/site.png",
+  charts = true,
 } = Astro.props;
 const ogUrl = "https://atlas.thisindianlife.today" + ogImage;
 const canonicalUrl = canonical ?? "https://atlas.thisindianlife.today/";
@@ -67,6 +70,6 @@ const canonicalUrl = canonical ?? "https://atlas.thisindianlife.today/";
   </div>
 </header>
 <main id="main"><slot /></main>
-<script>import "../kit/enhance.js";</script>
+{charts && <KitScript />}
 </body>
 </html>
