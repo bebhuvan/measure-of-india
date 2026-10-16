@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { readRaw } from './util.mjs';
-import { nationalHighlights, GER_CEILING } from './products/schools.mjs';
+import { nationalHighlights, GER_CEILING, reportDropout } from './products/schools.mjs';
 import { readCatalogue } from './catalogue.mjs';
 import { parseNumber } from './tabular.mjs';
 const sorted = d => JSON.stringify(Object.fromEntries(Object.entries(d).sort(([a],[b])=>a.localeCompare(b))));
@@ -11,6 +11,8 @@ export function validateSchools(root) {
   const fail=s=>errors.push(s);
   const manifest=JSON.parse(fs.readFileSync(path.join(root,'data/coverage/schools.manifest.json')));
   const load=slug=>JSON.parse(fs.readFileSync(path.join(root,'data/series',slug+'.json')));
+  // the printed report's tables the adapter checks the API against (schools.mjs cube `printed`)
+  const printedTables={41:reportDropout(readRaw(root,'data/raw/schools-udise-report-2024.json').text)};
   const memo=new Map(), b=slug=>memo.get(slug)??(memo.set(slug,load(slug)),memo.get(slug));
   // Source cells without a figure are catalogued as withheld instead of baked (util.splitEmptySeries).
   const withheld=new Map();for(const x of readCatalogue('data/coverage/schools.catalogue.json',root)?.items??[])if(x.withheld){const set=withheld.get(x.bundle)??new Set();set.add(sorted(x.dims));withheld.set(x.bundle,set);}
@@ -45,9 +47,12 @@ export function validateSchools(root) {
       const key=sorted(dimsOf(r))+':'+(it.family==='udise'?`${r.year.slice(0,4)}-04-01`:'2025-04-01');wanted.add(key);
       let value=parseNumber(r.value);if(it.family==='udise'&&it.code===31&&value===0)value=null;
       const tooHigh=it.family==='udise'&&it.code===31&&value>GER_CEILING;if(tooHigh)value=null;
+      const pt=it.family==='udise'?printedTables[it.code]:null,printed=pt&&pt.year===r.year?pt.value(r):undefined;
+      if(printed!==undefined&&value!=null&&value!==0&&Math.abs(value-printed)>0.051)fail(`${it.slug}: API ${r.value} != printed ${printed} at ${key}`);
+      const blank=printed!==undefined&&value===0&&printed!==0;if(blank)value=null;
       if(!cells.has(key)){if(value!==null||!withheld.get(it.slug)?.has(sorted(dimsOf(r))))fail(`${it.slug}: missing source cell ${key}`);}
       else if(cells.get(key)!==value)fail(`${it.slug}: changed source cell ${key}`);
-      else if(tooHigh&&series.get(sorted(dimsOf(r)))?.withheld?.[key.slice(key.lastIndexOf(':')+1)]!==r.value)fail(`${it.slug}: withheld GER ${key} not recorded with its printed value`);
+      else if((tooHigh||blank)&&series.get(sorted(dimsOf(r)))?.withheld?.[key.slice(key.lastIndexOf(':')+1)]!==r.value)fail(`${it.slug}: withheld cell ${key} not recorded with its printed value`);
       stats.sourceCells++;
     }
     // Cube axes deliberately include absent year cells as null, never fabricated values.

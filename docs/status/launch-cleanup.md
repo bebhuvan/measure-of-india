@@ -78,3 +78,110 @@ CHECKPOINT READY 417a96f
 - `lint-charts.mjs` now fails on a page the registry promises but the build lacks.
 - `test/gates-read-only.test.mjs` walks every gate and its validators for write calls.
 - Verified: `npm test` + `validate.mjs` run together left `git status` unchanged.
+
+### Step 4: repo weight
+
+| | before (15 Oct) | after |
+|---|---|---|
+| Largest tracked file | 72 MB (`farm-households.catalogue.json`) | 14.2 MB (`households-aidis-34.json`) |
+| Files over 25 MB tracked | 3 catalogues (72, 42, 28 MB) | none (gzipped: 8.8, 3.4, 3.8 MB) |
+| `docs/status/` | 259 MB | 0.7 MB |
+| `data/coverage/` | 212 MB on disk | 91 MB |
+| `data/series/` | 1.1 GB (farm 393 MB, households 127 MB) | 1.1 GB (farm 369 MB after 9,724 empty series left) |
+
+Not done, proposed instead: the farm cubes are 356 MB for 5.7 MB of numbers. Per-series `dims`
+(100 MB), `label` (95 MB), `group` (50 MB) and `name` (21 MB) are all derivable from `dims`.
+A compact encoding for single-date survey cubes (store `dims`, derive the rest in one shared
+loader) would cut farm and households by roughly 70%, but it changes the canonical bundle shape
+every consumer reads (Every Cut, explorer, downloads, search, models). That belongs to the
+performance session or a dedicated change, not a cleanup. Git compresses these well: the
+checkpoint commit added about 14 MB to `.git`.
+
+### Step 5: reader quality
+
+- One masthead rule for every guide: "Latest: <period of the headline figure>" (`mastheadStamp`
+  in headline.js). It replaces a mix of release months, report editions and fetch dates shown as
+  vintages ("October 2026" on nine guides was the fetch day).
+- Households rewritten by the lens method: 109 plates to 15; prose for a general reader; every
+  number a model fact on the page; boilerplate per-plate "As of" blocks and their 109 freshness
+  manifest entries removed (a survey snapshot has nothing to go stale).
+- Shared components: Every Cut, downloads and every-cut pages say "checked" / "not yet checked"
+  instead of reviewed/pending/canonical/archival. Home page drops "Records awaiting checks".
+- Then pensions, digital access, schools, energy and farm households, by the same method. Plates
+  per guide, before and after: households 109 to 15, pensions 278 to 16, digital access 158 to 18,
+  schools 66 to 19, energy 164 to 19, farm households 229 to 20. 1,004 plates in all became 107,
+  each answering one reader question. Nothing was dropped from the data: every table and cut is
+  still in Every Cut and the downloads (coverage: 49 ledgers clean).
+- Every number in the new prose is a model fact on the page, so `asof.mjs` and qc trace it. The
+  boilerplate "As of" blocks went from all six; the freshness manifest is down to 497 entries.
+- Smaller fixes on the way: energy's headline is now 933 Mtoe (it was printed in ktoe); Every Cut
+  says "thousand toe", not "ktoe"; the pensions masthead names the full month; farm's period text
+  stops at the first ";"; households-editorial now bakes every bundle (it had left 107,226 cells
+  undecided).
+- Left out of plates on purpose: farm API tables 18, 34, 36 and 39, whose labels or values look
+  wrong (for example 0.086 ha "owned" per household). They stay in Every Cut; the owner should check them against the printed report.
+
+### Steps 6-7 so far
+
+- Item 6, refreshability: 21 products already read the owner's local Data Bank, so the weekly
+  workflow's fetch failed on all of them in CI and could never reach validate. `fetch.mjs` now
+  holds those (committed bundles kept, listed as held) when the folder is absent; markets-listed is
+  one of them. Pensions and digital access refresh only by replaying archived originals.
+- Item 7, portability: no hardcoded user paths left in scripts; Codex-runtime Playwright scripts
+  are archived; `requirements.txt` (openpyxl 3.1.5) installed in all workflows; acorn and esbuild
+  declared; workflow timeouts 90/75/150 minutes for ci/deploy/update.
+
+## 2026-10-16
+
+- The chart-kit session's rebuilds found four launch-build items; all fixed in 5dafdfad:
+  qc checked guide stamps with the old display.js rule instead of `mastheadStamp`, and still
+  checked energy's removed `#prov-vintage`.
+- **API zeros checked against the printed source.** The UDISE API served Bihar's 2024-25
+  secondary dropout as 0, 0, 0; the printed 2024-25 report (Table 6.13) has 7.0, 6.8, 6.9. The
+  schools adapter now checks every dropout cell the report prints: 321 of 324 agree, the 3
+  are withheld with a note, and the 43 zeros the report also prints stay (UDISE+ defines
+  dropout as non-negative, so a 0 is its floor). A disagreeing figure stops the rebake.
+- **Shares of a nil amount.** AIDIS prints a "per Rs. 1000 of loans" breakdown as 0 in every
+  cell for Chandigarh's rural cultivators: the amount was nil or unsampled, so the shares do
+  not exist. 99 such cells (tables 26, 29, 34) are withheld and excluded with the reason. The
+  other 6,061 zeros in table 26 are published figures that round to zero: each breakdown
+  still adds to 1,000. Tests for both rules in `test/hard-rules.test.mjs`.
+- The first full build's chart lint found one collision: farm's net investment by land size has
+  a negative group (-289), and the interim Plot drawing prints its label across the zero rule.
+  The brief allows no drawing-code edits, so the plate is out (farm 21 to 20 plates); its cells
+  stay in Every Cut and the downloads. The chart kit should bring it back. The section heading
+  now reads "What farming costs, and what animals earn".
+- validate's schools replay applies the same printed-report rule as the adapter (it flagged the
+  three Bihar cells as changed until it did).
+- **Final check.** Build of 2,097 pages, 15,657 files, 4.5 GB (largest file 17.3 MB, under the
+  20 MB limit); `npm run gates` passes end to end; `npm test` 337/337; `prose:dry` clean. dist
+  deleted afterwards.
+- Build blocked twice by machine memory (other sessions' browsers and emulator, swap full);
+  the low-memory guard stopped one build. npm's download cache was cleared with the owner's
+  approval (1.2 GB).
+
+## Decisions only the owner can make
+
+1. **Codex worktrees.** Remove with `git worktree remove --force` for
+   `~/.codex/worktrees/{56ae,9dde,ed83}/Economic atlas new Kimi`. Their newer docs are salvaged.
+2. **Vintage semantics.** Older eSankhyiki and DBIE families date a bundle by when its body
+   first changed (CONTRACT-series rule 4 allows it). Schools and the state profiles follow the
+   stricter rule: null vintage plus `archiveCapturedDate`. Migrate the others or not.
+3. **GER above 200%.** 271 schools cells withheld as small-population artefacts; the threshold
+   is editorial.
+4. **UDISE zeros before 2024-25.** Only the 2024-25 report is archived, so 136 dropout zeros
+   for 2022-23 and 2023-24 cannot be checked (Bihar secondary reads 29.5, then 0). Archiving the
+   2022-23 and 2023-24 reports through the adapter would let the same check cover them.
+5. **Farm tables 18, 34, 36, 39.** Left out of plates because labels or values look wrong
+   (0.086 ha "owned" per household). Check them against the printed report.
+6. **Compact encoding for survey cubes.** Farm and households cubes are 356 MB for 5.7 MB of
+   numbers; a compact shape would cut about 70% but changes what every consumer reads.
+   Proposed for the performance session, not done.
+7. **Refreshability.** markets-listed and 21 Data Bank products refresh only on your machine
+   (CI holds them). Pensions and digital access refresh only by archive replay. Investor
+   participation stays parked: its 42 bundles were never produced.
+8. **Interim charts.** Charts stay on Observable Plot until the chart kit lands; the farm axis
+   prints raw unit names ("hundreds →", "pct →"), drawing code this cleanup did not touch. Farm's
+   net investment plate (negative values) waits for the kit.
+9. **Hosting.** The Workers cutover (`wrangler.jsonc`) is the performance session's; the
+   Pages example workflow is archived.

@@ -13,7 +13,9 @@ import { vintageError } from "../scripts/lib/vintage.mjs";
 import { ENVELOPE, envelopeOf } from "../scripts/lib/unit-envelope.mjs";
 import { unitOf as profileUnit } from "../scripts/lib/products/profiles-mospi.mjs";
 import { duplicateUnitBlock } from "../scripts/lib/products/energy.mjs";
-import { GER_CEILING } from "../scripts/lib/products/schools.mjs";
+import { GER_CEILING, cube, reportDropout } from "../scripts/lib/products/schools.mjs";
+import { noEstimateRows } from "../scripts/lib/products/households.mjs";
+import zlib from "node:zlib";
 
 const bundle = (series) => ({ meta: { vintage: null }, dates: ["2024-04-01"], series });
 
@@ -65,6 +67,30 @@ test("a unit block that only repeats another unit's values is a source duplicate
   const r = (unit, value, variable = "Coal") => ({ date: "2024-01-01", unit, value, dims: { state: "Goa", category: "Power sector emissions", variable } });
   assert.ok(duplicateUnitBlock([r("kt_co2e", 10), r("kt_co2e", 4, "Gas"), r("pct", 10), r("pct", 4, "Gas")], "Power sector emissions", "pct"));
   assert.ok(!duplicateUnitBlock([r("kt_co2e", 10), r("pct", 71.4)], "Power sector emissions", "pct"));
+});
+
+// 2026-10-16: the UDISE API served Bihar's 2024-25 secondary dropout as 0, 0, 0 where the printed
+// report has 7.0, 6.8, 6.9; AIDIS printed every share of a nil loan amount as 0.
+test("an API zero against a printed figure is withheld, and a disagreeing figure fails", () => {
+  const text = JSON.parse(zlib.gunzipSync(fs.readFileSync("data/raw/schools-udise-report-2024.json.gz"))).text;
+  const printed = reportDropout(text);
+  const row = (value, gender = "Total") => ({ indicator: "Dropout Rate", year: "2024-25", state: "Bihar", gender, level_of_education: "Secondary (9-10)", value });
+  const opts = { label: "Dropout Rate", code: 41, family: "udise", vintage: null, base: "x", rawFile: "x", printed };
+  const s = Object.values(cube([row("0")], opts).series)[0];
+  assert.equal(s.data[0], null);
+  assert.match(s.note, /prints 6\.9/);
+  assert.equal(Object.values(cube([row("6.9")], opts).series)[0].data[0], 6.9);
+  assert.throws(() => cube([row("9.9")], opts), /API 9\.9 != report 6\.9/);
+  // a zero the report also prints stays a zero
+  assert.equal(Object.values(cube([{ ...row("0"), state: "Delhi", level_of_education: "Primary (1-5)" }], opts).series)[0].data[0], 0);
+});
+
+test("shares of a nil amount are no estimate; a rounded zero inside a breakdown stays", () => {
+  const sub = "All households - cash loan (Rs.) per Rs. 1000 of total cash loan outstanding (by credit agency)";
+  const r = (state, value, agency) => ({ state, sector: "Rural", sub_indicator: sub, credit_agency: agency, value });
+  const rows = [r("Chandigarh", "0", "Bank"), r("Chandigarh", "0", "All"), r("Bihar", "0", "Bank"), r("Bihar", "1000", "All")];
+  assert.deepEqual([...noEstimateRows(rows)].map((x) => x.state), ["Chandigarh", "Chandigarh"]);
+  assert.equal(noEstimateRows([{ ...rows[0], sub_indicator: "per 1000 no. of households reporting" }, { ...rows[1], sub_indicator: "per 1000 no. of households reporting" }]).size, 0, "a zero incidence is an estimate");
 });
 
 // Data: the families that broke. Every series has a figure (or a declared unpublished cell), sits

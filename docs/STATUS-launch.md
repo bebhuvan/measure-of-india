@@ -1,6 +1,28 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-13, Digital verification checkpoint.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-16, launch cleanup.
+
+## Launch cleanup (2026-10-15 to 16)
+
+Brief `docs/briefs/launch-cleanup-2026-10-15.md`; full log and owner decisions in
+`docs/status/launch-cleanup.md`. 36 guides (investor participation parked, not deleted).
+
+- **Hard rules enforced on every bundle.** Each of 2,643 bundles is checked against its unit's
+  envelope (`scripts/lib/unit-envelope.mjs`); all-null series are refused at write time
+  (13,550 removed from schools and farm households, catalogued with reasons); fetch dates are
+  rejected as vintages. Defects found: Ember emissions duplicated under "%", 7,000 state-profile
+  series under the wrong unit, a MoSPI table with rotated columns, GERs up to 3,955%.
+- **Gates only read.** validate, explore-verify and the tests no longer write to the tree;
+  lint-charts fails on a missing page; a test walks every gate for write calls.
+- **Repo weight.** Nothing over 25 MB tracked (largest 14.2 MB); `docs/status` 259 MB to 0.7 MB.
+- **Reader quality.** Six Codex-wave guides rewritten one question per chart: 1,004 plates to
+  107, with all data kept in Every Cut and downloads. One masthead rule for every guide.
+- **CI can run.** Data Bank products are held, not failed, when the owner's folder is absent;
+  Python dependencies and timeouts declared.
+- **Final check, 2026-10-16:** build of 2,097 pages (15,657 files, 4.5 GB, largest file
+  17.3 MB); `npm run gates` passes (validate, 49 coverage ledgers, 497 as-of paragraphs, qc,
+  chart lint on 995 SVGs at desktop and 390 px, explorer 1,693,253 records); `npm test` 337/337;
+  `prose:dry` clean. Owner decisions: `docs/status/launch-cleanup.md`, last section.
 
 ## Digital access verification (2026-10-13)
 
@@ -11,7 +33,7 @@ tests pass. Real Chrome checks cover six Digital widths and all 36 state pages;
 has 15,594 files, below the 16,000 limit. Cold mobile Digital searches still take
 about 4.3–5.1 seconds; older MIS/CAMS report-only recovery and unattended live
 refresh remain unfinished. Root handoff and human release/deployment remain.
-Evidence: `docs/status/wave-2-digital-epoch-attempt-5/final-acceptance.json`.
+Evidence (moved out of the repo on 2026-10-15): `atlas-archive/codex-wave2-2026-10-15/docs/status/wave-2-digital-epoch-attempt-5/final-acceptance.json`.
 
 ## Schools implementation (2026-10-10)
 
@@ -201,4 +223,4 @@ with `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`, DNS for atlas.thisindia
 
 ## Investor source-only implementation — 2026-10-15
 
-Source implementation and bounded QA complete; admission blocked on the existing public HF archive destination (unauthenticated 401, configured-token 404). Three reviewed records and 7,654 pending remain fully accounted for. 31 focused tests pass; 18 actual source chart layouts and seven print pages checked. Accepted pension artifact and pre-existing canonical/raw bytes are unchanged. No canonical promotion or production build/gates. [Review packet](status/investor-implementation-2026-10-15/README.md).
+Source implementation and bounded QA complete; admission blocked on the existing public HF archive destination (unauthenticated 401, configured-token 404). Three reviewed records and 7,654 pending remain fully accounted for. 31 focused tests pass; 18 actual source chart layouts and seven print pages checked. Accepted pension artifact and pre-existing canonical/raw bytes are unchanged. No canonical promotion or production build/gates. Review packet now in `atlas-archive/codex-wave2-2026-10-15/docs/status/investor-implementation-2026-10-15/`. Superseded on 2026-10-15: the guide is parked (`parked/investor-participation/`).
