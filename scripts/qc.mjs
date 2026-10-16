@@ -803,11 +803,18 @@ for (const page of PAGES) {
   window.URL.createObjectURL = () => "blob:x";
   window.URL.revokeObjectURL = () => {};
   window.HTMLCanvasElement.prototype.getContext = () => null;
-  for (const k of ["window", "document", "Node", "Element", "HTMLElement", "SVGElement", "XMLSerializer", "Image", "Blob", "CustomEvent", "Event", "getComputedStyle"]) {
+  for (const k of ["window", "document", "Node", "Element", "HTMLElement", "SVGElement", "XMLSerializer", "Image", "Blob", "CustomEvent", "Event", "getComputedStyle", "location"]) {
     try { Object.defineProperty(globalThis, k, { value: window[k] ?? globalThis[k], configurable: true, writable: true }); } catch {}
   }
   globalThis.window = window;
   globalThis.document = window.document;
+  // the page's fetches are served from the build, never the network; kit.json is withheld: this gate
+  // reads every page's kit.json itself, and handing it to each page's script would hold it in memory
+  globalThis.fetch = async (u) => {
+    const f = path.join(DIST, decodeURIComponent(new URL(String(u), window.location.href).pathname));
+    const ok = !/kit\.json$/.test(f) && fs.existsSync(f) && fs.statSync(f).isFile();
+    return { ok, status: ok ? 200 : 404, json: async () => JSON.parse(fs.readFileSync(f, "utf8")), text: async () => fs.readFileSync(f, "utf8") };
+  };
 
   // evaluate the page's module scripts (they import shared chunks from _astro)
   const scripts = [...html.matchAll(/<script[^>]+src="([^"]+\.js)"/g)].map((m) => m[1]);
@@ -1206,6 +1213,8 @@ ok("static source greps done");
       if (e.isDirectory()) walk(p);
       else if (e.name.endsWith(".html")) {
         const html = fs.readFileSync(p, "utf8");
+        // in the built site a figure's CSV table travels in kit.json (figure() / dataFigure()), never inline
+        if (html.includes('class="akf-data"')) { missing++; fail(`${path.relative(DIST, p)}: a kit CSV table is inline in the page; carry it with figure() or dataFigure()`); }
         if (!html.includes('class="akf')) continue;
         pagesWithFigures++;
         if (!/<script[^>]+src="[^"]*KitScript[^"]*"|kit\.json/.test(html)) { missing++; if (missing <= 5) fail(`${path.relative(DIST, p)}: draws kit figures but does not load the chart script (charts={false}?)`); }

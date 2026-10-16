@@ -80,3 +80,11 @@ export function figure({ id, title = "", sub = "", source = "", notes = "", draw
     `<p class="akf-dl"><button type="button" data-akdl="csv">CSV</button><button type="button" data-akdl="svg">SVG</button><button type="button" data-akdl="png">PNG</button></p></div>` +
     dataTag + `</figure>`;
 }
+
+// A plate whose "chart" is a table (or nothing drawn at all) but whose CSV button should still
+// download its data: the same carrier as a figure, so in the built site the table travels in
+// kit.json and is fetched on the click, never inline in the page.
+export function dataFigure({ file, data, html = "" }) {
+  const { attrs, tag } = dataAttrs(null, data);
+  return `<div class="akf akf-bare"${attrs} data-file="${esc(file)}">${html}${tag}</div>`;
+}

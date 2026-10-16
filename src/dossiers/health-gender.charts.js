@@ -8,7 +8,7 @@
 // census and NSS literacy, two NFHS rounds), never one line; and a missing figure is a gap (a
 // row with no earlier round shows its later dot alone), never a zero.
 import * as K from "../kit/kit.js";
-import { figure } from "../kit/figure.js";
+import { figure, dataFigure } from "../kit/figure.js";
 
 const PCT = { suffix: "%" };
 const f0 = (v) => (v == null ? "–" : Math.round(v).toLocaleString("en-IN"));
@@ -227,8 +227,8 @@ export const NFHS = {
     };
     const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
     const csv = { cols: ["State", ...T.cols.map((c) => c.label)], rows: [T.india, ...T.rows].map((r) => [r.geo, ...r.v]) };
-    return `<div class="akf akf-bare" data-file="india-atlas_nfhs-states-table"><div class="nf-table-wrap"><table class="nf-table"><thead><tr><th>State or UT</th>${T.cols.map((c) => `<th>${esc(c.short)}</th>`).join("")}</tr></thead><tbody>` +
+    return dataFigure({ file: "india-atlas_nfhs-states-table", data: csv, html: `<div class="nf-table-wrap"><table class="nf-table"><thead><tr><th>State or UT</th>${T.cols.map((c) => `<th>${esc(c.short)}</th>`).join("")}</tr></thead><tbody>` +
       [T.india, ...T.rows].map((r, i) => `<tr${i === 0 ? ' class="ai"' : ""}><td>${esc(r.geo)}</td>${r.v.map((v, j) => `<td style="background:${i === 0 ? "transparent" : tint(v, ranges[j], T.cols[j].bad)}">${v == null ? "—" : f1(v)}</td>`).join("")}</tr>`).join("") +
-      `</tbody></table></div><script type="application/json" class="akf-data">${JSON.stringify(csv).replace(/</g, "\\u003c")}</script></div>`;
+      `</tbody></table></div>` });
   },
 };

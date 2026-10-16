@@ -4,7 +4,7 @@
 // OEA's two decimals and used as they are (pairs(..., { round: false })), exactly as the retired
 // client did, so qc.mjs's fmt.pct2 checks and the prose see the same figures.
 import * as K from "../kit/kit.js";
-import { figure } from "../kit/figure.js";
+import { figure, dataFigure } from "../kit/figure.js";
 import { pairs } from "../kit/data.js";
 import bundle from "../../data/series/wpi.json";
 import groupsBundle from "../../data/series/wpi-groups.json";
@@ -313,7 +313,7 @@ export function itemsData() {
   const IM = itemsBundle.series, ym = itemsBundle.meta.latestPeriod;
   const rows = Object.keys(IM).sort().map((k) => { const d = P(itemsBundle, k); return [IM[k].label, IM[k].lineage, IM[k].latestIndex ?? null, at(d, -1), at(d, -2), at(d, -13)]; });
   const data = { cols: ["item", "lineage", `index_${ym.replace("-", "")}`, "yoy_pct", "yoy_prev_month_pct", "yoy_year_ago_pct"], rows };
-  return `<div class="akf akf-bare" data-file="india-atlas_wpi_697-items_cross-section_${ym}"><script type="application/json" class="akf-data">${JSON.stringify(data).replace(/</g, "\\u003c")}</script></div>`;
+  return dataFigure({ file: `india-atlas_wpi_697-items_cross-section_${ym}`, data });
 }
 
 /* ---------- §11 wholesale food against retail food ---------- */

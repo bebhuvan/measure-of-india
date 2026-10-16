@@ -169,11 +169,18 @@ for (const url of PAGES) {
   window.URL.createObjectURL = () => "blob:x";
   window.URL.revokeObjectURL = () => {};
   window.HTMLCanvasElement.prototype.getContext = () => null;
-  for (const k of ["window", "document", "Node", "Element", "HTMLElement", "SVGElement", "XMLSerializer", "Image", "Blob", "CustomEvent", "Event", "getComputedStyle"]) {
+  for (const k of ["window", "document", "Node", "Element", "HTMLElement", "SVGElement", "XMLSerializer", "Image", "Blob", "CustomEvent", "Event", "getComputedStyle", "location"]) {
     try { Object.defineProperty(globalThis, k, { value: window[k] ?? globalThis[k], configurable: true, writable: true }); } catch {}
   }
   globalThis.window = window;
   globalThis.document = window.document;
+  // the page's fetches are served from the build, never the network; kit.json is withheld: this gate
+  // reads every page's kit.json itself, and handing it to each page's script would hold it in memory
+  globalThis.fetch = async (u) => {
+    const f = path.join(DIST, decodeURIComponent(new URL(String(u), window.location.href).pathname));
+    const ok = !/kit\.json$/.test(f) && fs.existsSync(f) && fs.statSync(f).isFile();
+    return { ok, status: ok ? 200 : 404, json: async () => JSON.parse(fs.readFileSync(f, "utf8")), text: async () => fs.readFileSync(f, "utf8") };
+  };
   const scripts = [...html.matchAll(/<script[^>]+src="([^"]+\.js)"/g)].map((m) => m[1]);
   try {
     // per-page query: a shared entry module runs once per page, not once per process (lb/profiles)
