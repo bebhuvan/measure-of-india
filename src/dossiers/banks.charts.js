@@ -53,15 +53,6 @@ const text = (x, y, t, { size = 12.5, fill = C.ink, weight = 600, anchor = "star
   `<text x="${r1(x)}" y="${r1(y)}" font-size="${size}" fill="${fill}"${anchor !== "start" ? ` text-anchor="${anchor}"` : ""}${weight !== 400 ? ` font-weight="${weight}"` : ""}>${esc(t)}</text>`;
 const open = (W, H) => `<svg class="ak" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="">`;
 
-/** Two panels, each titled: side by side when the drawing is wide, stacked on a phone. */
-function panels(width, [a, b], draw) {
-  const side = width >= 700, gap = 48, pw = side ? Math.floor((width - gap) / 2) : width, head = 24;
-  const A = draw(a, pw), B = draw(b, pw), [, ha] = sizeOf(A), [, hb] = sizeOf(B);
-  const H = side ? head + Math.max(ha, hb) : head * 2 + ha + hb + 28;
-  const bx = side ? pw + gap : 0, by = side ? 0 : head + ha + 28;
-  return open(width, H) + text(0, 15, a.title) + moved(A, 0, head) + text(bx, by + 15, b.title) + moved(B, bx, by + head) + "</svg>";
-}
-
 /** A key row above a kit drawing: swatches for bar colours, a ring for a second value. */
 function keyed(svg, items) {
   const [W, H] = sizeOf(svg);
@@ -115,10 +106,14 @@ export function shares() {
     bare: true, file: "india-atlas_bank-group-shares",
     label: "Each bank group's share of all banks' deposits and of advances in India, every quarter since December 2013: public sector banks falling, private sector banks rising",
     data: joined(["psb", "private", "foreign", "sfb"].flatMap((g) => ["deposits", "advances"].map((w) => [`${g}_${w}_share_pct`, D.shares[`${g}__${w}`]]))),
-    draw: (width) => panels(width, [{ title: "Deposits", w: "deposits" }, { title: "Advances", w: "advances" }], (p, pw) => K.line({
-      width: pw, height: phoneW(pw) ? 250 : 360, freq: "month", unit: PCT, endDp: 1, yDomain: [0, 80],
-      series: G.map((g) => ({ ...GROUP[g], data: D.shares[`${g}__${p.w}`] })),
-    })),
+    // two panels on one scale, side by side while each keeps 340 px, stacked on a phone
+    draw: (width) => {
+      const { across, w: pw, gap } = K.panelFit(width);
+      return K.panels(["deposits", "advances"].map((w) => K.line({
+        width: pw, height: phoneW(pw) ? 250 : 360, freq: "month", unit: PCT, endDp: 1, yDomain: [0, 80],
+        series: G.map((g) => ({ ...GROUP[g], data: D.shares[`${g}__${w}`] })),
+      })), { across, gap, titles: ["Deposits", "Advances"] });
+    },
   });
 }
 
@@ -323,15 +318,19 @@ export function ucb() {
     bare: true, file: "india-atlas_urban-cooperative-banks",
     label: "Urban co-operative banks: their number each March, and their gross NPA ratio against all scheduled commercial banks'",
     data: joined([["ucbs_all", D.ucbCount.all], ["ucbs_scheduled", D.ucbCount.scheduled], ["ucbs_non_scheduled", D.ucbCount.non], ["ucb_gnpa_ratio_pct", D.ucbNpa.all], ["ucb_scheduled_gnpa_ratio_pct", D.ucbNpa.scheduled], ["ucb_non_scheduled_gnpa_ratio_pct", D.ucbNpa.non], ["scb_gnpa_ratio_march_pct", D.scbMarchNpa]]),
-    draw: (width) => panels(width, [{ title: "Number of banks", k: "n" }, { title: "Gross NPA ratio", k: "npa" }], (p, pw) => p.k === "n"
-      ? K.columns({ width: pw, height: phoneW(pw) ? 230 : 330, data: D.ucbCount.all, freq: "year", valueDp: 0 })
-      : K.line({
-        width: pw, height: phoneW(pw) ? 230 : 330, freq: "year", unit: PCT, endDp: 2, hoverDp: 2,
-        series: [
-          { name: "Scheduled commercial banks", short: "Commercial banks", data: D.scbMarchNpa, role: "ctx" },
-          { name: "Urban co-operative banks", short: "UCBs", data: D.ucbNpa.all, role: "lead" },
-        ],
-      })),
+    draw: (width) => {
+      const { across, w: pw, gap } = K.panelFit(width), h = phoneW(pw) ? 230 : 330;
+      return K.panels([
+        K.columns({ width: pw, height: h, data: D.ucbCount.all, freq: "year", valueDp: 0 }),
+        K.line({
+          width: pw, height: h, freq: "year", unit: PCT, endDp: 2, hoverDp: 2,
+          series: [
+            { name: "Scheduled commercial banks", short: "Commercial banks", data: D.scbMarchNpa, role: "ctx" },
+            { name: "Urban co-operative banks", short: "UCBs", data: D.ucbNpa.all, role: "lead" },
+          ],
+        }),
+      ], { across, gap, titles: ["Number of banks", "Gross NPA ratio"] });
+    },
   });
 }
 

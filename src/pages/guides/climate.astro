@@ -123,7 +123,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Read across for years, down for months. Blue cells were cooler than the 1991-2020 normal for that month, ochre cells warmer, white cells close to it. The baseline is itself recent: a white cell is a month as warm as the 1990s and 2000s, already warmer than the 1940s.</p>
+            <p>Read across for years, down for months. Blue cells were cooler than the 1991-2020 normal for that month, red cells warmer, white cells close to it. The baseline is itself recent: a white cell is a month as warm as the 1990s and 2000s, already warmer than the 1940s.</p>
             <p>ERA5 is a reanalysis: a weather model run backwards over every observation available (stations, balloons, satellites), producing a complete, consistent picture of each day. It is not a thermometer reading, and its early decades rest on far fewer observations than its recent ones.</p>
           </div>
           <div class="now">
@@ -196,7 +196,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
         <p><b>Three instruments, never joined.</b> The station record (CRU TS, from the University of East Anglia) interpolates thermometer and rain-gauge readings onto a half-degree grid and reaches back to 1901. The reanalysis (ERA5, from the European Copernicus service) runs a weather model over every available observation from 1940; the World Bank's portal aggregates it from 1950 and computes heat and rain indices from it. The projections (CMIP6) are about thirty climate models run forward under stated assumptions about emissions. They measure related things in different ways, so this guide shows them side by side and never splices one onto another.</p>
         <p><b>Anomalies and baselines.</b> An anomaly is a departure from an average for the same period: this August against the average August. The month on this page is measured against 1991-2020, Copernicus's standard. Long-run change is measured as the difference between two 30-year averages, {w(W.base)} and {w(W.recent)}, inside one instrument. Thirty years is long enough to wash out most year-to-year swings.</p>
         <p><b>Area averages.</b> Every figure for India or a state is an average over its land, weighted by area, not by people. Delhi and the Thar desert count by their size. The World Bank's portal publishes 35 state and union territory units; its boundary set has none for Jammu and Kashmir or Ladakh. Its all-India temperature runs about 0.7°C warmer than the station record's own country average for the same grid, which is what leaving out those cold Himalayan territories would do; we do not know that for certain. Changes over time agree within a few hundredths of a degree, and this guide reports changes.</p>
-        <p><b>Projections are not forecasts.</b> A projection says what the models expect if emissions follow a stated pathway: SSP1-2.6 is rapid cuts, SSP2-4.5 roughly today's policies, SSP3-7.0 a fractured world, SSP5-8.5 fossil-fuelled growth. The range shown is the spread across models (the 10th to 90th percentile), not a probability. Projections are drawn hollow and dashed and never joined to an observed line.</p>
+        <p><b>Projections are not forecasts.</b> A projection says what the models expect if emissions follow a stated pathway: SSP1-2.6 is rapid cuts, SSP2-4.5 roughly today's policies, SSP3-7.0 a fractured world, SSP5-8.5 fossil-fuelled growth. The range shown is the spread across models (the 10th to 90th percentile), not a probability. Projections are never joined to an observed line.</p>
       </div>
       <div class="wm-rail">
         <aside class="margin-note">
@@ -329,7 +329,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Two bars a state. The blue bar is how many more muggy days a year the state now has; the grey bar how many more (or fewer) scorching dry days. In the plains of the north, dry 40°C days have become fewer while wet-bulb days rose sharply: the heat did not leave, it took on water. Irrigation, which puts moisture into the air, is part of the reason.</p>
+            <p>Two dots a state. The blue dot is how many more muggy days a year the state now has; the grey ring how many more (or fewer) scorching dry days. In the plains of the north, dry 40°C days have become fewer while wet-bulb days rose sharply: the heat did not leave, it took on water. Irrigation, which puts moisture into the air, is part of the reason.</p>
           </div>
           <div class="now">
             <span class="mk">As of {C.century.cruLast}</span>
@@ -391,7 +391,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>The bars are the recent average for each month, the dots the old one. A shift in timing matters to a farmer even when the total does not move: a late June delays sowing, a wet September can flatten a ripe crop. Monthly averages over the whole country cannot show the onset date; the India Meteorological Department dates onset and withdrawal, and those dates are not in these sources. We do not know from this data whether the monsoon arrives later.</p>
+            <p>The filled dots are the recent average for each month, the rings the old one. A shift in timing matters to a farmer even when the total does not move: a late June delays sowing, a wet September can flatten a ripe crop. Monthly averages over the whole country cannot show the onset date; the India Meteorological Department dates onset and withdrawal, and those dates are not in these sources. We do not know from this data whether the monsoon arrives later.</p>
           </div>
           <div class="now">
             <span class="mk">As of {C.century.cruLast}</span>
@@ -664,7 +664,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Each group is a 20-year window; within it, one hollow dot per emissions pathway. The pathways barely differ until the 2040s, because the warming of the next two decades is largely set by gases already emitted. After that the choice of pathway decides most of the outcome. A child born in {born} is 14 to 33 years old in the 2040-2059 window and 54 to 73 in 2080-2099.</p>
+            <p>Each group is a 20-year window; within it, one dot per emissions pathway. The pathways barely differ until the 2040s, because the warming of the next two decades is largely set by gases already emitted. After that the choice of pathway decides most of the outcome. A child born in {born} is 14 to 33 years old in the 2040-2059 window and 54 to 73 in 2080-2099.</p>
             <p>The baseline here is 1995-2014, the models' reference period, not 1951-1980. The models' change from 1995-2014 cannot be added to the observed change since 1951 to make one number: they are different instruments.</p>
           </div>
           <div class="now">
@@ -694,7 +694,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>The grey line is what the models reproduce for 1995-2014; the dots are what they project. Compare dots with the grey line, not with the observed counts in section 02: a model's past is its own ruler. The hollow, dashed marks are a reminder that none of this has happened.</p>
+            <p>The grey line is what the models reproduce for 1995-2014; the blue and red lines are what they project. Compare them with the grey line, not with the observed counts in section 02: a model's past is its own ruler.</p>
           </div>
           <div class="now">
             <span class="mk">As of CMIP6, CCKP {P.windows[0]} to 2099</span>

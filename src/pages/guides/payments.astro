@@ -202,7 +202,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Each dot is one payment system. The further right, the larger an average payment. The scale jumps by ten at each gridline, because the systems differ by that much: an RTGS transfer is thousands of times a UPI payment.</p>
+            <p>Each bar is one payment system. The further right, the larger an average payment. The scale jumps by ten at each gridline, because the systems differ by that much: an RTGS transfer is thousands of times a UPI payment.</p>
             <p>An average is pulled up by a few very large payments, so it can sit well above what an ordinary payment looks like. The RBI does not publish the typical (median) payment, so we do not know it.</p>
           </div>
           <div class="now">
@@ -304,7 +304,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>The left panel counts payments, the right panel counts rupees. The same systems sit in the same order in both, so read across: a long bar on the left and a short one on the right is a system of many small payments; the reverse is a system of few large ones.</p>
+            <p>The first panel counts payments, the second counts rupees. The same systems sit in the same order in both, so read across: a long bar in the first and a short one in the second is a system of many small payments; the reverse is a system of few large ones.</p>
           </div>
           <div class="now">
             <span class="mk">As of {PM.long}</span>
@@ -546,7 +546,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>The dotted line in November 2019 is where the RBI changed its table, so the lines stop and start again rather than run through. NEFT reads much the same on both sides. Card payments do not: the old table's "usage at PoS" is close to the new table's card payments of every kind, which suggests it also counted online card payments that the new table puts under "others". The RBI does not say, so read the two card stretches as different measures. The jump in card payments late in 2016 is demonetisation, when cash ran short for weeks and shops that had a card machine suddenly used it.</p>
+            <p>The vertical line in November 2019 is where the RBI changed its table, so the lines stop and start again rather than run through. NEFT reads much the same on both sides. Card payments do not: the old table's "usage at PoS" is close to the new table's card payments of every kind, which suggests it also counted online card payments that the new table puts under "others". The RBI does not say, so read the two card stretches as different measures. The jump in card payments late in 2016 is demonetisation, when cash ran short for weeks and shops that had a card machine suddenly used it.</p>
           </div>
           <div class="now">
             <span class="mk">As of {PM.long}</span>
@@ -696,13 +696,8 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
 
 </div>
 <style is:global>
-  /* payments guide only: two charts side by side in one plate (src/dossiers/payments.charts.js pair()) */
+  /* payments guide only */
   .now b{white-space:nowrap}
-  .pm-pair{display:grid;grid-template-columns:1fr;gap:28px 40px}
-  .pm-pair.two{grid-template-columns:1fr 1fr}
-  .pm-cell{min-width:0;border-top:1px solid var(--rule);padding-top:10px}
-  .pm-ph{margin:0 0 10px;font-family:var(--ak-sans);font-size:.875rem;line-height:1.4;color:var(--ak-muted)}
-  .pm-ph b{color:var(--ak-ink);font-weight:600}
 </style>
 <script>
   import "../../dossiers/guide.client.js";

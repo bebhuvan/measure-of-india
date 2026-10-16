@@ -32,15 +32,12 @@ const crore0 = (v) => num(v, { dp: v >= 100 ? 0 : 1, suffix: " crore" });   // a
 const lakhRs = (v) => (v >= 1e5 ? "₹" + (v / 1e5).toFixed(1) + " lakh" : F.rupees(v));
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
 
-// Two charts side by side on a desktop or tablet, one above the other on a phone, each under a
-// small head. Different units never share an axis, so a pair is two drawings, not one.
+// Two charts side by side while each keeps 340 px, one above the other on a phone, each under a
+// small head, as one drawing (kit panels()). Different units never share an axis, so a pair is two panels.
 function pair(width, [A, B]) {
-  const two = width >= 700, w = two ? Math.floor((width - 40) / 2) : width;
-  const cell = (p) => `<div class="pm-cell"><p class="pm-ph"><b>${esc(p.name)}</b>${p.sub ? ` <span>${esc(p.sub)}</span>` : ""}</p>${p.draw(w)}</div>`;
-  return `<div class="pm-pair${two ? " two" : ""}">${cell(A)}${cell(B)}</div>`;
+  const { across, w, gap } = K.panelFit(width, 2, { gap: 40 });
+  return K.panels([A.draw(w), B.draw(w)], { across, gap, titles: [[A.name, A.sub], [B.name, B.sub]] });
 }
-// A line chart inside a pair keeps no hover: the figure's hover belongs to one chart only.
-const quiet = (svg) => svg.replace(/ data-ak='[^']*'/, "").replace(/ class="ak-hit"/, "");
 
 /* ---------- § 01 ---------- */
 export const sparkUpi = () => K.spark(ser(m, "upi_volume"), { width: 190, height: 44 });
@@ -149,10 +146,10 @@ export function cash() {
     label: `Two charts. Cash withdrawals at ATMs a month, crore, ${F.crore(m.series.atm_cash_volume.data[0])} at the start and ${F.crore(m.series.atm_cash_volume.data.at(-1))} in the latest month. Currency with the public, ₹ lakh crore, every fortnight since January 2016, now ${lc(lastOf(cwpAll)[1])}`,
     data: { cols: ["date", "atm_cash_withdrawals", "currency_with_public_inr_lakh_crore"], rows: dates.map((d) => [d, m.series.atm_cash_volume.data[m.dates.indexOf(d)] ?? null, cwpAll.find((p) => p[0] === d)?.[1] ?? null]) },
     draw: (width) => pair(width, [
-      { name: "Cash withdrawals at ATMs", sub: "crore a month", draw: (w) => quiet(K.line({ width: w, freq: "month", unit: { suffix: " crore" }, endFormat: crore0, yDomain: [0, Math.max(...atm.filter((p) => p[1] != null).map((p) => p[1]))], series: [{ name: "ATM cash withdrawals", data: atm, role: "lead" }] })) },
-      { name: "Currency with the public", sub: "₹ lakh crore", draw: (w) => quiet(K.line({ width: w, freq: "month", unit: { prefix: "₹" }, endFormat: (v) => "₹" + v.toFixed(1),
+      { name: "Cash withdrawals at ATMs", sub: "crore a month", draw: (w) => K.line({ width: w, freq: "month", unit: { suffix: " crore" }, endFormat: crore0, yDomain: [0, Math.max(...atm.filter((p) => p[1] != null).map((p) => p[1]))], series: [{ name: "ATM cash withdrawals", data: atm, role: "lead" }] }) },
+      { name: "Currency with the public", sub: "₹ lakh crore", draw: (w) => K.line({ width: w, freq: "month", unit: { prefix: "₹" }, endFormat: (v) => "₹" + v.toFixed(1),
         events: [{ t: "2016-11-08", label: "Old notes withdrawn", short: "Notes withdrawn" }],
-        series: [{ name: "Currency with the public", data: cwpAll, role: "lead" }] })) },
+        series: [{ name: "Currency with the public", data: cwpAll, role: "lead" }] }) },
     ]),
   });
 }
@@ -268,8 +265,8 @@ export function clearing() {
       rows: chb.dates.map((d, i) => { const j = c.dates.indexOf(d); return [d, chb.series.total.data[i], chb.series.micr.data[i], ...["mumbai_number", "new_delhi_number", "chennai_number", "national_grid_number"].map((k) => (j < 0 ? null : c.series[k].data[j]))]; }) },
     draw: (width) => pair(width, [
       { name: "Clearing houses", sub: "end-March each year", draw: (w) => K.columns({ width: w, data: houses, freq: "year", dp: 0, valueDp: 0 }) },
-      { name: "Cheques cleared by centre", sub: "crore a year", draw: (w) => quiet(K.line({ width: w, freq: "fy", unit: { suffix: " crore" }, endFormat: (v) => num(v, { dp: 1 }),
-        series: [...C3.map(([name, k, color]) => ({ name, short: name === "New Delhi" ? "Delhi" : name, data: fyPts(ser(c, k, CR)), role: "cat", color })), { name: "National grid", data: grid, role: "lead" }] })) },
+      { name: "Cheques cleared by centre", sub: "crore a year", draw: (w) => K.line({ width: w, freq: "fy", unit: { suffix: " crore" }, endFormat: (v) => num(v, { dp: 1 }),
+        series: [...C3.map(([name, k, color]) => ({ name, short: name === "New Delhi" ? "Delhi" : name, data: fyPts(ser(c, k, CR)), role: "cat", color })), { name: "National grid", data: grid, role: "lead" }] }) },
     ]),
   });
 }

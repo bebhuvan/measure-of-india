@@ -54,10 +54,9 @@ const PCT = { suffix: "%" };
 
 /** kit pairs [[date, value]] from a hydrated series, scaled for display (never in the data). */
 const kp = (s, scale = 1) => s.data.map((d) => [d.date.toISOString().slice(0, 10), d.value == null ? null : d.value * scale]);
-/** several drawings stacked in one plate, each under a small head: different units never share
- * an axis. Only the first keeps the hover readout: a figure's hover belongs to one chart. */
-const quiet = (svg) => svg.replace(/ data-ak='[^']*'/, "").replace(/ class="ak-hit"/, "");
-const stack = (parts) => parts.map((p, i) => `<div class="fx-cell"><p class="fx-ph"><b>${esc(p.name)}</b>${p.sub ? ` <span>${esc(p.sub)}</span>` : ""}</p>${i ? quiet(p.svg) : p.svg}</div>`).join("");
+/** several drawings stacked in one plate, each under a small head, as one drawing (kit panels()):
+ * different units never share an axis; each panel keeps its own hover */
+const stack = (parts) => K.panels(parts.map((p) => p.svg), { titles: parts.map((p) => [p.name, p.sub]) });
 const csvOf = (cols, rows) => ({ cols, rows });
 /** a long name cut at a word to fit a bar chart's name column on a desktop (the kit's column is
  * at most 200 px at 13 px); a phone sets names above the bars, at full width */

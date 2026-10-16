@@ -7,6 +7,7 @@
 import * as K from "../kit/kit.js";
 import { figure } from "../kit/figure.js";
 import { pairs } from "../kit/data.js";
+import { place, unit } from "./states-key.js";
 import headline from "../../data/series/aishe-headline.json";
 import access from "../../data/series/aishe-access.json";
 import composition from "../../data/series/aishe-composition.json";
@@ -53,7 +54,9 @@ const eduSegs = EDU.map(([k, n]) => ({ k, n, v: last(C[k]) })).filter((d) => d.v
 const socSegs = SOC.map(([k, n]) => ({ k, n, v: last(C[k]) })).filter((d) => d.v != null && d.v > 0);
 
 const titled = (slug) => slug.split("_").map((w) => w[0].toUpperCase() + w.slice(1)).join(" ");
-const stateName = (slug) => (slug === "dadra_nagar_haveli_and_daman_diu" ? "DNH & Daman & Diu" : titled(slug)).replace("Dnh", "DNH");
+// the bundle's keys are slugs ("jammu_kashmir"): the state key (states-key.js) gives each its proper name,
+// the short form where there is one ("Andaman and Nicobar", "DNH and Daman and Diu")
+const stateName = (slug) => { const u = unit(place(slug.replace(/_/g, " "))); return u ? u.short ?? u.name : titled(slug); };
 const aiGer = last(H.ger);
 const gerRows = Object.entries(states.series).filter(([k]) => k.startsWith("ger_"))
   .map(([k, s]) => (s.data.at(-1) == null ? null : { state: stateName(k.slice(4)), ger: s.data.at(-1) })).filter(Boolean).sort((a, b) => b.ger - a.ger);
@@ -75,7 +78,7 @@ const minRows = GRP.map(([k, group]) => ({
 })).filter((r) => r.both != null).map((r) => ({ ...r, fshare: r.female != null && r.both ? r.female / r.both : null }));
 
 const LI = headline.dates.length - 1;
-const stShort = (s) => ({ "Andaman & Nicobar Islands": "Andaman & Nicobar", "Dadra & Nagar Haveli and Daman & Diu": "DNH and Daman & Diu" })[s] || s;
+const stShort = (s) => { const u = unit(place(s)); return u ? u.short ?? u.name : s; }; // one spelling on every plate (the state key's)
 const ptrRows = Object.entries(ptrB.series).filter(([k]) => k.endsWith("__ptr_regular_all") && !k.startsWith("all_india"))
   .map(([, s]) => ({ name: stShort(s.group), v: s.data[LI] })).filter((d) => d.v != null && d.v > 0).sort((a, c) => c.v - a.v);
 const ptrAI = ptrB.series.all_india__ptr_regular_all.data[LI];
@@ -246,25 +249,20 @@ export function ledger() {
 }
 
 /* ---------- plates ---------- */
-const part = (t) => `<p style="margin:0 0 6px;font:600 .875rem/1.3 var(--ak-sans);color:var(--ak-ink)">${esc(t)}</p>`;
-// two charts in one plate: the first figure answers the plate's buttons (its CSV carries both);
-// the second sits in its own <figure>, so the plate's buttons do not reach it
-const pair = (la, a, lb, b) => `${part(la)}${a}<figure style="margin:30px 0 0">${part(lb)}${b}</figure>`;
-
 /** §03: what they study and who they are, as shares of the 2021-22 enrolment. */
 export function comp() {
   const sh = (v) => Math.round(v / TOTAL * 1000) / 10;
   const edu = eduSegs.map((d) => ({ name: d.n, value: sh(d.v), note: countWords(d.v), highlight: d.k === "under_graduate" }));
   const soc = socSegs.map((d) => ({ name: d.n, value: sh(d.v), note: countWords(d.v), highlight: d.k === "social_sc" || d.k === "social_st" }));
-  const one = (rows, file, label, data) => figure({ bare: true, file, label, data, draw: (width) => K.bars({ width, rows, unit: PCT, dp: 1 }) });
-  return pair("By level of study", one(edu, "india-atlas_aishe_composition_2021-22",
-    `Enrolment by level of study, shares of the 2021-22 total: under-graduate ${sh(last(C.under_graduate))} per cent, post-graduate ${sh(last(C.post_graduate))}, Ph.D. ${sh(last(C.phd))}`,
-    csv(["Cut", "Group", "Enrolment 2021-22", "Share, %"], [
+  return figure({
+    bare: true, file: "india-atlas_aishe_composition_2021-22",
+    label: `Two charts. Enrolment by level of study, shares of the 2021-22 total: under-graduate ${sh(last(C.under_graduate))} per cent, post-graduate ${sh(last(C.post_graduate))}, Ph.D. ${sh(last(C.phd))}. Enrolment by social group: OBC ${sh(last(C.social_obc))} per cent, Others (residual) ${sh(last(C.social_others))}, Scheduled Caste ${sh(last(C.social_sc))}, Scheduled Tribe ${sh(last(C.social_st))}`,
+    data: csv(["Cut", "Group", "Enrolment 2021-22", "Share, %"], [
       ...eduSegs.map((d) => ["Level of study", d.n, Math.round(d.v), +(d.v / TOTAL * 100).toFixed(2)]),
       ...socSegs.map((d) => ["Social group", d.n, Math.round(d.v), +(d.v / TOTAL * 100).toFixed(2)]),
-    ])),
-  "By social group", one(soc, "india-atlas_aishe_social-group_2021-22",
-    `Enrolment by social group, shares of the 2021-22 total: OBC ${sh(last(C.social_obc))} per cent, Others (residual) ${sh(last(C.social_others))}, Scheduled Caste ${sh(last(C.social_sc))}, Scheduled Tribe ${sh(last(C.social_st))}`, null));
+    ]),
+    draw: (width) => K.panels([edu, soc].map((rows) => K.bars({ width, rows, unit: PCT, dp: 1 })), { gap: 30, titles: ["By level of study", "By social group"] }),
+  });
 }
 
 const crore = (b, k) => pairs(b, k, { round: false }).map(([d, v]) => [d, v == null ? null : Math.round(v / 1e5) / 100]);
@@ -318,18 +316,15 @@ export function gergen() {
 /** §08: GER by state against the All-India ratio, then enrolment by state. */
 export function states_() {
   const enr = enrRows.map((r, i) => ({ name: r.state, value: r.enr / 1e5, highlight: i < 3 }));
-  const g = figure({
+  return figure({
     bare: true, file: "india-atlas_aishe_state-ger-enrolment_2021-22",
-    label: `Gross Enrolment Ratio by state and union territory, 2021-22, against the All-India ${aiGer.toFixed(1)} per cent: ${gerRows[0].state} highest at ${gerRows[0].ger.toFixed(1)}, ${gerRows.at(-1).state} lowest at ${gerRows.at(-1).ger.toFixed(1)}`,
+    label: `Two charts. Gross Enrolment Ratio by state and union territory, 2021-22, against the All-India ${aiGer.toFixed(1)} per cent: ${gerRows[0].state} highest at ${gerRows[0].ger.toFixed(1)}, ${gerRows.at(-1).state} lowest at ${gerRows.at(-1).ger.toFixed(1)}. Estimated enrolment by state and union territory, 2021-22: ${enrRows[0].state} the largest at ${croreN(enrRows[0].enr)} crore, then ${enrRows[1].state} and ${enrRows[2].state}`,
     data: csv(["State", "GER 2021-22, %", "Enrolment 2021-22"], gerRows.map((r) => { const e = enrRows.find((x) => x.state === r.state); return [r.state, +r.ger.toFixed(2), e ? Math.round(e.enr) : null]; })),
-    draw: (width) => K.bars({ width, rows: gerRows.map((r) => ({ name: r.state, value: Math.round(r.ger * 10) / 10 })), unit: PCT, dp: 1, ref: { value: Math.round(aiGer * 10) / 10, label: `All India ${aiGer.toFixed(1)}%` } }),
+    draw: (width) => K.panels([
+      K.bars({ width, rows: gerRows.map((r) => ({ name: r.state, value: Math.round(r.ger * 10) / 10 })), unit: PCT, dp: 1, ref: { value: Math.round(aiGer * 10) / 10, label: `All India ${aiGer.toFixed(1)}%` } }),
+      K.bars({ width, rows: enr, unit: { suffix: " lakh" }, fmt: (v) => countWords(Math.round(v * 1e5)) }),
+    ], { gap: 30, titles: ["Gross Enrolment Ratio, per cent", "Estimated enrolment, lakh"] }),
   });
-  const e = figure({
-    bare: true, file: "india-atlas_aishe_state-enrolment_2021-22",
-    label: `Estimated enrolment by state and union territory, 2021-22: ${enrRows[0].state} the largest at ${croreN(enrRows[0].enr)} crore, then ${enrRows[1].state} and ${enrRows[2].state}`,
-    draw: (width) => K.bars({ width, rows: enr, unit: { suffix: " lakh" }, fmt: (v) => countWords(Math.round(v * 1e5)) }),
-  });
-  return pair("Gross Enrolment Ratio, per cent", g, "Estimated enrolment, lakh", e);
 }
 
 /** §09: enrolment by level of study, each panel on its own scale, in lakh. */

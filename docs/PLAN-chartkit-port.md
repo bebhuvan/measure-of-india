@@ -119,3 +119,8 @@ log below.
 - 2026-10-16 (industry port: factories, iip, manufacturing) kit additions: multiples `domain:{lo,hi,ticks}`
   (a fixed shared scale, values clipped on both sides and said so); scatter `medians:false`,
   `diag:{label}` (the y = x line), `point.color`. Specimen lint 0 finds.
+- 2026-10-16 (panels port) `panels()` titles may be `[name, sub]` (sub muted, on its own line when the two do not fit);
+  `panelFit(width, n, {gap, min: 340})` decides side by side or stacked; dumbbell a-dot tip had a stray quote (fixed).
+  Multi-panel plates now one kit figure each: debt credit gap, banks shares and UCBs, payments shares/cash/clearing,
+  factories long century/counts/money/sectors, mnre states and source maps, aishe composition and states, farms state
+  shares and state yields. Page-only `.pm-*` and `.fx-*` styles removed. Specimen lint 0 finds.

@@ -408,11 +408,8 @@ export function monsoon() {
   });
 }
 
-// Two crops, one plate: each crop is its own chart (its own scale, redrawn for a phone), set one
-// above the other under a small crop heading. The first figure answers the plate's download
-// buttons (its CSV carries both crops); the second sits in its own <figure> so it does not.
-const subhead = (t) => `<p style="margin:0 0 6px;font:600 14px/1.3 var(--ak-sans);color:var(--ak-ink)">${t}</p>`;
-const pairOf = (a, b, la, lb) => `${subhead(la)}${a}<figure style="margin:28px 0 0">${subhead(lb)}${b}</figure>`;
+// Two crops, one plate: each crop is its own panel (its own scale, redrawn for a phone), set one
+// above the other under a small crop heading, as one drawing (kit panels()).
 
 /** § 09: state shares of wheat and rice since 1980-81; split states as two rulers, never joined. */
 export function statelong() {
@@ -440,25 +437,21 @@ export function statelong() {
     longShare(`${k}__${pn.crop}`, pn.crop).forEach(([d, v]) => v != null && rows.push([pn.title, l, fyOf(d), +v.toFixed(2)]));
   }
   const lastFy = fyOf(SP.dates.at(-1)), mpw = longShare("madhya_pradesh__wheat", "wheat"), pbw = longShare("punjab__wheat", "wheat");
-  const a = figure({ bare: true, file: "india-atlas_state-shares-wheat-rice", data: csvRows(["crop", "state", "crop_year", "share_of_india_pct"], rows),
-    label: `Each state's share of India's wheat since 1980-81, per cent: Madhya Pradesh ${fmt.pct1(lastOf(mpw)[1])} in ${lastFy}, Punjab ${fmt.pct1(lastOf(pbw)[1])} against ${fmt.pct1(pbw[0][1])} in 1980-81; undivided states drawn pale, apart from the states after the split`,
-    draw: draw(panels[0]) });
-  const b = figure({ bare: true, file: "india-atlas_state-shares-rice", data: csvRows(["crop", "state", "crop_year", "share_of_india_pct"], rows.filter((r) => r[0] === "Rice")),
-    label: `Each state's share of India's rice since 1980-81, per cent; undivided Andhra Pradesh drawn pale, apart from Andhra Pradesh after the 2014 split`,
-    draw: draw(panels[1]) });
-  return pairOf(a, b, "Wheat, share of India's output", "Rice, share of India's output");
+  return figure({ bare: true, file: "india-atlas_state-shares-wheat-rice", data: csvRows(["crop", "state", "crop_year", "share_of_india_pct"], rows),
+    label: `Two charts. Each state's share of India's wheat since 1980-81, per cent: Madhya Pradesh ${fmt.pct1(lastOf(mpw)[1])} in ${lastFy}, Punjab ${fmt.pct1(lastOf(pbw)[1])} against ${fmt.pct1(pbw[0][1])} in 1980-81; undivided states drawn pale, apart from the states after the split. Each state's share of India's rice since 1980-81; undivided Andhra Pradesh drawn pale, apart from Andhra Pradesh after the 2014 split`,
+    draw: (width) => K.panels(panels.map((pn) => draw(pn)(width)), { titles: ["Wheat, share of India's output", "Rice, share of India's output"] }) });
 }
 
 /** § 09: rice and wheat yield by state, ranked, against All India; Punjab picked out. */
 export function stateyield() {
-  const fig = (crop, file, extra = {}) => figure({ bare: true, file, ...extra,
-    label: `${crop} yield by state, kg per hectare, ${SY.fy}: highest ${SY.top(crop).name} ${kg(SY.top(crop).v)}, All India ${kg(SY.ai[crop])}`,
-    draw: (width) => K.bars({ width, dp: 0, unit: { suffix: " kg" }, fmt: (v) => fmt.inr(v),
-      rows: SY.rows.filter((r) => r.crop === crop).map((r) => ({ name: r.name, value: r.v, highlight: r.name === "Punjab" })),
-      ref: { value: SY.ai[crop], label: `All India ${fmt.inr(SY.ai[crop])}` } }) });
-  const a = fig("Rice", "india-atlas_rice-wheat-yield-by-state", { data: csvRows(["crop", "state", "crop_year", "kg_per_ha"], SY.rows.map((r) => [r.crop, r.name, SY.fy, r.v])) });
-  const b = fig("Wheat", "india-atlas_wheat-yield-by-state");
-  return pairOf(a, b, "Rice, kg per hectare", "Wheat, kg per hectare");
+  const bars = (crop, width) => K.bars({ width, dp: 0, unit: { suffix: " kg" }, fmt: (v) => fmt.inr(v),
+    rows: SY.rows.filter((r) => r.crop === crop).map((r) => ({ name: r.name, value: r.v, highlight: r.name === "Punjab" })),
+    ref: { value: SY.ai[crop], label: `All India ${fmt.inr(SY.ai[crop])}` } });
+  const say = (crop) => `${crop} yield by state, kg per hectare, ${SY.fy}: highest ${SY.top(crop).name} ${kg(SY.top(crop).v)}, All India ${kg(SY.ai[crop])}`;
+  return figure({ bare: true, file: "india-atlas_rice-wheat-yield-by-state",
+    data: csvRows(["crop", "state", "crop_year", "kg_per_ha"], SY.rows.map((r) => [r.crop, r.name, SY.fy, r.v])),
+    label: `Two charts. ${say("Rice")}. ${say("Wheat")}`,
+    draw: (width) => K.panels([bars("Rice", width), bars("Wheat", width)], { titles: ["Rice, kg per hectare", "Wheat, kg per hectare"] }) });
 }
 
 /** § 09: each state's share of each crop, states by foodgrain share. */

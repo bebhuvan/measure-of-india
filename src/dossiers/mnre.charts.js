@@ -196,31 +196,6 @@ export function ledger() {
   }).join("");
 }
 
-/* ---------- several kit drawings as one svg: each part's coordinates shifted, so the drawing
- * stays explicit (lint-kit reads it as is) and the plate downloads as one picture ---------- */
-const SHIFT_X = /\s(x|x1|x2|cx)="(-?[\d.]+)"/g, SHIFT_Y = /\s(y|y1|y2|cy)="(-?[\d.]+)"/g;
-function shiftPath(d, dx, dy) {
-  return d.replace(/([MLHV])\s*(-?[\d.]+)(?:,(-?[\d.]+))?/g, (m, c, a, b) =>
-    c === "H" ? `H${+(+a + dx).toFixed(1)}` : c === "V" ? `V${+(+a + dy).toFixed(1)}` : `${c}${+(+a + dx).toFixed(1)},${+(+b + dy).toFixed(1)}`);
-}
-function inner(svg, dx, dy) {
-  const body = svg.replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "");
-  return body.replace(/<(text|line|rect|circle|path)\b([^>]*)>/g, (m, tag, a) => {
-    let b = a.replace(SHIFT_X, (_, k, v) => ` ${k}="${+(+v + dx).toFixed(1)}"`).replace(SHIFT_Y, (_, k, v) => ` ${k}="${+(+v + dy).toFixed(1)}"`);
-    if (tag === "path") b = b.replace(/\sd="([^"]*)"/, (_, d) => ` d="${shiftPath(d, dx, dy)}"`);
-    return `<${tag}${b}>`;
-  });
-}
-const hOf = (svg) => +svg.match(/height="([\d.]+)"/)[1];
-const head = (x, y, t) => `<text x="${x}" y="${y}" font-size="13" fill="${K.C.ink}" font-weight="600">${esc(t)}</text>`;
-/** parts: [{svg, x, y, title?}] (title set 12 px above the part); returns one svg of width W. */
-function compose(W, parts) {
-  const H = Math.ceil(Math.max(...parts.map((p) => p.y + hOf(p.svg))));
-  let s = `<svg class="ak" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="">`;
-  for (const p of parts) { if (p.title) s += head(p.x, p.titleY ?? p.y - 8, p.title); s += inner(p.svg, p.x, p.y); }
-  return s + "</svg>";
-}
-
 /* ============================ the plates ============================ */
 
 /** § 03 the source mix: each source's share of the Grand Total, ranked, solar in the lead colour. */
@@ -322,10 +297,7 @@ export function states() {
     bare: true, file: "india-atlas_mnre_state-solar-total_2026-06",
     label: `Solar capacity by state, then Grand Total renewable capacity by state, ${LATEST_SHORT}: ${sol[0].state} leads solar, ${tot[0].state} leads the total`,
     data: { cols: ["state", "solar_mw", "total_mw"], rows: tot.map((r) => { const s = sol.find((x) => x.state === r.state); return [r.state, s ? Math.round(s.v) : null, Math.round(r.v)]; }) },
-    draw: (width) => {
-      const a = strip(sol, width), b = strip(tot, width), gap = 44;
-      return compose(width, [{ svg: a, x: 0, y: 22, title: "Solar capacity" }, { svg: b, x: 0, y: 22 + hOf(a) + gap, title: "Grand Total capacity, all sources" }]);
-    },
+    draw: (width) => K.panels([strip(sol, width), strip(tot, width)], { gap: 44, titles: ["Solar capacity", "Grand Total capacity, all sources"] }),
   });
 }
 
@@ -337,13 +309,14 @@ export function srcmap() {
     bare: true, file: "india-atlas_mnre_source-maps_" + LATEST_SHORT.replace(" ", "-").toLowerCase(),
     label: "State shares of each renewable source, " + LATEST_SHORT + ". " + SRC.map(([n]) => `${n}: ` + all[n].ent.slice(0, 3).map((d) => `${d.state} ${(d.last / all[n].tot * 100).toFixed(0)}%`).join(", ")).join(". "),
     data: { cols: ["source", "state", "installed_mw", "share_of_source_pct"], rows: SRC.flatMap(([n]) => all[n].ent.map((d) => [n, d.state, d.last, +(d.last / all[n].tot * 100).toFixed(2)])) },
+    // two panels a row while each keeps 340 px, one a row on a phone: rows of panels, stacked
     draw: (width) => {
-      const cols = width >= 1000 ? 4 : width >= 600 ? 2 : 1, gx = 32, gy = 36, pw = Math.floor((width - gx * (cols - 1)) / cols);
+      const { across, w: pw, gap } = K.panelFit(width, 2, { gap: 32 }), cols = across ? 2 : 1;
       const max = Math.max(...SRC.map(([n]) => all[n].ent[0].last / all[n].tot * 100)); // one scale for the four panels
-      const panels = SRC.map(([n]) => K.bars({ width: pw, max, unit: { suffix: "%" }, dp: 0, fmt: (v) => v.toFixed(v < 1 ? 1 : 0) + "%",
-        rows: all[n].ent.slice(0, TOP).map((d, i) => ({ name: short(d.state), value: d.last / all[n].tot * 100, highlight: i < 3 })) }));
-      const rowH = Math.max(...panels.map(hOf));
-      return compose(width, panels.map((svg, i) => { const y = Math.floor(i / cols) * (rowH + gy) - 8; return { svg, title: SRC[i][0], titleY: y + 24, x: (i % cols) * (pw + gx), y }; }));
+      const panel = ([n]) => K.bars({ width: pw, max, unit: { suffix: "%" }, dp: 0, fmt: (v) => v.toFixed(v < 1 ? 1 : 0) + "%",
+        rows: all[n].ent.slice(0, TOP).map((d, i) => ({ name: short(d.state), value: d.last / all[n].tot * 100, highlight: i < 3 })) });
+      const rows = []; for (let i = 0; i < SRC.length; i += cols) rows.push(SRC.slice(i, i + cols));
+      return K.panels(rows.map((r) => K.panels(r.map(panel), { across, gap, titles: r.map(([n]) => n) })), { gap: 36 });
     },
   });
 }

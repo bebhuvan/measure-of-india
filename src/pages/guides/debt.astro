@@ -181,7 +181,7 @@ const LQG = qlab(gliB.dates.at(-1));
           <div class="plate-val"><div class="v acc" id="pv-gap" set:html={N["pv-gap"]} /><div class="c">gap, latest</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-gap"><Fragment set:html={CH.gapRatio()} /><figure class="ak-panel" style="margin:0"><Fragment set:html={CH.gapPoints()} /></figure></div>
+          <div class="plotzone" id="plot-gap" set:html={CH.gap()} />
           <div class="plotfoot">
             <span class="src">Source: BIS credit-to-GDP gaps (WS_CREDIT_GAP). Trend: one-sided Hodrick-Prescott filter, smoothing 400,000.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/CREDIT_GAPS" target="_blank" rel="noopener">Source</a></span>

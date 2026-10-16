@@ -42,12 +42,13 @@ if(root){
     const widths={wide:width,mid:width,phone:width};
     let draw;
     if(snapshot){
-      // row names: what tells the cuts apart (the words they do not share), numbered as in the list, fitted to the name column
+      // row names: one series is named by the title, so its bar carries the reference period; several
+      // are named by what tells the cuts apart (the words they do not share), numbered as in the list, fitted to the name column
       const words=records.map(r=>displayName(r).split(/\s+/));let pre=0,suf=0;
       if(words.length>1){while(words.every(w=>w[pre]===words[0][pre]&&pre<w.length-1))pre++;while(words.every(w=>w.at(-1-suf)===words[0].at(-1-suf)&&suf<w.length-1-pre))suf++;}
       const fit=(t,max)=>{if(K.tw(t,13,400)<=max)return t;while(t.length>1&&K.tw(t+'…',13,400)>max)t=t.slice(0,-1);return t.trimEnd().replace(/[,;:-]$/,'')+'…';};
       const nameOf=(i,w)=>{const t=(words.length>1?words[i].slice(pre,words[i].length-suf):words[i]).join(' ').replace(/^[,;:-]\s*|\s*[,;:-]$/g,'')||displayName(records[i]);return fit(`${i+1}. ${t}`,w<560?w-24:Math.min(320,Math.round(w*.45))-16);};
-      draw=w=>K.bars({width:w,unit,dp,sort:false,nameMax:Math.min(320,Math.round(w*.45)),rows:records.map((r,i)=>{const d=obs[i].find(d=>d.value!=null);return d?{name:nameOf(i,w),value:d.value,color:records.length===1?K.C.lead:K.CAT[i]}:null;}).filter(Boolean)});
+      draw=w=>K.bars({width:w,unit,dp,sort:false,nameMax:Math.min(320,Math.round(w*.45)),rows:records.map((r,i)=>{const d=obs[i].find(d=>d.value!=null);return d?{name:records.length===1?(d.period||d.date):nameOf(i,w),value:d.value,color:records.length===1?K.C.lead:K.CAT[i]}:null;}).filter(Boolean)});
     }else{
       const series=records.map((r,i)=>({name:displayName(r),short:short(r,i),data:obs[i].map(d=>[d.date,d.value]),role:records.length===1?'lead':'cat',color:records.length===1?K.C.lead:K.CAT[i],dots:expectedSchedule?'open':undefined}));
       // estimated observations: hollow dots over the line (the same series, never joined to anything)

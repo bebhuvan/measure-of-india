@@ -123,31 +123,29 @@ export function inr() {
 
 /* ---------- § 04 the credit gap: two panels, one ruler each ---------- */
 const GAP_FROM = "1961-01-01";
-export function gapRatio() {
+export function gap() {
   const ratio = P(gapB, "ratio", GAP_FROM), trend = P(gapB, "trend", GAP_FROM), gap = P(gapB, "gap", GAP_FROM);
+  const dates = [...ratio, ...gap].map(([d]) => d).sort(), tDomain = [K.tnum(dates[0]), K.tnum(dates.at(-1))];
   return figure({
     bare: true, file: "india-atlas_credit-gap",
-    label: "India's private credit as a share of GDP since 1961, with its long-run trend dashed",
+    label: "Two charts. India's private credit as a share of GDP since 1961, with its long-run trend dashed; below, the credit-to-GDP gap in percentage points, with the Basel buffer thresholds at 2 and 10 points",
     data: csvOf(["Quarter", "Credit, % of GDP", "Trend, % of GDP", "Gap, points"], [ratio, trend, gap]),
-    draw: (width) => K.line({
-      width, freq: "quarter", unit: PCT, endDp: 1, height: width < 520 ? 230 : 300, right: width < 520 ? 84 : 104, inside: false,
-      series: [
-        { name: "Trend", short: "Trend", data: trend, role: "ctx", dash: "4 3" },
-        { name: "Credit", short: "Credit (est.)", data: ratio, role: "lead", est: firstEst(gapB, "ratio") },
-      ],
-    }),
-  });
-}
-export function gapPoints() {
-  return figure({
-    bare: true, file: "india-atlas_credit-gap-points",
-    label: "India's credit-to-GDP gap in percentage points since 1961, with the Basel buffer thresholds at 2 and 10 points",
-    draw: (width) => K.line({
-      width, freq: "quarter", unit: { suffix: " pt" }, endDp: 1, height: width < 520 ? 220 : 260, right: width < 520 ? 84 : 104, inside: false,
-      endFormat: (v) => K.num(v, { dp: 1, sign: true, suffix: " pt" }),
-      refs: [{ y: 2, label: "Buffer starts, 2 pt" }, { y: 10, label: "Buffer full, 10 pt" }],
-      series: [{ name: "Gap", short: "Gap (est.)", data: P(gapB, "gap", GAP_FROM), role: "lead", est: firstEst(gapB, "gap"), area: true }],
-    }),
+    // stacked at every width: the two panels share one time axis (a fixed gutter and right margin)
+    draw: (width) => K.panels([
+      K.line({
+        width, freq: "quarter", unit: PCT, endDp: 1, height: width < 520 ? 230 : 300, right: width < 520 ? 84 : 104, gutter: 44, tDomain, inside: false,
+        series: [
+          { name: "Trend", short: "Trend", data: trend, role: "ctx", dash: "4 3" },
+          { name: "Credit", short: "Credit (est.)", data: ratio, role: "lead", est: firstEst(gapB, "ratio") },
+        ],
+      }),
+      K.line({
+        width, freq: "quarter", unit: { suffix: " pt" }, endDp: 1, height: width < 520 ? 220 : 260, right: width < 520 ? 84 : 104, gutter: 44, tDomain, inside: false,
+        endFormat: (v) => K.num(v, { dp: 1, sign: true, suffix: " pt" }),
+        refs: [{ y: 2, label: "Buffer starts, 2 pt" }, { y: 10, label: "Buffer full, 10 pt" }],
+        series: [{ name: "Gap", short: "Gap (est.)", data: gap, role: "lead", est: firstEst(gapB, "gap"), area: true }],
+      }),
+    ], { titles: [["Credit and its trend", "% of GDP"], ["The gap", "percentage points"]] }),
   });
 }
 

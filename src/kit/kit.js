@@ -637,7 +637,8 @@ function _dumbbell(spec) {
   const REFS = spec.refs ?? [];
   const vals = rows.flatMap(r => [r.a, r.b, r.m, r.a0, r.b0]).concat(spec.ref ? [spec.ref.value] : [], REFS.map(f => f.value)).filter(v => v != null);
   const N = nice(spec.from ?? Math.min(0, ...vals), Math.max(...vals), phone ? 3 : 5);
-  const nameW = phone ? 0 : Math.min(190, Math.max(...rows.map(r => tw(r.name, 13, r.highlight ? 600 : 400))) + 14);
+  // optional (survey port): spec.nameMax, a wider name column for long names (default 190), so they stay on one line
+  const nameW = phone ? 0 : Math.min(spec.nameMax ?? 190, Math.max(...rows.map(r => tw(r.name, 13, r.highlight ? 600 : 400))) + 14);
   rows.forEach(r => { r._lines = phone ? [r.name] : wrap(r.name, nameW - 14, 13, r.highlight ? 600 : 400, 2); });
   const row = phone ? 34 : 24, top = spec.ref || REFS.length ? 70 : 52, H = top + rows.length * row + 10; // a ref label takes its own row under the key
   // optional (banks port): spec.endText(r), one label per row in place of the values, after the
@@ -674,7 +675,7 @@ function _dumbbell(spec) {
     if (r.a != null) s += `<line x1="${r1(xa)}" x2="${r1(xb)}" y1="${r1(yy)}" y2="${r1(yy)}" stroke="${odd ? C.compTint : C.ctx2}" stroke-width="${odd ? 3 : 2.5}"/>`;
     if (odd && spec.flagLabel && !phone) s += T(Math.max(xa, xb) + 10, yy + 4.5, spec.flagLabel, { size: 11.5, fill: C.comp });
     for (const [v0, k0] of [[r.a0, ka], [r.b0, kb]]) if (v0 != null) s += `<circle cx="${r1(x(v0))}" cy="${r1(yy)}" r="3" fill="${C.ctx2}" data-tip="${esc(r.name + ' · ' + k0 + ', earlier round: ' + fmt(v0) + (spec.unit?.suffix ?? ''))}"/>`;
-    if (r.a != null) s += `<circle cx="${r1(xa)}" cy="${r1(yy)}" r="4.5" fill="#fff" stroke="${aCol}" stroke-width="2" data-tip=""${esc(r.name + ' · ' + ka + ': ' + fmt(r.a) + (spec.unit?.suffix ?? ''))}"/>`;
+    if (r.a != null) s += `<circle cx="${r1(xa)}" cy="${r1(yy)}" r="4.5" fill="#fff" stroke="${aCol}" stroke-width="2" data-tip="${esc(r.name + ' · ' + ka + ': ' + fmt(r.a) + (spec.unit?.suffix ?? ''))}"/>`;
     s += `<circle cx="${r1(xb)}" cy="${r1(yy)}" r="4.75" fill="${r.bColor ?? C.lead}" stroke="#fff" stroke-width="1.5" data-tip="${esc(r.name + ' · ' + kb + ': ' + fmt(r.b) + (spec.unit?.suffix ?? ''))}"/>`;
     if (spec.endText) s += phone ? T(W, yy - 10, spec.endText(r), { size: 12, fill: C.ink2, anchor: 'end', cls: 'tab halo' })
       : spec.endCol ? T(W, yy + 4.5, spec.endText(r), { size: 12.5, fill: r.highlight ? C.ink : C.ink2, weight: r.highlight ? 600 : 400, anchor: 'end', cls: 'tab' })
@@ -1367,18 +1368,31 @@ function _standings(spec) {
 // each kept as its own nested <svg> so its coordinates, its hover data and its labels stay its
 // own. A plate with two panels is then one figure: one download, one lint, one accessible name.
 // panels([svgA, svgB], { gap: 28, title: ['Credit and its trend', 'The gap'] })
+// optional (panels port): a title may be [name, sub], the name in ink and the sub after it in muted,
+// the sub on a line of its own when the two do not fit the panel's width
 export function panels(svgs, { gap = 28, across = false, titles = [] } = {}) {
   const dims = svgs.map(v => { const m = v.slice(0, 400).match(/width="([\d.]+)" height="([\d.]+)"/); return [+m[1], +m[2]]; });
-  const head = t => t ? 22 : 0;
+  const two = (t, w) => Array.isArray(t) && t[1] && tw(t[0], 13, 600) + 6 + tw(t[1], 12.5) > w;
+  const head = (t, w) => !t ? 0 : two(t, w) ? 40 : 22;
+  const hmax = across ? Math.max(0, ...titles.map((t, i) => head(t, dims[i]?.[0] ?? 0))) : 0; // side by side, the panels start on one line
   let W = 0, H = 0, body = '';
   svgs.forEach((v, i) => {
-    const [w, h] = dims[i], hh = head(titles[i]);
+    const [w, h] = dims[i], t = titles[i], hh = across ? hmax : head(t, w);
     const x = across ? W + (i ? gap : 0) : 0, y = across ? 0 : H + (i ? gap : 0);
-    if (titles[i]) body += T(x, y + 13, titles[i], { size: 13, fill: C.ink, weight: 600 });
+    if (Array.isArray(t)) {
+      body += T(x, y + 13, t[0], { size: 13, fill: C.ink, weight: 600 });
+      if (t[1]) body += two(t, w) ? T(x, y + 31, t[1], { size: 12.5, fill: C.muted }) : T(x + tw(t[0], 13, 600) + 6, y + 13, t[1], { size: 12.5, fill: C.muted });
+    } else if (t) body += T(x, y + 13, t, { size: 13, fill: C.ink, weight: 600 });
     body += v.replace(/^<svg\b/, `<svg x="${x}" y="${y + hh}"`).replace(/\srole="img"/, '');
     if (across) { W = x + w; H = Math.max(H, h + hh); } else { W = Math.max(W, w); H = y + hh + h; }
   });
   return `<svg class="ak" width="${r1(W)}" height="${r1(H)}" viewBox="0 0 ${r1(W)} ${r1(H)}" role="img">${body}</svg>`;
+}
+// panelFit(width, n): side by side only when each of n panels keeps at least `min` px, else stacked
+// at the full width (a phone always stacks). const { across, w, gap } = panelFit(width, 2)
+export function panelFit(width, n = 2, { gap = 28, min = 340 } = {}) {
+  const w = Math.floor((width - gap * (n - 1)) / n);
+  return w >= min ? { across: true, w, gap } : { across: false, w: width, gap };
 }
 
 // ============================================================================ FINISH
