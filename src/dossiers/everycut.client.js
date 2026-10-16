@@ -103,16 +103,15 @@ for (const root of document.querySelectorAll(".ec")) {
   let started = null;
   function start() {
     if (started || !root.dataset.pack || !loading()) return started;
-    started = stream().then(() => { root.dataset.complete = ""; root.dispatchEvent(new CustomEvent("ec:complete")); },
+    started = stream().then(() => { root.dataset.complete = ""; root.dispatchEvent(new window.CustomEvent("ec:complete")); },
       (e) => { root.dataset.failed = ""; if (count) count.textContent = `${rows.length.toLocaleString("en-IN")} of ${total.toLocaleString("en-IN")} series shown; the rest could not load. Reload, or download the CSV.`; console.error(e); });
     (document.__atlasEveryCut ??= []).push(started);
     return started;
   }
   async function stream() {
-    if (typeof DecompressionStream === "undefined") throw new Error("This browser cannot unpack the rest of the table");
     const res = await fetch(root.dataset.pack);
     if (!res.ok) throw new Error(`${root.dataset.pack}: ${res.status}`);
-    const reader = res.body.pipeThrough(new DecompressionStream("gzip")).pipeThrough(new TextDecoderStream()).getReader();
+    const reader = (await gunzipped(res.body)).pipeThrough(new TextDecoderStream()).getReader();
     const tpl = document.createElement("template");
     let buf = "", waiting = !!window.location.hash;
     const add = async (lines) => {
@@ -143,6 +142,18 @@ for (const root of document.querySelectorAll(".ec")) {
     if (rows.length !== total) throw new Error(`every-cut: ${rows.length} rows of ${total} after the pack`);
     sortRows();
     apply();
+  }
+  // the pack is a gzip file; a host or proxy that serves it with Content-Encoding: gzip has the
+  // browser unpack it already, so unpack here only when the bytes still begin with gzip's magic
+  // (0x1f; an unpacked pack begins with "<")
+  async function gunzipped(body) {
+    const [peek, rest] = body.tee();
+    const head = peek.getReader();
+    const { value } = await head.read();
+    head.cancel();
+    if (value?.[0] !== 0x1f) return rest;
+    if (typeof DecompressionStream === "undefined") throw new Error("This browser cannot unpack the rest of the table");
+    return rest.pipeThrough(new DecompressionStream("gzip"));
   }
   // scrolling to the end of what is shown asks for the rest
   const end = root.querySelector(".ec-none") ?? root;

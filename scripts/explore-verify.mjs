@@ -20,9 +20,8 @@ for(const bucket of fs.readdirSync(path.join(root,'m')).sort()){
  }
 }
 const sourceBundles=fs.readdirSync('data/series').filter(f=>f.endsWith('.json')).map(f=>f.slice(0,-5));assert.equal(published.size,sourceBundles.length,'Bundle omission');for(const b of sourceBundles)assert.ok(published.has(b));
-// Files per deployment: Cloudflare Pages accepts at most 20,000 files in one deployment. The
-// budget keeps 4,000 of those free for the next data wave and for _headers/_redirects/OG growth,
-// so a build that would break deploys fails here first. Raise it only with the hosting limit
-// (docs/briefs/performance-scale-2026-10-15.md owns the move off that limit).
-const walk=d=>fs.readdirSync(d,{withFileTypes:true}).reduce((n,f)=>n+(f.isDirectory()?walk(path.join(d,f.name)):1),0);const assets=walk(dist);const target=Number(process.env.ATLAS_EXPLORE_ASSET_LIMIT||16000);assert.ok(assets<=target,`Integrated asset count ${assets} exceeds headroom budget ${target}`);
+// Files per deployment: one cap for the whole site, perf/budgets.json deploy.maxFiles (90,000 under
+// the 100,000 that Workers Paid static assets allow; docs/RUNBOOK-workers-cutover.md), so a build
+// that would break deploys fails here as well as in perf-budget.mjs.
+const walk=d=>fs.readdirSync(d,{withFileTypes:true}).reduce((n,f)=>n+(f.isDirectory()?walk(path.join(d,f.name)):1),0);const assets=walk(dist);const target=Number(process.env.ATLAS_EXPLORE_ASSET_LIMIT||JSON.parse(fs.readFileSync('perf/budgets.json','utf8')).deploy.maxFiles);assert.ok(assets<=target,`Integrated asset count ${assets} exceeds headroom budget ${target}`);
 const evidence={schemaVersion:1,bundles:published.size,records,observations:points,interpretationPending:pending,interpretationEligible:records-pending,qualityCounts,qualityRegistryVersion,maxShardBytes:maxShard,maxManifestBytes:maxManifest,integratedAssets:assets,assetBudget:target,passed:true};console.log('Explorer verified:',JSON.stringify(evidence));   // a gate only reads: evidence goes to the log, never into the repo

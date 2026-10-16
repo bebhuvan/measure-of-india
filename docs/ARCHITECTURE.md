@@ -16,7 +16,7 @@ npx astro build                            ④ RENDER   pages + charts from bake
 pipeline/facts.mjs ─► generate.mjs         ⑤ NARRATE  LLM prose from facts sheets only
 pipeline/verify.mjs / lint.mjs / contract.mjs
 scripts/qc.mjs + lint-charts.mjs           ⑥ GATE     numbers traced, tells banned
-.github/workflows/update.yml ─► release PR ⑦ PUBLISH  human merges; deploy.yml ships it
+.github/workflows/update.yml ─► release PR ⑦ PUBLISH  human merges; deploy.yml ships it to Workers static assets (wrangler.jsonc)
 ```
 
 No framework runtime, no database, no client-side data fetching. Everything is

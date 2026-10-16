@@ -74,7 +74,7 @@ build.
   files.** Data rides in the bundle the page was built from, or in the content-named static files
   the build writes beside it: search shards, explorer shards and every-cut packs. The deployed
   site makes no request beyond its own static assets.
-- **No file in dist over 20 MB** (Cloudflare Pages refuses any file over 25 MiB; qc fails at 20 MB).
+- **No file in dist over 20 MB** (Cloudflare Workers static assets refuse any file over 25 MiB; qc fails at 20 MB).
 - **Site search: a core of fixed size, everything per row fetched by need** (index v2, 2026-10-15).
   Static files the build writes under `/search/` (`scripts/search-index.mjs`, run by the build
   hook, packing through `src/dossiers/search-pack.js`). The engine is `src/dossiers/search-core.js`,
@@ -151,7 +151,7 @@ static guide/EveryCut context. Their canonical is the common explorer entrance.
 `test/explore-model.test.mjs`, `scripts/explore-audit.mjs`,
 `scripts/explore-verify.mjs` and the integrated gates enforce this exception.
 
-The final integrated artifact must contain at most 16,000 files (20% headroom against a conservative 20,000-file hosting cap). Full post-build verification checks every series value/field, date axis, instrument metadata, identity and chunk hash against canonical source files; it fails on omissions, duplicates or budgets. Related cuts are fetched only on request, keeping initial exact-series lookup to two data requests.
+The final integrated artifact must contain at most `perf/budgets.json` `deploy.maxFiles` files (90,000, leaving headroom under the 100,000 that Workers Paid static assets allow; `docs/RUNBOOK-workers-cutover.md`). Full post-build verification checks every series value/field, date axis, instrument metadata, identity and chunk hash against canonical source files; it fails on omissions, duplicates or budgets. Related cuts are fetched only on request, keeping initial exact-series lookup to two data requests.
 
 Search index files are named with one release hash (core `rel`), so they cache immutably and an
 open tab can never read the next release's reordered rows: a missing name is a recoverable error,

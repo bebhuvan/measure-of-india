@@ -1,9 +1,18 @@
-// Preparation only. No custom-domain route until owner approves cutover.
+// The site is served as Workers static assets (owner decision, 2026-10-16): an assets-only
+// Worker, no script, so a request costs no Worker invocation. Workers Paid allows 100,000 files
+// a version and 25 MiB a file; perf/budgets.json gates the deploy below both.
+// deploy.yml runs `wrangler deploy` after the gates; docs/RUNBOOK-workers-cutover.md has the
+// first-deploy checks and the rollback.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "india-atlas",
-  "compatibility_date": "2026-10-13",
-  "workers_dev": false,
+  "compatibility_date": "2026-10-01",
+  // the canonical host (astro.config.mjs `site`). thisindianlife.today is a Cloudflare zone, so the
+  // first deploy creates this host's DNS record and certificate; it must be the same account.
+  "routes": [{ "pattern": "atlas.thisindianlife.today", "custom_domain": true }],
+  // india-atlas.<account>.workers.dev stays on as a check host for the first deploys; turn it off
+  // once the custom domain has passed the runbook's checks
+  "workers_dev": true,
   "preview_urls": false,
   "assets": {
     "directory": "./dist",

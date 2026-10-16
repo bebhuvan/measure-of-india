@@ -268,11 +268,20 @@ as many browsers at once as the run uses, and scales every ceiling by
   cached; every run builds from committed data.
 - **Timeouts:** 40/40/120 minutes, about twice the expected runner time.
 
-**deploy.yml:** `perf:static` now runs before the deploy, with the deploy file cap at 20,000.
-Cloudflare Pages docs (5 Sep 2026) give 20,000 files on the Free plan and 100,000 on
-Pro/Business/Enterprise. A Workers Paid subscription raises the Workers static-assets cap to
-100,000, but this deploy still goes to Pages until the Workers cutover. **Owner: confirm the
-account's Pages plan, or cut over to Workers, before the file count nears 20,000 (15,897 today).**
+**deploy.yml:** the site moves from Cloudflare Pages to Workers static assets (owner decision,
+2026-10-16). Pages allows 20,000 files a deployment on its Free plan, and the site has 15,897.
+Workers Paid allows 100,000. The deploy now runs `perf:static`, including the file cap from
+`perf/budgets.json` (90,000), then `wrangler deploy` with Wrangler 4.147.0 to the custom domain
+atlas.thisindianlife.today. Setup, local checks, the first-deploy checklist and the rollback are
+in `docs/RUNBOOK-workers-cutover.md`. Nothing has been deployed from this branch.
+
+Two things the local check found:
+
+- **Compatibility date:** `wrangler.jsonc` had 2026-10-13, newer than the 2026-10-08 that Wrangler
+  4.147.0's runtime supports. The local server refused to start, so the date is now 2026-10-01.
+- **Every Cut packs:** they are served as `application/gzip` with no Content-Encoding, and the
+  bytes on the wire match the file. The client now also accepts a pack a host has already
+  unpacked, checking the first byte (`test/everycut-stream.test.mjs` streams both kinds).
 
 **update.yml:** it ran `npm run build` after its own fetch + validate, which fetched and validated
 a second time (validate alone took about 13 minutes in the cleanup session's measurement). It now

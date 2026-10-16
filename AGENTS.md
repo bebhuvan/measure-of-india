@@ -25,7 +25,7 @@ pipeline/facts.mjs ─► generate.mjs         ⑤ NARRATE  LLM prose from facts
 pipeline/verify.mjs + lint.mjs + contract.mjs  ⑥ GATE  numbers traced, tells banned
 pipeline/asof.mjs + scripts/qc.mjs + lint-charts.mjs  ⑥ GATE  rendered numbers + as-of + prose freshness
 scripts/perf-budget/search/browser.mjs   ⑥ GATE  bytes per page, search quality, phone main thread
-.github/workflows/update.yml ─► release PR ⑦ PUBLISH  human merges; deploy.yml ships it
+.github/workflows/update.yml ─► release PR ⑦ PUBLISH  human merges; deploy.yml ships it to Workers static assets (wrangler.jsonc)
 ```
 
 Hard rules — breaking any of these is a bug regardless of what else works:
@@ -119,6 +119,7 @@ Hard rules — breaking any of these is a bug regardless of what else works:
 - `docs/CONTRACT-render.md` — chart/page rules and budgets
 - `docs/CONTRACT-dossier-structure.md` — the normative dossier flow
 - `docs/RUNBOOK-sources.md` — how to add a data source (follow it exactly)
+- `docs/RUNBOOK-workers-cutover.md` — hosting on Cloudflare Workers static assets: first deploy, checks, rollback
 - `docs/RELEASE-CHECKLIST.md` — what a human reviews before merging a release
 
 ## When you finish any task here
