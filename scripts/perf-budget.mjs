@@ -103,7 +103,7 @@ const typeOf = (rel) => {
 };
 const route = (rel) => "/" + rel.replace(/index\.html$/, "");
 
-const pages = [];
+const pages = [], missingFonts = new Map();
 const textOf = (html) => html.replace(/<script[\s\S]*?<\/script>/gi, " ").replace(/<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " ")
   .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n)).replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
   .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
@@ -137,8 +137,11 @@ for (const abs of files) {
     if ([...cps].some((c) => face.ranges.some(([a, b]) => c >= a && c <= b))) fonts.add(face.file);
   }
   for (const f of fonts) { m.fonts += fs.existsSync(f) ? fs.statSync(f).size : 0; m.fontFiles.push(path.relative(DIST, f)); }
+  // a face or preload naming a file the build does not have would 404 and drop the text to a fallback face
+  for (const f of [...faces.map((x) => x.file), ...fonts]) if (!fs.existsSync(f)) missingFonts.set(path.relative(DIST, f), m.route);
   pages.push(m);
 }
+for (const [f, r] of missingFonts) failures.push(`font file ${f} is named by a stylesheet or preload (first on ${r}) but is not in the build`);
 
 // ---- check against ceilings
 const METRICS = ["html", "js", "css", "json", "fonts"];
