@@ -110,21 +110,21 @@ const leader = (b) => { const r = Object.entries(b.series).filter(([k]) => !k.in
         <div class="plate-head">
           <div class="t">
             <h3>Solar is more than half the room</h3>
-            <div class="sub">Share of Grand Total installed capacity by source, All India, {P.short}, large hydro excluded from the share (it was added in Dec 2023)</div>
+            <div class="sub">Share of Grand Total installed capacity by source, All India, {P.short}; large hydro is part of the total, counted since Dec 2023</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-comp" set:html={N["pv-comp"]}></div><div class="c">Solar, share of Grand Total</div></div>
         </div>
         <div class="frame">
           <div class="plotzone" id="plot-comp" set:html={CH.comp()} />
           <div class="plotfoot">
-            <span class="src">Source: MNRE, cumulative installed capacity (MW) by source, shares computed from the {P.short} stock; large hydro excluded (added Dec 2023, not comparable)</span>
+            <span class="src">Source: MNRE, cumulative installed capacity (MW) by source, shares computed from the {P.short} stock, large hydro included (counted since Dec 2023)</span>
             <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://mnre.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>The bars show where each installed megawatt comes from. Solar (blue) is the longest: more than half the total. Wind is second; bio and small hydro are short bars at the bottom. Large hydro is excluded from this share calculation because it entered the definition only in December 2023; including it would distort the mix.</p>
+            <p>The bars show where each installed megawatt comes from. Solar (blue) is the longest: more than half the total. Wind is second. Large hydro, counted only since December 2023, is part of today's total and has its own bar. Bio and small hydro are short bars at the bottom.</p>
           </div>
         </div>
       </figure>

@@ -12,6 +12,7 @@ const D = bySlug["credit"];
 // periods named in the copy, read from the bundles (src/dossiers/periods.js)
 const PG = period("credit-growth"), PS = period("credit-sectors"), P42 = period("credit-scb-ratios"), PD = period("credit-depth"), PM = period("credit-money-growth");
 const PF = period("credit-food"), PN = period("credit-npa"), PST = period("credit-states-cd-annual"), PPL = period("credit-places"), PW = period("credit-women"), PR = period("credit-lending-rates");
+const P07 = period("credit-sectors-2007");
 const PZ = period("credit-size"), PI = period("credit-industry"), PNB = period("credit-nbfc"), PFR = period("credit-frauds"), PMR = period("credit-money-ratios"), PNM = period("credit-npa-movement");
 const load = (b) => JSON.parse(fs.readFileSync(`data/series/${b}.json`, "utf8"));
 import * as CH from "../../dossiers/credit.charts.js";
@@ -223,14 +224,14 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
         <div class="plate-head">
           <div class="t">
             <h3>Since 2007 banks have turned from lending to industry to lending to people</h3>
-            <div class="sub">Share of bank credit to the four sectors, monthly. Pale lines: the old classification, April 2007 to December 2018; solid: the current one, from January 2019. Never joined.</div>
+            <div class="sub">Share of bank credit to the four sectors, monthly. Pale lines: the old classification, {P07.firstLong} to {P07.long}; solid: the current one, from {PS.firstLong}. The two overlap and are never joined.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-mix" set:html={T["pv-mix"]} /><div class="c">personal loans' share, latest</div></div>
         </div>
         <div class="frame">
           <div class="plotzone" id="plot-mix" set:html={CH.mix()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, Sectoral Deployment of Bank Credit, old format (2007 to 2020) and new format (2019 on); shares computed from the published amounts.</span>
+            <span class="src">Source: RBI, Sectoral Deployment of Bank Credit, old format ({P07.firstLong.slice(-4)} to {P07.long.slice(-4)}) and new format ({PS.firstLong.slice(-4)} on); shares computed from the published amounts.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>

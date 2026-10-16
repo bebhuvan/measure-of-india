@@ -31,7 +31,8 @@ const gw = (v, dp = 1) => (v / 1000).toFixed(dp);
 const last = (s) => s.data.filter((d) => d.value != null).at(-1).value;
 const prevV = (s) => s.data.filter((d) => d.value != null).at(-2).value;
 const firstV = (s) => s.data.filter((d) => d.value != null)[0].value;
-const atYearAgo = (s) => { const d = s.data.filter((d) => d.value != null); const t = d.at(-1).date.getTime() - 365.25 * 86400000; let best = null; for (const p of d) { if (p.date.getTime() <= t) best = p; else break; } return best ? best.value : null; };
+// the same month a year earlier, by calendar, never by a day count (365.25 days back from the 1st lands a month early)
+const atYearAgo = (s) => { const d = s.data.filter((d) => d.value != null), t = d.at(-1).date; const p = d.find((x) => x.date.getUTCFullYear() === t.getUTCFullYear() - 1 && x.date.getUTCMonth() === t.getUTCMonth()); return p ? p.value : null; };
 const arrow = (d, f) => (d >= 0 ? "▲ +" : "▼ −") + f(Math.abs(d));
 const LATEST_SHORT = fmtMY(S.grand_total.data.filter((x) => x.value != null).at(-1).date);
 const YEAR_AGO_SHORT = LATEST_SHORT.replace(/\d{4}$/, (y) => String(+y - 1));

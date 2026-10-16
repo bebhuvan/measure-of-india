@@ -307,7 +307,7 @@ export function mix() {
   const rows = [...sectors07B.dates.map((d) => ["2007 format", d, ...["agriculture", "industry", "services", "personal_loans", "non_food_credit"].map((k) => at(sectors07B, k, d))]), ...S.dates.map((d) => ["2019 format", d, ...["agriculture", "industry", "services", "personal_loans", "non_food_credit"].map((k) => at(S, k, d))])];
   return figure({
     bare: true, file: "india-atlas_bank-credit-by-sector",
-    label: "Shares of bank credit to agriculture, industry, services and personal loans, monthly since April 2007; the old classification drawn pale to 2020, the current one solid from 2019, never joined",
+    label: "Shares of bank credit to agriculture, industry, services and personal loans, monthly since April 2007; the old classification drawn pale to " + sectors07B.dates.at(-1).slice(0, 4) + ", the current one solid from " + S.dates[0].slice(0, 4) + ", never joined",
     data: csv(["Classification", "Month", "Agriculture", "Industry", "Services", "Personal loans", "Non-food credit (₹ lakh crore)"], rows),
     draw: (width) => K.line({
       width, freq: "month", unit: PCT, endDp: 1, zero: true,
