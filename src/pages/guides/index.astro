@@ -1,20 +1,19 @@
 ---
 import Base from "../../layouts/Base.astro";
 import "../../styles/pages.css";
-import fs from "node:fs";
 import { DOSSIERS, bySlug } from "../../dossiers/registry.js";
 import { vintageLabel, dateStamp } from "../../dossiers/display.js";
 import { headlineOf, sparkOf } from "../../dossiers/headline.js";
-import { miniSVG, lineSVG } from "../../charts/static.js";
+import * as K from "../../kit/kit.js";
+import { cover } from "../../dossiers/home.charts.js";
 
 // grouped by the registry's own sections, in registry order; every figure is read from data
 const SECTIONS = [...new Set(DOSSIERS.map((d) => d.section))];
 const ent = (d) => ({ d, h: headlineOf(d), s: sparkOf(d) });
 const F = bySlug.cpi, FH = headlineOf(F);
-const linked = JSON.parse(fs.readFileSync("data/series/cpi-2024-linked.json", "utf8"));
-const featured = lineSVG({ dates: linked.dates, values: linked.series.headline.data },
-  { w: 500, h: 280, band: [F.bands.floor, F.bands.ceiling], target: F.bands.target, liveFrom: "2025-01-01",
-    label: "Consumer price inflation since 2014, against the RBI's band of 2 to 6 per cent", endLabel: FH.period });
+// the featured guide carries the front page's cover chart; every other guide a kit sparkline
+const featured = cover();
+const spark = (s) => K.spark(s.dates.map((d, i) => [d, s.values[i]]), { width: 140, height: 40, gaps: true });
 ---
 <Base
   title="Guides · India Atlas"
@@ -37,7 +36,7 @@ const featured = lineSVG({ dates: linked.dates, values: linked.series.headline.d
       <p class="feat-b">{F.blurb}</p>
       <a class="go" href="/guides/cpi/">Read the guide</a>
     </div>
-    <div class="feat-c" set:html={featured} />
+    <figure class="feat-c"><div class="plotzone" set:html={featured} /></figure>
   </article>
 
   <div class="index break">
@@ -50,7 +49,7 @@ const featured = lineSVG({ dates: linked.dates, values: linked.series.headline.d
               <h3>{d.title}</h3>
               <p class="d">{d.blurb}</p>
               <div class="v"><b>{h.value}</b><span>{h.what}, {h.period}</span></div>
-              <div class="m"><span class="nspark" set:html={miniSVG(s, { w: 140, h: 40, label: `${d.title}, history` })} />
+              <div class="m"><span class="nspark" set:html={spark(s)} />
                 <span class="fl"><span>{s.dates[0].slice(0, 4)}</span><span>{s.dates.at(-1).slice(0, 4)}</span></span></div>
               <span class="vt">{vintageLabel(d)}</span>
             </a>
@@ -66,7 +65,7 @@ const featured = lineSVG({ dates: linked.dates, values: linked.series.headline.d
       <div><h6>Sources</h6><p>Each guide names its source of record and the release it draws on.</p></div>
       <div><h6>Before you cite</h6><p>Read <a href="/method/">how we work</a>.</p></div>
     </div>
-    <div class="fine"><span>India Atlas, guides</span><span>Static, no trackers, no cookies</span><span>Set in Source Serif 4 and Golos Text</span></div>
+    <div class="fine"><span>India Atlas, guides</span><span>Static, no trackers, no cookies</span><span>Set in Newsreader and Libre Franklin</span></div>
   </footer>
 </div>
 </Base>

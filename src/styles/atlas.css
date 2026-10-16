@@ -1,58 +1,59 @@
-/* India Atlas design system, v3 (2026-10-10 design pass). See docs/DESIGN.md §0.
-   Two faces with fixed jobs: Source Serif 4 for reading and headings, Golos Text for
-   everything measured or navigational. One accent (ultramarine) for the series a chart is
-   about; marigold only for a comparison; cool greys for the rest. Sentence case throughout.
-   One left axis: every block on every page starts on the same edge (§0.1). Class names are
-   kept from v1 and v2 so every page, and the gates that read them (qc, lint-charts, asof),
-   keep working. v2 is in git history (lb/design, before the design pass). */
+/* India Atlas design system, v5 (2026-10-16 page design, approved with the chart kit). See docs/DESIGN.md §0.
+   Two faces with fixed jobs: Newsreader (optical sizes) for reading and headings, Libre Franklin
+   for everything measured or navigational, and for the charts (src/kit). One lead colour (indigo)
+   for the series a chart is about; sindoor only for a comparison; cool greys for the rest.
+   Sentence case throughout. One left axis: every sheet is a 268px margin that carries figures and
+   furniture, a 64px gap, and the field that carries the account (§0.1). Class names are kept from
+   v1 to v3 so every page, and the gates that read them (qc, lint-charts, asof), keep working.
+   Scale (px): 12.5 13 14 15 17 19 21 25 34 44 76; rhythm on 4px: 8 16 24 32 48 64 96 112. */
 
-@font-face{font-family:"Source Serif 4";font-style:normal;font-weight:300 700;font-display:swap;
-  src:url("/fonts/source-serif-4-normal-latin.woff2") format("woff2");
+@font-face{font-family:"Newsreader";font-style:normal;font-weight:200 800;font-display:swap;
+  src:url("/fonts/newsreader-normal-latin.woff2") format("woff2");
   unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:"Source Serif 4";font-style:normal;font-weight:300 700;font-display:swap;
-  src:url("/fonts/source-serif-4-normal-latin-ext.woff2") format("woff2");
+@font-face{font-family:"Newsreader";font-style:normal;font-weight:200 800;font-display:swap;
+  src:url("/fonts/newsreader-normal-latin-ext.woff2") format("woff2");
   unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2C60-2C7F,U+A720-A7FF}
-@font-face{font-family:"Source Serif 4";font-style:italic;font-weight:300 700;font-display:swap;
-  src:url("/fonts/source-serif-4-italic-latin.woff2") format("woff2");
+@font-face{font-family:"Newsreader";font-style:italic;font-weight:200 800;font-display:swap;
+  src:url("/fonts/newsreader-italic-latin.woff2") format("woff2");
   unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:"Source Serif 4";font-style:italic;font-weight:300 700;font-display:swap;
-  src:url("/fonts/source-serif-4-italic-latin-ext.woff2") format("woff2");
+@font-face{font-family:"Newsreader";font-style:italic;font-weight:200 800;font-display:swap;
+  src:url("/fonts/newsreader-italic-latin-ext.woff2") format("woff2");
   unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2C60-2C7F,U+A720-A7FF}
-@font-face{font-family:"Golos Text";font-style:normal;font-weight:400 700;font-display:swap;
-  src:url("/fonts/golos-text-normal-latin.woff2") format("woff2");
+@font-face{font-family:"Libre Franklin";font-style:normal;font-weight:100 900;font-display:swap;
+  src:url("/fonts/libre-franklin-normal-latin.woff2") format("woff2");
   unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:"Golos Text";font-style:normal;font-weight:400 700;font-display:swap;
-  src:url("/fonts/golos-text-normal-latin-ext.woff2") format("woff2");
+@font-face{font-family:"Libre Franklin";font-style:normal;font-weight:100 900;font-display:swap;
+  src:url("/fonts/libre-franklin-normal-latin-ext.woff2") format("woff2");
   unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2C60-2C7F,U+A720-A7FF}
 
 :root{
   --bg:#FFFFFF;
-  --ink:#161A22;
-  --ink-soft:#4A5160;
-  --body:#262B35;            /* reading text: a shade off ink, so headings carry */
-  --muted:#6B7180;           /* v3: 4.9:1 on white (v2's #878D99 was 3.3:1) */
-  --axis:#6B7180;            /* chart text */
-  --faint:#B5BAC4;           /* rules and marks only, never text */
-  --rule:#ECEEF2;
-  --rule-2:#DFE2E8;
-  --wash:#F7F8FA;
-  --hover:#F8F9FB;
-  --accent:#2E4BD8;          /* ultramarine: the series the chart is about */
-  --accent-soft:#B9C3F3;
-  --gold:#C47A16;            /* marigold: a comparison, never decoration */
-  --grey1:#5F6675;
-  --grey2:#A3A9B4;
-  --grey3:#C9CED6;
-  --grey4:#878D99;
-  --band:#F4F6FD;
-  --serif:"Source Serif 4",Georgia,serif;
-  --sans:"Golos Text",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --ink:#15171A;
+  --ink-soft:#3D4148;
+  --body:#22252A;            /* reading text: a shade off ink, so headings carry */
+  --muted:#6B7078;           /* 4.9:1 on white */
+  --axis:#6B7078;            /* chart text */
+  --faint:#9CA0A7;           /* rules, marks and hanging numerals, never running text */
+  --rule:#E6E7E9;
+  --rule-2:#D3D6DA;
+  --wash:#F6F7F8;
+  --hover:#F6F7F8;
+  --accent:#2E4BC4;          /* indigo: the series the chart is about (kit lead) */
+  --accent-soft:#B9C2EA;
+  --gold:#D04A2E;            /* sindoor: a comparison, never decoration (kit comp) */
+  --grey1:#5F6570;
+  --grey2:#A3A8B0;
+  --grey3:#C9CDD3;
+  --grey4:#878C95;
+  --band:#F3F5FC;
+  --serif:"Newsreader","Source Serif 4",Georgia,serif;
+  --sans:"Libre Franklin","Helvetica Neue",Arial,sans-serif;
   --wrap:1184px;
   --gutter:32px;
-  --measure:64ch;
-  --rail:220px;              /* the ledger margin (DESIGN §0.1) */
-  --rail-gap:56px;
-  --main:calc(var(--rail) + var(--rail-gap));   /* where the main field starts, from the axis */
+  --measure:34em;
+  --rail:268px;              /* the margin (DESIGN §0.1) */
+  --rail-gap:64px;
+  --main:calc(var(--rail) + var(--rail-gap));   /* where the field starts, from the axis */
 }
 *{margin:0;padding:0;box-sizing:border-box}
 ::selection{background:rgba(46,75,216,.14)}
@@ -74,25 +75,29 @@ body{
 .mono,.sans{font-family:var(--sans)}
 .break{width:auto;margin-left:0;transform:none}
 
-/* ---------- masthead ---------- */
-.sitehead{border-bottom:1px solid var(--rule)}
-.sh-in{max-width:calc(var(--wrap) + 2 * var(--gutter));margin:0 auto;padding:0 var(--gutter);height:68px;display:flex;align-items:center;gap:36px}
-.brand{display:flex;align-items:center;text-decoration:none;color:var(--ink);
-  font-family:var(--serif);font-weight:600;font-size:1.375rem;letter-spacing:-.012em;font-variation-settings:"opsz" 30;white-space:nowrap}
-.brand .mark{display:none}
-.sh-nav{display:flex;gap:28px;margin-left:auto;font-family:var(--sans);font-size:.9375rem}
+/* ---------- masthead: the name and its line, the sections, search; then the dateline, an ink
+   rule over where you are and how fresh the page is ---------- */
+.sitehead{max-width:calc(var(--wrap) + 2 * var(--gutter));margin:0 auto;padding:0 var(--gutter)}
+.sh-in{display:flex;align-items:center;gap:32px;padding:22px 0 18px}
+.brand{display:flex;align-items:baseline;gap:14px;margin-right:auto;text-decoration:none;color:var(--ink);white-space:nowrap}
+.brand b{font:500 1.625rem/1 var(--serif);letter-spacing:-.012em;font-variation-settings:"opsz" 48}
+.brand span{font:400 .8125rem/1 var(--sans);color:var(--muted);letter-spacing:.01em}
+.sh-nav{display:flex;gap:26px;font:500 .875rem/1 var(--sans)}
 .sh-nav a{color:var(--ink-soft);text-decoration:none;padding:4px 0;border-bottom:1px solid transparent;transition:color .15s ease,border-color .15s ease}
 .sh-nav a:hover{color:var(--ink)}
 .sh-nav a[aria-current]{color:var(--ink);border-bottom-color:var(--ink)}
-.sh-search{font-family:var(--sans);font-size:.875rem;color:var(--muted);text-decoration:none;border:1px solid var(--rule-2);padding:5px 34px 6px 12px;position:relative;white-space:nowrap;transition:border-color .15s ease,color .15s ease}
-.sh-search kbd{position:absolute;right:8px;top:6px;font:12px/1.4 var(--sans);color:var(--muted);border:1px solid var(--rule-2);border-radius:2px;padding:0 5px}
+.sh-search{display:flex;align-items:center;gap:10px;width:236px;padding:9px 12px;border:1px solid var(--rule-2);font:400 .875rem/1 var(--sans);color:var(--muted);text-decoration:none;white-space:nowrap;transition:border-color .15s ease,color .15s ease}
+.sh-search kbd{margin-left:auto;font:500 .6875rem/1 var(--sans);color:var(--muted);border:1px solid var(--rule-2);padding:3px 6px}
 .sh-search:hover{color:var(--ink);border-color:var(--ink-soft)}
-.sh-date{font-family:var(--sans);font-size:.8125rem;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
-.crumb{font-family:var(--sans);font-size:.875rem;color:var(--muted)}
-.crumb .crumb-in{max-width:calc(var(--wrap) + 2 * var(--gutter));margin:0 auto;padding:20px var(--gutter) 0;display:flex;justify-content:space-between;gap:24px}
-.crumb a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--rule-2)}
-.crumb a:hover{color:var(--ink);border-bottom-color:var(--ink)}
-.crumb b{color:var(--ink);font-weight:500}
+.dateline{display:flex;justify-content:space-between;align-items:baseline;gap:24px;padding:10px 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--rule);
+  font:400 .8125rem/1.35 var(--sans);color:var(--ink-soft)}
+.dateline b{font-weight:600;color:var(--ink)}
+.dateline a{color:var(--ink-soft);text-decoration:none}
+.dateline a:hover{color:var(--accent)}
+.dateline .dl-r{display:flex;gap:6px 18px;flex-wrap:wrap;justify-content:flex-end;text-align:right}
+.dateline .dl-note{color:var(--muted)}
+.sh-date{color:var(--ink);font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+.crumb{font-family:var(--sans)}
 
 /* ---------- title block: kicker, title and lede on the left, the key figures as a short
    ledger on the right, the meta strip underneath (DESIGN §0.2, critique "Title block") ---------- */
@@ -359,7 +364,7 @@ section > .sec-head + .break{margin-top:0}
 
 
 /* =====================================================================================
-   THE LEDGER MARGIN (DESIGN §0.1). Every section is a sheet of two columns: a 220px margin
+   THE LEDGER MARGIN (DESIGN §0.1). Every section is a sheet of two columns: a 268px margin
    on the left that carries the figures and the furniture (section numerals, each chart's
    readout, its actions, margin notes, numbered misreadings) and the main field that carries
    the story (headings, prose, findings). Charts, tables and ledgers span both. Read down the
@@ -436,7 +441,7 @@ figure[id^="cb-"] .frame > .plotfoot .acts .gap{flex-basis:100%;height:0;width:a
 .provenance{margin-top:112px;padding:0 0 72px;border-top:0}
 .provenance .prov-h{padding-left:var(--main);font-family:var(--serif);font-weight:500;font-variation-settings:"opsz" 48;font-size:2.125rem;line-height:1.12;letter-spacing:-.015em;margin-bottom:20px}
 .provenance .cols{display:block}
-.provenance .cols > div{display:grid;grid-template-columns:220px minmax(0,1fr);column-gap:56px;padding:22px 0;border-top:1px solid var(--rule)}
+.provenance .cols > div{display:grid;grid-template-columns:var(--rail) minmax(0,1fr);column-gap:var(--rail-gap);padding:22px 0;border-top:1px solid var(--rule)}
 .provenance .cols > div > h6{grid-row:1 / span 30;margin:2px 0 0;font-family:var(--sans);font-size:.9375rem;font-weight:500;color:var(--ink)}
 .provenance .cols > div > *:not(h6){grid-column:2}
 .provenance h6{font-family:var(--sans);font-size:.9375rem;font-weight:500;color:var(--ink);margin-bottom:10px}
@@ -486,15 +491,6 @@ figure[id^="cb-"] .frame > .plotfoot .acts .gap{flex-basis:100%;height:0;width:a
   .kicker{margin-bottom:14px;font-size:.875rem}
   .meta{display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;margin-top:32px}
   .num .v{font-size:2.5rem}
-  .sh-in{flex-wrap:wrap;height:auto;padding:12px var(--gutter) 0;row-gap:4px;column-gap:16px}
-  .brand{font-size:1.25rem}
-  .sh-nav{display:flex;order:3;width:calc(100% + 2 * var(--gutter));margin:0 calc(-1 * var(--gutter));padding:4px var(--gutter) 8px;gap:22px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-  .sh-nav::-webkit-scrollbar{display:none}
-  .sh-nav a{white-space:nowrap}
-  .sh-search{display:none}
-  .sh-date{margin-left:auto}
-  .crumb .crumb-in{padding:14px var(--gutter) 0}
-  .crumb .crumb-in > span:last-child{display:none}
   .numbers{grid-template-columns:1fr 1fr;gap:30px 20px}
   .numbers[data-long-values]{grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr))}
   .onpage{grid-template-columns:1fr;margin-top:32px}
@@ -557,3 +553,104 @@ figure[id^="cb-"] .frame > .plotfoot .acts .gap{flex-basis:100%;height:0;width:a
 /* Basket keys retain the bar seam on desktop and use the full phone width. */
 .basket-key{display:flex;flex-wrap:wrap;gap:14px 30px;margin:20px 0 0 var(--basket-indent);min-width:0}
 @media(max-width:680px){.basket-key{margin-left:0}}
+
+
+/* =====================================================================================
+   v5 PAGE LAYER (2026-10-16, from the approved page mocks, design-mocks/pages). Proportion and
+   type only: the sheet is unchanged, so every page and gate keeps its markup.
+   ===================================================================================== */
+/* the guide's title: a phrase at display size, its second half in italic */
+.titleblock{padding-top:64px}
+h1{font-weight:400;font-variation-settings:"opsz" 72;font-size:4.25rem;line-height:1;letter-spacing:-.028em;max-width:14em}
+h1 i{font-style:italic;font-weight:300;color:var(--ink-soft)}
+.lede{font-size:1.5rem;line-height:1.42;color:var(--ink-soft);max-width:30em;font-variation-settings:"opsz" 24}
+.hero-grid .lede{margin-top:24px}
+.titleblock > .kicker,.titleblock:not(.break) > .kicker,.titleblock.break:not(:has(> .hero-grid)) > .kicker{
+  padding-top:14px;font:600 .75rem/1.45 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+.titleblock > .kicker::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-right:8px;vertical-align:1px}
+/* the facts of the source: a quiet grid under a hairline */
+.meta{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px 32px;margin-top:44px;padding-top:18px;border-top:1px solid var(--rule);font-size:.78125rem;line-height:1.3}
+.meta span{gap:4px}
+.meta b{font-size:.90625rem;line-height:1.35;font-weight:500}
+/* the key figures down the margin */
+.titleblock > .numbers{margin-top:30px}
+.titleblock .num{padding:14px 0 20px}
+.titleblock .num .l{font-size:.8125rem;color:var(--ink-soft)}
+.titleblock .num .v{font-size:2.75rem;font-weight:300;letter-spacing:-.025em}
+.titleblock .num .d{font-size:.875rem;color:var(--ink-soft)}
+
+/* on this page: two columns of numbered rows */
+.onpage{grid-template-columns:var(--rail) repeat(2,minmax(0,1fr));column-gap:var(--rail-gap);row-gap:0;margin-top:56px;padding-top:0;border-top:0;font-size:.9375rem}
+.onpage > span{padding-top:9px;font:600 .75rem/1.45 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+.onpage a{padding:8px 0;border-bottom:1px solid var(--rule);gap:0}
+.onpage a i{min-width:30px;color:var(--faint)}
+.onpage a:hover{color:var(--accent)}
+.onpage a:hover b{text-decoration:none}
+
+/* a part of the page: an ink rule across the sheet, the numeral hanging in the margin */
+section{padding-top:96px}
+.page > section:has(> .sec-head)::before{content:"";grid-column:1 / -1;grid-row:1;align-self:start;border-top:1px solid var(--ink)}
+.page > section > .sec-head .no{padding-top:14px;font-size:2.5rem;line-height:1;letter-spacing:-.02em;color:var(--faint);font-variation-settings:"opsz" 60}
+.page > section > .sec-head h2{padding-top:16px;font-size:2.125rem;line-height:1.12;letter-spacing:-.014em}
+.page > section > .sec-head .unit{padding-top:14px;font-size:.8125rem;color:var(--muted)}
+.page > section > :nth-child(2){margin-top:32px}
+.prose p,.page > section > p{font-size:1.1875rem}
+
+/* the plate */
+.plate-head .t h3{font-size:1.5625rem;line-height:1.24;letter-spacing:-.008em;font-variation-settings:"opsz" 32;max-width:32em}
+.plate-head .t .sub{font-size:.9375rem;line-height:1.5;margin-top:6px;max-width:46em}
+figure[id^="cb-"] .plate-val .v{font-size:2.75rem;font-weight:300}
+.plotfoot{font-size:.78125rem;margin-top:14px;padding-top:10px}
+.dl button,.dl a,.acts button,.acts a,.dl .acts button,.dl .acts a{font-size:.78125rem;font-weight:500}
+.dl button:hover,.dl a:hover,.acts button:hover,.acts a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+section .break + .break > figure[id^="cb-"]{margin-top:88px !important;padding-top:40px}
+
+/* notes */
+.margin-note{border-left:0;padding:12px 0 0;border-top:1px solid var(--rule);font-size:.875rem;line-height:1.5}
+.margin-note .mk{color:var(--ink);font-weight:600;font-size:.875rem}
+.explain p{font-size:1.0625rem}
+.misread h3{font-weight:400;font-size:1.375rem}
+.misread li > .no,.method ol.rules li::before{color:var(--faint);font-size:1.75rem}
+
+/* end matter and the colophon */
+.endmatter{padding-top:112px}
+.provenance{margin-top:128px;padding-top:24px;border-top:1px solid var(--ink)}
+.provenance .prov-h{font-size:1.75rem;margin-bottom:12px}
+.provenance .cols > div > h6{font-size:.875rem;font-weight:600}
+.provenance p{font-size:.875rem}
+
+@media (max-width:960px){
+  .sh-nav{gap:20px}
+  .brand span{display:none}
+  .sh-search{width:auto}
+}
+@media (max-width:860px){
+  .sitehead{padding:0 var(--gutter)}
+  .sh-in{flex-wrap:wrap;gap:4px 12px;padding:14px 0 0}
+  .brand b{font-size:1.375rem}
+  .sh-search{width:40px;height:40px;padding:0;justify-content:center}
+  .sh-search span{display:none}
+  .sh-search kbd{margin:0;border:0;font-size:0;padding:0}
+  .sh-search kbd::before{content:"";display:block;width:14px;height:14px;border:1.75px solid var(--ink-soft);border-radius:50%;box-shadow:5px 5px 0 -3.5px var(--ink-soft)}
+  .sh-nav{order:3;width:calc(100% + 2 * var(--gutter));margin:0 calc(-1 * var(--gutter));padding:6px var(--gutter) 10px;gap:22px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .sh-nav::-webkit-scrollbar{display:none}
+  .sh-nav a{white-space:nowrap}
+  .dateline .dl-note{display:none}
+  .titleblock{padding-top:40px}
+  h1{font-size:3rem;line-height:1.02}
+  .lede{font-size:1.25rem}
+  .titleblock .num .v{font-size:2.25rem}
+  .meta{grid-template-columns:1fr 1fr;gap:14px 20px;margin-top:32px}
+  .onpage{grid-template-columns:1fr;margin-top:40px}
+  .onpage > span{padding:0 0 6px}
+  section{padding-top:72px}
+  .page > section:has(> .sec-head)::before{grid-column:1 !important;grid-row:1 !important}
+  .page > section > .sec-head .no{padding-top:12px;font-family:var(--serif);font-weight:300;font-size:1.75rem;line-height:1;color:var(--faint)}
+  .page > section > .sec-head h2{padding-top:8px;font-size:1.75rem}
+  .plate-head .t h3{font-size:1.3125rem}
+  .provenance{margin-top:96px}
+}
+@media (max-width:480px){
+  h1{font-size:2.5rem}
+  .dateline{font-size:.75rem}
+}

@@ -1,4 +1,25 @@
-# DESIGN — the India Atlas design system (v3, 2026-10)
+# DESIGN — the India Atlas design system (v5, 2026-10)
+
+**v5 (16 October 2026), approved by the owner with the chart kit.** It keeps v3's sheet and
+raises its proportion and type. Where v5 and anything below disagree, v5 wins.
+
+- **Type.** Newsreader (variable, optical sizes 6 to 72) for reading and headings; Libre Franklin
+  for everything measured or navigational, and for every chart (`src/kit/metrics.js` holds its
+  advance widths). Guide titles are a phrase at 68 px, weight 400, their second half in light
+  italic. Kickers and part labels are 12 px Libre Franklin capitals, tracked .08em.
+- **Sheet.** Margin 268 px, gap 64 px, field 852 px; plates still span the whole 1184 px sheet.
+  Each part of a page opens with an ink rule across the sheet, its numeral hanging light in the
+  margin (40 px, `--faint`).
+- **Colour.** Ink #15171A, lead indigo #2E4BC4 (kit `lead`), sindoor #D04A2E for the one
+  comparison (kit `comp`); greys as in `src/styles/atlas.css` `:root`.
+- **Masthead.** Name and line, sections, search; then the dateline, an ink rule over where you are
+  and how fresh the page is (`.sh-date`, which qc reads).
+- **Charts.** Every chart is drawn at build time by the chart kit (`src/kit/`, plan
+  `docs/PLAN-chartkit-port.md`); §0.4 and §5's Plot-era recipes are history.
+- **Front page.** The newest print as a finding with its figure in the margin and its chart; search;
+  the ledger of the measures that move every month or quarter; states as equal tiles; the guides
+  on dotted leaders (`src/dossiers/home.charts.js`). Reference mocks: `design-mocks/pages/`.
+
 
 v3 (10 October 2026) is the whole-site design pass on the v2 lineage: one left axis, one type
 scale, AA greys, the chart card with a fixed anatomy, an action row in place of the Share

@@ -5,7 +5,7 @@ import fs from "node:fs";
 import { DOSSIERS, bySlug } from "../dossiers/registry.js";
 import { vintageLabel } from "../dossiers/display.js";
 import { headlineOf } from "../dossiers/headline.js";
-import { briefSVG } from "../charts/static.js";
+import { COVER, cover, LEDGER, ST, ACROSS, tiles } from "../dossiers/home.charts.js";
 import { STATES } from "../dossiers/states-key.js";   // profiles (lb/profiles)
 import { MONTHS_FULL as MF } from "../../pipeline/lib/periods.mjs";
 import { EXPLAINERS } from "../learn/registry.js";
@@ -18,116 +18,92 @@ const read = (b) => JSON.parse(fs.readFileSync(`data/series/${b}.json`, "utf8"))
 const SERIES_FILES = fs.readdirSync("data/series").filter((f) => f.endsWith(".json"));
 const N = SERIES_FILES.reduce((n, f) => n + Object.keys(read(f.replace(/\.json$/, "")).series).length, 0).toLocaleString("en-IN");
 
-const M3 = MONTHS_FULL.map((m) => m.slice(0, 3));
-const monthL = (d) => `${MONTHS_FULL[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`;
-const monthS = (d) => `${M3[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`;
-const qtrL = (d) => { const m = +d.slice(5, 7) - 1; return `${MONTHS_FULL[m]} to ${MONTHS_FULL[m + 2]} ${d.slice(0, 4)}`; };
-const qtrS = (d) => { const m = +d.slice(5, 7) - 1; return `${M3[m]} to ${M3[m + 2]} ${d.slice(0, 4)}`; };
-// rates at the precision the agencies publish them: one decimal (CPI, GDP, IIP, PLFS)
-const p1 = (v) => `${v.toFixed(1)}%`;
-const r1 = (v) => Math.round(v * 10) / 10;   // compare what the reader sees, not hidden decimals
-const series = (b, k) => { const j = read(b); const P = j.dates.map((d, i) => ({ d, v: j.series[k].data[i] })).filter((p) => p.v != null); return P; };
-// months of consecutive rises (or falls) ending at the latest point
-const streak = (P) => { let n = 0; const up = r1(P.at(-1).v) > r1(P.at(-2).v); for (let i = P.length - 1; i > 0; i--) { if ((r1(P[i].v) > r1(P[i - 1].v)) === up && r1(P[i].v) !== r1(P[i - 1].v)) n++; else break; } return { n, up }; };
-const ordinal = (n) => ["", "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth"][n] ?? `${n}th`;
-
-// 1. prices: the continuous 2024-base headline (back-cast before 2025, never the retired base)
-const cpi = series("cpi-2024-linked", "headline"), cL = cpi.at(-1), cS = streak(cpi), band = bySlug.cpi.bands;
-const lastAbove = [...cpi].reverse().slice(1).find((p) => p.v > band.target);
-const runStart = (() => { let i = cpi.length - 1; while (i > 0 && cpi[i - 1].v > band.target) i--; return cpi[i]; })();
-const cpiNews = cL.v > band.target
-  ? (runStart.d === cL.d && lastAbove ? `back above the RBI's ${band.target}% target for the first time since ${monthL(lastAbove.d)}` : `above the RBI's ${band.target}% target`)
-  : cL.v < band.floor ? `below the ${band.floor}% floor of the RBI's band` : `inside the RBI's band of ${band.floor} to ${band.ceiling}%`;
-// 2. output: real GDP growth, 2022-23 base
-const gdp = series("gdp-2022", "gdp"), gL = gdp.at(-1), gP = gdp.at(-2);
-// 3. factories: IIP general, 2022-23 base
-const iip = series("iip-2022", "general"), iL = iip.at(-1), iP = iip.at(-2);
-// 4. jobs: monthly unemployment, current weekly status
-const ur = series("plfs-monthly", "ur"), uL = ur.at(-1), uP = ur.at(-2);
-
-// each chart shows the last five years, or the whole current base where it is younger (never a
-// spliced older base: AGENTS.md rule 1)
-const W5 = (P, n) => P.slice(-n);
-const drawn = (P, n, o) => ({
-  d: briefSVG({ dates: W5(P, n).map((p) => p.d), values: W5(P, n).map((p) => p.v) }, { ...o, ...(o.lead ? { w: 904, h: 300, lines: 5 } : { w: 500, h: 150 }) }),
-  m: briefSVG({ dates: W5(P, n).map((p) => p.d), values: W5(P, n).map((p) => p.v) }, { ...o, w: 350, h: o.lead ? 190 : 130 }),
-});
-const LEAD = [
-  { slug: "cpi", topic: "Prices", period: monthL(cL.d), value: p1(cL.v),
-    sentence: `Consumer prices were <b>${p1(cL.v)}</b> higher in ${MONTHS_FULL[+cL.d.slice(5, 7) - 1]} than a year earlier, ${cS.n === 0 ? "the same rate as the month before" : `${cS.up ? "up" : "down"} for the ${cS.n > 1 ? `${ordinal(cS.n)} month in a row` : "first time"}`}, and ${cpiNews}.`,
-    chart: drawn(cpi, 60, { lead: true, ref: band.target, refLabel: `RBI target, ${band.target}%`, band: [band.floor, band.ceiling], label: `Consumer price inflation, year on year, ${monthS(cpi.at(-60).d)} to ${monthS(cL.d)}, against the RBI's target of ${band.target}% and its band of ${band.floor} to ${band.ceiling}%`, dp: 1 }) },
-  { slug: "gdp", topic: "Growth", period: qtrL(gL.d), value: p1(gL.v),
-    sentence: `The economy grew <b>${p1(gL.v)}</b> in ${qtrL(gL.d)}, ${r1(gL.v) < r1(gP.v) ? (r1(gP.v) - r1(gL.v) <= 1 ? "a little slower than" : "slower than") : r1(gL.v) > r1(gP.v) ? "faster than" : "the same as"} the ${p1(gP.v)} of the quarter before.`,
-    chart: drawn(gdp, 20, { label: `Real GDP growth by quarter, year on year, ${qtrS(gdp.at(-20)?.d ?? gdp[0].d)} to ${qtrS(gL.d)}`, dp: 1 }) },
-  { slug: "iip", topic: "Factories", period: monthL(iL.d), value: p1(iL.v),
-    sentence: `Industrial output ${iL.v < 0 ? "shrank" : "grew"} <b>${p1(Math.abs(iL.v))}</b> in ${MONTHS_FULL[+iL.d.slice(5, 7) - 1]}, ${r1(iL.v) === r1(iP.v) ? "the same as" : r1(iL.v) > r1(iP.v) ? "up from" : "down from"} ${p1(iP.v)} the month before.`,
-    chart: drawn(iip, 60, { ref: 0, label: `Industrial output growth by month, year on year, to ${monthS(iL.d)}`, dp: 1 }) },
-  { slug: "jobs", topic: "Jobs", period: monthL(uL.d), value: `${uL.v.toFixed(1)}%`,
-    sentence: r1(uL.v) === r1(uP.v) ? `Unemployment held at <b>${uL.v.toFixed(1)}%</b> in ${MONTHS_FULL[+uL.d.slice(5, 7) - 1]}, the same as the month before.`
-      : `Unemployment ${r1(uL.v) > r1(uP.v) ? "rose" : "fell"} to <b>${uL.v.toFixed(1)}%</b> in ${MONTHS_FULL[+uL.d.slice(5, 7) - 1]}, from ${uP.v.toFixed(1)}% the month before.`,
-    chart: drawn(ur, 60, { label: `Unemployment rate by month, age 15 and over, to ${monthS(uL.d)}`, dp: 1 }) },
-];
-const leadSlugs = new Set(LEAD.map((l) => l.slug));
-const cpiMeta = read("cpi-2024").meta;
-const rel = cpiMeta.releaseDate ?? cpiMeta.vintage;
-const STAMP = `${MONTHS_FULL[+rel.slice(5, 7) - 1]} ${rel.slice(0, 4)}`;
 const SECTIONS = [...new Set(DOSSIERS.map((d) => d.section))];
 const UNITS = [...STATES].sort((a, b) => a.name.localeCompare(b.name, "en-IN"));
 const nStates = UNITS.filter((u) => u.kind === "state").length, nUTs = UNITS.length - nStates;
 const LEARN = EXPLAINERS.filter((e) => e.live);
+const WORDS = ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve"];
 const LEARN_FAMILIES = [...new Set(LEARN.map((e) => e.family))];
 ---
 <Base
   title="India Atlas: the Indian economy, explained"
   description={`What the latest official figures say about prices, growth, factories and jobs, with plain-language guides to every statistic and ${N} series to search and download.`}
   nav="home"
-  dateStamp={STAMP}
+  crumbLeft={`Latest release: <b>consumer prices for ${COVER.month}</b>${COVER.release ? `, published ${+COVER.release.slice(8, 10)} ${MONTHS_FULL[+COVER.release.slice(5, 7) - 1]} ${COVER.release.slice(0, 4)}` : ""}`}
   canonical="https://atlas.thisindianlife.today/"
 >
 <div class="page home spage">
 
-  <header class="hm-head hm-row">
-    <div class="hm-m"><span class="hm-date">{STAMP}</span><span class="hm-note">Revised as each figure is released</span></div>
-    <div class="hm-b">
-      <h1>The Indian economy, from its official figures</h1>
-      <p class="hm-dek">{DOSSIERS.length} guides that explain India's statistics in plain words, and a profile of each of the {UNITS.length} states and union territories. Every figure behind them can be searched, charted and downloaded, with a link to where it came from.</p>
-      <div class="find" id="find" role="search" data-quality-version={qualityRegistryVersion}>
-        <label id="find-l" for="q">Search {N} series</label>
-        <div class="qwrap">
-          <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Inflation in Kerala, the rupee, wheat"
-            role="combobox" aria-expanded="false" aria-controls="results" aria-autocomplete="list" aria-labelledby="find-l">
-          <ul id="results" role="listbox" hidden></ul>
-        </div>
-      </div>
+  <section class="hm-sec hm-cover hm-row" aria-labelledby="cv-h">
+    <div class="hm-m">
+      <div class="hm-kicker"><span class="dot"></span>Latest release</div>
+      <div class="fig-xl">{COVER.value}<small>%</small></div>
+      <div class="hm-delta"><b>Consumer prices</b>, {COVER.month}<br>{COVER.delta}</div>
     </div>
-  </header>
-
-  <section class="hm-sec brief" aria-labelledby="br-h">
-    <div class="hm-sh hm-row"><span class="hm-m">To {monthL(cL.d)}</span><h2 id="br-h">The latest figures</h2></div>
-    {LEAD.map((l, i) => (
-      <article class={`bi hm-row${i === 0 ? " lead" : ""}`}>
-        <div class="hm-m bi-r"><span class="bi-v">{l.value}</span><span class="bi-k">{l.topic}, {l.period}</span></div>
-        <a class="bi-link" href={`/guides/${l.slug}/`}>
-          <p class="bi-s" set:html={l.sentence} />
-          <div class="bi-c nspark"><div class="bc-d" set:html={l.chart.d} /><div class="bc-m" set:html={l.chart.m} /></div>
-          <span class="bi-go">Read the guide</span>
-        </a>
-      </article>
-    ))}
+    <div>
+      <h1 id="cv-h" class="cover-h">{COVER.finding}</h1>
+      <p class="hm-lede">{COVER.lede}</p>
+      <figure class="hm-fig">
+        <div class="plotzone" set:html={cover()} />
+        <div class="plotfoot"><span class="src">Consumer Price Index, all India, year on year, per cent, base 2024=100; lighter before January 2025, where the statistics office's back-cast gives way to the live print. Source: MoSPI.</span>
+          <span class="dl"><a href="/guides/cpi/">Read the guide</a><button type="button" data-dl="csv">CSV</button><button type="button" data-dl="png">PNG</button></span></div>
+      </figure>
+    </div>
   </section>
 
-  <section class="hm-sec index" aria-labelledby="ix-h">
-    <div class="hm-sh hm-row"><span class="hm-m"><a href="/guides/">The guides, with their charts</a></span><h2 id="ix-h">Every guide</h2></div>
-    <div class="dossiers">
+  <section class="hm-sec hm-find hm-row" aria-label="Search">
+    <div class="hm-m"><div class="hm-lab">Search</div></div>
+    <div class="find" id="find" role="search" data-quality-version={qualityRegistryVersion}>
+      <label id="find-l" for="q">Search {N} series, every guide and every chart</label>
+      <div class="qwrap">
+        <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Inflation in Kerala, the rupee, wheat"
+          role="combobox" aria-expanded="false" aria-controls="results" aria-autocomplete="list" aria-labelledby="find-l">
+        <ul id="results" role="listbox" hidden></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="hm-sec" aria-labelledby="lg-h">
+    <div class="hm-ph hm-row"><div class="hm-m"><div class="hm-lab">The ledger</div></div><div><h2 id="lg-h">{WORDS[LEDGER.length]} measures that move every month or quarter, as they last printed</h2><p>Newest first. Change is on the print before; the trend is the last three years.</p></div></div>
+    <div class="hm-ledger">
+      <table>
+        <thead><tr><th>Measure</th><th>Latest</th><th>Change</th><th class="ya">A year ago</th><th class="sp">Last three years</th><th class="pd">Period</th></tr></thead>
+        <tbody>{LEDGER.map((r) => (
+          <tr><td><a href={`/guides/${r.slug}/`}><span class="nm">{r.name}</span><span class="wh">{r.what}</span></a></td>
+            <td><span class="lv">{r.value}<small>{r.suffix}</small></span></td>
+            <td class="ch">{r.change}</td><td class="ya">{r.yearAgo}</td><td class="sp" set:html={r.spark} /><td class="pd">{r.period}</td></tr>
+        ))}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="hm-sec" aria-labelledby="ai-h">
+    <div class="hm-ph hm-row"><div class="hm-m"><div class="hm-lab">Across India</div></div><div><h2 id="ai-h">Prices rose fastest in {ACROSS.top.name} and slowest in {ACROSS.bottom.name}</h2><p>Consumer prices by state and union territory, {ACROSS.month}, year on year. Each is one equal tile, so Goa counts as much as Rajasthan.</p></div></div>
+    <div class="hm-row">
+      <div class="hm-m">
+        <ol class="hm-rank">
+          {ST.slice(0, 5).map((r) => <li><span>{r.name}</span><b>{r.v.toFixed(1)}%</b></li>)}
+          <li class="gap" aria-hidden="true">…</li>
+          {ST.slice(-3).map((r) => <li><span>{r.name}</span><b>{r.v.toFixed(1)}%</b></li>)}
+        </ol>
+        <p class="hm-more"><a href="/states/">All {UNITS.length} state profiles</a></p>
+      </div>
+      <figure class="hm-fig hm-tiles"><div class="plotzone" set:html={tiles()} /></figure>
+    </div>
+  </section>
+
+  <section class="hm-sec" aria-labelledby="ix-h">
+    <div class="hm-ph hm-row"><div class="hm-m"><div class="hm-lab">The guides</div></div><div><h2 id="ix-h">{DOSSIERS.length} guides to India's statistics, each with its latest figure</h2><p>Every guide explains what a number measures, how it is made and how to read it, with every published series and cut to download.</p></div></div>
+    <div class="dossiers hm-index">
       {SECTIONS.map((sec) => (
-        <div class="ix-grp hm-row">
-          <h3 class="hm-m">{sec}</h3>
+        <div class="ix-grp">
+          <h3>{sec}</h3>
           <ul>
             {DOSSIERS.filter((d) => d.section === sec).map((d) => { const h = headlineOf(d); return (
               <li data-slug={d.slug}><a href={`/guides/${d.slug}/`}>
-                <span class="ix-n">{d.title}</span>
+                <span class="ix-n">{d.title}</span><span class="ix-l" aria-hidden="true"></span>
                 <span class="ix-v" id={`v-${d.slug}`}>{h.value}</span>
-                <span class="ix-w">{h.what}, {h.period}</span>
+                <span class="ix-w"><i>{h.what.replace(/^./, (c) => c.toUpperCase())}</i>, {h.period}</span>
                 <span class="vt">{vintageLabel(d)}</span>
               </a></li>
             ); })}
@@ -137,18 +113,13 @@ const LEARN_FAMILIES = [...new Set(LEARN.map((e) => e.family))];
     </div>
   </section>
 
-  <!-- profiles (lb/profiles): an entry point to the state profiles -->
   <section class="hm-sec st-entry" aria-labelledby="st-h">
-    <div class="hm-sh hm-row"><span class="hm-m"><a href="/states/">All {UNITS.length}, compared</a></span><h2 id="st-h">States and union territories</h2></div>
-    <div class="hm-row">
-      <p class="hm-m hm-lede">A page for each of the {nStates} states and {nUTs} union territories: how it earns, spends, works, borrows and falls ill, against India and its neighbours.</p>
-      <ul class="st-links">{UNITS.map((u) => <li><a href={`/states/${u.slug}/`}>{u.name}</a></li>)}</ul>
-    </div>
+    <div class="hm-ph hm-row"><div class="hm-m"><div class="hm-lab"><a href="/states/">All {UNITS.length}, compared</a></div></div><div><h2 id="st-h">States and union territories</h2><p>A page for each of the {nStates} states and {nUTs} union territories: how it earns, spends, works, borrows and falls ill, against India and its neighbours.</p></div></div>
+    <ul class="st-links">{UNITS.map((u) => <li><a href={`/states/${u.slug}/`}>{u.name}</a></li>)}</ul>
   </section>
-  <!-- end profiles -->
 
   <section class="hm-sec learn" aria-labelledby="ln-h">
-    <div class="hm-sh hm-row"><span class="hm-m"><a href="/learn/">All {LEARN.length} notes</a></span><h2 id="ln-h">The ideas behind the numbers</h2></div>
+    <div class="hm-ph hm-row"><div class="hm-m"><div class="hm-lab"><a href="/learn/">All {LEARN.length} notes</a></div></div><div><h2 id="ln-h">The ideas behind the numbers</h2></div></div>
     {LEARN_FAMILIES.map((f) => (
       <div class="ln-grp hm-row">
         <h3 class="hm-m">{f}</h3>
@@ -163,7 +134,7 @@ const LEARN_FAMILIES = [...new Set(LEARN.map((e) => e.family))];
       <div><h6>Sources</h6><p>MoSPI and the National Statistics Office, the Reserve Bank of India, the Office of the Economic Adviser, the Registrar General, the ministries of agriculture, education, health, commerce and renewable energy, and, for the comparisons with the world, the World Bank, the UN, the ILO and the BIS. Each guide cites its release.</p></div>
       <div><h6>Before you cite</h6><p>Read <a href="/method/">how we work</a>. Every chart downloads as an image or as data, with its source attached.</p></div>
     </div>
-    <div class="fine"><span>India Atlas</span><span>Static, no trackers, no cookies</span><span>Set in Source Serif 4 and Golos Text</span></div>
+    <div class="fine"><span>India Atlas</span><span>Static, no trackers, no cookies</span><span>Set in Newsreader and Libre Franklin</span></div>
   </footer>
 </div>
 <script>

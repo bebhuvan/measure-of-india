@@ -11,18 +11,33 @@
 .spage p a:hover{text-decoration-color:var(--ink)}
 .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* ---------- home (DESIGN §0.8), on the ledger margin: every row is the margin (figures,
-   dates, group names) and the main field (the account) ---------- */
+/* ---------- home (DESIGN §0.8, v5 page mock): the cover (the newest print as a finding, its
+   figure in the margin, its chart), search, the ledger, across India, the guides ---------- */
 .home .hm-row{display:grid;grid-template-columns:var(--rail) minmax(0,1fr);column-gap:var(--rail-gap);align-items:start}
 .home .hm-m{grid-column:1;min-width:0}
 .home .hm-row > :not(.hm-m){grid-column:2;min-width:0}
-.home .hm-head{padding:80px 0 0}
-.home .hm-head .hm-m{padding-top:14px;display:flex;flex-direction:column;gap:4px;font-family:var(--sans)}
-.home .hm-date{font-size:.9375rem;font-weight:500;color:var(--ink)}
-.home .hm-note{font-size:.8125rem;line-height:1.45;color:var(--muted);max-width:14em}
-.home .hm-head h1{font-size:3.5rem;line-height:1.04;letter-spacing:-.022em;max-width:20ch}
-.home .hm-dek{font-size:1.3125rem;line-height:1.5;color:var(--ink-soft);max-width:50ch;margin-top:24px}
-.home .find{padding:40px 0 0;max-width:640px}
+.home .hm-sec{padding-top:96px}
+.home .hm-kicker,.home .hm-lab{font:600 .75rem/1.4 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+.home .hm-lab a{color:inherit;text-decoration:none;border-bottom:1px solid var(--rule-2)}
+.home .hm-lab a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+.home .hm-kicker .dot{display:inline-block;width:6px;height:6px;background:var(--accent);border-radius:50%;margin-right:8px;vertical-align:1px}
+
+.home .hm-cover{padding-top:56px}
+.home .hm-cover .hm-m{padding-top:6px}
+.home .fig-xl{font:300 8.25rem/1 var(--serif);letter-spacing:-.045em;font-variation-settings:"opsz" 72;font-variant-numeric:lining-nums proportional-nums;margin:22px 0 18px;white-space:nowrap}
+.home .fig-xl small{font-size:.38em;letter-spacing:-.01em;color:var(--muted);margin-left:4px;font-weight:300}
+.home .hm-delta{font:400 .875rem/1.5 var(--sans);color:var(--ink-soft)}
+.home .hm-delta b{font-weight:600;color:var(--ink)}
+.home .cover-h{font:500 2.75rem/1.1 var(--serif);letter-spacing:-.018em;font-variation-settings:"opsz" 60;text-wrap:balance;max-width:20em;margin:4px 0 16px}
+.home .hm-lede{font:400 1.25rem/1.45 var(--serif);color:var(--ink-soft);max-width:34em;font-variation-settings:"opsz" 24;margin:0}
+.home .hm-fig{margin:36px 0 0}
+.home .hm-fig .plotzone{padding-top:0}
+.home .hm-fig .plotfoot{grid-template-columns:minmax(0,1fr) auto}
+.home .hm-fig .dl a{color:var(--ink);font-weight:600}
+
+.home .hm-find{padding-top:72px}
+.home .hm-find .hm-m{padding-top:14px}
+.home .find{max-width:720px}
 .home .find label{display:block;font-family:var(--sans);font-size:.875rem;font-weight:500;color:var(--ink);margin-bottom:10px}
 .home .qwrap{position:relative}
 .home #q{width:100%;font-family:var(--sans);font-size:1.0625rem;line-height:1.3;color:var(--ink);border:1px solid var(--ink-soft);padding:14px 16px;background:var(--bg);border-radius:0;outline:none;-webkit-appearance:none;appearance:none}
@@ -47,74 +62,113 @@
 #results li.wait{display:block;font-size:.875rem;color:var(--muted);cursor:default}
 #results .rv small:only-child{font-size:.8125rem}
 
-/* section heads on the front page: the heading in the main field, a way onward in the margin,
-   an ink rule across the sheet */
-.home .hm-sec{padding-top:104px}
-.home .hm-sh{align-items:baseline;padding-bottom:14px;border-bottom:1px solid var(--ink)}
-.home .hm-sh h2{font-family:var(--serif);font-weight:500;font-variation-settings:"opsz" 48;font-size:2.125rem;line-height:1.12;letter-spacing:-.015em}
-.home .hm-sh .hm-m{font-family:var(--sans);font-size:.875rem;color:var(--muted)}
-.home .hm-sh .hm-m a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--rule-2)}
-.home .hm-sh .hm-m a:hover{color:var(--ink);border-bottom-color:var(--ink)}
-.home .hm-lede{font-family:var(--sans);font-size:.875rem;line-height:1.55;color:var(--ink-soft);max-width:none;padding-top:20px}
 
-/* the latest figures: four plates, the figure in the margin */
-.home .bi{padding:28px 0 32px;border-bottom:1px solid var(--rule)}
-.home .bi:last-child{border-bottom:0}
-.home .bi-r{display:flex;flex-direction:column;gap:8px;padding-top:2px}
-.home .bi-v{font-family:var(--serif);font-weight:300;font-variation-settings:"opsz" 60;font-size:3rem;line-height:1;letter-spacing:-.025em;font-variant-numeric:lining-nums;white-space:nowrap}
-.home .bi.lead .bi-v{font-size:4.5rem;letter-spacing:-.03em}
-.home .bi-k{font-family:var(--sans);font-size:.8125rem;line-height:1.45;color:var(--muted)}
-.home .bi-link{display:grid;grid-template-columns:minmax(0,1fr) 500px;grid-template-rows:auto 1fr;column-gap:48px;text-decoration:none;color:inherit}
-.home .bi-s{grid-column:1;font-family:var(--serif);font-size:1.25rem;line-height:1.42;color:var(--ink);font-variation-settings:"opsz" 24;margin:0;max-width:none;text-wrap:pretty}
-.home .bi-s b{font-weight:600;font-variant-numeric:lining-nums}
-.home .bi-c{grid-column:2;grid-row:1 / span 2}
-.home .bi-go{grid-column:1;align-self:end;justify-self:start;font-family:var(--sans);font-size:.875rem;color:var(--ink-soft);border-bottom:1px solid var(--rule-2);margin-top:16px}
-.home .bi.lead .bi-link{grid-template-columns:minmax(0,1fr);grid-template-rows:none}
-.home .bi.lead .bi-s{font-size:1.75rem;line-height:1.3;font-variation-settings:"opsz" 36;letter-spacing:-.008em;max-width:30em}
-.home .bi.lead .bi-c{grid-column:1;grid-row:auto;margin-top:28px}
-.home .bi.lead .bi-go{margin-top:14px}
-.home .bc-m{display:none}
-.home .bi-link:hover .bi-go{color:var(--ink);border-bottom-color:var(--ink)}
-.home .bi-link:hover .bi-s{text-decoration:underline;text-decoration-color:var(--rule-2);text-decoration-thickness:1px;text-underline-offset:4px}
-.home .bi-link:focus-visible{outline-offset:6px}
+/* a part of the front page: an ink rule across the sheet, its label in the margin */
+.home .hm-ph{border-top:1px solid var(--ink);padding-top:14px;margin-bottom:40px}
+.home .hm-ph .hm-m{padding-top:4px}
+.home .hm-ph h2{font:500 2.125rem/1.12 var(--serif);letter-spacing:-.014em;font-variation-settings:"opsz" 48;text-wrap:balance;max-width:24em}
+.home .hm-ph p{font:400 1.0625rem/1.5 var(--sans);color:var(--ink-soft);margin-top:10px;max-width:40em}
 
-/* every guide: a ledger, the subject in the margin, the guides in two columns */
-.home .ix-grp{padding:22px 0 0}
-.home .ix-grp{margin-top:18px}
-.home .ix-grp h3{font-family:var(--serif);font-style:italic;font-weight:400;font-size:1.1875rem;line-height:1.3;color:var(--ink-soft);padding-top:12px;border-top:1px solid var(--ink)}
-.home .ix-grp ul{border-top:0}
-.home .ix-grp ul{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:48px}
-.home .ix-grp li a{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:20px;padding:10px 0 12px;border-top:1px solid var(--rule);text-decoration:none;color:inherit;height:100%}
-.home .ix-n{font-family:var(--serif);font-size:1.125rem;font-weight:500;line-height:1.3;color:var(--ink)}
-.home .ix-v{font-family:var(--sans);font-size:1rem;font-weight:600;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;color:var(--ink)}
-.home .ix-w{font-family:var(--sans);font-size:.8125rem;line-height:1.45;color:var(--ink-soft);margin-top:3px}
+/* the ledger */
+.home .hm-ledger{overflow-x:auto}
+.home .hm-ledger table{width:100%;border-collapse:collapse;font-family:var(--sans)}
+.home .hm-ledger th{font:500 .75rem/1.3 var(--sans);color:var(--muted);text-align:right;padding:0 0 10px 16px;border-bottom:1px solid var(--ink);white-space:nowrap}
+.home .hm-ledger th:first-child{text-align:left;padding-left:0}
+.home .hm-ledger td{padding:14px 0 14px 16px;border-bottom:1px solid var(--rule);text-align:right;vertical-align:middle;white-space:nowrap}
+.home .hm-ledger td:first-child{text-align:left;padding-left:0;white-space:normal}
+.home .hm-ledger td:first-child a{text-decoration:none;color:inherit;display:block}
+.home .hm-ledger .nm{font:500 1.1875rem/1.2 var(--serif);color:var(--ink);font-variation-settings:"opsz" 24}
+.home .hm-ledger .wh{display:block;font:400 .8125rem/1.35 var(--sans);color:var(--muted);margin-top:3px}
+.home .hm-ledger .lv{font:400 1.75rem/1 var(--serif);letter-spacing:-.02em;font-variant-numeric:lining-nums tabular-nums;color:var(--ink)}
+.home .hm-ledger .lv small{font-size:.55em;color:var(--muted);margin-left:1px}
+.home .hm-ledger td.ch,.home .hm-ledger td.ya{font-size:.875rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.home .hm-ledger td.pd{font-size:.8125rem;color:var(--muted)}
+.home .hm-ledger td.sp{width:160px}
+.home .hm-ledger td.sp svg{display:block;margin-left:auto}
+.home .hm-ledger tbody tr:hover td{background:var(--wash)}
+.home .hm-ledger tbody tr:hover td:first-child{box-shadow:inset 2px 0 0 var(--accent)}
+.home .hm-ledger tbody tr:hover .nm{color:var(--accent)}
+
+/* across India: the extremes in the margin, the tiles in the field */
+.home .hm-rank{list-style:none;margin:0;padding:0;font:400 .875rem/1.5 var(--sans);color:var(--ink-soft)}
+.home .hm-rank li{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--rule)}
+.home .hm-rank li b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.home .hm-rank li.gap{border:0;color:var(--muted);padding:8px 0 2px}
+.home .hm-more{margin-top:20px;font:600 .875rem/1.4 var(--sans)}
+.home .hm-more a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule-2)}
+.home .hm-tiles{margin:0;max-width:720px}
+
+/* the guides: a section per subject, each guide with its latest figure on a dotted leader */
+.home .hm-index{columns:3 300px;column-gap:56px}
+.home .ix-grp{break-inside:avoid;margin:0 0 36px}
+.home .ix-grp h3{font:600 .75rem/1.3 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 6px;padding-bottom:8px;border-bottom:1px solid var(--ink)}
+.home .ix-grp ul{list-style:none;margin:0;padding:0}
+.home .ix-grp li a{display:grid;grid-template-columns:auto 1fr auto;align-items:baseline;gap:8px;padding:9px 0 8px;border-bottom:1px solid var(--rule);text-decoration:none;color:inherit}
+.home .ix-n{font:400 1.125rem/1.25 var(--serif);color:var(--ink);font-variation-settings:"opsz" 20}
+.home .ix-l{border-bottom:1px dotted var(--rule-2);transform:translateY(-4px);min-width:12px}
+.home .ix-v{font:500 .875rem/1 var(--sans);font-variant-numeric:tabular-nums;color:var(--ink);white-space:nowrap}
+.home .ix-w{grid-column:1 / -1;font:400 .78125rem/1.35 var(--sans);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home .ix-w i{font-style:normal;color:var(--ink-soft)}
 .home .ix-grp .vt{display:none}   /* the vintage is on each guide; qc still reads it here */
-.home .ix-grp li a:hover .ix-n{text-decoration:underline;text-decoration-color:var(--rule-2);text-underline-offset:3px}
+.home .ix-grp li a:hover .ix-n{color:var(--accent)}
 
 /* the states and union territories: a set list in columns */
-.home .st-links{list-style:none;margin:20px 0 0;padding:0;columns:4 180px;column-gap:40px;font-family:var(--sans);font-size:.9375rem}
-.home .st-links li{break-inside:avoid;padding:6px 0;border-top:1px solid var(--rule)}
+.home .st-links{list-style:none;margin:0;padding:0;columns:4 180px;column-gap:40px;font-family:var(--sans);font-size:.9375rem}
+.home .st-links li{break-inside:avoid;padding:6px 0;border-bottom:1px solid var(--rule)}
 .home .st-links a{color:var(--ink);text-decoration:none}
-.home .st-links a:hover{text-decoration:underline;text-decoration-color:var(--rule-2);text-underline-offset:3px}
+.home .st-links a:hover{color:var(--accent)}
 
 /* the ideas: Learn notes, the family in the margin */
-.home .ln-grp{padding:20px 0 0}
-.home .ln-grp{margin-top:8px}
-.home .ln-grp h3{font-family:var(--serif);font-style:italic;font-weight:400;font-size:1.1875rem;color:var(--ink-soft);padding-top:6px}
+.home .ln-grp{padding:0 0 24px}
+.home .ln-grp h3{font:italic 400 1.1875rem/1.3 var(--serif);color:var(--ink-soft);padding-top:6px}
 .home .ln-grp ul{list-style:none;columns:2 300px;column-gap:48px}
 .home .ln-grp li{break-inside:avoid}
-.home .ln-grp a{display:block;padding:7px 0;border-top:1px solid var(--rule);font-family:var(--serif);font-size:1.0625rem;line-height:1.35;color:var(--ink);text-decoration:none}
-.home .ln-grp a:hover{text-decoration:underline;text-decoration-color:var(--rule-2);text-underline-offset:3px}
-.home .provenance{margin-top:120px}
+.home .ln-grp a{display:block;padding:7px 0;border-bottom:1px solid var(--rule);font-family:var(--serif);font-size:1.0625rem;line-height:1.35;color:var(--ink);text-decoration:none}
+.home .ln-grp a:hover{color:var(--accent)}
+.home .provenance{margin-top:128px}
 .home .provenance a{color:var(--ink)}
 
+@media (max-width:960px){
+  .home .hm-row{grid-template-columns:minmax(0,1fr)}
+  .home .hm-row > *,.home .hm-m{grid-column:1 !important}
+  .home .hm-cover .hm-m{display:grid;grid-template-columns:auto 1fr;column-gap:20px;align-items:end;padding-bottom:20px}
+  .home .hm-cover .hm-kicker{grid-column:1 / -1}
+  .home .fig-xl{font-size:5.5rem;margin:12px 0 0}
+  .home .hm-ph .hm-m{padding:0 0 8px}
+  .home .hm-find .hm-m{padding:0 0 10px}
+  .home .hm-rank{display:none}
+  .home .hm-more{margin:0 0 16px}
+}
+@media (max-width:760px){
+  .home .hm-ledger .ya,.home .hm-ledger th.ya,.home .hm-ledger .pd,.home .hm-ledger th.pd{display:none}
+  .home .hm-ledger td.sp{width:96px}
+  .home .hm-ledger td.sp svg{width:96px;height:auto}
+  .home .hm-ledger .lv{font-size:1.5rem}
+}
+@media (max-width:640px){
+  .home .hm-sec{padding-top:72px}
+  .home .hm-cover{padding-top:32px}
+  .home .cover-h{font-size:1.875rem;line-height:1.14}
+  .home .hm-lede{font-size:1.125rem}
+  .home .hm-ph h2{font-size:1.75rem}
+  .home .hm-ph p{font-size:.9375rem}
+  .home .hm-fig .plotfoot{grid-template-columns:minmax(0,1fr)}
+  .home .hm-fig .plotfoot .dl{justify-self:start}
+}
+@media (max-width:480px){
+  .home .hm-ledger td.sp,.home .hm-ledger th.sp{display:none}
+  .home .fig-xl{font-size:4.5rem}
+}
+
 /* ---------- guides index, on the ledger margin ---------- */
-.guides .feat{display:grid;grid-template-columns:var(--rail) minmax(0,5fr) minmax(0,7fr);column-gap:var(--rail-gap);align-items:start;margin-top:80px;padding:36px 0 40px;border-top:1px solid var(--ink);border-bottom:1px solid var(--rule)}
+.guides .feat{display:grid;grid-template-columns:var(--rail) minmax(0,1fr);column-gap:var(--rail-gap);align-items:start;margin-top:80px;padding:36px 0 40px;border-top:1px solid var(--ink);border-bottom:1px solid var(--rule)}
 .guides .feat-m{grid-column:1;display:flex;flex-direction:column;gap:8px}
 .guides .feat-m b{font-family:var(--serif);font-weight:300;font-variation-settings:"opsz" 60;font-size:4rem;line-height:1;letter-spacing:-.03em;font-variant-numeric:lining-nums}
 .guides .feat-m span{font-family:var(--sans);font-size:.8125rem;line-height:1.45;color:var(--muted)}
 .guides .feat-t{grid-column:2}
-.guides .feat-c{grid-column:3}
+.guides .feat-c{grid-column:2;margin:32px 0 0}
+.guides .feat-c .plotzone{padding-top:0}
+.guides .feat-b{max-width:34em}
 .guides .feat-k{font-family:var(--sans);font-size:.875rem;color:var(--muted);margin-bottom:8px}
 .guides .feat h2{font-family:var(--serif);font-weight:500;font-size:2.5rem;line-height:1.08;letter-spacing:-.018em;margin-bottom:14px}
 .guides .feat h2 a{color:inherit;text-decoration:none}
@@ -124,7 +178,7 @@
 .guides .index{margin-top:56px}
 .guides .grp{display:grid;grid-template-columns:var(--rail) minmax(0,1fr);column-gap:var(--rail-gap);padding:28px 0 4px;border-top:1px solid var(--rule-2)}
 .guides .grp:first-child{border-top:1px solid var(--ink)}
-.guides .grp > h2{font-family:var(--serif);font-weight:400;font-style:italic;font-size:1.375rem;color:var(--ink-soft);line-height:1.3}
+.guides .grp > h2{font:600 .75rem/1.4 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);padding-top:8px}
 .guides .ents{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 48px}
 .guides .ent{display:grid;grid-template-columns:minmax(0,1fr) 150px;column-gap:24px;padding:0 0 36px;text-decoration:none;color:inherit;scroll-margin-top:24px}
 .guides .ent h3{grid-column:1 / -1;font-family:var(--serif);font-weight:500;font-size:1.4375rem;line-height:1.25;margin:0 0 6px}
@@ -133,10 +187,10 @@
 .guides .ent .v b{display:block;font-family:var(--serif);font-weight:300;font-variation-settings:"opsz" 60;font-size:2.25rem;letter-spacing:-.02em;line-height:1;font-variant-numeric:lining-nums}
 .guides .ent .v span{display:block;font-size:.8125rem;color:var(--muted);margin-top:8px;line-height:1.4}
 .guides .ent .m{align-self:end;min-width:0}
-.guides .ent .m svg{display:block;width:100%;height:auto}
+.guides .ent .m svg{display:block;width:100%;height:auto;overflow:visible}
 .guides .ent .fl{display:flex;justify-content:space-between;font-family:var(--sans);font-size:.75rem;color:var(--muted);margin-top:4px}
 .guides .ent .vt{grid-column:1 / -1;font-family:var(--sans);font-size:.75rem;color:var(--muted);margin-top:10px}
-.guides .ent:hover h3{text-decoration:underline;text-decoration-color:var(--rule-2);text-underline-offset:4px;text-decoration-thickness:1px}
+.guides .ent:hover h3{color:var(--accent)}
 
 /* ---------- indicators register ---------- */
 .register .ledger td{padding:12px 20px 12px 0}
@@ -157,30 +211,9 @@
 .method ol.rules p{font-size:1.0625rem}
 
 @media (max-width:1100px){
-  .home .bi-link{grid-template-columns:minmax(0,1fr);grid-template-rows:none}
-  .home .bi-c{grid-column:1;grid-row:auto;margin-top:20px}
-  .home .bi-go{grid-column:1}
 }
 @media (max-width:860px){
   .spage .titleblock h1{font-size:2.4rem}
-  .home .hm-row{grid-template-columns:minmax(0,1fr)}
-  .home .hm-row > *,.home .hm-m{grid-column:1 !important;grid-row:auto !important}
-  .home .hm-head{padding-top:28px}
-  .home .hm-head .hm-m{flex-direction:row;gap:12px;padding:0 0 18px;align-items:baseline}
-  .home .hm-head h1{font-size:2.375rem}
-  .home .hm-dek{font-size:1.0625rem;margin-top:16px}
-  .home .find{padding-top:28px}
-  .home .hm-sec{padding-top:64px}
-  .home .hm-sh{display:flex;flex-direction:column-reverse;gap:4px}
-  .home .hm-sh h2{font-size:1.75rem}
-  .home .bi-r{flex-direction:row;align-items:baseline;gap:12px;margin-bottom:10px}
-  .home .bi-v,.home .bi.lead .bi-v{font-size:2.5rem}
-  .home .bi.lead .bi-s{font-size:1.375rem}
-  .home .ix-grp ul{grid-template-columns:minmax(0,1fr)}
-  .home .ix-grp h3,.home .ln-grp h3{padding:0 0 4px}
-  .home .bc-d{display:none}
-  .home .bc-m{display:block}
-  .home .ix-cols{columns:1}
   .home .st-links{columns:2;column-gap:20px}
   #results li{grid-template-columns:minmax(0,1fr) 84px}
   #results .rs{display:none}
@@ -193,3 +226,4 @@
   .guides .ents{grid-template-columns:1fr}
   .guides .ent{grid-template-columns:minmax(0,1fr) 120px}
 }
+@media (max-width:960px){.home .hm-find .hm-m{display:none}}

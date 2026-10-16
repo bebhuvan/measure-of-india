@@ -133,3 +133,8 @@ log below.
 - 2026-10-16 (survey port: households, schools, digital-access, energy, farm-households, pensions) dumbbell
   `nameMax` (a wider name column, default 190). Shared shaping helpers in `src/dossiers/survey-plates.js`.
   Specimen lint 0 finds.
+- 2026-10-16 (page design v5, from the approved mocks) Newsreader and Libre Franklin site-wide; masthead with
+  a dateline; margin 268, gap 64; guide title block, contents, part heads and plates restyled in atlas.css (markup
+  unchanged); front page rebuilt on the kit (`home.charts.js`: cover line, ledger sparks, CPI state tiles); the guides
+  index's featured chart and sparklines moved to the kit. `src/charts/static.js` is no longer imported by any page.
+  Fonts sit in public/fonts for now; after lb/perf merges they go through its fonts/source + fonts-build split.
