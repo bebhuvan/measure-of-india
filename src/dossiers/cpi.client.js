@@ -186,47 +186,7 @@ setTxt("pf-core", `peak: ${pkCore.value.toFixed(1)}%, ${fmtDate(pkCore.date)}, l
   const linked = LN24.headline;                                          // continuous 2024 base, primary
   const oldS = { ...S.headline, label: "Base 2012 · retired", color: "#C9CED6" };  // faint reference
   const handoff = new Date(Date.UTC(2025, 0, 1));                        // back-cast → live levels
-  const geo = { W: 1184, H: 520, ml: 70, mr: 178, mt: 36, mb: 48, d0: -1, d1: 10 };
-  const yTicks = [0, 2, 4, 6, 8, 10];
-  const xTicks = []; for (let y = 2014; y <= 2026; y += 2) xTicks.push(new Date(Date.UTC(y, 0, 1)));
-  const nbPlacer = makePlacer(geo, linked.data.map((d) => d.date));
-  nbPlacer.addSeries(linked.data).addSeries(oldS.data).addRuleY(4);
-  const nbRbiSpot = nbPlacer.place("RBI target, 4%", 12, [
-    { x: new Date(Date.UTC(2023, 5, 1)), y: 3.3, anchor: "start" },
-    { x: new Date(Date.UTC(2024, 0, 1)), y: 3.3, anchor: "start" },
-    { x: new Date(Date.UTC(2017, 6, 1)), y: 3.3, anchor: "start" },
-    { x: new Date(Date.UTC(2014, 2, 1)), y: 4.55, anchor: "start" },
-  ]);
-  const plot = Plot.plot({
-    width: geo.W, height: geo.H,
-    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
-    x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => String(d.getUTCFullYear()) },
-    y: { label: "↑ year-on-year, per cent", labelAnchor: "top", labelArrow: false,
-         tickFormat: (d) => (d === yTicks[yTicks.length - 1] ? d + "%" : String(d)), ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
-    marks: [
-      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
-      Plot.rectY([{ y1: 2, y2: 6 }], { y1: "y1", y2: "y2", x1: linked.data[0].date, x2: linked.data.at(-1).date, fill: "#F4F6FD" }),
-      Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
-      Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
-      Plot.ruleY([4], { stroke: "#BFC4CD", strokeWidth: 1, strokeDasharray: "2,4" }),
-      Plot.text([{ date: nbRbiSpot.x, value: nbRbiSpot.y }], { x: "date", y: "value", text: ["RBI target, 4%"], fontSize: 12, fill: "#878D99", fontFamily: mono, textAnchor: nbRbiSpot.anchor }),
-      // the shared agency seam: the retired 2012 ruler faint; the continuous 2024-base headline in
-      // two evidence regimes, the NSO back-cast (reconstructed, to 2024) as a pale tint and the
-      // live measurement solid from the join, so the agency's line never breaks
-      ...seamMarks("agency", [{ ...oldS, width: 1.5, opacity: 0.7 }, { ...linked, reconstructedUntil: handoff }],
-        { text: "NSO back-cast to Dec 2024, live from Jan 2025", y: 9.4 }),
-      Plot.dot([oldS.data.at(-1)], { x: "date", y: "value", fill: oldS.color, r: 3, stroke: "#FFFFFF", strokeWidth: 1 }),
-      Plot.dot([linked.data.at(-1)], { x: "date", y: "value", fill: linked.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([linked.data.at(-1)], { x: "date", y: "value", text: (d) => `Base 2024 ${d.value.toFixed(1)}%`, dx: 16, dy: -8, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
-    ],
-  });
-  a11y(plot, "Headline CPI as a continuous series on the 2024 base (NSO back-cast to 2014, live from 2025), beside the retired 2012 ruler",
-    "A continuous blue line on the 2024 base runs from 2014 to " + longDate(LN24.headline.data.at(-1).date) + ", ending at " + L24.headline.toFixed(1) + " per cent: the NSO's own back-cast joined to the live print; no 2012-base figure enters it. A faint grey line shows the retired 2012 series for comparison, ending at " + L.headline.toFixed(1) + " per cent in December 2025. The two rulers read the overlap years slightly differently. Shaded band: RBI tolerance 2–6%; dashed rule: 4% target.");
-  document.getElementById("plot-nb").append(plot);
-  wireTools(document.getElementById("cb-nb"), plot, [linked, oldS], "india-atlas_cpi2024_linked-headline_2014-2026");
-  wireLegend(document.getElementById("legend-nb"), plot, ["nb_new", "nb_old"],
-    { nb_new: { color: "#2E4BD8" }, nb_old: { color: "#C9CED6" } });
+  // drawn at build time: src/dossiers/cpi.charts.js nb()
   setTxt("pv-nb", f1(L24.headline));
   setTxt("nb-jan", f1(FIRST24)); setTxt("nb-new", f1(L24.headline));
   setTxt("nb-old-final", f1(L.headline));

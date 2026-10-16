@@ -883,7 +883,8 @@ for (const page of PAGES) {
     else ok(`${page.url} #n-lvl-now = ${want}`);
   }
   const minPlots = page.minPlots ?? 4;
-  const nPlots = doc.querySelectorAll(".plotzone svg, #frontis-plot svg, .spark svg, .nspark svg").length+(page.sourceTableSelector?doc.querySelectorAll(page.sourceTableSelector).length:0);
+  // a chart-kit figure (src/kit/figure.js) carries three drawings of one chart: it counts once
+  const nPlots = [...doc.querySelectorAll(".plotzone svg, #frontis-plot svg, .spark svg, .nspark svg")].filter((s) => !s.closest(".akf")).length + doc.querySelectorAll(".akf").length+(page.sourceTableSelector?doc.querySelectorAll(page.sourceTableSelector).length:0);
   if(page.exactPlots!==undefined&&nPlots!==page.exactPlots)fail(`${page.url}: expected exactly ${page.exactPlots} reviewed source graphics/tables, got ${nPlots}`);
   if (nPlots < minPlots) fail(`${page.url}: expected >=${minPlots} SVGs, got ${nPlots}`);
   else ok(`${page.url}: ${nPlots} charts rendered`);
@@ -910,8 +911,11 @@ for (const page of PAGES) {
   }
   // small-multiple grid panels are decorative (aria-hidden) — their accessible
   // name lives on the grid container's aria-label, so they carry no <title>
+  // kit figures are named once, on the figure's plot (role="img" aria-label); their drawings are hidden
   const missingTitle = [...doc.querySelectorAll(".plotzone svg")]
-    .filter((s) => !s.querySelector("title") && s.getAttribute("aria-hidden") !== "true");
+    .filter((s) => !s.closest(".akf") && !s.querySelector("title") && s.getAttribute("aria-hidden") !== "true");
+  const unnamedKit = [...doc.querySelectorAll(".akf-plot")].filter((p) => !p.getAttribute("aria-label")?.trim());
+  if (unnamedKit.length) fail(`${page.url}: ${unnamedKit.length} kit figures without an accessible name`);
   if (missingTitle.length) fail(`${page.url}: ${missingTitle.length} plates missing <title>`);
   // Each fully inspected page is finished: release jsdom timers, listeners and its tree.
   window.close();

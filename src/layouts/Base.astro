@@ -1,5 +1,6 @@
 ---
 import "../styles/atlas.css";
+import "../kit/kit.css";
 
 interface Props {
   title: string;
@@ -70,5 +71,6 @@ const canonicalUrl = canonical ?? "https://atlas.thisindianlife.today/";
   </div>
 )}
 <main id="main"><slot /></main>
+<script>import "../kit/enhance.js";</script>
 </body>
 </html>

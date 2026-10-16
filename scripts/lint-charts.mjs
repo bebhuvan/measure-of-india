@@ -32,6 +32,7 @@ import { awaitChartJobs } from './lib/chart-ready.mjs';
 import path from "node:path";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import { JSDOM } from "jsdom";
+import { lintSVG } from "./lint-kit.mjs";
 import { DOSSIERS } from "../src/dossiers/registry.js";
 import { EXPLAINERS } from "../src/learn/registry.js";
 
@@ -185,7 +186,15 @@ for (const url of PAGES) {
   }
   const doc = window.document;
 
+  // charts drawn at build time by the chart kit (src/kit/): all three drawings are linted by
+  // scripts/lint-kit.mjs's own rules (the kit's face and geometry), once, on the desktop run
+  if (!VW) doc.querySelectorAll(".akf-plot > div > svg").forEach((svg) => {
+    chartsSeen++;
+    const where = `${url} #${svg.closest("[id]")?.id || "(anon)"} (${svg.parentElement.className})`;
+    for (const f of lintSVG(svg.outerHTML)) issues.push({ url: where, kind: "kit", detail: f });
+  });
   doc.querySelectorAll(".plotzone svg, .frontis svg").forEach((svg) => {
+    if (svg.closest(".akf")) return;
     chartsSeen++;
     const W = +svg.getAttribute("width") || 0;
     const block = svg.closest("[id]")?.id || "(anon)";

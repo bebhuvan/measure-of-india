@@ -9,6 +9,7 @@ import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["cpi"];
 import { period, word } from "../../dossiers/periods.js";
 import b24 from "../../../data/series/cpi-2024.json";
+import * as CH from "../../dossiers/cpi.charts.js";
 import sec24 from "../../../data/series/cpi-2024-sectors.json";
 // periods named in the copy, read from the bundles (src/dossiers/periods.js)
 const P24 = period("cpi-2024"), PS24 = period("cpi-2024-sectors"), PG24 = period("cpi-2024-groups");
@@ -95,11 +96,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           <div class="plate-val"><div class="v" id="pv-nb">–</div><div class="c">{P24.short}, base 2024, y/y</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-nb">
-            <button class="chip" data-key="nb_new"><i style="background:#2E4BD8"></i>Base 2024, linked (NSO back-cast + live)</button>
-            <button class="chip" data-key="nb_old"><i style="background:#C9CED6"></i>Base 2012, retired</button>
-          </div>
-          <div class="plotzone" id="plot-nb"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-nb" set:html={CH.nb()} />
           <div class="plotfoot">
             <span class="src">Source: MoSPI, the NSO publishes its own back-cast of the new index to 2013 (series=Back) and live levels from 2025 (series=Current); on the same 2024=100 base they form one continuous headline, not a cross-base splice. The 2025 year-on-year is computed at the handoff from back-cast 2024 levels to live 2025 levels. The retired 2012 series is shown faint for comparison only, band: RBI tolerance 2–6%</span>
             <span class="dl">
