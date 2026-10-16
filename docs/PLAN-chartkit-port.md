@@ -138,3 +138,7 @@ log below.
   unchanged); front page rebuilt on the kit (`home.charts.js`: cover line, ledger sparks, CPI state tiles); the guides
   index's featured chart and sparklines moved to the kit. `src/charts/static.js` is no longer imported by any page.
   Fonts sit in public/fonts for now; after lb/perf merges they go through its fonts/source + fonts-build split.
+- 2026-10-16 lb/perf (cc5a70c7) merged (52d29df3): Newsreader and Libre Franklin now go through `fonts/source` and
+  `scripts/fonts-build.mjs`; OG cards drawn in the same faces from static instances in `scripts/og-fonts/`. git rerere is on
+  in this worktree, so the merge resolutions replay. Copy fixes from the port's review list: MNRE year-ago figures compare
+  the same calendar month; MNRE §03 says large hydro is in the shares; the credit mix subtitle reads its dates from the bundles.
