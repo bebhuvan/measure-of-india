@@ -54,13 +54,13 @@ const coreYears = +core11.dates[CI].slice(0, 4) - +core93.dates[core93.series.co
 const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
 ---
 <Base
-  title="Industrial Production · India Atlas"
+  title="Industrial Production · Measure of India"
   description={D.description}
   nav="guides"
   dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
-  canonical="https://atlas.thisindianlife.today/guides/iip/"
+  canonical="/guides/iip/"
   ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
@@ -612,7 +612,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
         <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. "Quick Estimates of Index of Industrial Production: {P.long}" (base 2022-23=100). Index levels retrieved via the eSankhyiki API, vintage <b id="prov-vintage" set:html={N["prov-vintage"]} />; growth rates are computed from levels and track the published rates within 0.05 pt.</p>
         <p>The discontinued base 2011-12=100, including the 23-industry register in §05, is shown separately and never spliced with the current base (the base-year rule). Its March 2025 index, missing from the source for months, was later loaded, so the series closes without a gap.</p>
         <p>The heritage bases 1993-94=100 (Apr 1994 to Jun 2011) and 2004-05=100 (Apr 2005 to Mar 2017), the deep ledger in §03, come from the same API, each on its own ruler. The API serves four bases, monthly and annual, by sector, use and two-digit industry, and nothing finer; every one of those cuts is in the downloads, the annual rows as published (levels and growth) since October 2026.</p>
-        <p>The oldest ruler, 1980-81=100 (Apr 1981 to Mar 1998; manufacturing groups to Mar 1994), is not served by MoSPI's API. It comes from the CSO's index as republished by the Reserve Bank of India in its database (DBIE reports 638 and 219), read through the Atlas's local mirror of DBIE. Every other base in those RBI tables is a copy of MoSPI's series and is not used.</p>
+        <p>The oldest ruler, 1980-81=100 (Apr 1981 to Mar 1998; manufacturing groups to Mar 1994), is not served by MoSPI's API. It comes from the CSO's index as republished by the Reserve Bank of India in its database (DBIE reports 638 and 219), read through our local mirror of DBIE. Every other base in those RBI tables is a copy of MoSPI's series and is not used.</p>
         <p>The eight core industries come from the Office of the Economic Adviser, DPIIT, as published annually by the RBI (DBIE reports 499 and 989) on bases 1993-94, 2004-05 and 2011-12. The RBI's growth figure for the first year of the 1993-94 base is measured against the 1980-81 base and is left out. The monthly core index is not in the RBI database and is not yet carried here.</p>
         <p>The Index of Services Production (base 2024-25=100, first published 2025) is a trial series: MoSPI may change its methodology without notice, and every vintage is provisional. It is shown as levels only, same vintage.</p>
       </div>
@@ -627,7 +627,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, IIP</span>
+      <span>Measure of India, IIP</span>
       <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]} />, Bases 2022-23, 2011-12, 2004-05, 1993-94 and 1980-81 (each =100), core industries 2011-12, 2004-05 and 1993-94, ISP base 2024-25=100</span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

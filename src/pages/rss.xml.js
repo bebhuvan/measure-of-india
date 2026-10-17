@@ -9,6 +9,7 @@ import rss from "@astrojs/rss";
 import fs from "node:fs";
 import path from "node:path";
 import { DOSSIERS } from "../dossiers/registry.js";
+import { SITE } from "../site.js";
 
 const read = (slug) =>
   JSON.parse(fs.readFileSync(path.resolve("data/series", slug + ".json"), "utf8"));
@@ -30,7 +31,7 @@ export function GET(context) {
     };
   });
   return rss({
-    title: "India Atlas",
+    title: SITE.name,
     description: "Guides to India's official economic statistics, revised with each release.",
     site: context.site,
     items,

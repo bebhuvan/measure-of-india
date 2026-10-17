@@ -157,13 +157,13 @@ const N = {};
 }
 ---
 <Base
-  title="Interest rates · India Atlas"
+  title="Interest rates · Measure of India"
   description={D.description}
   nav="guides"
   dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
-  canonical="https://atlas.thisindianlife.today/guides/rates/"
+  canonical="/guides/rates/"
   ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
@@ -589,7 +589,7 @@ const N = {};
         <div class="frame">
           <div class="plotzone" id="plot-real" set:html={CH.real()} />
           <div class="plotfoot">
-            <span class="src">Source: India Atlas calculation from RBI rates and MoSPI CPI (2024=100; the CPI guide's linked series). Before tax. The same calculation on the retired 2012 base is in the data downloads.</span>
+            <span class="src">Source: Measure of India calculation from RBI rates and MoSPI CPI (2024=100; the CPI guide's linked series). Before tax. The same calculation on the retired 2012 base is in the data downloads.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -846,7 +846,7 @@ const N = {};
       <p><b>Policy rates</b> are decisions, not measurements. Each is in force from the date the RBI announces until it is changed; the charts draw them as steps. The Handbook of Statistics records every change since 1935, and a few dates differ between its editions; this guide follows the newest edition and lists the differences in its data.</p>
       <p><b>WALR</b> and <b>WADTDR</b> are weighted averages of what banks report to the RBI each month: the rate on every rupee lent or deposited, weighted by the amount. They exclude regional rural banks and small finance banks. "Fresh" covers business done in the month; "outstanding" covers everything on the books at month-end.</p>
       <p><b>Yields</b> come from trades and auctions. A bond's yield is the return a buyer earns by holding it to maturity at today's price; when its price rises, its yield falls. The month-end yield curve is read from trades settled in the RBI's own ledger of government securities, at whole years to maturity.</p>
-      <p><b>Real rates</b> on this page subtract the year's CPI inflation from a nominal rate for the same month. They are a calculation by India Atlas, not an RBI statistic.</p>
+      <p><b>Real rates</b> on this page subtract the year's CPI inflation from a nominal rate for the same month. They are a calculation by us, not an RBI statistic.</p>
     </div>
   </section>
 
@@ -870,11 +870,11 @@ const N = {};
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Reserve Bank of India: the Handbook of Statistics on the Indian Economy, MPC resolutions and minutes, the monthly release on Lending and Deposit Rates of Scheduled Commercial Banks, the Weekly Statistical Supplement, auction results, and the Database on Indian Economy (DBIE), all read from India Atlas's archived copy of these RBI publications. CPI from MoSPI, read from this site's CPI guide. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]}></b>.</p>
+        <p>Reserve Bank of India: the Handbook of Statistics on the Indian Economy, MPC resolutions and minutes, the monthly release on Lending and Deposit Rates of Scheduled Commercial Banks, the Weekly Statistical Supplement, auction results, and the Database on Indian Economy (DBIE), all read from our archived copy of these RBI publications. CPI from MoSPI, read from this site's CPI guide. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]}></b>.</p>
       </div>
       <div>
         <h6>Method</h6>
-        <p>Policy rates are carried forward from each change to give the level on any date. Amounts are converted from rupees to ₹ crore. Where a table prints one value per display unit, only the actual values are read. Weighted averages, sums by financial year, real rates and the term spread are India Atlas calculations, labelled as such. Nothing is estimated; impossible printed values (a negative tenor or rate) are left empty and listed.</p>
+        <p>Policy rates are carried forward from each change to give the level on any date. Amounts are converted from rupees to ₹ crore. Where a table prints one value per display unit, only the actual values are read. Weighted averages, sums by financial year, real rates and the term spread are calculations by Measure of India, labelled as such. Nothing is estimated; impossible printed values (a negative tenor or rate) are left empty and listed.</p>
       </div>
       <div>
         <h6>Revisions and breaks</h6>
@@ -886,7 +886,7 @@ const N = {};
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, interest rates</span>
+      <span>Measure of India, interest rates</span>
       <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]}></span></span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

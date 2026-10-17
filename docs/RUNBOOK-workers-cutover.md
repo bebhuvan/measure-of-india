@@ -14,7 +14,7 @@ it is redirected or retired. Both are owner steps, below.
 `wrangler.jsonc` is an assets-only Worker named `india-atlas`. It has no script, no bindings and no
 Worker-first routes, so a request costs no Worker invocation.
 
-- **Host:** the custom domain `atlas.thisindianlife.today`, the canonical host in `astro.config.mjs`.
+- **Host:** the custom domain `measure.thisindianlife.today`, the canonical host in `astro.config.mjs`.
   `thisindianlife.today` is a Cloudflare zone (its nameservers are Cloudflare's), so the first
   deploy creates the DNS record and certificate. The zone must be in the same account as the deploy
   token.
@@ -63,7 +63,7 @@ the plan or the custom domain; the first real deploy does.
 ## First deploy (owner)
 
 1. Create the GitHub repository and add the two secrets. Merge the release PR; `deploy.yml` runs.
-2. On `https://atlas.thisindianlife.today/`, check:
+2. On `https://measure.thisindianlife.today/`, check:
    - TLS and status codes;
    - the home page, a guide, a profile, the explorer, search (a cold query and a deep link to a
      row) and an Every Cut page (scroll to the end; Ctrl+F finds a row from the last pack);

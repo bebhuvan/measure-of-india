@@ -44,7 +44,7 @@ const note = (t) => {
   )}
   {arcs.length > 0 && (
     <div class="ec-arc">
-      <p>Finer detail than these files carry is in the India Atlas data archive, as Parquet and CSV:</p>
+      <p>Finer detail than these files carry is in Measure of India data archive, as Parquet and CSV:</p>
       <ul>{arcs.map(({ b, a }) => <li><a class="archive-link" href={a.href}>Finer detail: {fmtN(a.tables)} {a.tables === 1 ? "table" : "tables"} in the archive</a> <small>under {bundleTitle(b)}</small></li>)}</ul>
     </div>
   )}

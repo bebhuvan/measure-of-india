@@ -13,7 +13,8 @@ import { vintageError } from "../scripts/lib/vintage.mjs";
 import { ENVELOPE, envelopeOf } from "../scripts/lib/unit-envelope.mjs";
 import { unitOf as profileUnit } from "../scripts/lib/products/profiles-mospi.mjs";
 import { duplicateUnitBlock } from "../scripts/lib/products/energy.mjs";
-import { GER_CEILING, cube, reportDropout } from "../scripts/lib/products/schools.mjs";
+import { GER_CEILING, cube, printedDropout, printedRule, REPORTS } from "../scripts/lib/products/schools.mjs";
+import { LABEL_CORRECTIONS, EXPECTED_MATCHED, correctFarmRow, reconcileFarmLabels } from "../scripts/lib/farm-households-corrections.mjs";
 import { noEstimateRows } from "../scripts/lib/products/households.mjs";
 import zlib from "node:zlib";
 
@@ -71,18 +72,83 @@ test("a unit block that only repeats another unit's values is a source duplicate
 
 // 2026-10-16: the UDISE API served Bihar's 2024-25 secondary dropout as 0, 0, 0 where the printed
 // report has 7.0, 6.8, 6.9; AIDIS printed every share of a nil loan amount as 0.
-test("an API zero against a printed figure is withheld, and a disagreeing figure fails", () => {
-  const text = JSON.parse(zlib.gunzipSync(fs.readFileSync("data/raw/schools-udise-report-2024.json.gz"))).text;
-  const printed = reportDropout(text);
-  const row = (value, gender = "Total") => ({ indicator: "Dropout Rate", year: "2024-25", state: "Bihar", gender, level_of_education: "Secondary (9-10)", value });
-  const opts = { label: "Dropout Rate", code: 41, family: "udise", vintage: null, base: "x", rawFile: "x", printed };
-  const s = Object.values(cube([row("0")], opts).series)[0];
-  assert.equal(s.data[0], null);
-  assert.match(s.note, /prints 6\.9/);
-  assert.equal(Object.values(cube([row("6.9")], opts).series)[0].data[0], 6.9);
-  assert.throws(() => cube([row("9.9")], opts), /API 9\.9 != report 6\.9/);
-  // a zero the report also prints stays a zero
-  assert.equal(Object.values(cube([{ ...row("0"), state: "Delhi", level_of_education: "Primary (1-5)" }], opts).series)[0].data[0], 0);
+// 2026-10-17: the API's whole 2023-24 dropout year disagrees with the printed report (39 of 324
+// cells agree). Owner's rule: where the printed report has the cell, the printed figure is published.
+test("the printed report's figure is published over a disagreeing API figure; its own zeros stay", () => {
+  const printed = printedDropout(".");
+  assert.deepEqual(Object.keys(printed).sort(), ["2022-23", "2023-24", "2024-25"]);
+  const row = (value, year = "2024-25", extra = {}) => ({ indicator: "Dropout Rate", year, state: "Bihar", gender: "Total", level_of_education: "Secondary (9-10)", value, ...extra });
+  // single rows: without the reviewed whole-year counts, which only a full year can meet
+  const loose = Object.fromEntries(Object.entries(printed).map(([y, t]) => [y, { ...t, reviewed: undefined }]));
+  const opts = { label: "Dropout Rate", code: 41, family: "udise", vintage: null, base: "x", rawFile: "x", printed: loose };
+  const one = (rows) => Object.values(cube(rows, opts).series)[0];
+  // an API zero against a printed figure: the printed figure, with the API value kept
+  let s = one([row("0")]);
+  assert.equal(s.data[0], 6.9);
+  assert.equal(s.sourceValues["2024-04-01"], "0");
+  assert.match(s.note, /2024-25: API 0, printed 6\.9/);
+  // a differing non-zero API figure: the printed figure (Bihar 2023-24 prints 25.6)
+  s = one([row("9.9", "2023-24")]);
+  assert.equal(s.data[0], 25.6);
+  assert.equal(s.sourceValues["2023-04-01"], "9.9");
+  // within 0.1 is the same figure rounded: the printed one is kept and the API's recorded
+  s = one([row("25.5", "2023-24")]);
+  assert.equal(s.data[0], 25.6);
+  assert.equal(printedRule(25.5, 25.6).kind, "rounding");
+  assert.equal(printedRule(6.9, 6.9).kind, "agree");
+  assert.equal(printedRule(0, 0).kind, "printedZero");
+  assert.equal(printedRule(0, 6.9).kind, "apiZero");
+  assert.equal(printedRule(null, 6.9).value, 6.9);
+  assert.equal(printedRule(3, undefined).value, 3, "a year with no report keeps the API figure");
+  assert.throws(() => printedRule(3, 140), /not a rate/);
+  // a zero the report also prints stays a zero, with no API value attached
+  s = one([row("0", "2024-25", { state: "Delhi", level_of_education: "Primary (1-5)" })]);
+  assert.equal(s.data[0], 0);
+  assert.equal(s.sourceValues, undefined);
+  // a row the report should print but does not stops the bake
+  assert.throws(() => cube([row("5", "2024-25", { state: "Atlantis" })], opts), /no printed cell/);
+  // the reviewed outcome is pinned: a different set of disagreements stops the rebake
+  const year = JSON.parse(zlib.gunzipSync(fs.readFileSync("data/raw/profiles-mospi/udise-0-41.json.gz"))).rows.filter((r) => r.year === "2024-25");
+  assert.equal(Object.keys(cube(year, { ...opts, printed }).series).length, 324);
+  const tampered = { ...printed, "2024-25": { ...printed["2024-25"], reviewed: { ...printed["2024-25"].reviewed, apiZero: 2 } } };
+  assert.throws(() => cube(year, { ...opts, printed: tampered }), /differs from the reviewed/);
+  // the baked bundle carries the per-year counts, and Bihar's secondary dropout is the printed series
+  const b = JSON.parse(fs.readFileSync("data/series/schools-udise-student-41.json"));
+  for (const R of REPORTS) assert.deepEqual(Object.fromEntries(Object.keys(R.reviewed).map((k) => [k, b.meta.printedCheck.years[R.year][k]])), R.reviewed);
+  assert.deepEqual(b.series.total__secondary_9_10__bihar.data, [29.5, 25.6, 6.9]);
+});
+
+// 2026-10-17: NSS 77 API tables 18, 19 and 34 swap the agricultural and non-agricultural household
+// labels (the guide's "0.086 ha owned per agricultural household" was the non-agricultural figure);
+// 36 says leasing-out over leasing-in values; 39 drops "in milk" and the visit-1 season.
+test("farm label corrections hold only if every corrected cell matches Report 587", () => {
+  const report = JSON.parse(zlib.gunzipSync(fs.readFileSync("data/raw/farm-households-report.json.gz"))).text;
+  const raw = (c) => JSON.parse(zlib.gunzipSync(fs.readFileSync(`data/raw/profiles-mospi/nss77-0-${c}.json.gz`))).rows;
+  const rows34 = raw(34);
+  const rec = reconcileFarmLabels(report, { 34: rows34 });
+  assert.equal(rec[34].matched, EXPECTED_MATCHED[34]);
+  assert.equal(rec[34].agree, rec[34].matched);
+  // the labels as served fail the same check, and the strict check throws on them
+  assert.ok(reconcileFarmLabels(report, { 34: rows34 }, { strict: false, correct: false })[34].disagree > 30000);
+  assert.throws(() => reconcileFarmLabels(report, { 34: rows34 }, { correct: false }), /matched cells agree/);
+  // a value that no longer matches the print stops the bake
+  const bent = rows34.map((r, i) => (i === 0 ? { ...r, value: String(Number(r.value) + 1) } : r));
+  assert.throws(() => reconcileFarmLabels(report, { 34: bent }), /34: corrected labels/);
+  // corrections relabel and say so; values are untouched
+  const { row, changes } = correctFarmRow(39, { state: "All India", "Social Group": "All", gender: null, ownership_holding: "All Sizes", livestock_owned: "Cattle", stock: null, value: "164" });
+  assert.deepEqual([row.stock, row.season, row.value], ["In milk", "July 2018-December 2018", "164"]);
+  assert.equal(changes.length, 2);
+  assert.equal(correctFarmRow(18, { state: "Himachal Pradesh", "Social Group": "OBC", household_classification: "All Households" }).row["Social Group"], "Others");
+  assert.equal(correctFarmRow(18, { state: "Bihar", "Social Group": "OBC", household_classification: "All Households" }).changes.length, 0);
+  // the baked cube: agricultural households own 0.876 ha on average, the note keeps the API label
+  const owned = [];
+  for (const f of fs.readdirSync("data/series").filter((f) => /^farm-households-nss77-34-\d+\.json$/.test(f))) for (const s of Object.values(JSON.parse(fs.readFileSync(`data/series/${f}`)).series)) { const d = s.dims; if (d.state === "All India" && d["Social Group"] === "All" && d.ownership_holding === "All Sizes" && d.season === "July 2018–June 2019" && d.ownership_holding_area === "Average Area Owned per hh (ha)") owned.push([d.household_classification, s.data[0], s.note ?? ""]); }
+  const by = Object.fromEntries(owned.map(([c, v, n]) => [c, { v, n }]));
+  assert.equal(by["Agricultural Households"].v, 0.876);
+  assert.equal(by["Non-agricultural Households"].v, 0.086);
+  assert.match(by["Agricultural Households"].n, /"Non-agricultural Households" in the API/);
+  const manifest = JSON.parse(fs.readFileSync("data/coverage/farm-households.manifest.json"));
+  for (const c of Object.keys(LABEL_CORRECTIONS)) assert.equal(manifest.labelCorrections[c].disagree, 0);
 });
 
 test("shares of a nil amount are no estimate; a rounded zero inside a breakdown stays", () => {

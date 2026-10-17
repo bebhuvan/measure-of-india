@@ -12,7 +12,7 @@ const groups=[...new Set(model.plates.map(p=>p.group))];
 const period=model.plates.find(p=>p.bundle==='households-aidis-6').period,flowPeriod=model.plates.find(p=>p.bundle==='households-aidis-19').period;
 const N=householdNumbers(model);
 ---
-<Base title="Household assets and borrowing · India Atlas" description={D.description} nav="guides" dateStamp={mastheadStamp(D)} crumbLeft={`<a href="/guides/">Guides</a> / Households / <b>Assets and borrowing</b>`} crumbRight={`${D.statusNote}, <b>${D.version}</b>`} canonical="https://atlas.thisindianlife.today/guides/households/" ogImage="/og/households.png">
+<Base title="Household assets and borrowing · Measure of India" description={D.description} nav="guides" dateStamp={mastheadStamp(D)} crumbLeft={`<a href="/guides/">Guides</a> / Households / <b>Assets and borrowing</b>`} crumbRight={`${D.statusNote}, <b>${D.version}</b>`} canonical="/guides/households/" ogImage="/og/households.png">
 <div class="page">
  <div class="titleblock break" data-inputs="households-aidis-6" data-prose="evergreen and data-bound facts">
   <div class="kicker">{kicker(D)}</div><div class="hero-grid"><h1 set:html={D.headline}/><p class="lede">Most of what an Indian family owns is land and the house it lives in. Most of what it owes is to a bank, though in villages a moneylender is still often the lender. A national survey of debt and investment counts both, household by household.</p></div>

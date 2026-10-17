@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {JSDOM} from 'jsdom';
 import {composeCardSVG} from '../src/charts/plumbing.js';
+import {SITE} from '../src/site.js';
 const dom = new JSDOM('<html><body></body></html>');
 globalThis.XMLSerializer = dom.window.XMLSerializer;
 globalThis.getComputedStyle = dom.window.getComputedStyle;
@@ -21,8 +22,8 @@ for (const width of [280,377,1120]) test(`published chart metadata remains reada
   const titleLines=texts.filter(t=>t.getAttribute('font-size')==='30');
   const readout=texts.find(t=>t.textContent==='₹40 lakh cr');
   assert.ok(+readout.getAttribute('y')>Math.max(...titleLines.map(t=>+t.getAttribute('y'))));
-  const brand=texts.find(t=>t.textContent==='India Atlas');
-  const source=texts.filter(t=>t.getAttribute('font-size')==='12.5'&&t.textContent!=='atlas.thisindianlife.today');
+  const brand=texts.find(t=>t.textContent===SITE.name);
+  const source=texts.filter(t=>t.getAttribute('font-size')==='12.5'&&t.textContent!==SITE.host);
   assert.ok(+brand.getAttribute('y')>Math.max(...source.map(t=>+t.getAttribute('y'))));
  }
 });

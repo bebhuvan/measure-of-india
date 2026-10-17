@@ -36,7 +36,7 @@ export function schoolChart(p, model) {
       return fig(barsDraw(R, { sort: false, fmt: pct, unit: PCT, ref: { value: 50, label: "Half" }, refFill: false }), "Girls as a share of pupils at each stage, per cent.");
     case "states-ger": case "states-dropout": {
       const ref = model.facts[p.id === "states-ger" ? "higher_ger" : "dropout"].value;
-      // a published zero after earlier non-zero years (Bihar's dropout rate) is drawn as the source prints it, and said so
+      // a zero the printed UDISE+ report itself gives (its dropout floor) is drawn as printed, and said so
       const rows = R.map((r) => ({ ...r, note: r.value === 0 ? "published as zero" : undefined }));
       return fig(barsDraw(rows, { fmt: pct, unit: PCT, ref: { value: ref, label: `All-India ${pct(ref)}` } }), p.id === "states-ger" ? "Gross enrolment ratio at higher secondary, per cent, by state." : "Dropout rate in classes 9 and 10, per cent, by state.");
     }

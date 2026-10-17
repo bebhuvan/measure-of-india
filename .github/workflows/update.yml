@@ -96,7 +96,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "india-atlas-bot"
-          git config user.email "bot@atlas.thisindianlife.today"
+          git config user.email "bot@measure.thisindianlife.today"
           BRANCH="release/$(date -u +%Y-%m-%d)"
           git checkout -b "$BRANCH"
           git add data/series data/raw data/coverage pipeline/out

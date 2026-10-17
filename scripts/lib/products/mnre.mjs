@@ -161,7 +161,7 @@ export async function buildMnre(root, dcfg, vintage) {
   delete sourcesBundle.series.large_hydro.entersNote;   // the break note says it
   // The published Grand Total steps up in the month large hydro enters MNRE's table (a change
   // in what the total counts, not growth). Kept as published, with the seam named on the
-  // series; beside it a like-for-like series over the whole span, computed by India Atlas:
+  // series; beside it a like-for-like series over the whole span, computed by Measure of India:
   // the Grand Total less large hydro (before the entry month the two are the same).
   {
     const G = sourcesBundle.series.grand_total, L = sourcesBundle.series.large_hydro;
@@ -169,7 +169,7 @@ export async function buildMnre(root, dcfg, vintage) {
     G.seamNote = `MNRE's Grand Total counts large hydro from ${mon(lhEntry)}; the step that month is the change in coverage, not new capacity. For a like-for-like comparison across it, use the Grand Total excluding large hydro.`;
     sourcesBundle.series.grand_total_excl_large_hydro = {
       name: "mnre_grand_total_excl_large_hydro", label: "Grand Total excluding large hydro (like for like across the change)", color: "#5F6675", unit: "mw",
-      derived: true, derivedNote: "Computed by India Atlas: MNRE's published Grand Total less its Large Hydro line, so every month counts the same sources.",
+      derived: true, derivedNote: "Computed by Measure of India: MNRE's published Grand Total less its Large Hydro line, so every month counts the same sources.",
       data: G.data.map((v, i) => (v == null ? null : Math.round((v - (L.data[i] ?? 0)) * 100) / 100)),
     };
   }

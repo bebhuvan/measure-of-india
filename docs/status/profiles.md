@@ -127,8 +127,14 @@ Updated 2026-10-10.
 ## Source quirks (step 5)
 - **UDISE+ dropout rates**: MoSPI serves 0 for some state-years after much higher values (Bihar,
   classes 9 and 10: 29.5% in 2022-23, then 0 in 2023-24 and 2024-25; primary 0, 0, 10.7, 0).
-  Not a believable measurement and not documented as a floor, so the dropout rate is baked as
-  served but kept off the profiles. To check against the UDISE+ report itself.
+  Checked on 2026-10-17 against the printed UDISE+ reports for 2022-23, 2023-24 and 2024-25
+  (Table 6.13): the API's 2023-24 year is wrong (39 of 324 cells agree) and three 2024-25 Bihar
+  zeros are blanks. The printed figure is now baked wherever the report has the cell (owner's
+  rule; `printedRule` in `scripts/lib/products/schools.mjs`, applied in the profile bake too), so
+  Bihar secondary reads 29.5, 25.6, 6.9. Zeros the report itself prints stay (UDISE+ floors
+  dropout at 0). The dropout rate is still kept off the profiles; whether to add it is open.
+  Note that `profiles-mospi-udise-0-41` runs 2018-19 to 2024-25 in one series, across the 2022-23
+  change from institution-level to student-level collection; the schools guide keeps them apart.
 - **UDISE+ has no All India row** on the API: school measures on the profiles have no all-India
   figure (we do not sum the states into one).
 - **NSS 75 paging**: some indicators page unstably (rows differ between two full reads);

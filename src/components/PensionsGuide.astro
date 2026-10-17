@@ -19,7 +19,7 @@ const when=p=>p.replace(/^([A-Z][a-z]{2}) (\d{4})$/,(_,m,y)=>`${MONTHS[m]} ${y}`
 const say=f=>pensionSay(f.value,f.unit);
 const n=(id)=>({id:'n-'+id,text:say(F[id])});
 ---
-<Base title="Pensions and retirement saving · India Atlas" description={D.description} nav="guides" dateStamp={mastheadStamp(D)} crumbLeft='<a href="/guides/">Guides</a> / Households / <b>Pensions</b>' crumbRight={`${D.statusNote}, <b>${D.version}</b>`} canonical="https://atlas.thisindianlife.today/guides/pensions/" ogImage="/og/pensions.png">
+<Base title="Pensions and retirement saving · Measure of India" description={D.description} nav="guides" dateStamp={mastheadStamp(D)} crumbLeft='<a href="/guides/">Guides</a> / Households / <b>Pensions</b>' crumbRight={`${D.statusNote}, <b>${D.version}</b>`} canonical="/guides/pensions/" ogImage="/og/pensions.png">
 <div class="page pensions-guide">
  <div class="titleblock break" data-inputs={h.bundle} data-prose="evergreen and source-bound facts">
   <div class="kicker">{kicker(D)}</div><div class="hero-grid"><h1 set:html={D.headline}/><p class="lede">Most Indians who work will never draw a government or company pension. Two schemes run by the pension regulator, the National Pension System and Atal Pension Yojana, are how a growing number of them now save for old age. This guide follows who has joined, how much money the schemes hold, and what people do when they take it out.</p></div>

@@ -23,13 +23,13 @@ const LX = qlab(rx25.dates.at(-1));
 const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series).length;
 ---
 <Base
-  title="House prices · India Atlas"
+  title="House prices · Measure of India"
   description={D.description}
   nav="guides"
   dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
-  canonical="https://atlas.thisindianlife.today/guides/housing/"
+  canonical="/guides/housing/"
   ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
@@ -368,7 +368,7 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Reserve Bank of India, house price index (DBIE report 688), read from India Atlas's archived copy of DBIE; National Housing Bank, RESIDEX dashboards; Bank for International Settlements, residential property prices (WS_SPP, WS_DPP), from India Atlas's archived copy of the BIS statistics. Data vintage <b id="prov-vintage" set:html={TX["prov-vintage"]}></b>.</p>
+        <p>Reserve Bank of India, house price index (DBIE report 688), read from our archived copy of DBIE; National Housing Bank, RESIDEX dashboards; Bank for International Settlements, residential property prices (WS_SPP, WS_DPP), from our archived copy of the BIS statistics. Data vintage <b id="prov-vintage" set:html={TX["prov-vintage"]}></b>.</p>
         <p>Checked by hand: the RBI's 18-city all-India index for January to March 2026, 115.85 here, against 115.9 in the RBI's press release of 29 May 2026 (later revised to 116.2, a revision BIS has not yet picked up).</p>
       </div>
       <div>
@@ -385,7 +385,7 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, house prices</span>
+      <span>Measure of India, house prices</span>
       <span>Vintage <span id="prov-vintage2" set:html={TX["prov-vintage2"]}></span></span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

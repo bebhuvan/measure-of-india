@@ -8,6 +8,7 @@ import {parseNumber} from '../tabular.mjs';
 import {mospi,mospiAll} from '../mospi.mjs';
 import {writeCatalogue} from '../catalogue.mjs';
 import {farmApiProvenance} from '../farm-households-provenance.mjs';
+import {LABEL_CORRECTIONS,correctFarmRow,correctionNote,reconcileFarmLabels} from '../farm-households-corrections.mjs';
 // Why a source cell is withheld, and the id segment its catalogue item carries.
 export const WITHHELD={'API repeats Andhra Pradesh cells under every state':'repeated-state','API category labels conflict with the report':'label-conflict','rate exceeds its per-thousand base':'over-base','parenthesised source cell':'parenthesised','no figure published':'no-figure'};
 export const REPORT_URL='https://www.mospi.gov.in/sites/default/files/publication_reports/Report_587m_0.pdf';
@@ -37,12 +38,13 @@ export function farmUnit(code,r){
  if([18,21,22,23,33,39,41,43,44,45,46,47,48,49,50,51].includes(code))return 'per_1000';
  throw Error(`Unresolved farm unit ${code}: ${measure} / ${heading}`);
 }
-export function farmCell(code,r,dims){
+// r is the raw API row after correctFarmRow; changes are its label corrections (kept in the note).
+export function farmCell(code,r,dims,changes=[]){
  const d=Object.fromEntries(dims.map(k=>[k,clean(r[k])])),key=keyOf(d),value=sourceValue(r.value);
  const warnings=[];
+ const corrected=correctionNote(code,changes);if(corrected)warnings.push(corrected);
  if(code===33)warnings.push('API repeats Andhra Pradesh debt cells under every state; quarantined from numerical interpretation, report29 is the replacement.');
  if(code===21&&sourceValue(r.value)>1000)warnings.push('Source rate exceeds its per-thousand base; confirmed in official report Table 13A and quarantined as a source inconsistency.');
- if(code===36)warnings.push('API sub-indicator incorrectly says leasing-out in the leasing-in table; source label preserved.');
  if(code===47)warnings.push('API MSP category labels conflict with the report; not used for interpreted category comparisons.');
  if(/^\s*\(/.test(String(r.value)))warnings.push('Parenthesised source cell withheld from numerical interpretation pending report reconciliation. Original source value preserved.');
  const quarantined=code===33||code===47||code===21&&value>1000;
@@ -52,6 +54,8 @@ export function farmCell(code,r,dims){
 }
 export async function buildFarmHouseholds(root,dcfg={},archiveCapturedDate=new Date().toISOString().slice(0,10)){
  const bundles=[],items=[];let sourceRows=0;
+ // API tables whose labels are corrected must match the printed report cell for cell first.
+ const reconciliation=reconcileFarmLabels(readRaw(root,'data/raw/farm-households-report.json').text,Object.fromEntries(Object.keys(LABEL_CORRECTIONS).map(c=>[c,readRaw(root,`data/raw/profiles-mospi/nss77-0-${c}.json`).rows])));
  const list=readRaw(root,'data/raw/farm-households-list-1.json').body.data;
  if(list.length!==CODES.length||list.some(x=>!CODES.includes(+x.indicator_code)))throw Error('Farm source listing changed');
  for(const code of CODES){
@@ -60,9 +64,9 @@ export async function buildFarmHouseholds(root,dcfg={},archiveCapturedDate=new D
    if(process.env.FARM_HOUSEHOLDS_FROM_RAW==='1')throw Error(`Missing offline farm archive ${code}`);
    const rows=await mospiAll('nss-77/getNss77Records',{indicator_code:code});writeRaw(root,rel,{vintage:archiveCapturedDate,archiveCapturedDate,indicator:{code,expected:rows.length},rows});
   }
-  const raw=readRaw(root,rel),provenance=farmApiProvenance(root,rel,raw),dims=dimensions(raw.rows[0]),cells=new Map();
+  const raw=readRaw(root,rel),provenance=farmApiProvenance(root,rel,raw),fixed=raw.rows.map(r=>correctFarmRow(code,r)),dims=dimensions(fixed[0].row),cells=new Map();
   if(raw.rows.length!==raw.indicator.expected)throw Error('Incomplete farm source '+code);
-  for(const r of raw.rows){const [key,s]=farmCell(code,r,dims);if(cells.has(key))throw Error('Duplicate farm cell '+code+' '+key);cells.set(key,s);}
+  for(const {row:r,changes} of fixed){const [key,s]=farmCell(code,r,dims,changes);if(cells.has(key))throw Error('Duplicate farm cell '+code+' '+key);cells.set(key,s);}
   sourceRows+=raw.rows.length;
   // Cells with no usable figure are catalogued as withheld, with the reason, never baked as empty series.
   const {kept,empty}=splitEmptySeries(Object.fromEntries(cells));
@@ -71,7 +75,7 @@ export async function buildFarmHouseholds(root,dcfg={},archiveCapturedDate=new D
   // Chunking protects the renderer/download file budget; no statistical selection.
   for(let start=0;start<sorted.length;start+=8000){
    const slug=`farm-households-nss77-${code}-${String(start/8000+1).padStart(2,'0')}`,series=Object.fromEntries(sorted.slice(start,start+8000));
-   const b={meta:{dossier:'farm-households',product:`farm-households-nss77-${code}`,source:'MoSPI, NSS 77 Situation Assessment and Land and Livestock Holdings',sourceUrl:REPORT_URL,base:'NSS 77, Schedule 33.1, rural India',frequency:'cross-sectional',unit:'see each series',...provenance,geo:'IND',latestPeriod:'July 2018–June 2019; seasonal/visit references in each cell',releaseDate:'2021-09-10',revisionPolicy:'Published survey estimates; changed source bodies must be archived before rebaking.',coverage:raw.indicator.label??raw.rows[0].indicator,dimensions:dims,rawFile:rel,indicator:{code,sourceRows:raw.rows.length},note:'Historical rural survey. Agricultural-household measures exclude wage-only households; land/livestock tables also include all/non-agricultural rural households where labelled. Annual and half-year season/visit references remain separate dimensions; the shared endpoint is an indexing date, not a universal observation date. Means may condition on activity/reporting. Source zeros retained; dashes and unresolved parenthesised cells null, with original value attached. All observed cross-tabs retained; no Cartesian expansion or state averaging. MSP category labels and leasing-in sublabels have known API defects.'},dates:['2019-06-30'],series};
+   const b={meta:{dossier:'farm-households',product:`farm-households-nss77-${code}`,source:'MoSPI, NSS 77 Situation Assessment and Land and Livestock Holdings',sourceUrl:REPORT_URL,base:'NSS 77, Schedule 33.1, rural India',frequency:'cross-sectional',unit:'see each series',...provenance,geo:'IND',latestPeriod:'July 2018–June 2019; seasonal/visit references in each cell',releaseDate:'2021-09-10',revisionPolicy:'Published survey estimates; changed source bodies must be archived before rebaking.',coverage:raw.indicator.label??raw.rows[0].indicator,dimensions:dims,rawFile:rel,indicator:{code,sourceRows:raw.rows.length},...(reconciliation[code]?{labelCorrection:{reportTable:'Report 587 Table '+LABEL_CORRECTIONS[code].table,...reconciliation[code],method:'Corrected labels replayed against the printed table by state, social group, classification, season, class and column; every matched cell agrees. Unmatched rows are classes or geographies the report prints on pages the parser does not read.'}}:{}),note:'Historical rural survey. Agricultural-household measures exclude wage-only households; land/livestock tables also include all/non-agricultural rural households where labelled. Annual and half-year season/visit references remain separate dimensions; the shared endpoint is an indexing date, not a universal observation date. Means may condition on activity/reporting. Source zeros retained; dashes and unresolved parenthesised cells null, with original value attached. All observed cross-tabs retained; no Cartesian expansion or state averaging. MSP category labels have known API defects. Tables 18, 19, 34, 36 and 39 carry corrected API labels (household classification swap, Himachal Pradesh social groups, leasing-in, cattle and buffalo in milk, visit-1 season), each proven against the printed report; original API labels are in each series note.'},dates:['2019-06-30'],series};
    writeSeries(root,`data/series/${slug}.json`,b);bundles.push({slug,code,series:Object.keys(series).length,rawFile:rel});
    for(const key of Object.keys(series))items.push({id:slug+':'+key,bundle:slug,series:key});
   }
@@ -85,6 +89,6 @@ export async function buildFarmHouseholds(root,dcfg={},archiveCapturedDate=new D
  const reportBundles=buildFarmReport(root);bundles.push(...reportBundles);
  for(const it of reportBundles){const b=JSON.parse(fs.readFileSync(path.join(root,'data/series/'+it.slug+'.json')));for(const key of Object.keys(b.series))items.push({id:it.slug+':'+key,bundle:it.slug,series:key});}
  writeCatalogue('farm-households',{source:'MoSPI NSS77 complete observed archived cubes, all 33 listed visualisation indicators',generator:'scripts/lib/products/farm-households.mjs',note:'API visualisation inventory; report and non-visualisation tables require separate accounting.',items});
- fs.writeFileSync(path.join(root,'data/coverage/farm-households.manifest.json'),JSON.stringify({sourceIndicators:CODES.length,sourceRows,bundles},null,1)+'\n');
+ fs.writeFileSync(path.join(root,'data/coverage/farm-households.manifest.json'),JSON.stringify({sourceIndicators:CODES.length,sourceRows,labelCorrections:reconciliation,bundles},null,1)+'\n');
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))await buildFarmHouseholds(process.cwd());

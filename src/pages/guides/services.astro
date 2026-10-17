@@ -113,13 +113,13 @@ const V = {};
 }
 ---
 <Base
-  title="Services · India Atlas"
+  title="Services · Measure of India"
   description={D.description}
   nav="guides"
   dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
-  canonical="https://atlas.thisindianlife.today/guides/services/"
+  canonical="/guides/services/"
   ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
@@ -183,7 +183,7 @@ const V = {};
         <div class="frame">
           <div class="plotzone" id="plot-mix" set:html={CH.mix()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, National Accounts Statistics, GVA by industry and sub-industry (eSankhyiki). Shares computed by India Atlas from published current-price levels.</span>
+            <span class="src">Source: MoSPI, National Accounts Statistics, GVA by industry and sub-industry (eSankhyiki). Shares computed by us from published current-price levels.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -217,7 +217,7 @@ const V = {};
         <div class="frame">
           <div class="plotzone" id="plot-long" set:html={CH.long()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, National Accounts Statistics. "Services" is the sum of the three published service groups, or of their six parts where only the parts are published; computed by India Atlas.</span>
+            <span class="src">Source: MoSPI, National Accounts Statistics. "Services" is the sum of the three published service groups, or of their six parts where only the parts are published; computed by us.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -247,7 +247,7 @@ const V = {};
         <div class="frame">
           <div class="plotzone" id="plot-growth" set:html={CH.growth()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, National Accounts Statistics, GVA at constant 2022-23 prices. Growth computed by India Atlas from published levels.</span>
+            <span class="src">Source: MoSPI, National Accounts Statistics, GVA at constant 2022-23 prices. Growth computed by us from published levels.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -276,7 +276,7 @@ const V = {};
         <div class="frame">
           <div class="plotzone" id="plot-quarter" set:html={CH.quarter()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, quarterly estimates of GDP, GVA by industry at constant prices. Growth computed by India Atlas from levels.</span>
+            <span class="src">Source: MoSPI, quarterly estimates of GDP, GVA by industry at constant prices. Growth computed by us from levels.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -312,7 +312,7 @@ const V = {};
         <div class="frame">
           <div class="plotzone" id="plot-isp" set:html={CH.isp()} />
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, trial Index of Services Production, base 2024-25 = 100 (eSankhyiki). Growth computed by India Atlas from the index; it matches MoSPI's published rates within 0.15 points. Trial series.</span>
+            <span class="src">Source: MoSPI, trial Index of Services Production, base 2024-25 = 100 (eSankhyiki). Growth computed by us from the index; it matches MoSPI's published rates within 0.15 points. Trial series.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -406,7 +406,7 @@ const V = {};
         <div class="frame">
           <div class="plotzone" id="plot-monthly" set:html={CH.monthly()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, monthly data on India's international trade in services (DBIE report 1501, read from the Atlas's local mirror of DBIE).</span>
+            <span class="src">Source: RBI, monthly data on India's international trade in services (DBIE report 1501, read from our local mirror of DBIE).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -414,7 +414,7 @@ const V = {};
           <div class="ev">
             <span class="mk">How to read this</span>
             <p>The monthly figures come from banks' reports of foreign-exchange receipts and payments, released about six weeks after the month. They are revised once the quarter's full balance of payments is compiled, so the three months of a quarter may not add up to the later quarterly total. March is usually the year's peak, as firms settle annual contracts. The break in early 2020 is February 2020, a month the RBI's table does not carry.</p>
-            <p>The RBI's DBIE table lags its press releases by a few months; the Atlas reads DBIE, so the latest months here can trail the newspapers.</p>
+            <p>The RBI's DBIE table lags its press releases by a few months; we read DBIE, so the latest months here can trail the newspapers.</p>
           </div>
           <div class="now">
             <span class="mk">As of May 2026</span>
@@ -708,7 +708,7 @@ const V = {};
     <div class="cols">
       <div>
         <h6>Sources of record</h6>
-        <p>Ministry of Statistics and Programme Implementation, National Statistics Office: National Accounts Statistics (GVA by industry and sub-industry, 2011-12 and 2022-23 bases), the trial Index of Services Production (base 2024-25), the Periodic Labour Force Survey and the Annual Survey of Unincorporated Sector Enterprises, all through the eSankhyiki API. Reserve Bank of India: monthly trade in services, the balance of payments by category and purpose code, and the long annual invisibles table, from its Database on Indian Economy through the Atlas's local, read-only mirror. Data vintage <b id="prov-vintage" set:html={V["prov-vintage"]}></b>; trade vintage <b id="prov-trade-v" set:html={V["prov-trade-v"]}></b>.</p>
+        <p>Ministry of Statistics and Programme Implementation, National Statistics Office: National Accounts Statistics (GVA by industry and sub-industry, 2011-12 and 2022-23 bases), the trial Index of Services Production (base 2024-25), the Periodic Labour Force Survey and the Annual Survey of Unincorporated Sector Enterprises, all through the eSankhyiki API. Reserve Bank of India: monthly trade in services, the balance of payments by category and purpose code, and the long annual invisibles table, from its Database on Indian Economy through our local, read-only mirror. Data vintage <b id="prov-vintage" set:html={V["prov-vintage"]}></b>; trade vintage <b id="prov-trade-v" set:html={V["prov-trade-v"]}></b>.</p>
         <p>Checked by hand against the agencies' own releases: MoSPI's first ISP release (14 July 2026: retail trade 130.5 for 2025-26, 137.50 for April 2026) and its 29 July release (retail trade up 13.3% in May 2026); the RBI's balance-of-payments press release of 27 June 2025 (net services US$ 53.3 billion in January to March 2025, US$ 42.7 billion a year earlier); and its 30 June 2026 release on monthly services trade (May 2026 receipts US$ 33,355 million, payments US$ 17,637 million).</p>
       </div>
       <div>
@@ -721,11 +721,11 @@ const V = {};
       </div>
       <div>
         <h6>This guide</h6>
-        <p>Version 1.0, built October 2026. Revised with each national accounts, ISP, RBI and survey release. The RBI's DBIE copy of the monthly services data lags its press releases; the Atlas follows DBIE.</p>
+        <p>Version 1.0, built October 2026. Revised with each national accounts, ISP, RBI and survey release. The RBI's DBIE copy of the monthly services data lags its press releases; we follow DBIE.</p>
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, services</span>
+      <span>Measure of India, services</span>
       <span>Vintage <span id="prov-vintage2" set:html={V["prov-vintage2"]}></span></span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

@@ -9,6 +9,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { JSDOM } from "jsdom";
 import { DOSSIERS, bySlug, kicker } from "../src/dossiers/registry.js";
+import { SITE } from "../src/site.js";
+import { markBody } from "../src/brand/mark.js";
+// the mark at size px with its top-left at x, y (src/brand/mark.js draws in a 64-unit box)
+const mark = (x, y, px) => `<g transform="translate(${x} ${y}) scale(${px / 64})">${markBody("paper")}</g>`;
 import { headlineOf } from "../src/dossiers/headline.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -470,7 +474,9 @@ for (const card of CARDS) {
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">` +
     `<rect width="1200" height="630" fill="#FFFFFF"/>` +
-    `<text x="48" y="66" font-family="'Atlas OG5 Serif Brand', serif" font-size="24" letter-spacing="-0.2" fill="#15171A">India Atlas</text>` +
+    // the mark and the name keep to the left column (48 to 268), clear of the kicker at x 300
+    mark(48, 38, 38) +
+    wrapT(SITE.name, 18).map((l, i) => `<text x="98" y="${(wrapT(SITE.name, 18).length > 1 ? 52 : 66) + i * 26}" font-family="'Atlas OG5 Serif Brand', serif" font-size="22" letter-spacing="-0.2" fill="#15171A">${esc(l)}</text>`).join("") +
     `<line x1="48" y1="${tl.length > 1 ? 232 : 186}" x2="268" y2="${tl.length > 1 ? 232 : 186}" stroke="#15171A"/>` +
     `<text x="48" y="${(tl.length > 1 ? 232 : 186) + 16 + figSize}" font-family="'Atlas OG5 Serif Light', serif" font-size="${figSize}" letter-spacing="-1.5" fill="#15171A">${esc(fig.value)}</text>` +
     capL.map((l, i) => `<text x="48" y="${(tl.length > 1 ? 232 : 186) + 16 + figSize + 34 + i * 22}" font-family="'Libre Franklin', sans-serif" font-size="16" fill="#3D4148">${esc(l)}</text>`).join("") +
@@ -479,7 +485,7 @@ for (const card of CARDS) {
     `<g transform="translate(300,${tl.length > 1 ? 222 : 176})">${chart.replace(/<\?xml[^>]*\?>/, "").replace(/<svg/, '<svg x="0" y="0"')}</g>` +
     `<line x1="48" y1="582" x2="1152" y2="582" stroke="#DFE2E8"/>` +
     `<text x="48" y="608" font-family="'Libre Franklin', sans-serif" font-size="14" fill="#6B7078">${esc(card.foot(bundle, S).replace(/ · /g, ", "))}</text>` +
-    `<text x="1152" y="608" text-anchor="end" font-family="'Libre Franklin', sans-serif" font-size="14" fill="#6B7078">atlas.thisindianlife.today</text>` +
+    `<text x="1152" y="608" text-anchor="end" font-family="'Libre Franklin', sans-serif" font-size="14" fill="#6B7078">measure.thisindianlife.today</text>` +
     `</svg>`;
   const png = await sharp(Buffer.from(renderFonts(svg))).png().toBuffer();
   fs.writeFileSync(path.join(ROOT, "public/og", card.slug + ".png"), png);
@@ -512,14 +518,15 @@ if (!ONLY || ONLY.has("profiles"))
     const svg =
       `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">` +
       `<rect width="1200" height="630" fill="#FFFFFF"/>` +
-      `<text x="40" y="58" font-family="'Atlas OG5 Serif Brand', serif" font-size="24" letter-spacing="-0.2" fill="#15171A">India Atlas</text>` +
+      mark(40, 30, 38) +
+      `<text x="90" y="58" font-family="'Atlas OG5 Serif Brand', serif" font-size="24" letter-spacing="-0.2" fill="#15171A">${SITE.name}</text>` +
       `<text x="40" y="100" font-family="'Libre Franklin', sans-serif" font-size="17" fill="#6B7078">${esc(`${KIND[u.kind]} profile, ${u.region}`)}</text>` +
       `<text x="40" y="${150 + nameSize / 2}" font-family="'Atlas OG5 Serif Display', serif" font-size="${nameSize}" letter-spacing="-0.9" fill="#15171A">${esc(u.name)}</text>` +
       `<text x="40" y="262" font-family="'Libre Franklin', sans-serif" font-size="19" fill="#3D4148">How it earns, spends, works, borrows, learns and falls ill, against India and its neighbours</text>` +
       cellsSvg +
       `<line x1="40" y1="596" x2="1160" y2="596" stroke="#ECEEF2"/>` +
       `<text x="40" y="618" font-family="'Libre Franklin', sans-serif" font-size="14" fill="#6B7078">Each figure with its own period. Sources: MoSPI, RBI, the family health survey and others, as named on the page.</text>` +
-      `<text x="1160" y="618" text-anchor="end" font-family="'Libre Franklin', sans-serif" font-size="14" fill="#6B7078">atlas.thisindianlife.today/states/${u.slug}/</text>` +
+      `<text x="1160" y="618" text-anchor="end" font-family="'Libre Franklin', sans-serif" font-size="14" fill="#6B7078">measure.thisindianlife.today/states/${u.slug}/</text>` +
       `</svg>`;
     const png = await sharp(Buffer.from(renderFonts(svg))).png().toBuffer();
     fs.writeFileSync(path.join(dir, u.slug + ".png"), png);

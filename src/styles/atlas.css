@@ -1,4 +1,4 @@
-/* India Atlas design system, v5 (2026-10-16 page design, approved with the chart kit). See docs/DESIGN.md §0.
+/* Measure of India design system, v5 (2026-10-16 page design, approved with the chart kit). See docs/DESIGN.md §0.
    Two faces with fixed jobs: Newsreader (optical sizes) for reading and headings, Libre Franklin
    for everything measured or navigational, and for the charts (src/kit). One lead colour (indigo)
    for the series a chart is about; sindoor only for a comparison; cool greys for the rest.
@@ -65,9 +65,16 @@ body{
    rule over where you are and how fresh the page is ---------- */
 .sitehead{max-width:calc(var(--wrap) + 2 * var(--gutter));margin:0 auto;padding:0 var(--gutter)}
 .sh-in{display:flex;align-items:center;gap:32px;padding:22px 0 18px}
-.brand{display:flex;align-items:baseline;gap:14px;margin-right:auto;text-decoration:none;color:var(--ink);white-space:nowrap}
+.brand{display:grid;grid-template-columns:auto auto auto;align-items:center;justify-content:start;column-gap:10px;row-gap:7px;margin-right:auto;text-decoration:none;color:var(--ink);white-space:nowrap}
 .brand b{font:500 1.625rem/1 var(--serif);letter-spacing:-.012em;font-variation-settings:"opsz" 48}
-.brand span{font:400 .8125rem/1 var(--sans);color:var(--muted);letter-spacing:.01em}
+.brand .mark{grid-row:1/3;display:block;width:44px;height:44px;margin-right:4px}
+.brand .mark svg{display:block;width:100%;height:100%}
+.brand .tag{grid-column:2/-1;font:400 .8125rem/1 var(--sans);color:var(--muted);letter-spacing:.01em}
+.brand .beta{align-self:center;font:600 .625rem/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);border:1px solid var(--rule-2);padding:3px 5px 2px;justify-self:start}
+.sitefoot{max-width:calc(var(--wrap) + 2 * var(--gutter));margin:96px auto 0;padding:20px var(--gutter) 40px;border-top:1px solid var(--rule);font:400 .8125rem/1.55 var(--sans);color:var(--muted)}
+.sitefoot p{max-width:78ch;margin:0 0 8px}
+.sitefoot b{font-weight:600;color:var(--ink-soft)}
+.sitefoot a{color:var(--ink-soft)}
 .sh-nav{display:flex;gap:26px;font:500 .875rem/1 var(--sans)}
 .sh-nav a{color:var(--ink-soft);text-decoration:none;padding:4px 0;border-bottom:1px solid transparent;transition:color .15s ease,border-color .15s ease}
 .sh-nav a:hover{color:var(--ink)}
@@ -184,6 +191,8 @@ p+p{margin-top:1em}
 .reading-top .band-scale svg{display:block;width:100%;height:auto}
 .reading-top .band-chip{margin-top:10px;font-family:var(--sans);font-size:.8125rem;color:var(--muted)}
 .reading-top .band-chip b{color:var(--ink);font-weight:500}
+/* below 1000px the three columns (reading, caption, band) only fit with tighter gaps, until they stack at 860px */
+@media (max-width:1000px){.reading-top{gap:32px}}
 .reading-cols{display:grid;grid-template-columns:repeat(2,minmax(0,34rem));gap:56px;margin-top:34px}
 .reading-col .mk{font-family:var(--sans);font-size:.875rem;font-weight:500;display:block;margin-bottom:10px;color:var(--ink)}
 .reading-col.now .mk{color:var(--ink)}
@@ -605,19 +614,27 @@ section .break + .break > figure[id^="cb-"]{margin-top:88px !important;padding-t
 .provenance .cols > div > h6{font-size:.875rem;font-weight:600}
 .provenance p{font-size:.875rem}
 
-@media (max-width:960px){
+/* the full name is long: below 1140px search folds to its icon, below 960px the name steps down a size */
+@media (max-width:1140px){
+  .sh-in{gap:24px}
   .sh-nav{gap:20px}
-  .brand span{display:none}
-  .sh-search{width:auto}
-}
-@media (max-width:860px){
-  .sitehead{padding:0 var(--gutter)}
-  .sh-in{flex-wrap:wrap;gap:4px 12px;padding:14px 0 0}
-  .brand b{font-size:1.375rem}
   .sh-search{width:40px;height:40px;padding:0;justify-content:center}
   .sh-search span{display:none}
   .sh-search kbd{margin:0;border:0;font-size:0;padding:0}
   .sh-search kbd::before{content:"";display:block;width:14px;height:14px;border:1.75px solid var(--ink-soft);border-radius:50%;box-shadow:5px 5px 0 -3.5px var(--ink-soft)}
+}
+@media (max-width:960px){
+  .sh-in{gap:20px}
+  .sh-nav{gap:16px}
+  .brand b{font-size:1.4375rem}
+  .brand .tag{display:none}
+}
+@media (max-width:860px){
+  .sitehead{padding:0 var(--gutter)}
+  .sh-in{flex-wrap:wrap;gap:4px 12px;padding:14px 0 0}
+  .brand b{font-size:1.25rem}
+  .brand{gap:10px}
+  .brand .mark{grid-row:auto;width:30px;height:30px;margin-right:0}
   .sh-nav{order:3;width:calc(100% + 2 * var(--gutter));margin:0 calc(-1 * var(--gutter));padding:6px var(--gutter) 10px;gap:22px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .sh-nav::-webkit-scrollbar{display:none}
   .sh-nav a{white-space:nowrap}
@@ -635,6 +652,10 @@ section .break + .break > figure[id^="cb-"]{margin-top:88px !important;padding-t
   .page > section > .sec-head h2{padding-top:8px;font-size:1.75rem}
   .plate-head .t h3{font-size:1.3125rem}
   .provenance{margin-top:96px}
+}
+/* the smallest phones: the full name and its Beta mark need one size less to fit */
+@media (max-width:340px){
+  .brand b{font-size:1.125rem}
 }
 @media (max-width:480px){
   h1{font-size:2.5rem}

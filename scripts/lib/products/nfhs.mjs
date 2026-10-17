@@ -173,7 +173,7 @@ const DHS_URL = (sv) => `https://api.dhsprogram.com/rest/dhs/data?countryIds=IA&
 export async function fetchDhsCrosscheck(root, vintage) {
   const rows = [];
   for (const sv of ["IA2015DHS", "IA2020DHS"]) {
-    const res = await getJson(DHS_URL(sv), { gapMs: 1000, retries: 4, headers: { "User-Agent": "india-atlas (atlas.thisindianlife.today)" } });
+    const res = await getJson(DHS_URL(sv), { gapMs: 1000, retries: 4, headers: { "User-Agent": "india-atlas (measure.thisindianlife.today)" } });
     if ((res.TotalPages ?? 1) > 1) throw new Error(`DHS ${sv}: more than one page; raise perpage`);
     for (const x of res.Data ?? []) if (x.IsTotal) rows.push({ survey: x.SurveyId, id: x.IndicatorId, indicator: x.Indicator, value: x.Value, precision: x.Precision, preferred: x.IsPreferred });
   }

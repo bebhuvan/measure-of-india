@@ -15,13 +15,13 @@ import * as CH from "../../dossiers/wpi.charts.js";
 const { NUM } = CH;
 ---
 <Base
-  title="Wholesale Prices · India Atlas"
+  title="Wholesale Prices · Measure of India"
   description={D.description}
   nav="guides"
   dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
-  canonical="https://atlas.thisindianlife.today/guides/wpi/"
+  canonical="/guides/wpi/"
   ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
@@ -497,8 +497,8 @@ const { NUM } = CH;
       <div>
         <h6>Source of record</h6>
         <p>Office of the Economic Adviser, Ministry of Commerce &amp; Industry (DPIIT). "Index Numbers of Wholesale Price in India (Base 2022-23=100): {PW22.long}." Press release, {PW22.release} (provisional). The retired 2011-12 series ran to April 2026; its plates below cite that final print. Major-group, group, sub-group and item indices retrieved via the eSankhyiki API, vintage <b id="prov-vintage" set:html={NUM["prov-vintage"]}></b>.</p>
-        <p>The headline is computed by India Atlas from the three major-group indices using the official weights (Primary 22.62, Fuel &amp; power 13.15, Manufactured 64.23); it tracks the published headline within 0.10 pt across the decade. The food index is published directly by the OEA and is shown as published.</p>
-        <p>Coverage below the majors is complete: all 29 two-digit groups, all 134 sub-groups and all 697 items: major-group → group → sub-group → item, the finest grain the OEA publishes. Item weights are not served by the API, so no weighted recomposition is asserted at that level; every year-on-year figure on this page is computed by India Atlas from the published index levels, never taken from the release's growth columns.</p>
+        <p>The headline is computed by us from the three major-group indices using the official weights (Primary 22.62, Fuel &amp; power 13.15, Manufactured 64.23); it tracks the published headline within 0.10 pt across the decade. The food index is published directly by the OEA and is shown as published.</p>
+        <p>Coverage below the majors is complete: all 29 two-digit groups, all 134 sub-groups and all 697 items: major-group → group → sub-group → item, the finest grain the OEA publishes. Item weights are not served by the API, so no weighted recomposition is asserted at that level; every year-on-year figure on this page is computed by us from the published index levels, never taken from the release's growth columns.</p>
       </div>
       <div>
         <h6>Revisions &amp; uncertainty</h6>
@@ -511,7 +511,7 @@ const { NUM } = CH;
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, WPI</span>
+      <span>Measure of India, WPI</span>
       <span>Vintage <span id="prov-vintage2" set:html={NUM["prov-vintage2"]}></span>, Base 2022-23=100 (2011-12=100 to April 2026)</span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

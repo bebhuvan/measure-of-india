@@ -56,7 +56,7 @@ export function requestRaw(url, { method = "GET", headers = {}, body = null, tim
 }
 
 export const BASE = "https://tradestat.commerce.gov.in/";
-const UA = "IndiaAtlas/1.0 (+https://atlas.thisindianlife.today; public-data reference work)";
+const UA = "IndiaAtlas/1.0 (+https://measure.thisindianlife.today; public-data reference work)";
 const GAP_MS = Number(process.env.TRADESTAT_GAP_MS ?? 600);
 const RETRIES = 6;
 

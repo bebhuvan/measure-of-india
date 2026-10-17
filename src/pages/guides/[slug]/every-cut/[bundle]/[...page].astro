@@ -41,11 +41,11 @@ const src = sources.length === 1 ? sources[0] : `${sources.length} sources, name
 const titles = Object.fromEntries((single ? [] : [...new Set(rows.map((r) => r.bundle))]).map((b) => [b, bundleTitle(b)]));
 ---
 <Base
-  title={`${title}: every series · India Atlas`}
-  description={`Every series of ${title}, from the India Atlas guide to ${d.title.toLowerCase()}: ${governed ? "every series, with the publisher's original files" : snapshot ? "source estimates and downloads" : "latest values, change on a year earlier, and downloads"}.`}
+  title={`${title}: every series · Measure of India`}
+  description={`Every series of ${title}, from Measure of India guide to ${d.title.toLowerCase()}: ${governed ? "every series, with the publisher's original files" : snapshot ? "source estimates and downloads" : "latest values, change on a year earlier, and downloads"}.`}
   nav="guides"
   crumbLeft={`<a href="/guides/">Guides</a> / <a href="/guides/${slug}/">${d.crumbTitle}</a> / <b>Every cut</b>`}
-  canonical={`https://atlas.thisindianlife.today${href(n)}`}
+  canonical={`${href(n)}`}
   ogImage={`/og/${slug}.png`}
   charts={false}
 >

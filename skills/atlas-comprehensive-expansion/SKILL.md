@@ -1,6 +1,6 @@
 ---
 name: atlas-comprehensive-expansion
-description: Temporary launch-expansion skill for India Atlas. Inventory official economic statistics, deepen existing guides and build new guides with every published sub-index and cut accounted for. Use for this repository's coverage expansion, not generic dashboards.
+description: Temporary launch-expansion skill for Measure of India. Inventory official economic statistics, deepen existing guides and build new guides with every published sub-index and cut accounted for. Use for this repository's coverage expansion, not generic dashboards.
 ---
 
 # Comprehensive expansion, temporary launch instruction
@@ -10,7 +10,7 @@ granularity, more cuts, more explanations and more charts.** Comprehensiveness
 is a selling point. A headline and a few convenient sub-series do not finish
 a statistical family.
 
-This skill applies to the current expansion in India Atlas. Keep it in the
+This skill applies to the current expansion in Measure of India. Keep it in the
 repository; do not install it globally or remove it automatically at launch.
 The owner may retire it when the expansion is finished.
 

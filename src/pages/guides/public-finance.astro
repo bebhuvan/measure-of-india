@@ -73,13 +73,13 @@ const a24 = at(g11, "gross_fiscal_deficit", ST.accountsTo), n24 = at(r22, "centr
 const ratesBorrow = B("rates-borrowing");
 ---
 <Base
-  title="Government budgets and debt · India Atlas"
+  title="Government budgets and debt · Measure of India"
   description={D.description}
   nav="guides"
   dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
-  canonical="https://atlas.thisindianlife.today/guides/public-finance/"
+  canonical="/guides/public-finance/"
   ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
@@ -141,7 +141,7 @@ const ratesBorrow = B("rates-borrowing");
       <p><b>Three numbers for every year.</b> Each Union Budget, presented on 1 February, gives a <b>budget estimate</b> for the coming year and a <b>revised estimate</b> for the year about to end. Months after a year closes come the <b>accounts</b>: provisional ones from the Controller General of Accounts in May, audited ones later. The three can differ by lakhs of crores. This guide never joins them into one line: the accounts are drawn solid, the revised estimate and the budget estimate as separate marks, and every chart says which is which.</p>
       <p><b>The deficits.</b> The <b>gross fiscal deficit</b> is everything the government spends less everything it receives other than new borrowing; it is how much it must borrow in the year. The <b>revenue deficit</b> is the part of day-to-day spending (salaries, interest, subsidies) not covered by day-to-day income: borrowing to pay running costs rather than to build. The <b>primary deficit</b> is the fiscal deficit less interest: whether this year's choices, leaving aside the cost of old debt, add to the debt.</p>
       <p><b>The Centre, the states, and both.</b> The Centre collects most taxes and passes a share to the states; the states spend most of the money that reaches people, on schools, hospitals, police and roads. Their accounts are published apart. The combined account nets out what one owes the other, so it is not the sum of the two. The Centre's tax figures here are net of the states' share unless a chart says gross.</p>
-      <p><b>Per cent of GDP depends on which GDP.</b> A ratio to GDP is only as steady as its denominator, and India has measured GDP on several base years. The RBI divides by the GDP series of the time (the 1999-2000 base to 2003-04, the 2004-05 base to 2010-11, the 2011-12 base since), and these are drawn as separate rulers, never joined. Where a chart adds a line on one ruler back to 1970-71, that line is India Atlas's own arithmetic, the RBI's rupee figures divided by the statistics office's back series of 2011-12-base GDP: it is drawn dashed and named as ours, never as a continuation of the RBI's. The new 2022-23 series measures a different economy size again (section 09).</p>
+      <p><b>Per cent of GDP depends on which GDP.</b> A ratio to GDP is only as steady as its denominator, and India has measured GDP on several base years. The RBI divides by the GDP series of the time (the 1999-2000 base to 2003-04, the 2004-05 base to 2010-11, the 2011-12 base since), and these are drawn as separate rulers, never joined. Where a chart adds a line on one ruler back to 1970-71, that line is our own arithmetic, the RBI's rupee figures divided by the statistics office's back series of 2011-12-base GDP: it is drawn dashed and named as ours, never as a continuation of the RBI's. The new 2022-23 series measures a different economy size again (section 09).</p>
     </div>
   </section>
 
@@ -153,14 +153,14 @@ const ratesBorrow = B("rates-borrowing");
         <div class="plate-head">
           <div class="t">
             <h3>The Centre budgets a deficit of {r1(gfdBE)}% of GDP for {ST.budgetEstimate}, half its pandemic peak of {r1(peak[1])}% in {peak[0]}</h3>
-            <div class="sub">Gross fiscal deficit of the Centre and of all states together, per cent of GDP, {fy(back.dates[0])} to {ST.budgetEstimate}: the RBI's printed ratios, solid, on the GDP series of each period (1999-2000, 2004-05 and 2011-12 bases, never joined), accounts as lines and the revised and budget estimates as marks. Dashed grey, to 2010-11: India Atlas, computed: RBI amounts ÷ NSO back-series GDP.</div>
+            <div class="sub">Gross fiscal deficit of the Centre and of all states together, per cent of GDP, {fy(back.dates[0])} to {ST.budgetEstimate}: the RBI's printed ratios, solid, on the GDP series of each period (1999-2000, 2004-05 and 2011-12 bases, never joined), accounts as lines and the revised and budget estimates as marks. Dashed grey, to 2010-11: computed by us: RBI amounts ÷ NSO back-series GDP.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-deficit" set:html={N["pv-deficit"]} /><div class="c">Centre, budget estimate {ST.budgetEstimate}</div></div>
         </div>
         <div class="frame">
           <div class="plotzone" id="plot-deficit" set:html={CH.deficit()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, Handbook of Statistics, Key Deficit Indicators and Select Fiscal Indicators of the Central and State Governments (DBIE reports 713, 355, 451, 454); the dashed lines: RBI's rupee amounts (713, 451) over MoSPI's back series of GDP on the 2011-12 base, computed by India Atlas.</span>
+            <span class="src">Source: RBI, Handbook of Statistics, Key Deficit Indicators and Select Fiscal Indicators of the Central and State Governments (DBIE reports 713, 355, 451, 454); the dashed lines: RBI's rupee amounts (713, 451) over MoSPI's back series of GDP on the 2011-12 base, computed by us.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -189,7 +189,7 @@ const ratesBorrow = B("rates-borrowing");
         <div class="frame">
           <div class="plotzone" id="plot-ytd" set:html={CH.ytdPlate()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI Bulletin, Union Government Accounts at a Glance (DBIE report 49), from the Controller General of Accounts; unaudited. Share of the budget estimate computed by India Atlas.</span>
+            <span class="src">Source: RBI Bulletin, Union Government Accounts at a Glance (DBIE report 49), from the Controller General of Accounts; unaudited. Share of the budget estimate computed by us.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -247,7 +247,7 @@ const ratesBorrow = B("rates-borrowing");
         <div class="frame">
           <div class="plotzone" id="plot-financing" set:html={CH.financing()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, Handbook of Statistics, Centre's Gross Fiscal Deficit and its Financing (DBIE report 656). Shares computed by India Atlas. Gross market borrowing by year is in the Interest rates guide (rates-borrowing).</span>
+            <span class="src">Source: RBI, Handbook of Statistics, Centre's Gross Fiscal Deficit and its Financing (DBIE report 656). Shares computed by us. Gross market borrowing by year is in the Interest rates guide (rates-borrowing).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -280,7 +280,7 @@ const ratesBorrow = B("rates-borrowing");
         <div class="frame">
           <div class="plotzone" id="plot-taxmix" set:html={CH.taxmix()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, Handbook of Statistics, Central Government Receipts, Major Components (DBIE report 655). Every tax is net of the states' share; shares computed by India Atlas.</span>
+            <span class="src">Source: RBI, Handbook of Statistics, Central Government Receipts, Major Components (DBIE report 655). Every tax is net of the states' share; shares computed by us.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -338,7 +338,7 @@ const ratesBorrow = B("rates-borrowing");
         <div class="frame">
           <div class="plotzone" id="plot-taxwho" set:html={CH.taxwho()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, Handbook of Statistics, Direct and Indirect Tax Revenues of Central and State Governments (DBIE report 673). Share computed by India Atlas.</span>
+            <span class="src">Source: RBI, Handbook of Statistics, Direct and Indirect Tax Revenues of Central and State Governments (DBIE report 673). Share computed by us.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -400,7 +400,7 @@ const ratesBorrow = B("rates-borrowing");
         <div class="frame">
           <div class="plotzone" id="plot-interest" set:html={CH.interest()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, Handbook of Statistics, DBIE reports 353 and 655 (the Centre), 677 and 709 (the states). Ratios computed by India Atlas.</span>
+            <span class="src">Source: RBI, Handbook of Statistics, DBIE reports 353 and 655 (the Centre), 677 and 709 (the states). Ratios computed by us.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -455,14 +455,14 @@ const ratesBorrow = B("rates-borrowing");
         <div class="plate-head">
           <div class="t">
             <h3>India's governments owe {r1(debtBE)}% of GDP by the budgets for {SS.budgetEstimate}</h3>
-            <div class="sub">Outstanding liabilities at the end of each March, the Centre, all states and the two together (which nets out what one owes the other), per cent of GDP, {fy(back.dates.find((d, i) => back.series.combined_liabilities.data[i] != null))} to {SS.budgetEstimate}: the RBI's printed ratios, solid, on the GDP series of each period (never joined). Dashed grey, to 2010-11: India Atlas, computed: RBI amounts ÷ NSO back-series GDP.</div>
+            <div class="sub">Outstanding liabilities at the end of each March, the Centre, all states and the two together (which nets out what one owes the other), per cent of GDP, {fy(back.dates.find((d, i) => back.series.combined_liabilities.data[i] != null))} to {SS.budgetEstimate}: the RBI's printed ratios, solid, on the GDP series of each period (never joined). Dashed grey, to 2010-11: computed by us: RBI amounts ÷ NSO back-series GDP.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-debt" set:html={N["pv-debt"]} /><div class="c">Centre and states, budget {SS.budgetEstimate}</div></div>
         </div>
         <div class="frame">
           <div class="plotzone" id="plot-debt" set:html={CH.debt()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, Handbook of Statistics, Combined Liabilities and Select Debt Indicators of the Central and State Governments (DBIE reports 339, 342, 1399, 452); the dashed lines: RBI's rupee amounts over MoSPI's back series of GDP on the 2011-12 base, computed by India Atlas.</span>
+            <span class="src">Source: RBI, Handbook of Statistics, Combined Liabilities and Select Debt Indicators of the Central and State Governments (DBIE reports 339, 342, 1399, 452); the dashed lines: RBI's rupee amounts over MoSPI's back series of GDP on the 2011-12 base, computed by us.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -549,7 +549,7 @@ const ratesBorrow = B("rates-borrowing");
         <div class="frame">
           <div class="plotzone" id="plot-maturity" set:html={CH.maturity()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, Maturity Pattern of Government of India Rupee Loans (DBIE report 1362). Shares computed by India Atlas.</span>
+            <span class="src">Source: RBI, Maturity Pattern of Government of India Rupee Loans (DBIE report 1362). Shares computed by us.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -622,7 +622,7 @@ const ratesBorrow = B("rates-borrowing");
         <div class="frame">
           <div class="plotzone" id="plot-st-receipts" set:html={CH.stReceipts()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, Handbook of Statistics, Pattern of Receipts of the State Governments (DBIE report 709). From 2017-18, all states and union territories with legislatures. Shares computed by India Atlas; the RBI's tax receipts include the states' share in central taxes and its non-tax receipts include grants, so own taxes and own non-tax revenue are those totals less the transfers.</span>
+            <span class="src">Source: RBI, Handbook of Statistics, Pattern of Receipts of the State Governments (DBIE report 709). From 2017-18, all states and union territories with legislatures. Shares computed by us; the RBI's tax receipts include the states' share in central taxes and its non-tax receipts include grants, so own taxes and own non-tax revenue are those totals less the transfers.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -651,7 +651,7 @@ const ratesBorrow = B("rates-borrowing");
         <div class="frame">
           <div class="plotzone" id="plot-st-spend" set:html={CH.stSpend()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, Handbook of Statistics, Expenditure Pattern of the State Governments (DBIE report 677). Social and economic services are revenue spending; capital outlay is separate. Shares computed by India Atlas.</span>
+            <span class="src">Source: RBI, Handbook of Statistics, Expenditure Pattern of the State Governments (DBIE report 677). Social and economic services are revenue spending; capital outlay is separate. Shares computed by us.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -680,7 +680,7 @@ const ratesBorrow = B("rates-borrowing");
         <div class="frame">
           <div class="plotzone" id="plot-state-cut" set:html={CH.stateCut()} />
           <div class="plotfoot">
-            <span class="src">Source: the States guide (states-finances): RBI, Handbook of Statistics on Indian States, tables 164 and 176, over MoSPI's GSDP at current prices; ratios computed by India Atlas, not the RBI's. The latest year with both accounts and GSDP for every state.</span>
+            <span class="src">Source: the States guide (states-finances): RBI, Handbook of Statistics on Indian States, tables 164 and 176, over MoSPI's GSDP at current prices; ratios computed by us, not the RBI's. The latest year with both accounts and GSDP for every state.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -709,7 +709,7 @@ const ratesBorrow = B("rates-borrowing");
         <div class="frame">
           <div class="plotzone" id="plot-wma" set:html={CH.wma()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI Bulletin, Financial Accommodation Availed by State Governments under various Facilities (DBIE report 63); twelve-month totals computed by India Atlas. Every state's monthly days and amounts since September 2017 are in the data below.</span>
+            <span class="src">Source: RBI Bulletin, Financial Accommodation Availed by State Governments under various Facilities (DBIE report 63); twelve-month totals computed by us. Every state's monthly days and amounts since September 2017 are in the data below.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -735,14 +735,14 @@ const ratesBorrow = B("rates-borrowing");
         <div class="plate-head">
           <div class="t">
             <h3>The same deficit is {r1(a24)}% of GDP on the old series and {r1(n24)}% on the new one, for {ST.accountsTo}</h3>
-            <div class="sub">The Centre's gross fiscal deficit, per cent of GDP: as the RBI publishes it, on the GDP series of each period (1999-2000, 2004-05 and 2011-12 bases), solid; and, computed by India Atlas, over the statistics office's back series of the 2011-12 base and over the new 2022-23 series, dashed. {fy(B99.dates[0])} to {ST.accountsTo}, accounts.</div>
+            <div class="sub">The Centre's gross fiscal deficit, per cent of GDP: as the RBI publishes it, on the GDP series of each period (1999-2000, 2004-05 and 2011-12 bases), solid; and, computed by us, over the statistics office's back series of the 2011-12 base and over the new 2022-23 series, dashed. {fy(B99.dates[0])} to {ST.accountsTo}, accounts.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-gdpbase" set:html={N["pv-gdpbase"]} /><div class="c">on the 2022-23 series, {ST.accountsTo}</div></div>
         </div>
         <div class="frame">
           <div class="plotzone" id="plot-gdpbase" set:html={CH.gdpbase()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, Select Fiscal Indicators of the Central Government (DBIE report 355) and Key Deficit Indicators (713); MoSPI, GDP back series (2011-12 base) and the 2022-23 series. Ratios other than the RBI's computed by India Atlas.</span>
+            <span class="src">Source: RBI, Select Fiscal Indicators of the Central Government (DBIE report 355) and Key Deficit Indicators (713); MoSPI, GDP back series (2011-12 base) and the 2022-23 series. Ratios other than the RBI's computed by us.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -792,11 +792,11 @@ const ratesBorrow = B("rates-borrowing");
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Reserve Bank of India: the Handbook of Statistics on the Indian Economy, the RBI Bulletin, the Weekly Statistical Supplement and the Database on Indian Economy (DBIE), read from India Atlas's archived copy of these RBI publications. The printed tables' notes from the RBI Innovation Hub's copy of DBIE. GDP from MoSPI, read from this site's GDP guide; state GSDP ratios from the States guide. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]} />.</p>
+        <p>Reserve Bank of India: the Handbook of Statistics on the Indian Economy, the RBI Bulletin, the Weekly Statistical Supplement and the Database on Indian Economy (DBIE), read from our archived copy of these RBI publications. The printed tables' notes from the RBI Innovation Hub's copy of DBIE. GDP from MoSPI, read from this site's GDP guide; state GSDP ratios from the States guide. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]} />.</p>
       </div>
       <div>
         <h6>Method</h6>
-        <p>Amounts converted from rupees to ₹ crore; where a table prints one value per display unit, only actual values are read. Shares, ratios to revenue, ratios to GDP other than the RBI's, and shares of the budget estimate are India Atlas calculations, labelled as such. Every annual table is checked against the printed Handbook and every identity the tables state is tested. Nothing is estimated.</p>
+        <p>Amounts converted from rupees to ₹ crore; where a table prints one value per display unit, only actual values are read. Shares, ratios to revenue, ratios to GDP other than the RBI's, and shares of the budget estimate are calculations by Measure of India, labelled as such. Every annual table is checked against the printed Handbook and every identity the tables state is tested. Nothing is estimated.</p>
       </div>
       <div>
         <h6>Revisions and breaks</h6>
@@ -808,7 +808,7 @@ const ratesBorrow = B("rates-borrowing");
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, government budgets and debt</span>
+      <span>Measure of India, government budgets and debt</span>
       <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]} /></span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

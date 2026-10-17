@@ -32,13 +32,13 @@ const aboveSince = h24.at(-1) > 4 ? monthOf(b24.dates[runStart]) : null;
 const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.data[i]).length;
 ---
 <Base
-  title="Consumer Prices · India Atlas"
+  title="Consumer Prices · Measure of India"
   description={D.description}
   nav="guides"
   dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
-  canonical="https://atlas.thisindianlife.today/guides/cpi/"
+  canonical="/guides/cpi/"
   ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
@@ -1138,7 +1138,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
         <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. "Consumer Price Index Numbers on Base 2024=100 for Rural, Urban &amp; Combined: {P24.long}." Press release, {P24.release}. Division indices retrieved via the eSankhyiki API, vintage <b id="prov-vintage24" set:html={NUM["prov-vintage24"]}></b>. The rebased series prices a redrawn basket, classified into twelve COICOP-2018-style divisions in place of the 2012 base's six groups; its index history begins January 2025, so the first same-base year-on-year rates are the 2026 prints. The API serves no component weights for this base yet: the 2024-base headline is the published all-groups index, and the weights recomputation applied to the 2012 base, the cross-check that series gets, is not yet possible here. The API's own published inflation rate is kept as a crosscheck instead (worst deviation 0.01 pt). The lighter stretch of the line in §02 is the NSO's own back-cast of the new index, 2013–2024, baked as its own bundle. The two bases are never spliced.</p>
         <p>Coverage of the 2024 base is now complete to the API's floor, audited level by level against the source's own row counts: below CPI General and the 13 divisions sit 43 groups, 92 classes, 162 sub-classes and 358 items: 668 all-India rows per month, every month from January 2025. The groups and the full item basket are baked (§03); the classes and sub-classes, intermediate aggregates between them, are archived raw. The General index of all 36 states and UTs on the new base (§11) is baked for combined, rural and urban. Every year-on-year figure is computed from index levels and only where a same-base year-ago level exists: nothing is computed across the seam. Each item row carries the API's imputation flag; every all-India combined row served so far is N, meaning compiled from collected prices. Because the API serves no weights for this base, groups and items are shown unweighted and no recomposition is asserted at any level. A base-2010 fragment also exists in the API (January 2011 to December 2014, on the pre-2012 scheme); its span predates this guide's window and it is archived, not baked.</p>
         <p>The retired series: "Consumer Price Index Numbers on Base 2012=100 for Rural, Urban &amp; Combined, December 2025." Press release, 12 January 2026, the final print on that base. Group indices retrieved via the eSankhyiki API, vintage <b id="prov-vintage" set:html={NUM["prov-vintage"]}></b>.</p>
-        <p>Headline and core inflation are computed by India Atlas from the published group indices using the official weights; the computed headline tracks the published one within 0.14 pt across the decade. Core is not an official series. Housing group indices for December 2018 to September 2019 were never published; those months are linearly interpolated and flagged in the series metadata. The rural and urban headline and core series (§10) are computed the same way, on the sector weights.</p>
+        <p>Headline and core inflation are computed by us from the published group indices using the official weights; the computed headline tracks the published one within 0.14 pt across the decade. Core is not an official series. Housing group indices for December 2018 to September 2019 were never published; those months are linearly interpolated and flagged in the series metadata. The rural and urban headline and core series (§10) are computed the same way, on the sector weights.</p>
         <p>The 21 sub-group indices (§09, Jan 2016 to Dec 2025) and the state series (§11) are the published MoSPI series, same vintage. State figures are the published General index of each state: state baskets differ, and nothing is recomputed on all-India weights. Several state indices were not published in April–June 2020 and April–June 2021; those months, and their year-on-year knock-on a year later, are gaps in the data, not zeros.</p>
         <p>The CPI for Agricultural Labourers and Rural Labourers (§12) is compiled by the Labour Bureau, Ministry of Labour &amp; Employment, retrieved via eSankhyiki, vintage <b id="prov-vintage3" set:html={NUM["prov-vintage3"]}></b>. The base 1986-87=100 series ends with the May 2025 print; the base 2019=100 series begins June 2025 (coverage here: Jul 2000 to {PAL.short}). The two bases price different baskets and are never spliced. Year-on-year rates on the new base are the Bureau's own, computed on a linked back-series it does not publish.</p>
       </div>
@@ -1153,7 +1153,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, CPI</span>
+      <span>Measure of India, CPI</span>
       <span>Vintage <span id="prov-vintage2" set:html={NUM["prov-vintage2"]}></span>, Bases 2024=100 &amp; 2012=100 (retired), AL/RL 1986-87 &amp; 2019=100</span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

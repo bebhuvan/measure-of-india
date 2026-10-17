@@ -118,8 +118,10 @@ checkpoint commit added about 14 MB to `.git`.
   says "thousand toe", not "ktoe"; the pensions masthead names the full month; farm's period text
   stops at the first ";"; households-editorial now bakes every bundle (it had left 107,226 cells
   undecided).
-- Left out of plates on purpose: farm API tables 18, 34, 36 and 39, whose labels or values look
-  wrong (for example 0.086 ha "owned" per household). They stay in Every Cut; the owner should check them against the printed report.
+- Farm API tables 18, 34, 36 and 39 looked wrong (0.086 ha "owned" per agricultural household).
+  Checked against Report 587 on 2026-10-17: the labels were wrong, not the values, and they are
+  now corrected in the adapter (owner decision 5 below). No lens plate was ever drawn from them,
+  so there is nothing to put back.
 
 ### Steps 6-7 so far
 
@@ -169,11 +171,23 @@ checkpoint commit added about 14 MB to `.git`.
    stricter rule: null vintage plus `archiveCapturedDate`. Migrate the others or not.
 3. **GER above 200%.** 271 schools cells withheld as small-population artefacts; the threshold
    is editorial.
-4. **UDISE zeros before 2024-25.** Only the 2024-25 report is archived, so 136 dropout zeros
-   for 2022-23 and 2023-24 cannot be checked (Bihar secondary reads 29.5, then 0). Archiving the
-   2022-23 and 2023-24 reports through the adapter would let the same check cover them.
-5. **Farm tables 18, 34, 36, 39.** Left out of plates because labels or values look wrong
-   (0.086 ha "owned" per household). Check them against the printed report.
+4. **UDISE dropout against the printed reports. Decided 2026-10-17.** The 2022-23 and 2023-24
+   reports are archived through the adapter (`REPORTS` in `scripts/lib/products/schools.mjs`, URL and
+   sha256 pinned), and Table 6.13 is checked for every year with a report. The API's 2023-24 year is
+   wrong: only 39 of 324 cells agree. Owner's rule: where the API disagrees with the printed report,
+   the printed figure is published; the API figure stays in the raw archive and in the series'
+   `sourceValues` and note. Within 0.1 counts as rounding (printed kept). Zeros the report prints stay.
+   Per year (cells, exact agreement, rounding, printed zeros, replaced non-zero, API zero replaced):
+   2022-23 324: 292, 1, 31, 0, 0; 2023-24 324: 2, 12, 37, 210, 63; 2024-25 324: 278, 0, 43, 0, 3.
+   These counts are pinned, so a new disagreement stops the rebake for review. Bihar secondary now
+   reads 29.5, 25.6, 6.9. The state-profile bundle `profiles-mospi-udise-0-41` applies the same rule.
+5. **Farm tables 18, 34, 36, 39. Decided 2026-10-17.** The labels were wrong, not the values: 18, 19
+   and 34 swap agricultural and non-agricultural households (agricultural households own 0.876 ha;
+   0.086 is the non-agricultural figure), 18 shifts Himachal Pradesh's social groups, 36 says
+   leasing-out over leasing-in values, and 39 drops "in milk" and its visit-1 season.
+   `scripts/lib/farm-households-corrections.mjs` relabels the raw rows and every bake replays
+   291,314 corrected cells against Report 587 (all agree, or the bake stops). See
+   `docs/reference/farm-households.md`.
 6. **Compact encoding for survey cubes.** Farm and households cubes are 356 MB for 5.7 MB of
    numbers; a compact shape would cut about 70% but changes what every consumer reads.
    Proposed for the performance session, not done.

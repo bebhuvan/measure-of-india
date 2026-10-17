@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import { SITE } from "../site.js";
 import "../styles/pages.css";
 import fs from "node:fs";
 import { DOSSIERS, bySlug } from "../dossiers/registry.js";
@@ -26,11 +27,11 @@ const WORDS = ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eig
 const LEARN_FAMILIES = [...new Set(LEARN.map((e) => e.family))];
 ---
 <Base
-  title="India Atlas: the Indian economy, explained"
+  title={`${SITE.name}: ${SITE.tagline}`}
   description={`What the latest official figures say about prices, growth, factories and jobs, with plain-language guides to every statistic and ${N} series to search and download.`}
   nav="home"
   crumbLeft={`Latest release: <b>consumer prices for ${COVER.month}</b>${COVER.release ? `, published ${+COVER.release.slice(8, 10)} ${MONTHS_FULL[+COVER.release.slice(5, 7) - 1]} ${COVER.release.slice(0, 4)}` : ""}`}
-  canonical="https://atlas.thisindianlife.today/"
+  canonical="/"
 >
 <div class="page home spage">
 
@@ -130,11 +131,11 @@ const LEARN_FAMILIES = [...new Set(LEARN.map((e) => e.family))];
 
   <footer class="provenance">
     <div class="cols">
-      <div><h6>India Atlas</h6><p>A reference work on Indian economic statistics, revised as each figure is released. All data comes from the statistical agencies and is built into the page; nothing is estimated unless a chart says so.</p></div>
+      <div><h6>{SITE.name}</h6><p>A reference work on Indian economic statistics, revised as each figure is released. All data comes from the statistical agencies and is built into the page; nothing is estimated unless a chart says so.</p></div>
       <div><h6>Sources</h6><p>MoSPI and the National Statistics Office, the Reserve Bank of India, the Office of the Economic Adviser, the Registrar General, the ministries of agriculture, education, health, commerce and renewable energy, and, for the comparisons with the world, the World Bank, the UN, the ILO and the BIS. Each guide cites its release.</p></div>
       <div><h6>Before you cite</h6><p>Read <a href="/method/">how we work</a>. Every chart downloads as an image or as data, with its source attached.</p></div>
     </div>
-    <div class="fine"><span>India Atlas</span><span>Static, no trackers, no cookies</span><span>Set in Newsreader and Libre Franklin</span></div>
+    <div class="fine"><span>{SITE.name}</span><span>Static, no trackers, no cookies</span><span>Set in Newsreader and Libre Franklin</span></div>
   </footer>
 </div>
 <script>

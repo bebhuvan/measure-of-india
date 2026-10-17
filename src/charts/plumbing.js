@@ -16,6 +16,7 @@
 
 import * as Plot from "@observablehq/plot";
 import FONTS from "../styles/fonts.generated.js";
+import { SITE } from "../site.js";
 
 // Chart text is Golos Text (proportional, tabular figures). The export keeps its old name,
 // MONO, so the 15 client files that import it need no change; SANS is the honest alias.
@@ -223,8 +224,8 @@ export function composeCardSVG(svg, meta = {}) {
   parts.push(`<line x1="${pad}" y1="${footY}" x2="${totalW - pad}" y2="${footY}" stroke="#DFE2E8"/>`);
   footL.forEach((l, i) => parts.push(`<text x="${pad}" y="${footY + 26 + i * 19}" font-family="'Golos Text', sans-serif" font-size="12.5" fill="#6B7180">${escapeXml(l)}</text>`));
   const brandY = stacked ? footY + 26 + footL.length * 19 + 24 : footY + 27;
-  parts.push(`<text x="${totalW - pad}" y="${brandY}" text-anchor="end" font-family="'Source Serif 4', serif" font-weight="600" font-size="18" letter-spacing="-0.2" fill="#161A22">India Atlas</text>`);
-  parts.push(`<text x="${totalW - pad}" y="${brandY + 19}" text-anchor="end" font-family="'Golos Text', sans-serif" font-size="12.5" fill="#6B7180">atlas.thisindianlife.today</text>`);
+  parts.push(`<text x="${totalW - pad}" y="${brandY}" text-anchor="end" font-family="'Source Serif 4', serif" font-weight="600" font-size="18" letter-spacing="-0.2" fill="#161A22">${SITE.name}</text>`);
+  parts.push(`<text x="${totalW - pad}" y="${brandY + 19}" text-anchor="end" font-family="'Golos Text', sans-serif" font-size="12.5" fill="#6B7180">${SITE.host}</text>`);
   const totalH = Math.ceil(footY + Math.max(26 + footL.length * 19, brandY - footY + 35) + pad - 16);
   const out = [
     `<svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}">`,

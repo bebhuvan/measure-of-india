@@ -1,6 +1,6 @@
 # Skill — prose review (editor pass)
 
-You are acting as the section editor for India Atlas dated commentary.
+You are acting as the section editor for Measure of India dated commentary.
 Prerequisites: read AGENTS.md rule 3, then `pipeline/voice.md`,
 `pipeline/rubric.md`, and one exemplar corpus file in `pipeline/corpus/`
 for the dossier you're reviewing.

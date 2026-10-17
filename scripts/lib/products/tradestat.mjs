@@ -280,7 +280,7 @@ export function writeRawIndex(root) {
     }
   };
   walk(RAW);
-  const body = { note: "Index of the TradeStat per-call raw archive (gzipped JSON, cells as printed), held in the deep-archive staging folder and uploaded to the India Atlas archive (PLAN-launch §2b). sha256 is of the stored .json.gz file.", root: RAW, calls: out.length, files: out };
+  const body = { note: "Index of the TradeStat per-call raw archive (gzipped JSON, cells as printed), held in the deep-archive staging folder and uploaded to Measure of India archive (PLAN-launch §2b). sha256 is of the stored .json.gz file.", root: RAW, calls: out.length, files: out };
   const p = path.join(root, RAW_INDEX);
   const prev = fs.existsSync(p) ? fs.readFileSync(p, "utf8") : null;
   const next = JSON.stringify(body).replace(/\},\{"file"/g, '},\n{"file"') + "\n";

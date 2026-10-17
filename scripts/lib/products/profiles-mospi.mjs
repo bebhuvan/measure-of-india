@@ -238,7 +238,7 @@ async function phaseRetry(mospi, mospiAll, plan) {
  * an activity), stays in the series key. The full grain stays in the raw dumps. Dates: the row's
  * own year (a financial year "2022-23" at April, a calendar year at January), else the round. */
 const STD = ["sector", "gender", "type_of_management", "management", "social_group", "age_group", "class_taught", "month", "period", "religion", "household_type", "sex"];
-const HEAD = /^(total|all|all india|rural \+ urban|rural\+urban|combined|person|persons|all management|all persons|both|annual|all ages|all social groups|all categories|all religions)$/i;
+const HEAD = /^(total|all|all india|rural \+ urban|rural\+urban|combined|person|persons|all management|all persons|both|annual|all ages|all social groups|all categories|all religions|male and female)$/i;
 const ROUND = { nss75: ["2017-07-01", "NSS 75, 2017-18"], nss76: ["2018-07-01", "NSS 76, July to December 2018"], nss77: ["2019-01-01", "NSS 77, 2019"], nss77aidis: ["2019-01-01", "NSS 77 (AIDIS), 2019"], nss78: ["2020-01-01", "NSS 78, 2020-21"], nss79: ["2022-07-01", "NSS 79, 2022-23"] };
 const SKIPKEYS = new Set(["value", "indicator", "state", "unit", "year", "zone", "survey", "survey_code", "indicator_code"]);
 // the period a row names, as a date on the axis: "2022-23" or "2021-22(P)" a financial year at
@@ -328,6 +328,22 @@ const fieldWords = (f) => String(f).replace(/^sub_/, "sub-").replace(/instituiti
 export const SOURCE_DEFECTS = {
   "env 99": "MoSPI serves this table with its column labels rotated: from 2019-20 to 2022-23 the column named Percentage holds household counts (Goa: 263,013) and the column named Total Rural Households holds the percentage (115.62 in 2019-20), so no column can be read as what it says.",
 };
+// Source corrections proven against the printed publication, shared with the guide adapters so a
+// state profile never bakes what a guide has corrected: NSS 77 label corrections checked against
+// Report 587 (farm-households-corrections.mjs) and UDISE+ dropout where the printed report has the
+// cell (schools.mjs printedRule). Returns the rows to bake and a sentence for the bundle note.
+async function correctedRows(P, ind, rows) {
+  if (P.id === "nss77") {
+    const { LABEL_CORRECTIONS, correctFarmRow } = await import("../farm-households-corrections.mjs");
+    if (LABEL_CORRECTIONS[ind.code]) return { rows: rows.map((r) => correctFarmRow(ind.code, r).row), note: ` API labels corrected against Report 587 Table ${LABEL_CORRECTIONS[ind.code].table} (scripts/lib/farm-households-corrections.mjs).` };
+  }
+  if (P.id === "udise" && ind.code === 41) {
+    const { printedDropout, printedRule } = await import("./schools.mjs");
+    const t = printedDropout(ROOT);
+    return { rows: rows.map((r) => (t[r.year] ? { ...r, value: printedRule(num(r.value), t[r.year].value(r)).value } : r)), note: ` For ${Object.keys(t).join(", ")} the printed UDISE+ report (Table 6.13) replaces the API figure where the two differ; the API figures stay in the raw dump.` };
+  }
+  return { rows, note: "" };
+}
 async function phaseBake(plan) {
   const { readRaw, writeSeries, nullBornStandIns } = await import("../util.mjs");
   const { placeAll } = await import("../../../src/dossiers/states-key.js");
@@ -338,7 +354,7 @@ async function phaseBake(plan) {
     for (const ind of plan.products[P.id]?.indicators ?? []) {
       const rel = `data/raw/profiles-mospi/${P.id}-${ind.survey ?? 0}-${ind.code}.json`;
       if (!fs.existsSync(path.join(ROOT, rel + ".gz")) && !fs.existsSync(path.join(ROOT, rel))) continue;
-      const raw = readRaw(ROOT, rel), rows = raw.rows;
+      const raw = readRaw(ROOT, rel), { rows, note: corrected } = await correctedRows(P, ind, raw.rows);
       if (!rows.length) continue;
       // which standard cuts publish a headline value for this indicator
       const dims = [...new Set(rows.flatMap((r) => Object.keys(r)))].filter((k) => !SKIPKEYS.has(k));
@@ -426,7 +442,7 @@ async function phaseBake(plan) {
         revisionPolicy: "Survey estimates are final on release; MoSPI may revise a table without notice, and each fetch is checked against the archived rows.",
         // the API's field names ("age_group", "sub_indicator") read as words in a title
         coverage: `${String(ind.label ?? "").trim().slice(0, 200)}: every state and UT, at the headline of ${[...headOf.keys()].map(fieldWords).join(", ") || "no standard cut"}${keep.length ? `, by ${keep.map(fieldWords).join(", ")}` : ""}`,
-        note: `Baked from data/raw/profiles-mospi/${P.id}-${ind.survey ?? 0}-${ind.code}.json (${rows.length} rows as MoSPI serves them). Standard cuts kept at their headline value: ${[...headOf].map(([d, h]) => `${d} = ${h}`).join("; ") || "none"}. The finer grain is in the raw dump.`,
+        note: `Baked from data/raw/profiles-mospi/${P.id}-${ind.survey ?? 0}-${ind.code}.json (${rows.length} rows as MoSPI serves them). Standard cuts kept at their headline value: ${[...headOf].map(([d, h]) => `${d} = ${h}`).join("; ") || "none"}. The finer grain is in the raw dump.${corrected}`,
         indicator: { product: P.id, survey: ind.survey ?? null, code: ind.code, rows: rows.length },
         ...(Object.keys(labels).length ? { periodLabels: Object.fromEntries(Object.entries(labels).filter(([d]) => dates.includes(d)).map(([d, t]) => [d, [...t].join(" / ")])) } : {}) } });
       nB++; nS += Object.keys(series).length;

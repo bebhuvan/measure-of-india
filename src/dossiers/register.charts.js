@@ -217,7 +217,7 @@ function render(tbody, rows, lag, prefix, vintage, srcName = "MoSPI / NSO") {
       : spark(s.data.map((d) => [d.date.toISOString().slice(0, 10), d.value]), { width: 150, height: 40, color: SW[sw] ?? SW["s-acc"], zero: true, gaps: true });
     return `
     <tr>
-      <td class="name"><span class="sw ${sw}"></span><a href="${href}">${nm}</a>${derived ? '<span class="derived-tag">Derived</span>' : ""}<small>Source: ${code.startsWith("IA") ? "India Atlas computation" : note === "computed" ? srcName + " · computed from levels" : srcName}</small></td>
+      <td class="name"><span class="sw ${sw}"></span><a href="${href}">${nm}</a>${derived ? '<span class="derived-tag">Derived</span>' : ""}<small>Source: ${code.startsWith("IA") ? "Measure of India computation" : note === "computed" ? srcName + " · computed from levels" : srcName}</small></td>
       <td class="code">${code}</td>
       <td class="val">${f(data.at(-1).value)}</td>
       <td class="code">${yrAgo == null ? "—" : f(yrAgo.value)}</td>

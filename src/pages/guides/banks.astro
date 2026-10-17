@@ -19,13 +19,13 @@ const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
 const N = bankNumbers();
 ---
 <Base
-  title="India's banks, one by one · India Atlas"
+  title="India's banks, one by one · Measure of India"
   description={D.description}
   nav="guides"
   dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
-  canonical="https://atlas.thisindianlife.today/guides/banks/"
+  canonical="/guides/banks/"
   ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
@@ -143,7 +143,7 @@ const N = bankNumbers();
         <div class="frame">
           <div class="plotzone" id="plot-shares" set:html={CH.shares()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, DBIE report 1221, table 1, via the Reserve Bank Innovation Hub. Shares computed by India Atlas: a group's deposits (or net advances) over all scheduled commercial banks', domestic operations. IDBI Bank moved from the public to the private group in 2019.</span>
+            <span class="src">Source: RBI, DBIE report 1221, table 1, via the Reserve Bank Innovation Hub. Shares computed by us: a group's deposits (or net advances) over all scheduled commercial banks', domestic operations. IDBI Bank moved from the public to the private group in 2019.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -172,7 +172,7 @@ const N = bankNumbers();
         <div class="frame">
           <div class="plotzone" id="plot-biggest" set:html={CH.biggest()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, DBIE report 1221, table 1 (total deposits, domestic operations), via the Reserve Bank Innovation Hub; shares computed by India Atlas. A bank's 2013 share excludes the banks it later absorbed.</span>
+            <span class="src">Source: RBI, DBIE report 1221, table 1 (total deposits, domestic operations), via the Reserve Bank Innovation Hub; shares computed by us. A bank's 2013 share excludes the banks it later absorbed.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -681,7 +681,7 @@ const N = bankNumbers();
         <div class="frame">
           <div class="plotzone" id="plot-insured" set:html={CH.insured()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, DICGC insured deposits (DBIE report 384); share computed by India Atlas. Cover raised from ₹1 lakh to ₹5 lakh on 4 February 2020.</span>
+            <span class="src">Source: RBI, DICGC insured deposits (DBIE report 384); share computed by us. Cover raised from ₹1 lakh to ₹5 lakh on 4 February 2020.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -731,12 +731,12 @@ const N = bankNumbers();
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Reserve Bank of India, DBIE: variables published bank and bank group-wise (report 1221), and the data tables of the Primary (Urban) Co-operative Banks' Outlook (reports 772, 784 to 789, 795 to 800), both gated behind a prompt on DBIE and read through the Reserve Bank Innovation Hub's data service; the Outlook's typed tables (771, 773 to 777, 810 to 812) and the financial-institutions tables (382 to 398, 801, 873, 1372), read from India Atlas's archived copy of DBIE. Branches, offices and NBFC credit are the credit guide's bundles. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]}></b>.</p>
+        <p>Reserve Bank of India, DBIE: variables published bank and bank group-wise (report 1221), and the data tables of the Primary (Urban) Co-operative Banks' Outlook (reports 772, 784 to 789, 795 to 800), both gated behind a prompt on DBIE and read through the Reserve Bank Innovation Hub's data service; the Outlook's typed tables (771, 773 to 777, 810 to 812) and the financial-institutions tables (382 to 398, 801, 873, 1372), read from our archived copy of DBIE. Branches, offices and NBFC credit are the credit guide's bundles. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]}></b>.</p>
         <p>Checked by hand: State Bank of India's gross NPAs for March 2025, ₹76,880 crore and 1.82%, equal SBI's audited results; insured deposits for March 2025, ₹100.12 lakh crore, equal DICGC's published figure.</p>
       </div>
       <div>
         <h6>Method</h6>
-        <p>Amounts converted to ₹ crore (₹ lakh crore on the charts). Banks named as the RBI names them; four renamed banks joined, mergers never joined. Identities checked on every bank and quarter: deposits, assets and liabilities add up, gross NPAs equal their three classes, the printed NPA ratio equals NPAs over advances, and the bank groups add to all banks. Shares of deposits and advances are computed by India Atlas and labelled. Nothing is estimated.</p>
+        <p>Amounts converted to ₹ crore (₹ lakh crore on the charts). Banks named as the RBI names them; four renamed banks joined, mergers never joined. Identities checked on every bank and quarter: deposits, assets and liabilities add up, gross NPAs equal their three classes, the printed NPA ratio equals NPAs over advances, and the bank groups add to all banks. Shares of deposits and advances are computed by us and labelled. Nothing is estimated.</p>
       </div>
       <div>
         <h6>Revisions and breaks</h6>
@@ -748,7 +748,7 @@ const N = bankNumbers();
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, India's banks</span>
+      <span>Measure of India, India's banks</span>
       <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]}></span></span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

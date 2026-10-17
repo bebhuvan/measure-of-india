@@ -153,3 +153,17 @@ log below.
   15,622 → 145 ms. `perf-browser` here runs with `ATLAS_CHROME_CHANNEL=chrome` (no Playwright browser download on this
   machine). Search: "electricity generation" marked a known ranking issue (energy plates retitled by finding; Ember
   series carry machine labels; fix the Ember labels, then remove the mark).
+- 2026-10-17 two owner-approved source corrections (uncommitted). Farm households: NSS 77 API tables 18, 19 and 34 swap
+  agricultural and non-agricultural household labels, 18 shifts Himachal Pradesh's social groups, 36 says leasing-out over
+  leasing-in values, 39 drops "in milk" and its visit-1 season. `scripts/lib/farm-households-corrections.mjs` relabels raw
+  rows before keying (values untouched, API label in each series note) and replays every corrected cell against Report 587
+  (18/Table 5 33,176, 19/Table 36 127,008, 34/Table 31 85,050, 36/Table 34 13,950, 39/Table 45 32,130 matched cells, all
+  agree; the bake stops otherwise). Agricultural households own 0.876 ha (0.086 was the non-agricultural figure). No lens
+  plate had ever used these tables, so none came back. UDISE dropout: the 2022-23 and 2023-24 reports archived through the
+  adapter (`REPORTS`, sha256 pinned); where the API disagrees with Table 6.13 the printed figure is baked (`printedRule`,
+  0.1 rounding, printed zeros kept, API value in `sourceValues`). 2023-24 replaced 273 of 324 cells (the API year is
+  wrong); 2024-25 three Bihar zeros; 2022-23 one rounding. Reviewed counts pinned. Both rules also apply in the state
+  profile bake (`profiles-mospi-nss77-0-{18,19,34,36,39}`, `profiles-mospi-udise-0-41`). Tests in `test/hard-rules.test.mjs`.
+  Checks: validate, `npm test` (315/315), coverage (49 ledgers), prose:dry all exit 0. Full build 816 pages exit 0; gates
+  passed everything up to perf-browser, which failed after two pages because the worktree's dist/ was deleted from outside
+  this session mid-run. perf-browser still needs a rerun on a fresh build (the data change touches no page weight).

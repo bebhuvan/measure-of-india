@@ -21,6 +21,7 @@ import { execFileSync } from "node:child_process";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import { JSDOM } from "jsdom";
 import { DOSSIERS, bySlug } from "../src/dossiers/registry.js";
+import { RETIRED_NAMES } from "../src/site.js";
 import * as fmt from "../src/charts/format.js";
 import { round as roundP } from "../src/dossiers/precision.js";   // review-a: rates shown at the agency's precision
 const R1 = (v) => roundP(v, 1);
@@ -798,7 +799,7 @@ for (const page of PAGES) {
   // every id referenced by inline HTML placeholders exists — and vice versa
   const dash = [...html.matchAll(/id="([a-z0-9-]+)">–</g)].map((m) => m[1]);
 
-  const dom = new JSDOM(html, { url: "https://atlas.thisindianlife.today" + page.url, pretendToBeVisual: true });
+  const dom = new JSDOM(html, { url: "https://measure.thisindianlife.today" + page.url, pretendToBeVisual: true });
   const { window } = dom;
   window.URL.createObjectURL = () => "blob:x";
   window.URL.revokeObjectURL = () => {};
@@ -1205,14 +1206,20 @@ ok("static source greps done");
 
 // a page that draws kit figures must load the chart script: without it the wide and mid drawings
 // (fetched from kit.json by src/kit/enhance.js) never arrive. Base.astro leaves it out on charts={false}.
+// The same walk refuses a retired site name (src/site.js RETIRED_NAMES) in any page or feed.
 {
-  let pagesWithFigures = 0, missing = 0;
+  let pagesWithFigures = 0, missing = 0, retired = 0;
   (function walk(dir) {
     for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
       const p = path.join(dir, e.name);
       if (e.isDirectory()) walk(p);
+      else if (e.name.endsWith(".xml") || e.name.endsWith(".txt")) {
+        const text = fs.readFileSync(p, "utf8");
+        for (const n of RETIRED_NAMES) if (text.includes(n)) { retired++; if (retired <= 5) fail(`${path.relative(DIST, p)}: still prints the retired name "${n}"`); }
+      }
       else if (e.name.endsWith(".html")) {
         const html = fs.readFileSync(p, "utf8");
+        for (const n of RETIRED_NAMES) if (html.includes(n)) { retired++; if (retired <= 5) fail(`${path.relative(DIST, p)}: still prints the retired name "${n}"`); }
         // in the built site a figure's CSV table travels in kit.json (figure() / dataFigure()), never inline
         if (html.includes('class="akf-data"')) { missing++; fail(`${path.relative(DIST, p)}: a kit CSV table is inline in the page; carry it with figure() or dataFigure()`); }
         if (!html.includes('class="akf')) continue;
@@ -1222,6 +1229,8 @@ ok("static source greps done");
     }
   })(DIST);
   if (!missing) ok(`kit: all ${pagesWithFigures} pages with figures load the chart script`);
+  if (retired > 5) fail(`${retired} files in all still print a retired site name`);
+  if (!retired) ok(`site name: no page or feed prints a retired name (${RETIRED_NAMES.join(", ")})`);
 }
 
 // ---------------------------------------------------------------------------

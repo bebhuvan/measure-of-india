@@ -3,6 +3,8 @@ import "../styles/atlas.css";
 import "../kit/kit.css";
 import FONTS from "../styles/fonts.generated.js";
 import KitScript from "../kit/KitScript.astro";
+import { SITE } from "../site.js";
+import { markSVG } from "../brand/mark.js";
 
 interface Props {
   title: string;
@@ -17,7 +19,7 @@ interface Props {
 }
 const {
   title,
-  description = "India Atlas: plain-language guides to India's official economic statistics, with charts you can download and share.",
+  description = `${SITE.name}: plain-language guides to India's official economic statistics, with charts you can download and share.`,
   nav,
   dateStamp = "",
   crumbLeft = "",
@@ -26,8 +28,9 @@ const {
   ogImage = "/og/site.png",
   charts = true,
 } = Astro.props;
-const ogUrl = "https://atlas.thisindianlife.today" + ogImage;
-const canonicalUrl = canonical ?? "https://atlas.thisindianlife.today/";
+const ogUrl = SITE.url + ogImage;
+// pages pass their path ("/guides/cpi/"); the host comes from SITE, so moving the site is one edit
+const canonicalUrl = canonical ? (canonical.startsWith("/") ? SITE.url + canonical : canonical) : SITE.url + "/";
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -37,16 +40,16 @@ const canonicalUrl = canonical ?? "https://atlas.thisindianlife.today/";
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
 <meta name="description" content={description}>
-{canonical && <link rel="canonical" href={canonical}>}
+{canonical && <link rel="canonical" href={canonicalUrl}>}
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="alternate" type="application/rss+xml" title="India Atlas: guide revisions" href="/rss.xml">
+<link rel="alternate" type="application/rss+xml" title={`${SITE.short}: guide revisions`} href="/rss.xml">
 <meta property="og:title" content={title}>
 <meta property="og:description" content={description}>
 <meta property="og:type" content="article">
 <meta property="og:url" content={canonicalUrl}>
-<meta property="og:site_name" content="India Atlas">
+<meta property="og:site_name" content={SITE.name}>
 <meta property="og:image" content={ogUrl}>
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -58,7 +61,7 @@ const canonicalUrl = canonical ?? "https://atlas.thisindianlife.today/";
 <a class="skip" href="#main">Skip to content</a>
 <header class="sitehead">
   <div class="sh-in">
-    <a class="brand" href="/"><b>India Atlas</b><span>The economy in its official figures</span></a>
+    <a class="brand" href="/"><span class="mark" set:html={markSVG("paper")} /><b>{SITE.name}</b><span class="beta" title="The site is in beta: figures are checked, but pages and tools are still being refined">Beta</span><span class="tag">{SITE.tagline}</span></a>
     <nav class="sh-nav" aria-label="Main">
       <a href="/guides/" aria-current={nav === "guides" ? "page" : undefined}>Guides</a><a href="/states/" aria-current={nav === "states" ? "page" : undefined}>States</a><a href="/learn/" aria-current={nav === "learn" ? "page" : undefined}>Learn</a><a href="/explore/" aria-current={nav === "register" ? "page" : undefined}>Indicators</a><a href="/method/" aria-current={nav === "method" ? "page" : undefined}>Method</a><a href="/about/" aria-current={nav === "about" ? "page" : undefined}>About</a>
     </nav>
@@ -70,6 +73,10 @@ const canonicalUrl = canonical ?? "https://atlas.thisindianlife.today/";
   </div>
 </header>
 <main id="main"><slot /></main>
+<footer class="sitefoot">
+  <p><b>{SITE.name}</b> is in beta. Its figures come from official publications and their data services, which can contain errors. Where we have checked a figure against the printed report and the two disagree, we publish the printed figure and say so on the page. Nothing here is investment, legal or policy advice.</p>
+  <p>A <a href={SITE.parent.url}>{SITE.parent.name}</a> project. Text and charts under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>; each source's data keeps its own terms.</p>
+</footer>
 {charts && <KitScript />}
 </body>
 </html>

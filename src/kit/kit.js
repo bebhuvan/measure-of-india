@@ -1,4 +1,4 @@
-// India Atlas chart kit, v5 (from scratch, 2026-10-15).
+// Measure of India chart kit, v5 (from scratch, 2026-10-15).
 //
 // One module, no dependencies. Every form takes a plain spec and returns an SVG string, so
 // the same code can run at build time (Node) or in the page. Hover is a separate, optional

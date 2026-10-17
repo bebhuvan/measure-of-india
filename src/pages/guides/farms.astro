@@ -13,13 +13,13 @@ import * as CH from "../../dossiers/farms.charts.js";
 const N = CH.numbers();
 ---
 <Base
-  title="Farms and food · India Atlas"
+  title="Farms and food · Measure of India"
   description={D.description}
   nav="guides"
   dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
-  canonical="https://atlas.thisindianlife.today/guides/farms/"
+  canonical="/guides/farms/"
   ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
@@ -76,14 +76,14 @@ const N = CH.numbers();
         <div class="plate-head">
           <div class="t">
             <h3>A hectare of wheat sold at the support price brings in far more rupees than it used to</h3>
-            <div class="sub">All India wheat yield (kg per hectare) times the wheat minimum support price (rupees a kg), by crop year: what one average hectare would fetch at the support price, before costs, in the rupees of each year (not adjusted for inflation). Computed by India Atlas.</div>
+            <div class="sub">All India wheat yield (kg per hectare) times the wheat minimum support price (rupees a kg), by crop year: what one average hectare would fetch at the support price, before costs, in the rupees of each year (not adjusted for inflation). Computed by Measure of India.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-hectare" set:html={N["pv-hectare"]}></div><div class="c" id="pc-hectare" set:html={N["pc-hectare"]}></div></div>
         </div>
         <div class="frame">
           <div class="plotzone" id="plot-hectare" set:html={CH.hectare()} />
           <div class="plotfoot">
-            <span class="src">Source: Agriculture ministry, yield per hectare and minimum support prices, as published by the RBI (DBIE reports 886 and 461). Product computed by India Atlas.</span>
+            <span class="src">Source: Agriculture ministry, yield per hectare and minimum support prices, as published by the RBI (DBIE reports 886 and 461). Product computed by us.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -310,7 +310,7 @@ const N = CH.numbers();
         <div class="frame">
           <div class="plotzone" id="plot-land" set:html={CH.land()} />
           <div class="plotfoot">
-            <span class="src">Source: Agriculture ministry, land use statistics, as published by the RBI (DBIE report 463). Irrigated share computed by India Atlas.</span>
+            <span class="src">Source: Agriculture ministry, land use statistics, as published by the RBI (DBIE report 463). Irrigated share computed by us.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -332,14 +332,14 @@ const N = CH.numbers();
         <div class="plate-head">
           <div class="t">
             <h3>Fertiliser per hectare climbed steeply after the Green Revolution, then levelled off</h3>
-            <div class="sub">Fertiliser used (nitrogen, phosphate and potash, nutrient tonnes) per hectare of gross sown area, kg, 1950-51 on. Computed by India Atlas from RBI's land-use table.</div>
+            <div class="sub">Fertiliser used (nitrogen, phosphate and potash, nutrient tonnes) per hectare of gross sown area, kg, 1950-51 on. Computed by Measure of India from RBI's land-use table.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-fert" set:html={N["pv-fert"]}></div><div class="c">kg per hectare, latest year</div></div>
         </div>
         <div class="frame">
           <div class="plotzone" id="plot-fert" set:html={CH.fert()} />
           <div class="plotfoot">
-            <span class="src">Source: Agriculture ministry, as published by the RBI (DBIE report 463). Per hectare computed by India Atlas.</span>
+            <span class="src">Source: Agriculture ministry, as published by the RBI (DBIE report 463). Per hectare computed by us.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -401,7 +401,7 @@ const N = CH.numbers();
         <div class="frame">
           <div class="plotzone" id="plot-mspinfl" set:html={CH.mspinfl()} />
           <div class="plotfoot">
-            <span class="src">Source: Support prices as published by the RBI (DBIE 461); CPI for agricultural labourers, Labour Bureau (the prices guide's bundle cpialrl-1986). Rises and averages computed by India Atlas.</span>
+            <span class="src">Source: Support prices as published by the RBI (DBIE 461); CPI for agricultural labourers, Labour Bureau (the prices guide's bundle cpialrl-1986). Rises and averages computed by us.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -430,7 +430,7 @@ const N = CH.numbers();
         <div class="frame">
           <div class="plotzone" id="plot-mspall" set:html={CH.mspall()} />
           <div class="plotfoot">
-            <span class="src">Source: Support prices as published by the RBI (DBIE reports 461 and 462). Ten-year rise computed by India Atlas.</span>
+            <span class="src">Source: Support prices as published by the RBI (DBIE reports 461 and 462). Ten-year rise computed by us.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -525,7 +525,7 @@ const N = CH.numbers();
         <div class="frame">
           <div class="plotzone" id="plot-states" set:html={CH.states()} />
           <div class="plotfoot">
-            <span class="src">Source: Agriculture ministry, as published in the RBI's Handbook of Statistics on Indian States, tables 58 to 66 (the states guide's bundles). Shares computed by India Atlas.</span>
+            <span class="src">Source: Agriculture ministry, as published in the RBI's Handbook of Statistics on Indian States, tables 58 to 66 (the states guide's bundles). Shares computed by us.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in/Scripts/AnnualPublications.aspx?head=Handbook+of+Statistics+on+Indian+States" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -554,7 +554,7 @@ const N = CH.numbers();
         <div class="frame">
           <div class="plotzone" id="plot-statelong" set:html={CH.statelong()} />
           <div class="plotfoot">
-            <span class="src">Source: Agriculture ministry, state-wise production, as published by the RBI (DBIE report 465). Shares computed by India Atlas.</span>
+            <span class="src">Source: Agriculture ministry, state-wise production, as published by the RBI (DBIE report 465). Shares computed by us.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -648,7 +648,7 @@ const N = CH.numbers();
         <div class="frame">
           <div class="plotzone" id="plot-monsoon" set:html={CH.monsoon()} />
           <div class="plotfoot">
-            <span class="src">Source: Foodgrain production, agriculture ministry via the RBI (DBIE 623); rainfall, CRU TS 4.10, University of East Anglia, via the World Bank Climate Change Knowledge Portal (the climate guide's bundle climate-cru-monthly). Departures and changes computed by India Atlas.</span>
+            <span class="src">Source: Foodgrain production, agriculture ministry via the RBI (DBIE 623); rainfall, CRU TS 4.10, University of East Anglia, via the World Bank Climate Change Knowledge Portal (the climate guide's bundle climate-cru-monthly). Departures and changes computed by us.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -689,12 +689,12 @@ const N = CH.numbers();
     <div class="cols">
       <div>
         <h6>Sources of record</h6>
-        <p>Ministry of Agriculture and Farmers Welfare (crop area, production and yield, index numbers, land use, inputs, state-wise production, minimum support prices), the Tea Board and the Coffee Board, and the Ministry of Consumer Affairs, Food and Public Distribution (procurement, off-take and stocks), as the Reserve Bank of India publishes them in its Database on Indian Economy and its Handbooks. Read from the Atlas's local, read-only mirror of DBIE; report 190 (commercial-crop area), the Handbook's printed tables and two SDMX datasets from the Reserve Bank Innovation Hub's DBIE service. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]}></b>.</p>
+        <p>Ministry of Agriculture and Farmers Welfare (crop area, production and yield, index numbers, land use, inputs, state-wise production, minimum support prices), the Tea Board and the Coffee Board, and the Ministry of Consumer Affairs, Food and Public Distribution (procurement, off-take and stocks), as the Reserve Bank of India publishes them in its Database on Indian Economy and its Handbooks. Read from our local, read-only mirror of DBIE; report 190 (commercial-crop area), the Handbook's printed tables and two SDMX datasets from the Reserve Bank Innovation Hub's DBIE service. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]}></b>.</p>
         <p>Every cell the Data Bank holds was checked against the RBI's own printed table at its printed precision: 16,800 cells across twelve tables, all equal. Checked by hand: rice 2024-25, 150,184 thousand tonnes (the Handbook prints 1,502 lakh tonnes); cotton 2023-24, 325.22 lakh bales, the ministry's final figure; paddy MSP 2024-25 ₹2,300 and wheat 2025-26 ₹2,585, the government's announced prices; wheat stocks on 1 April 2025, 11.8 million tonnes, as the food ministry reported.</p>
       </div>
       <div>
         <h6>Method</h6>
-        <p>Values are stored once each (DBIE repeats every value once per display unit), in the units the RBI prints: thousand tonnes, thousand bales, thousand hectares, kg per hectare, lakh tonnes, rupees a quintal. Crop years are dated at April of their first year. Shares, per hectare figures, the hectare's value at the support price, rainfall departures and the crop-year average of farm labourers' inflation are computed by India Atlas and labelled as such.</p>
+        <p>Values are stored once each (DBIE repeats every value once per display unit), in the units the RBI prints: thousand tonnes, thousand bales, thousand hectares, kg per hectare, lakh tonnes, rupees a quintal. Crop years are dated at April of their first year. Shares, per hectare figures, the hectare's value at the support price, rainfall departures and the crop-year average of farm labourers' inflation are computed by us and labelled as such.</p>
       </div>
       <div>
         <h6>Revisions and breaks</h6>
@@ -706,7 +706,7 @@ const N = CH.numbers();
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, farms and food</span>
+      <span>Measure of India, farms and food</span>
       <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]}></span></span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

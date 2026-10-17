@@ -19,13 +19,13 @@ const LQ = qlab(creditB.dates.at(-1));
 const LQG = qlab(gliB.dates.at(-1));
 ---
 <Base
-  title="How much India owes · India Atlas"
+  title="How much India owes · Measure of India"
   description={D.description}
   nav="guides"
   dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
-  canonical="https://atlas.thisindianlife.today/guides/debt/"
+  canonical="/guides/debt/"
   ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
@@ -363,7 +363,7 @@ const LQG = qlab(gliB.dates.at(-1));
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Bank for International Settlements statistics: total credit (WS_TC), credit-to-GDP gaps (WS_CREDIT_GAP), debt service ratios (WS_DSR), global liquidity indicators (WS_GLI), US dollar exchange rates (WS_XRU) and central bank policy rates (WS_CBPOL), read from India Atlas's archived copy of the BIS statistics. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]} />.</p>
+        <p>Bank for International Settlements statistics: total credit (WS_TC), credit-to-GDP gaps (WS_CREDIT_GAP), debt service ratios (WS_DSR), global liquidity indicators (WS_GLI), US dollar exchange rates (WS_XRU) and central bank policy rates (WS_CBPOL), read from our archived copy of the BIS statistics. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]} />.</p>
         <p>Checked by hand: India's private credit, 105.1% of GDP in January to March 2026, households 49.1 and companies 56.0, government 83.5, gap 4.3 points, as published on the BIS data portal.</p>
       </div>
       <div>
@@ -380,7 +380,7 @@ const LQG = qlab(gliB.dates.at(-1));
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, debt</span>
+      <span>Measure of India, debt</span>
       <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]} /></span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

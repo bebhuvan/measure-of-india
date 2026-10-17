@@ -29,13 +29,13 @@ import { archiveForFamily } from "../../dossiers/archive.js";
 const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
 ---
 <Base
-  title="What India Buys and Sells · India Atlas"
+  title="What India Buys and Sells · Measure of India"
   description={D.description}
   nav="guides"
   dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
-  canonical="https://atlas.thisindianlife.today/guides/trade/"
+  canonical="/guides/trade/"
   ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
@@ -623,7 +623,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
     </div>
   </section>
 
-    <div class="prose xp-note"><p><b>Six- and eight-digit detail.</b> The 5,600 subheadings and 11,000 tariff lines, every month since January 2017, in dollars, rupees and quantity, are too large for these pages. They are published as files in the India Atlas data archive, one per year and flow, each on one HS edition; the headings above are their totals. <span id="xp-archive-link">{lines ? <a class="archive-link" href={lines.href}>{lines.tables.toLocaleString("en-IN")} files of subheadings and tariff lines, {lines.rows.toLocaleString("en-IN")} rows, as Parquet and CSV</a> : "The archive files are being prepared."}</span></p></div>
+    <div class="prose xp-note"><p><b>Six- and eight-digit detail.</b> The 5,600 subheadings and 11,000 tariff lines, every month since January 2017, in dollars, rupees and quantity, are too large for these pages. They are published as files in Measure of India data archive, one per year and flow, each on one HS edition; the headings above are their totals. <span id="xp-archive-link">{lines ? <a class="archive-link" href={lines.href}>{lines.tables.toLocaleString("en-IN")} files of subheadings and tariff lines, {lines.rows.toLocaleString("en-IN")} rows, as Parquet and CSV</a> : "The archive files are being prepared."}</span></p></div>
 
   <!-- § 10 what this measures: evergreen -->
   <section>
@@ -656,7 +656,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Commodity and partner detail: Ministry of Commerce and Industry, TradeStat (tradestat.commerce.gov.in), which publishes DGCI&amp;S customs data: the monthly export-import data bank (MEIDB), principal-commodity tables (FTPA and FTSPCC). The long history and the oil split: RBI, Database on Indian Economy, read from India Atlas's archived copy of DBIE. Data vintage <b id="prov-vintage" set:html={W["prov-vintage"]}></b>.</p>
+        <p>Commodity and partner detail: Ministry of Commerce and Industry, TradeStat (tradestat.commerce.gov.in), which publishes DGCI&amp;S customs data: the monthly export-import data bank (MEIDB), principal-commodity tables (FTPA and FTSPCC). The long history and the oil split: RBI, Database on Indian Economy, read from our archived copy of DBIE. Data vintage <b id="prov-vintage" set:html={W["prov-vintage"]}></b>.</p>
         <p>Checked against the Ministry's quick-estimates release of 13 August 2026: gold imports for July 2025 (US$ 3,974 million), rice exports (US$ 921 million) and coal imports (US$ 2,361 million) match these tables to the million, and 2025-26 exports total US$ 441,452 million in both.</p>
       </div>
       <div>
@@ -674,7 +674,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, merchandise trade</span>
+      <span>Measure of India, merchandise trade</span>
       <span>Vintage <span id="prov-vintage2" set:html={W["prov-vintage2"]}></span></span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

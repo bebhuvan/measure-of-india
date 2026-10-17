@@ -245,7 +245,7 @@ for (const f of [...tables, ...Object.values(raw).flatMap((r) => r.files.map(([r
 // HF path; the uploaded sha256 and commit carry over while the file is unchanged
 const keepUpload = (f) => { const p = prevByPath.get(f.path); return p && p.uploaded_sha256 === f.sha256 ? { uploaded_sha256: p.uploaded_sha256, hf_commit: p.hf_commit } : { uploaded_sha256: null, hf_commit: null }; };
 const manifest = {
-  note: "The India Atlas deep archive (docs/PLAN-launch.md §2b): finer grain than the chart bundles carry, published on Hugging Face. Built by scripts/archive.mjs; each file's rows were checked against its catalogue or index, and its sha256 recorded, before upload.",
+  note: "Measure of India deep archive (docs/PLAN-launch.md §2b): finer grain than the chart bundles carry, published on Hugging Face. Built by scripts/archive.mjs; each file's rows were checked against its catalogue or index, and its sha256 recorded, before upload.",
   repo: REPO, url: HF_BASE, generated_at: new Date().toISOString().slice(0, 10), card_commit: prev.card_commit ?? null,
   tables: tables.map(({ local, ...f }) => ({ ...f, ...keepUpload(f) })).sort((a, b) => (a.path < b.path ? -1 : 1)),
   raw: Object.fromEntries(Object.entries(raw).map(([fam, r]) => {
@@ -315,14 +315,14 @@ function datasetCard(m) {
   });
   return `---
 license: other
-pretty_name: India Atlas deep archive
+pretty_name: Measure of India deep archive
 language: [en]
 tags: [india, economics, statistics, official-statistics, trade, credit, labour, climate]
 ---
 
-# India Atlas deep archive
+# Measure of India deep archive
 
-The finer grain behind [India Atlas](https://atlas.thisindianlife.today), a reference work on
+The finer grain behind [Measure of India](https://measure.thisindianlife.today), a reference work on
 India's official economic statistics. The site draws charts from compact "bundles"; this
 dataset holds what those bundles summarise: 6- and 8-digit traded goods, district and centre
 tables of bank credit, the ILO's three-way survey cubes, and state-by-month climate series,

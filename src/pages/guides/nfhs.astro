@@ -191,13 +191,13 @@ const DATA = {
 const asOf = "NFHS-5";
 ---
 <Base
-  title="Family health · India Atlas"
+  title="Family health · Measure of India"
   description={D.description}
   nav="guides"
   dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
-  canonical="https://atlas.thisindianlife.today/guides/nfhs/"
+  canonical="/guides/nfhs/"
   ogImage={`/og/${D.slug}.png`}
 >
 <style is:global>
@@ -272,7 +272,7 @@ const asOf = "NFHS-5";
         <div class="frame">
           <div class="plotzone" id="plot-nfhs6" set:html={CH["nfhs6"](DATA)} />
           <div class="plotfoot">
-            <span class="src">Source: NFHS-6 (2023-24) India fact sheet, IIPS and MoHFW, May 2026, with the NFHS-5 figures it prints alongside. Read into data by India Atlas; not yet on MoSPI's API.</span>
+            <span class="src">Source: NFHS-6 (2023-24) India fact sheet, IIPS and MoHFW, May 2026, with the NFHS-5 figures it prints alongside. Read into data by Measure of India; not yet on MoSPI's API.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -999,7 +999,7 @@ const asOf = "NFHS-5";
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, Family health</span>
+      <span>Measure of India, Family health</span>
       <span>Vintage <span id="prov-vintage2">{round5.vintage}</span>, two rounds side by side</span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

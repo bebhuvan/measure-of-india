@@ -26,12 +26,12 @@ const kindNote = u.kind === "ut" ? "A union territory without a legislature: the
 ---
 <Base
   nav="states"
-  title={`${u.name}: a state profile · India Atlas`}
+  title={`${u.name}: a state profile · Measure of India`}
   description={`${u.name} in official figures: income, growth, prices, jobs, spending, health, banking, industry, farms, education, climate and state finances, each against India and its neighbours.`}
   dateStamp={latestVintage ? `Updated ${+latestVintage.slice(8, 10)} ${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+latestVintage.slice(5, 7) - 1]} ${latestVintage.slice(0, 4)}` : ""}
   crumbLeft={`<a href="/states/">States and union territories</a> / <b>${u.name}</b>`}
   crumbRight={`${P.kind}, ${u.iso}`}
-  canonical={`https://atlas.thisindianlife.today/states/${u.slug}/`}
+  canonical={`/states/${u.slug}/`}
   ogImage={`/og/states/${u.slug}.png`}
 >
 <style is:global>
@@ -99,7 +99,7 @@ const kindNote = u.kind === "ut" ? "A union territory without a legislature: the
         <div class="frame">
           <div class="plotzone" id="plot-where" set:html={CH.where(P.charts, u.slug, N)} />
           <div class="plotfoot">
-            <span class="src">Source: India Atlas, from the bundles named under each section below. Ranks count only units with a figure for the same period.</span>
+            <span class="src">Source: Measure of India, from the bundles named under each section below. Ranks count only units with a figure for the same period.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button></span>
           </div>
         </div>
@@ -285,7 +285,7 @@ const kindNote = u.kind === "ut" ? "A union territory without a legislature: the
       </div>
       <div>
         <h6>Method</h6>
-        <p>Read at build time from the Atlas's baked bundles through one state key (src/dossiers/states-key.js), which maps every source's spelling of every state. Sentences are templates filled from the data; no language model writes on this page. The build checks every figure against its table.</p>
+        <p>Read at build time from our baked bundles through one state key (src/dossiers/states-key.js), which maps every source's spelling of every state. Sentences are templates filled from the data; no language model writes on this page. The build checks every figure against its table.</p>
       </div>
       <div>
         <h6>Breaks</h6>
@@ -297,7 +297,7 @@ const kindNote = u.kind === "ut" ? "A union territory without a legislature: the
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, state profiles</span>
+      <span>Measure of India, state profiles</span>
       <span>{u.name}</span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

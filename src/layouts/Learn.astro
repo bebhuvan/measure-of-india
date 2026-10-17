@@ -29,7 +29,7 @@ const ruler = RULERS[EXPLAINERS.find((e) => e.slug === slug)?.ruler];
   dateStamp={dateStamp}
   crumbLeft={`<a href="/learn/" style="color:inherit">Learn</a> / Concepts / <b>${crumbTitle}</b>`}
   crumbRight="Evergreen, concept notes, <b>v1.0</b>"
-  canonical={"https://atlas.thisindianlife.today/learn/" + slug + "/"}
+  canonical={"/learn/" + slug + "/"}
   ogImage={ogImage}
 >
 <div class="page">
@@ -55,7 +55,7 @@ const ruler = RULERS[EXPLAINERS.find((e) => e.slug === slug)?.ruler];
       <slot name="prov-note" />
     </div>
     <div class="fine">
-      <span>India Atlas, Learn, {crumbTitle}</span>
+      <span>Measure of India, Learn, {crumbTitle}</span>
       <span>Evergreen, review with each base revision</span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

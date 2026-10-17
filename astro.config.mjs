@@ -5,6 +5,7 @@ import zlib from "node:zlib";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { DOSSIERS } from "./src/dossiers/registry.js";
+import { SITE } from "./src/site.js";
 
 // Raw dumps are stored gzipped (data/raw/*.json.gz, scripts/lib/util.mjs). A page that draws on one
 // (the learn explainers read the CPI and NAS index levels) imports the .json.gz; this loads it at
@@ -69,7 +70,7 @@ export default defineConfig({
   // ATLAS_OUT_DIR builds somewhere other than ./dist (a RAM disk when the work disk is short);
   // the gates read the same variable through QC_DIST or their dist argument.
   ...(process.env.ATLAS_OUT_DIR ? { outDir: process.env.ATLAS_OUT_DIR } : {}),
-  site: "https://atlas.thisindianlife.today",
+  site: SITE.url,
   redirects,
   integrations: [sitemap({ filter: (page) => !page.includes("/dossiers/") }), kitDrawings, explorerIndex, searchIndex],
   build: { inlineStylesheets: "auto" },

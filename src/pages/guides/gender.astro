@@ -167,13 +167,13 @@ const DATA = {
 const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.dates.at(-1)] ?? b.meta.latestPeriod; };
 ---
 <Base
-  title="Women and men · India Atlas"
+  title="Women and men · Measure of India"
   description={D.description}
   nav="guides"
   dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
-  canonical="https://atlas.thisindianlife.today/guides/gender/"
+  canonical="/guides/gender/"
   ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
@@ -718,7 +718,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
         <div class="frame">
           <div class="plotzone" id="plot-money" set:html={CH["money"](DATA)} />
           <div class="plotfoot">
-            <span class="src">Source: Department of Financial Services, Ministry of Finance (PMJDY, PMJJBY, PMSBY, APY, Stand-Up India); RBI, BSR-2 (deposits, March 2025); CDSL (demat); NSE (investors); as reprinted in MoSPI's Women and Men in India 2025 (tables 4.24 to 4.36). Shares computed by the Atlas from the printed counts.</span>
+            <span class="src">Source: Department of Financial Services, Ministry of Finance (PMJDY, PMJJBY, PMSBY, APY, Stand-Up India); RBI, BSR-2 (deposits, March 2025); CDSL (demat); NSE (investors); as reprinted in MoSPI's Women and Men in India 2025 (tables 4.24 to 4.36). Shares computed by us from the printed counts.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -751,7 +751,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
         <div class="frame">
           <div class="plotzone" id="plot-lok-sabha" set:html={CH["lok-sabha"](DATA)} />
           <div class="plotfoot">
-            <span class="src">Source: Election Commission of India, as reprinted in MoSPI's Women and Men in India 2025 (table 5.2). Share computed by the Atlas: women elected divided by seats.</span>
+            <span class="src">Source: Election Commission of India, as reprinted in MoSPI's Women and Men in India 2025 (table 5.2). Share computed by us: women elected divided by seats.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://eci.gov.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -778,7 +778,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
         <div class="frame">
           <div class="plotzone" id="plot-voice" set:html={CH["voice"](DATA)} />
           <div class="plotfoot">
-            <span class="src">Source: Ministry of Panchayati Raj; Lok Sabha Secretariat; Department of Justice; Bureau of Police Research and Development; Election Commission of India; Ministry of Corporate Affairs; as reprinted in MoSPI's Women and Men in India 2025 (tables 5.1 to 5.11). Assembly and company shares computed by the Atlas from the printed counts.</span>
+            <span class="src">Source: Ministry of Panchayati Raj; Lok Sabha Secretariat; Department of Justice; Bureau of Police Research and Development; Election Commission of India; Ministry of Corporate Affairs; as reprinted in MoSPI's Women and Men in India 2025 (tables 5.1 to 5.11). Assembly and company shares computed by us from the printed counts.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -968,7 +968,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, Women and men</span>
+      <span>Measure of India, Women and men</span>
       <span>Vintage <span id="prov-vintage2">{compendium.vintage}</span>, every table on its own ruler</span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

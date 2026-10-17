@@ -724,7 +724,7 @@ export async function buildCpi2024(root, dcfg, vintage) {
       latestPeriod: backMonths.at(-1), releaseDate: null,
       coverage: "All India, Combined; General index only",
       note: "The NSO's own back-cast of the 2024-base General index (series=Back), 2013–2024 — " +
-        "a linking series published by the Bureau, not by India Atlas. Its own bundle: " +
+        "a linking series published by the Bureau, not by Measure of India. Its own bundle: " +
         "never merged with the 2012-base series or with the 2024-base Current series.",
       revisionPolicy: dcfg.revision_policy,
     },
@@ -1130,7 +1130,7 @@ async function buildCpi2024Deep(root, dcfg, vintage, { fd, years, divisions, bac
     const bax = monthAxis(ym[0], ym.at(-1));
     out["cpi-2024-back-sectors"] = {
       meta: { ...meta("All India, Rural and Urban; General index only, NSO back series"), latestPeriod: bax.at(-1), releaseDate: null,
-        note: "The NSO's own back-cast of the 2024-base General index for rural and urban India (series=Back), " + bm[0].slice(0, 4) + " to " + bm.at(-1).slice(0, 4) + ". A linking series published by the NSO, not by India Atlas; never merged with the 2012-base series or with the Current series." },
+        note: "The NSO's own back-cast of the 2024-base General index for rural and urban India (series=Back), " + bm[0].slice(0, 4) + " to " + bm.at(-1).slice(0, 4) + ". A linking series published by the NSO, not by Measure of India; never merged with the 2012-base series or with the Current series." },
       dates: bax.map((m) => `${m}-01`),
       series: Object.fromEntries(["rural", "urban"].map((sector, i) => [sector, { name: `cpi2024_back_${sector}_yoy_pct`, label: `Headline, ${sector}, base 2024, NSO back-cast`, color: GREYS[i], unit: "pct_yoy", data: bax.map((m) => yy[sector].get(m) ?? null) }])),
       crosscheck: { published_inflation: Object.fromEntries(["rural", "urban"].map((sector) => [sector, bax.map((m) => back[sector].published.get(m) ?? null)])) },

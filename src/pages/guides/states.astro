@@ -36,13 +36,13 @@ const ELSEWHERE = [
 ].map(([slug, kind, what]) => ({ ...other(slug), kind, what })).filter((x) => x.href);
 ---
 <Base
-  title="State economies · India Atlas"
+  title="State economies · Measure of India"
   description={D.description}
   nav="guides"
   dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
-  canonical="https://atlas.thisindianlife.today/guides/states/"
+  canonical="/guides/states/"
   ogImage={`/og/${D.slug}.png`}
 >
 <style is:global>
@@ -164,7 +164,7 @@ const ELSEWHERE = [
         <div class="frame">
           <div class="plotzone" id="plot-gap" set:html={CH.gapChart()} />
           <div class="plotfoot">
-            <span class="src">Source: India Atlas computation from MoSPI per-capita NSDP (states-spread). Not in the panel: Jammu and Kashmir (its territory changed in 2019-20), Ladakh and Nagaland (years missing).</span>
+            <span class="src">Source: Measure of India computation from MoSPI per-capita NSDP (states-spread). Not in the panel: Jammu and Kashmir (its territory changed in 2019-20), Ladakh and Nagaland (years missing).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/data/states-spread.csv">Data</a></span>
           </div>
         </div>
@@ -232,7 +232,7 @@ const ELSEWHERE = [
         <div class="frame">
           <div class="plotzone" id="plot-growth" set:html={CH.growthChart()} />
           <div class="plotfoot">
-            <span class="src">Source: India Atlas computation from MoSPI GSDP at constant 2011-12 prices: the compound annual rate between the two years. † Built from published parts. Year-by-year growth for every state is in states-growth-real.</span>
+            <span class="src">Source: Measure of India computation from MoSPI GSDP at constant 2011-12 prices: the compound annual rate between the two years. † Built from published parts. Year-by-year growth for every state is in states-growth-real.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/data/states-growth-real.csv">Data</a></span>
           </div>
         </div>
@@ -262,7 +262,7 @@ const ELSEWHERE = [
         <div class="frame">
           <div class="plotzone" id="plot-converge" set:html={CH.convergeChart()} />
           <div class="plotfoot">
-            <span class="src">Source: India Atlas computation from MoSPI per-capita NSDP at constant 2011-12 prices. The same panel as the gap chart.</span>
+            <span class="src">Source: Measure of India computation from MoSPI per-capita NSDP at constant 2011-12 prices. The same panel as the gap chart.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/data/states-pcnsdp-constant.csv">Data</a></span>
           </div>
         </div>
@@ -296,7 +296,7 @@ const ELSEWHERE = [
         <div class="frame">
           <div class="plotzone" id="plot-structure" set:html={CH.structureChart()} />
           <div class="plotfoot">
-            <span class="src">Source: India Atlas computation from MoSPI GSVA by industry (indicator 29), current prices.</span>
+            <span class="src">Source: Measure of India computation from MoSPI GSVA by industry (indicator 29), current prices.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/data/states-structure.csv">Data</a></span>
           </div>
         </div>
@@ -325,7 +325,7 @@ const ELSEWHERE = [
         <div class="frame">
           <div class="plotzone" id="plot-industries" set:html={CH.industriesChart()} />
           <div class="plotfoot">
-            <span class="src">Source: India Atlas computation from MoSPI GSVA by industry (indicator 29), current prices. Sub-industries (crops, livestock, road transport, hotels and others) are in states-gsva-current.</span>
+            <span class="src">Source: Measure of India computation from MoSPI GSVA by industry (indicator 29), current prices. Sub-industries (crops, livestock, road transport, hotels and others) are in states-gsva-current.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/data/states-industry-shares.csv">Data</a></span>
           </div>
         </div>
@@ -358,7 +358,7 @@ const ELSEWHERE = [
         <div class="frame">
           <div class="plotzone" id="plot-finance" set:html={CH.financeChart()} />
           <div class="plotfoot">
-            <span class="src">Source: India Atlas computation: RBI Handbook of Statistics on Indian States, Tables 164 and 176 (actuals only), over MoSPI GSDP at current prices for the same year.</span>
+            <span class="src">Source: Measure of India computation: RBI Handbook of Statistics on Indian States, Tables 164 and 176 (actuals only), over MoSPI GSDP at current prices for the same year.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/data/states-finances.csv">Data</a></span>
           </div>
         </div>
@@ -466,7 +466,7 @@ const ELSEWHERE = [
       </div>
       <div>
         <h6>Method</h6>
-        <p>Growth is computed from levels and checked against MoSPI's own one-decimal rates. GSDP for Assam, Haryana, Nagaland and Ladakh, which MoSPI's GSDP table omits, is built from MoSPI's published value added, taxes and subsidies, the identity that reproduces every published state. Shares, ratios, the panel of states and correlations are India Atlas computations; nothing is estimated or filled.</p>
+        <p>Growth is computed from levels and checked against MoSPI's own one-decimal rates. GSDP for Assam, Haryana, Nagaland and Ladakh, which MoSPI's GSDP table omits, is built from MoSPI's published value added, taxes and subsidies, the identity that reproduces every published state. Shares, ratios, the panel of states and correlations are computations by Measure of India; nothing is estimated or filled.</p>
       </div>
       <div>
         <h6>Breaks and defects</h6>
@@ -478,7 +478,7 @@ const ELSEWHERE = [
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, state economies</span>
+      <span>Measure of India, state economies</span>
       <span>Vintage <span id="prov-vintage2" set:html={V["prov-vintage2"]}></span></span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

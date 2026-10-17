@@ -8,6 +8,7 @@
 import fs from "node:fs";
 import {vintageText, vintageSummary} from "../../scripts/lib/vintage.mjs";
 import { bySlug } from "../dossiers/registry.js";
+import { SITE } from "../site.js";
 import { everyCutPlan, guideBundles } from "../dossiers/everycut.js";
 import { archiveFor } from "../dossiers/archive.js";
 import {governedDownloadPlan,loadGovernedSourceInventory} from "../dossiers/governed-downloads.js";
@@ -88,6 +89,6 @@ const citationVintage = sourceDateSummary === "Mixed dated and unknown revisions
     <a href={sourceInventory.sourceCoverage||"/data/pensions-source-coverage.json"} download>List of every series and whether it is shown</a></details>}
   <div class="em-cite">
     <h3>Cite this guide</h3>
-    <p>India Atlas, “{d.title}”, {citationVintage}. atlas.thisindianlife.today/guides/{d.slug}/</p>
+    <p>{SITE.name}, “{d.title}”, {citationVintage}. {SITE.host}/guides/{d.slug}/</p>
   </div>
 </section>

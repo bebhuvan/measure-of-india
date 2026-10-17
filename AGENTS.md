@@ -1,4 +1,4 @@
-# AGENTS.md — India Atlas operating manual
+# AGENTS.md — Measure of India operating manual
 
 This file is the entry point for ANY LLM coding agent working in this repo
 (Claude Code, opencode, Cursor, Codex, Kimi, GLM, DeepSeek harnesses, humans).

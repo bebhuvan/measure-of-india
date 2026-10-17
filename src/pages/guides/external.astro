@@ -25,13 +25,13 @@ const FY = { ind: fyOf(last("external-bop-indicators")), ann: fyOf(last("externa
 const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
 ---
 <Base
-  title="The External Account · India Atlas"
+  title="The External Account · Measure of India"
   description={D.description}
   nav="guides"
   dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
-  canonical="https://atlas.thisindianlife.today/guides/external/"
+  canonical="/guides/external/"
   ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
@@ -288,7 +288,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
         <div class="frame">
           <div class="plotzone" id="plot-lrs" set:html={CH.lrs()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, outward remittances under the LRS (DBIE report 793), monthly, summed by India Atlas into fiscal years; only complete years are drawn.</span>
+            <span class="src">Source: RBI, outward remittances under the LRS (DBIE report 793), monthly, summed by us into fiscal years; only complete years are drawn.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -350,7 +350,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
         <div class="frame">
           <div class="plotzone" id="plot-fdi" set:html={CH.fdi()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, foreign investment inflows (DBIE report 34), monthly, summed by India Atlas into fiscal years; complete years only.</span>
+            <span class="src">Source: RBI, foreign investment inflows (DBIE report 34), monthly, summed by us into fiscal years; complete years only.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -441,7 +441,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
         <div class="frame">
           <div class="plotzone" id="plot-resmove" set:html={CH.resmove()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, reserves at month end (DBIE report 184) and sale and purchase of US dollars by the RBI (DBIE report 730). The month's change is computed by India Atlas from the two month-end figures.</span>
+            <span class="src">Source: RBI, reserves at month end (DBIE report 184) and sale and purchase of US dollars by the RBI (DBIE report 730). The month's change is computed by us from the two month-end figures.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -600,7 +600,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
         <div class="frame">
           <div class="plotzone" id="plot-sector" set:html={CH.sector()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, external debt of India, quarterly (DBIE report 660), borrower-by-maturity layout, shares computed by India Atlas from rupee values (the same shares in any currency at one date).</span>
+            <span class="src">Source: RBI, external debt of India, quarterly (DBIE report 660), borrower-by-maturity layout, shares computed by us from rupee values (the same shares in any currency at one date).</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -702,12 +702,12 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Reserve Bank of India, Database on Indian Economy (DBIE), read from India Atlas's archived copy of DBIE, not fetched live from the RBI. Every external-sector table DBIE publishes is either baked into a file listed above or accounted for in the coverage ledger: copies of the same table under other DBIE menus, and the few tables DBIE serves without names for their columns. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]} />.</p>
+        <p>Reserve Bank of India, Database on Indian Economy (DBIE), read from our archived copy of DBIE, not fetched live from the RBI. Every external-sector table DBIE publishes is either baked into a file listed above or accounted for in the coverage ledger: copies of the same table under other DBIE menus, and the few tables DBIE serves without names for their columns. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]} />.</p>
         <p>Checked by hand against the RBI's own figures: the latest quarter's current account, the reserves in the Weekly Statistical Supplement, and the current-account ratio to GDP in RBI's press release. The checks, and every source quirk found, are recorded in the adapters and in the guide's status notes.</p>
       </div>
       <div>
         <h6>Method</h6>
-        <p>RBI publishes amounts in US$ million; this guide shows them in US$ billion. Where several versions of a figure exist, the latest is shown and the earlier are kept. Sums over fiscal years, month-to-month changes and shares are computed by India Atlas and say so. Nothing is estimated or filled in.</p>
+        <p>RBI publishes amounts in US$ million; this guide shows them in US$ billion. Where several versions of a figure exist, the latest is shown and the earlier are kept. Sums over fiscal years, month-to-month changes and shares are computed by us and say so. Nothing is estimated or filled in.</p>
       </div>
       <div>
         <h6>Revisions and breaks</h6>
@@ -719,7 +719,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, the external account</span>
+      <span>Measure of India, the external account</span>
       <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]} /></span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

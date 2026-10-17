@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import {readRaw} from './util.mjs';
 import {readCatalogue} from './catalogue.mjs';
 import {CODES,keyOf,clean} from './products/farm-households.mjs';
+import {LABEL_CORRECTIONS,correctFarmRow,reconcileFarmLabels} from './farm-households-corrections.mjs';
 export function validateFarmHouseholds(root){
  const errors=[],issues=[],stats={sourceCells:0,identities:0,withheld:0},manifest=JSON.parse(fs.readFileSync(root+'/data/coverage/farm-households.manifest.json'));
  const stable=x=>JSON.stringify(Object.entries(x).sort(([a],[b])=>a.localeCompare(b)));
@@ -13,7 +14,9 @@ export function validateFarmHouseholds(root){
  for(const code of CODES){
   const raw=readRaw(root,`data/raw/profiles-mospi/nss77-0-${code}.json`),m=map.get(code)??new Map(),seen=new Set();let held=0;
   if(raw.rows.length!==raw.indicator.expected)errors.push('Incomplete farm table '+code);
-  for(const r of raw.rows){
+  for(const raw_ of raw.rows){
+   // the adapter keys corrected API labels (farm-households-corrections.mjs); replay the same rows
+   const r=correctFarmRow(code,raw_).row;
    const d=Object.fromEntries(Object.keys(r).filter(k=>!['indicator','value'].includes(k)).map(k=>[k,clean(r[k])])),key=keyOf(d),s=m.get(key);let v=String(r.value??'').trim().replaceAll(',','');const withheld=/^\([^)]*\)$/.test(v);const quarantine=code===33||code===47||code===21&&Number(v)>1000;v=quarantine||withheld||v===''||!Number.isFinite(Number(v))?null:Number(v);
    if(seen.has(key))errors.push('Duplicate archived joint grain '+code);seen.add(key);
    if(v===null){held++;const w=heldCells.get(`farm-households-nss77-${code}:${key}`);if(s||!w||w.sourceValue!==String(r.value))errors.push('Farm withheld cell not catalogued '+code+' '+key);}
@@ -33,7 +36,11 @@ export function validateFarmHouseholds(root){
  identity(32,'receipts_type',['Expenses (Rs.)','Net receipts (Rs.)'],'Receipts (Rs.)',2);
  identity(34,'ownership_holding_area',['Average Area Homestead land Owned per hh(ha)','Average area Land Owned, Excluding Homestead Land per hh (ha)'],'Average Area Owned per hh (ha)',0.011);
  identity(49,'crop_insurance',['Insured Additionally','Insured Only When Received Loan','Not Insured'],'All',2);
- const expected=extractFarmReport(readRaw(root,'data/raw/farm-households-report.json')).seriesByTable;
+ const reportRaw=readRaw(root,'data/raw/farm-households-report.json'),expected=extractFarmReport(reportRaw).seriesByTable;
+ // Corrected API labels: replay against the printed report (throws below 100%) and match the recorded counts.
+ try{const rec=reconcileFarmLabels(reportRaw.text,Object.fromEntries(Object.keys(LABEL_CORRECTIONS).map(c=>[c,readRaw(root,`data/raw/profiles-mospi/nss77-0-${c}.json`).rows])));stats.labelCorrected=0;
+  for(const [c,x] of Object.entries(rec)){stats.labelCorrected+=x.matched;if(JSON.stringify(x)!==JSON.stringify(manifest.labelCorrections?.[c]))errors.push(`Farm ${c}: label-correction reconciliation differs from the manifest (rebake)`);}}
+ catch(e){errors.push(e.message);}
  for(const it of manifest.bundles.filter(it=>String(it.code).startsWith('report-'))){const b=JSON.parse(fs.readFileSync(root+'/data/series/'+it.slug+'.json'));const exp=expected[String(it.code).slice(7)];if(JSON.stringify(b.series)!==JSON.stringify(exp))errors.push('Official report replay failed '+it.code);stats.sourceCells+=Object.keys(exp).length;}
  // Detect duplicate state vectors over the whole family, preserving audit evidence.
  for(const code of CODES){const vectors=new Map();for(const r of readRaw(root,`data/raw/profiles-mospi/nss77-0-${code}.json`).rows){const {state,...d}=Object.fromEntries(Object.keys(r).filter(k=>!['indicator','value'].includes(k)).map(k=>[k,clean(r[k])])),k=stable(d);const arr=vectors.get(state)??[];arr.push([k,String(r.value)]);vectors.set(state,arr);}const seenVectors=new Map();for(const [state,arr]of vectors){const v=JSON.stringify(arr.sort(([a],[b])=>a.localeCompare(b))),states=seenVectors.get(v)??[];states.push(state);seenVectors.set(v,states);}for(const states of seenVectors.values())if(states.length>1){issues.push({code,states,issue:'Identical complete state vectors; quarantined, report-native replacement required.'});if([...(map.get(code)??new Map()).values()].some(s=>states.includes(s.dims.state)&&s.data[0]!=null))errors.push('Duplicated state vector remains numeric '+code);}}

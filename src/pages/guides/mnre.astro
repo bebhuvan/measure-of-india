@@ -34,13 +34,13 @@ const hydroStep = Math.round(srcB.series.large_hydro.data.find((v) => v > 0) / 1
 const leader = (b) => { const r = Object.entries(b.series).filter(([k]) => !k.includes("__")).map(([, s]) => s).map((s) => ({ name: s.label.split(" · ")[1] ?? s.label, v: s.data.at(-1) })).filter((x) => x.v != null).sort((a, c) => c.v - a.v)[0]; return `${r.name.replace(/\b\w/g, (c) => c.toUpperCase())} (${Math.round(r.v / 1000)} GW)`; };
 ---
 <Base
-  title="Renewable Energy · India Atlas"
+  title="Renewable Energy · Measure of India"
   description={D.description}
   nav="guides"
   dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
-  canonical="https://atlas.thisindianlife.today/guides/mnre/"
+  canonical="/guides/mnre/"
   ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
@@ -481,7 +481,7 @@ const leader = (b) => { const r = Object.entries(b.series).filter(([k]) => !k.in
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, MNRE</span>
+      <span>Measure of India, MNRE</span>
       <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]}></span>, capacity, not generation</span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

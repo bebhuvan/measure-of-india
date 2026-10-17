@@ -6,7 +6,7 @@
 // states-finances, rates-borrowing, population-wpp-projection.
 // Stages are never joined: accounts are lines; the revised estimate (filled, pale) and the budget
 // estimate (hollow) are marks (the kit line's `stages`). GDP bases are never joined: each base is its
-// own series, the rebasings marked; India Atlas's ratios over the NSO's 2011-12 back series are a
+// own series, the rebasings marked; Measure of India's ratios over the NSO's 2011-12 back series are a
 // separate dashed grey line, never a continuation of the RBI's.
 import * as K from "../kit/kit.js";
 import { figure } from "../kit/figure.js";
@@ -91,12 +91,12 @@ function rulerPlate({ file, label, rbi, atlas, events, unitEnd = 1 }) {
 export function deficit() {
   return rulerPlate({
     file: "public-finance-deficit",
-    label: `Gross fiscal deficit of the Centre and all states as a share of GDP since ${fyOf(backB.dates[0])}, the RBI's ratios on each GDP base never joined, India Atlas's ratios over the NSO back series dashed`,
+    label: `Gross fiscal deficit of the Centre and all states as a share of GDP since ${fyOf(backB.dates[0])}, the RBI's ratios on each GDP base never joined, Measure of India's ratios over the NSO back series dashed`,
     rbi: [
       { name: "States", short: "States", role: "comp", key: "gross_fiscal_deficit", rulers: [sg99B, sg04B, sg11B], stages: stagesOf(sg11B, "gross_fiscal_deficit") },
       { name: "Centre", short: "Centre", role: "lead", key: "gross_fiscal_deficit", rulers: [g99B, g04B, g11B], stages: stagesOf(g11B, "gross_fiscal_deficit") },
     ],
-    atlas: [{ name: "Centre, India Atlas computed", key: "centre_gross_fiscal_deficit" }, { name: "States, India Atlas computed", key: "states_gross_fiscal_deficit" }],
+    atlas: [{ name: "Centre, computed by Measure of India", key: "centre_gross_fiscal_deficit" }, { name: "States, computed by Measure of India", key: "states_gross_fiscal_deficit" }],
     events: rebased(g04B, g11B),
   });
 }
@@ -245,13 +245,13 @@ const DK = { comb: "combined_total_liabilities_of_centre_and_states", cen: "tota
 export function debt() {
   return rulerPlate({
     file: "public-finance-debt",
-    label: "Outstanding liabilities of the Centre, all states and the two together as a share of GDP, the RBI's ratios on each GDP base never joined, India Atlas's ratios over the NSO back series dashed",
+    label: "Outstanding liabilities of the Centre, all states and the two together as a share of GDP, the RBI's ratios on each GDP base never joined, Measure of India's ratios over the NSO back series dashed",
     rbi: [
       { name: "States", short: "States", role: "ctx2", key: DK.sta, rulers: [dg99B, dg04B, dg11B], stages: stagesOf(dg11B, DK.sta) },
       { name: "Centre", short: "Centre", role: "ctx", key: DK.cen, rulers: [dg99B, dg04B, dg11B], stages: stagesOf(dg11B, DK.cen) },
       { name: "Centre and states", short: "Combined", role: "lead", key: DK.comb, rulers: [dg99B, dg04B, dg11B], stages: stagesOf(dg11B, DK.comb) },
     ],
-    atlas: [{ name: "Centre and states, India Atlas computed", key: "combined_liabilities" }, { name: "Centre, India Atlas computed", key: "centre_liabilities" }, { name: "States, India Atlas computed", key: "states_liabilities" }],
+    atlas: [{ name: "Centre and states, computed by Measure of India", key: "combined_liabilities" }, { name: "Centre, computed by Measure of India", key: "centre_liabilities" }, { name: "States, computed by Measure of India", key: "states_liabilities" }],
     events: rebased(dg04B, dg11B),
   });
 }
@@ -374,8 +374,8 @@ export function gdpbase() {
   const acc = `${ST.accountsTo.slice(0, 4)}-04-01`, base = ["1999-2000", "2004-05", "2011-12"];
   const pub = [g99B, g04B, g11B].map((b, i) => ({ name: `RBI, ${base[i]} base`, short: "RBI 2011-12 series", data: cut(pairs(b, "gross_fiscal_deficit"), acc), role: "ctx", label: i === 2 }));
   const series = [...pub,
-    { name: "Over the 2011-12 back series, India Atlas", short: "2011-12 back series", data: pairs(backB, "centre_gross_fiscal_deficit"), role: "ctx", color: K.C.leadSoft, dash: "5 3", label: false },
-    { name: "Over the 2022-23 series, India Atlas", short: "2022-23 series", data: cut(pairs(r22B, "centre_gross_fiscal_deficit"), acc), role: "lead", dash: "5 3" }];
+    { name: "Over the 2011-12 back series, computed by Measure of India", short: "2011-12 back series", data: pairs(backB, "centre_gross_fiscal_deficit"), role: "ctx", color: K.C.leadSoft, dash: "5 3", label: false },
+    { name: "Over the 2022-23 series, computed by Measure of India", short: "2022-23 series", data: cut(pairs(r22B, "centre_gross_fiscal_deficit"), acc), role: "lead", dash: "5 3" }];
   return figure({
     bare: true, file: "public-finance-which-gdp",
     label: "The Centre's gross fiscal deficit as a share of GDP: as the RBI publishes it on the GDP of each period, and computed over the 2011-12 back series and the new 2022-23 series",

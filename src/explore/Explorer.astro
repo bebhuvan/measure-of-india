@@ -4,12 +4,13 @@ import {DOSSIERS} from '../dossiers/registry.js';
 import {rowAnchor,loadBundle,periodLabel} from '../dossiers/everycut.js';
 import {qualityRegistryVersion} from './source-quality.js';
 import {identity,seriesURL} from './model.js';
+import {SITE} from '../site.js';
 const {initial} = Astro.props;
 const examples=[['cpi-2024','headline','Retail inflation, current instrument'],['cpi','headline','Retail inflation, earlier instrument']].map(([b,k,title])=>({id:identity(b,rowAnchor(b,k)),title}));
-const canonical=initial?`https://atlas.thisindianlife.today/explore/${initial.slug}/`:'https://atlas.thisindianlife.today/explore/';
+const canonical=initial?`${SITE.url}/explore/${initial.slug}/`:`${SITE.url}/explore/`;
 const B=initial?loadBundle(initial.bundle):null,S=B?.series[initial.key];
 ---
-<Base title={`${initial?.title || 'Explore individual indicators'} | India Atlas`} nav="register" canonical={canonical} description="Find an individual Indian economic series, inspect its complete published history and source, download exact observations and compare compatible cuts.">
+<Base title={`${initial?.title || 'Explore individual indicators'} | ${SITE.short}`} nav="register" canonical={canonical} description="Find an individual Indian economic series, inspect its complete published history and source, download exact observations and compare compatible cuts.">
 <div class="page explore-page" id="explorer" data-quality-version={qualityRegistryVersion} data-series={initial ? identity(initial.bundle,rowAnchor(initial.bundle,initial.key)) : undefined}>
   <div class="titleblock"><h1>Explore individual indicators</h1><p class="lede">Follow one measure through its published history, or compare compatible cuts. Each instrument keeps its own identity, source and limits.</p></div>
   <form id="explore-search-form" class="explore-search"><label for="explore-search">Find a series</label><div><input id="explore-search" type="search" placeholder="Food inflation, a state, a survey cut" autocomplete="off"/><button type="submit">Search</button></div></form>

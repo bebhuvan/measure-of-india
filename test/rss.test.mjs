@@ -2,7 +2,7 @@ import test from 'node:test';import assert from 'node:assert/strict';
 import {GET} from '../src/pages/rss.xml.js';
 import {DOSSIERS} from '../src/dossiers/registry.js';
 test('RSS includes every guide with valid known publication dates and no capture-date fallback',async()=>{
- const response=await GET({site:new URL('https://atlas.thisindianlife.today')});const xml=await response.text();
+ const response=await GET({site:new URL('https://measure.thisindianlife.today')});const xml=await response.text();
  assert.equal((xml.match(/<item>/g)||[]).length,DOSSIERS.length);
  assert.doesNotMatch(xml,/Invalid Date|nullT00/);
  for(const slug of ['households','farm-households']){

@@ -1,3 +1,4 @@
+import {SITE} from '../site.js';
 // The chart is drawn with the house chart kit (src/kit/kit.js) in the browser, at the container's
 // measured width, because the reader picks the series; src/kit/enhance.js adds hover and the
 // SVG/PNG downloads (the figure's data-dl buttons). Missing values stay null and break the line.
@@ -59,7 +60,7 @@ if(root){
       if(expectedSchedule){const ds=obs[0].map(d=>d.date),step=Math.max(1,Math.ceil(ds.length/Math.max(2,Math.floor(width/90))));xTicks=ds.filter((_,k)=>k%step===0).map(d=>({t:d,label:r.periods[r.dates.indexOf(d)]||d}));}
       draw=w=>K.line({width:w,height:w<520?260:380,series,unit,dp:undefined,endDp:dp,hoverDp:dp,freq,...(xTicks?{xTicks}:{})});
     }
-    return `<span class="akf-title" hidden>${esc(el('explore-title').textContent)}</span><span class="akf-src" hidden>${esc('Source: '+(r.series.source||r.meta.source||'India Atlas'))}</span>`+
+    return `<span class="akf-title" hidden>${esc(el('explore-title').textContent)}</span><span class="akf-src" hidden>${esc('Source: '+(r.series.source||r.meta.source||SITE.name))}</span>`+
       figure({bare:true,file:'atlas-series',label,widths,draw,data:{cols:['Period',...records.map(displayName)],rows:aligned(records,range()).map(row=>[row.date,...row.values])}});
   }
   function drawChart(){const box=el('explore-chart');box.innerHTML=chartHTML();chart=box.querySelector('.akf');enhance(box);}
@@ -91,10 +92,10 @@ if(root){
       const links=el('explore-quality-links');links.replaceChildren();
       for(const source of q.sourceLinks||[]){const a=node('a',source.title);a.href=source.url;const p=node('p');p.append(a);links.append(p);}
       const a=node('a','Download the archived canonical bundle mapping (under review)');a.href=`/data/${held.bundle}.json`;const p=node('p');p.append(a);links.append(p);
-      document.title=el('explore-quality-title').textContent+' | India Atlas';status('Source mapping under review. Numeric interpretation and selected exports are withheld.');return;
+      document.title=el('explore-quality-title').textContent+' | '+SITE.short;status('Source mapping under review. Numeric interpretation and selected exports are withheld.');return;
     }
     el('explore-title').textContent=records.length>1?'Compare compatible series':(/^(Headline|Food|Core)$/i.test(first.series.label||'')&&first.guides[0]?`${first.guides[0].title}: ${displayName(first)}`:displayName(first));
-    document.title=el('explore-title').textContent+' | India Atlas';
+    document.title=el('explore-title').textContent+' | '+SITE.short;
     el('explore-definition').textContent=first.quality?.definition||first.series.definition||first.meta.coverage||first.meta.product||'Read the parent guide for the definition and survey limits.';
     const list=el('explore-selected');list.replaceChildren();
     records.forEach((r,i)=>{const li=node('li');const mark=node('i');mark.className='series-mark';mark.setAttribute('aria-hidden','true');li.append(mark,node('strong',`${i+1}. ${displayName(r)}`));const last=r.series.data.findLastIndex(v=>v!=null);li.append(node('span',last<0?'No published value':`${r.meta.observationKind==='expected-schedule'?'Expected count at final source schedule period: ':''}${fmt(r.series.data[last])} ${unitLabel(r.unit)}, ${r.periods[last]||r.dates[last]}${r.meta.observationKind==='expected-schedule'?` (${expectedAsOf(r.meta)})`:r.series.estimated?.includes(r.dates[last])?' (estimate)':''}`));if(records.length>1){const button=node('button','Remove');button.onclick=()=>navigate(records.filter(x=>x.id!==r.id).map(x=>x.id));li.append(button);}list.append(li);});

@@ -25,13 +25,13 @@ const wdiRows = Object.values(wdi.series).map((s) => ({ code: s.name, label: s.l
 const latestRound = cols.at(-1).round, firstRound = cols[0].round;
 ---
 <Base
-  title="Poverty and inequality · India Atlas"
+  title="Poverty and inequality · Measure of India"
   description={D.description}
   nav="guides"
   dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
-  canonical="https://atlas.thisindianlife.today/guides/poverty/"
+  canonical="/guides/poverty/"
   ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
@@ -393,7 +393,7 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, poverty and inequality</span>
+      <span>Measure of India, poverty and inequality</span>
       <span>Vintage <span id="prov-vintage2" set:html={TX["prov-vintage2"]}></span></span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

@@ -90,9 +90,9 @@ function check(file, slotId) {
   }
 }
 
-const CRITIC_SYS = `You are the critic for India Atlas prose. Score the draft against this rubric:\n${rubric}\nReply with either "PASS" alone, or "REVISE:" followed by the revised draft only. One revision pass, no commentary.`;
+const CRITIC_SYS = `You are the critic for Measure of India prose. Score the draft against this rubric:\n${rubric}\nReply with either "PASS" alone, or "REVISE:" followed by the revised draft only. One revision pass, no commentary.`;
 
-const SYSTEM_SYS = `You are the lead writer for India Atlas — a static reference work that explains Indian economic statistics to curious non-specialists (citizens, students, journalists), not economists. You write only the DATED commentary that changes with each release; evergreen explanation is human-written and you never touch it.
+const SYSTEM_SYS = `You are the lead writer for Measure of India — a static reference work that explains Indian economic statistics to curious non-specialists (citizens, students, journalists), not economists. You write only the DATED commentary that changes with each release; evergreen explanation is human-written and you never touch it.
 
 The register is a printed monograph crossed with a good newspaper's second paragraph: short declarative sentences, plain words, the nuance kept in the structure, not the vocabulary. The corpus exemplars ARE the voice — match their cadence and their recurring moves, never their specific numbers (those belong to a past print).
 

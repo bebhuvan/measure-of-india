@@ -124,13 +124,13 @@ const chFirst = ch.dates[0].slice(0, 4), chLast = ch.dates.at(-1).slice(0, 4), g
 const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 10)} ${MONTHS[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`; })();
 ---
 <Base
-  title="How Indians Pay · India Atlas"
+  title="How Indians Pay · Measure of India"
   description={D.description}
   nav="guides"
   dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
-  canonical="https://atlas.thisindianlife.today/guides/payments/"
+  canonical="/guides/payments/"
   ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
@@ -195,7 +195,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
         <div class="frame">
           <div class="plotzone" id="plot-ticket" set:html={CH.ticket()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, Payment System Indicators (Bulletin Table 45, DBIE report 612). Averages derived by India Atlas: the value of each line divided by its number of transactions in the same month.</span>
+            <span class="src">Source: RBI, Payment System Indicators (Bulletin Table 45, DBIE report 612). Averages derived by us: the value of each line divided by its number of transactions in the same month.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -224,7 +224,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
         <div class="frame">
           <div class="plotzone" id="plot-upi-ticket" set:html={CH.upiTicket()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, Payment System Indicators (DBIE report 612). UPI value divided by the number of UPI transactions, India Atlas.</span>
+            <span class="src">Source: RBI, Payment System Indicators (DBIE report 612). UPI value divided by the number of UPI transactions, Measure of India.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -268,7 +268,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
         <div class="frame">
           <div class="plotzone" id="plot-upi" set:html={CH.upi()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, Payment System Indicators (DBIE report 612). "All other retail systems" is total retail payments less UPI, India Atlas.</span>
+            <span class="src">Source: RBI, Payment System Indicators (DBIE report 612). "All other retail systems" is total retail payments less UPI, Measure of India.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -297,7 +297,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
         <div class="frame">
           <div class="plotzone" id="plot-share" set:html={CH.share()} />
           <div class="plotfoot">
-            <span class="src">Source: RBI, Payment System Indicators (DBIE report 612). Shares of total payments (RTGS and retail), India Atlas. "Bulk and Aadhaar" is NACH credit and debit, APBS, AePS, BHIM Aadhaar Pay, ECS and NETC.</span>
+            <span class="src">Source: RBI, Payment System Indicators (DBIE report 612). Shares of total payments (RTGS and retail), Measure of India. "Bulk and Aadhaar" is NACH credit and debit, APBS, AePS, BHIM Aadhaar Pay, ECS and NETC.</span>
             <span class="dl"><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -670,7 +670,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Reserve Bank of India: Payment System Indicators (RBI Bulletin Table 45, monthly, and the Handbook of Statistics on the Indian Economy, yearly), Statistical Tables Relating to Banks in India (Tables 22 and 27) and the Handbook's e₹ table, read from India Atlas's archived copy of the RBI's DBIE database. Currency with the public comes from this site's credit guide. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]}></b>.</p>
+        <p>Reserve Bank of India: Payment System Indicators (RBI Bulletin Table 45, monthly, and the Handbook of Statistics on the Indian Economy, yearly), Statistical Tables Relating to Banks in India (Tables 22 and 27) and the Handbook's e₹ table, read from our archived copy of the RBI's DBIE database. Currency with the public comes from this site's credit guide. Data vintage <b id="prov-vintage" set:html={N["prov-vintage"]}></b>.</p>
         <p>Checked against the RBI's own publications: UPI in July 2026 (2,36,583.53 lakh transactions, ₹29,87,880.48 crore) and 2,52,508 ATMs (Bulletin Table 45); UPI in 2024-25 (18,587 crore transactions, RBI Annual Report); e₹ in circulation of ₹1,016.5 crore at end-March 2025 (RBI Annual Report).</p>
       </div>
       <div>
@@ -688,7 +688,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, how Indians pay</span>
+      <span>Measure of India, how Indians pay</span>
       <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]}></span></span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

@@ -666,7 +666,7 @@ export async function buildFarms(root, dcfg, vintage, cfg) {
         dossier: "farms", frequency: "annual", base: "as published", unit: "per series", source: dcfg.source_agency, vintage: null, mock: false, geo: dcfg.geo ?? "IND",
         latestPeriod: axis.at(-1).slice(0, 7), releaseDate: null, revisionPolicy: dcfg.revision_policy, periodKind: "fy",
         coverage: "All India land use, irrigation, fertiliser and pesticide use, 1950-51 on",
-        note: "Pattern of land use and select inputs (DBIE report 463; Handbook table 278), read in the unit RBI prints: areas in lakh hectares (stored as thousand hectares), fertiliser in lakh tonnes of nutrients (N+P+K), pesticides in thousand tonnes of technical-grade material. Fertiliser years are February to January up to 1982-83 and April to March from 1983-84 (RBI's note). The area under high-yielding varieties is printed as not available in recent years. Cropping intensity, the irrigated shares and fertiliser per hectare are computed by India Atlas from the published levels.",
+        note: "Pattern of land use and select inputs (DBIE report 463; Handbook table 278), read in the unit RBI prints: areas in lakh hectares (stored as thousand hectares), fertiliser in lakh tonnes of nutrients (N+P+K), pesticides in thousand tonnes of technical-grade material. Fertiliser years are February to January up to 1982-83 and April to March from 1983-84 (RBI's note). The area under high-yielding varieties is printed as not available in recent years. Cropping intensity, the irrigated shares and fertiliser per hectare are computed by Measure of India from the published levels.",
       },
       dates: axis, series,
     };

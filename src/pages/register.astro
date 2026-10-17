@@ -13,20 +13,20 @@ const N_SERIES = SERIES_FILES.reduce((n, f) => n + Object.keys(JSON.parse(fs.rea
 const N_DOSSIERS = DOSSIERS.length;
 ---
 <Base
-  title="Indicators · India Atlas"
-  description="Every series India Atlas tracks: what it is, who publishes it, its latest reading, and its shape over the decade."
+  title="Indicators · Measure of India"
+  description="Every series Measure of India tracks: what it is, who publishes it, its latest reading, and its shape over the decade."
   nav="register"
   dateStamp={dateStamp(DOSSIERS[0])}
   crumbLeft="<b>The Register</b>"
   crumbRight={`<b>${N_SERIES.toLocaleString("en-IN")}</b> series baked, ${N_DOSSIERS} guides, updated with each print`}
-  canonical="https://atlas.thisindianlife.today/register/"
+  canonical="/register/"
 >
 <div class="page register spage">
 
   <div class="titleblock">
     <div class="kicker">The Register</div>
     <h1>Every series we track, <i>in one ledger.</i></h1>
-    <p class="lede">The complete inventory of India Atlas data: what each series is, who publishes it, its latest reading, and its shape over the decade. Derived series are tagged.</p>
+    <p class="lede">The complete inventory of Measure of India data: what each series is, who publishes it, its latest reading, and its shape over the decade. Derived series are tagged.</p>
   </div>
 
   {DOSSIERS.map((d) => (
@@ -43,7 +43,7 @@ const N_DOSSIERS = DOSSIERS.length;
 
   <footer class="provenance">
     <div class="fine">
-      <span>India Atlas, Register</span>
+      <span>Measure of India, Register</span>
       <span>Data: the agencies each guide names, vintages as shown</span>
       <span>Set in Newsreader and Libre Franklin</span>
     </div>

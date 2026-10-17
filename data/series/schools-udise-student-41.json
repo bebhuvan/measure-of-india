@@ -25,7 +25,48 @@
    "level_of_education",
    "state"
   ],
-  "rawFile": "data/raw/profiles-mospi/udise-0-41.json"
+  "rawFile": "data/raw/profiles-mospi/udise-0-41.json",
+  "printedCheck": {
+   "rule": "Printed UDISE+ report figure published where the report prints the cell; API figures within 0.1 are the same figure rounded (printed kept); zeros the report prints stay (UDISE+ floors dropout at 0).",
+   "years": {
+    "2024-25": {
+     "table": "Table 6.13",
+     "pdfPage": 120,
+     "url": "https://dashboard.udiseplus.gov.in/report2025/static/media/UDISE+2024_25_Booklet_existing.118ba29d4773e6372f72.pdf",
+     "sha256": "cc66d03e1413722d2f5ab66f29ece3cdb3c21f7d736ac63f21efc3696ed7f4bf",
+     "cells": 324,
+     "agree": 278,
+     "rounding": 0,
+     "printedZero": 43,
+     "replaced": 0,
+     "apiZero": 3
+    },
+    "2023-24": {
+     "table": "Table 6.13",
+     "pdfPage": 119,
+     "url": "https://dashboard.udiseplus.gov.in/report2025/static/media/UDISE+2023_24_Booklet_existing.309eabf9e4889db93bcb.pdf",
+     "sha256": "6a54fbf78e0ea7158aeeba568066a179aa133736e3bd9102c2c9e352bece71ac",
+     "cells": 324,
+     "agree": 2,
+     "rounding": 12,
+     "printedZero": 37,
+     "replaced": 210,
+     "apiZero": 63
+    },
+    "2022-23": {
+     "table": "Table 6.13",
+     "pdfPage": 116,
+     "url": "https://dashboard.udiseplus.gov.in/report2025/static/media/UDISE+2022_23_Booklet_existing.d209e7c7516d77939da9.pdf",
+     "sha256": "59884f936772bc79ac7f007ae0f8330311c85b4f5cf748d6834672c0be8f08e6",
+     "cells": 324,
+     "agree": 292,
+     "rounding": 1,
+     "printedZero": 31,
+     "replaced": 0,
+     "apiZero": 0
+    }
+   }
+  }
  },
  "dates": [
   "2022-04-01",
@@ -47,9 +88,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     0,
-    0,
+    1,
     0.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.0."
   },
   "girls__primary_1_5__andaman_nicobar_islands": {
    "name": "udise_41_girls__primary_1_5__andaman_nicobar_islands",
@@ -65,9 +110,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     0.1,
-    0,
+    0.5,
     0.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.5."
   },
   "total__primary_1_5__andaman_nicobar_islands": {
    "name": "udise_41_total__primary_1_5__andaman_nicobar_islands",
@@ -83,9 +132,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     0,
-    0,
+    0.8,
     0.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.8."
   },
   "boys__upper_primary_6_8__andaman_nicobar_islands": {
    "name": "udise_41_boys__upper_primary_6_8__andaman_nicobar_islands",
@@ -101,9 +154,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     0.6,
-    0,
+    0.8,
     1.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.8."
   },
   "girls__upper_primary_6_8__andaman_nicobar_islands": {
    "name": "udise_41_girls__upper_primary_6_8__andaman_nicobar_islands",
@@ -137,9 +194,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     1,
-    0,
+    0.4,
     1.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.4."
   },
   "boys__secondary_9_10__andaman_nicobar_islands": {
    "name": "udise_41_boys__secondary_9_10__andaman_nicobar_islands",
@@ -155,9 +216,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     6.4,
-    6.4,
+    7.6,
     7.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "6.4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 6.4, printed 7.6."
   },
   "girls__secondary_9_10__andaman_nicobar_islands": {
    "name": "udise_41_girls__secondary_9_10__andaman_nicobar_islands",
@@ -173,9 +238,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     4.6,
-    0.7,
+    3.4,
     3.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0.7, printed 3.4."
   },
   "total__secondary_9_10__andaman_nicobar_islands": {
    "name": "udise_41_total__secondary_9_10__andaman_nicobar_islands",
@@ -191,9 +260,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     5.5,
-    3.6,
+    5.5,
     5.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3.6, printed 5.5."
   },
   "boys__primary_1_5__andhra_pradesh": {
    "name": "udise_41_boys__primary_1_5__andhra_pradesh",
@@ -209,9 +282,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     0,
-    0,
+    0.3,
     1.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.3."
   },
   "girls__primary_1_5__andhra_pradesh": {
    "name": "udise_41_girls__primary_1_5__andhra_pradesh",
@@ -245,9 +322,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     0,
-    0,
+    0.2,
     1.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.2."
   },
   "boys__upper_primary_6_8__andhra_pradesh": {
    "name": "udise_41_boys__upper_primary_6_8__andhra_pradesh",
@@ -263,9 +344,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     0,
-    1.6,
+    1.3,
     4.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "1.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 1.6, printed 1.3."
   },
   "girls__upper_primary_6_8__andhra_pradesh": {
    "name": "udise_41_girls__upper_primary_6_8__andhra_pradesh",
@@ -281,9 +366,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     0,
-    2,
+    0.8,
     2.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2, printed 0.8."
   },
   "total__upper_primary_6_8__andhra_pradesh": {
    "name": "udise_41_total__upper_primary_6_8__andhra_pradesh",
@@ -299,9 +388,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     0,
-    1.8,
+    1.1,
     3.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "1.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 1.8, printed 1.1."
   },
   "boys__secondary_9_10__andhra_pradesh": {
    "name": "udise_41_boys__secondary_9_10__andhra_pradesh",
@@ -317,9 +410,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     16.9,
-    18.7,
+    14.2,
     18.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "18.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 18.7, printed 14.2."
   },
   "girls__secondary_9_10__andhra_pradesh": {
    "name": "udise_41_girls__secondary_9_10__andhra_pradesh",
@@ -335,9 +432,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     12.3,
-    14.5,
+    10.6,
     12.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "14.5"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 14.5, printed 10.6."
   },
   "total__secondary_9_10__andhra_pradesh": {
    "name": "udise_41_total__secondary_9_10__andhra_pradesh",
@@ -353,9 +454,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     14.7,
-    16.7,
+    12.5,
     15.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "16.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 16.7, printed 12.5."
   },
   "boys__primary_1_5__arunachal_pradesh": {
    "name": "udise_41_boys__primary_1_5__arunachal_pradesh",
@@ -371,9 +476,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     16.3,
-    4.3,
+    5.7,
     5.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "4.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 4.3, printed 5.7."
   },
   "girls__primary_1_5__arunachal_pradesh": {
    "name": "udise_41_girls__primary_1_5__arunachal_pradesh",
@@ -389,9 +498,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     13.6,
-    2.9,
+    5.1,
     4.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2.9"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2.9, printed 5.1."
   },
   "total__primary_1_5__arunachal_pradesh": {
    "name": "udise_41_total__primary_1_5__arunachal_pradesh",
@@ -407,9 +520,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     15,
-    3.6,
+    5.4,
     4.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3.6, printed 5.4."
   },
   "boys__upper_primary_6_8__arunachal_pradesh": {
    "name": "udise_41_boys__upper_primary_6_8__arunachal_pradesh",
@@ -425,9 +542,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     9.9,
-    4.8,
+    7.2,
     4.9
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "4.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 4.8, printed 7.2."
   },
   "girls__upper_primary_6_8__arunachal_pradesh": {
    "name": "udise_41_girls__upper_primary_6_8__arunachal_pradesh",
@@ -443,9 +564,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     11,
-    4,
+    6.5,
     5.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 4, printed 6.5."
   },
   "total__upper_primary_6_8__arunachal_pradesh": {
    "name": "udise_41_total__upper_primary_6_8__arunachal_pradesh",
@@ -461,9 +586,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     10.5,
-    4.4,
+    6.8,
     5.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "4.4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 4.4, printed 6.8."
   },
   "boys__secondary_9_10__arunachal_pradesh": {
    "name": "udise_41_boys__secondary_9_10__arunachal_pradesh",
@@ -479,9 +608,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     17.7,
-    16.5,
+    20.4,
     19
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "16.5"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 16.5, printed 20.4."
   },
   "girls__secondary_9_10__arunachal_pradesh": {
    "name": "udise_41_girls__secondary_9_10__arunachal_pradesh",
@@ -497,9 +630,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     16.1,
-    16.9,
+    18.2,
     17.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "16.9"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 16.9, printed 18.2."
   },
   "total__secondary_9_10__arunachal_pradesh": {
    "name": "udise_41_total__secondary_9_10__arunachal_pradesh",
@@ -515,9 +652,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     16.9,
-    16.7,
+    19.3,
     18.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "16.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 16.7, printed 19.3."
   },
   "boys__primary_1_5__assam": {
    "name": "udise_41_boys__primary_1_5__assam",
@@ -533,9 +674,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     8.9,
-    3.2,
+    7.1,
     4.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3.2, printed 7.1."
   },
   "girls__primary_1_5__assam": {
    "name": "udise_41_girls__primary_1_5__assam",
@@ -551,9 +696,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     8,
-    1.2,
+    5.2,
     2.9
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "1.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 1.2, printed 5.2."
   },
   "total__primary_1_5__assam": {
    "name": "udise_41_total__primary_1_5__assam",
@@ -569,9 +718,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     8.5,
-    2.3,
+    6.2,
     3.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2.3, printed 6.2."
   },
   "boys__upper_primary_6_8__assam": {
    "name": "udise_41_boys__upper_primary_6_8__assam",
@@ -587,9 +740,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     11.5,
-    6.4,
+    10.3,
     7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "6.4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 6.4, printed 10.3."
   },
   "girls__upper_primary_6_8__assam": {
    "name": "udise_41_girls__upper_primary_6_8__assam",
@@ -605,9 +762,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     9.2,
-    3,
+    6.1,
     3.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3, printed 6.1."
   },
   "total__upper_primary_6_8__assam": {
    "name": "udise_41_total__upper_primary_6_8__assam",
@@ -623,9 +784,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     10.3,
-    4.6,
+    8.2,
     5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "4.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 4.6, printed 8.2."
   },
   "boys__secondary_9_10__assam": {
    "name": "udise_41_boys__secondary_9_10__assam",
@@ -641,9 +806,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     29,
-    23.3,
+    25.2,
     18.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "23.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 23.3, printed 25.2."
   },
   "girls__secondary_9_10__assam": {
    "name": "udise_41_girls__secondary_9_10__assam",
@@ -659,9 +828,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     29.9,
-    24.7,
+    25,
     16.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "24.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 24.7, printed 25.0."
   },
   "total__secondary_9_10__assam": {
    "name": "udise_41_total__secondary_9_10__assam",
@@ -677,9 +850,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     29.5,
-    24,
+    25.1,
     17.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "24"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 24, printed 25.1."
   },
   "boys__primary_1_5__bihar": {
    "name": "udise_41_boys__primary_1_5__bihar",
@@ -695,9 +872,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     11.1,
-    0,
+    9,
     4.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 9.0."
   },
   "girls__primary_1_5__bihar": {
    "name": "udise_41_girls__primary_1_5__bihar",
@@ -713,9 +894,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     10.2,
-    0,
+    8.7,
     1.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 8.7."
   },
   "total__primary_1_5__bihar": {
    "name": "udise_41_total__primary_1_5__bihar",
@@ -731,9 +916,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     10.7,
-    0,
+    8.9,
     2.9
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 8.9."
   },
   "boys__upper_primary_6_8__bihar": {
    "name": "udise_41_boys__upper_primary_6_8__bihar",
@@ -749,9 +938,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     17,
-    17.7,
+    26,
     11.9
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "17.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 17.7, printed 26.0."
   },
   "girls__upper_primary_6_8__bihar": {
    "name": "udise_41_girls__upper_primary_6_8__bihar",
@@ -767,9 +960,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     14.6,
-    15.8,
+    25.9,
     6.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "15.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 15.8, printed 25.9."
   },
   "total__upper_primary_6_8__bihar": {
    "name": "udise_41_total__upper_primary_6_8__bihar",
@@ -785,9 +982,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     15.8,
-    16.8,
+    25.9,
     9.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "16.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 16.8, printed 25.9."
   },
   "boys__secondary_9_10__bihar": {
    "name": "udise_41_boys__secondary_9_10__bihar",
@@ -803,13 +1004,14 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     30.3,
-    0,
-    null
+    26.2,
+    7
    ],
-   "withheld": {
-    "2024-04-01": "0"
+   "sourceValues": {
+    "2024-04-01": "0",
+    "2023-04-01": "0"
    },
-   "note": "MoSPI's API serves 2024-25 as 0, but the UDISE+ 2024-25 report prints 7.0 (Table 6.13). The API figure is a blank, so the year is left empty here."
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2024-25: API 0, printed 7.0; 2023-24: API 0, printed 26.2."
   },
   "girls__secondary_9_10__bihar": {
    "name": "udise_41_girls__secondary_9_10__bihar",
@@ -825,13 +1027,14 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     28.8,
-    0,
-    null
+    25.1,
+    6.8
    ],
-   "withheld": {
-    "2024-04-01": "0"
+   "sourceValues": {
+    "2024-04-01": "0",
+    "2023-04-01": "0"
    },
-   "note": "MoSPI's API serves 2024-25 as 0, but the UDISE+ 2024-25 report prints 6.8 (Table 6.13). The API figure is a blank, so the year is left empty here."
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2024-25: API 0, printed 6.8; 2023-24: API 0, printed 25.1."
   },
   "total__secondary_9_10__bihar": {
    "name": "udise_41_total__secondary_9_10__bihar",
@@ -847,13 +1050,14 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     29.5,
-    0,
-    null
+    25.6,
+    6.9
    ],
-   "withheld": {
-    "2024-04-01": "0"
+   "sourceValues": {
+    "2024-04-01": "0",
+    "2023-04-01": "0"
    },
-   "note": "MoSPI's API serves 2024-25 as 0, but the UDISE+ 2024-25 report prints 6.9 (Table 6.13). The API figure is a blank, so the year is left empty here."
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2024-25: API 0, printed 6.9; 2023-24: API 0, printed 25.6."
   },
   "boys__primary_1_5__chandigarh": {
    "name": "udise_41_boys__primary_1_5__chandigarh",
@@ -923,9 +1127,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     0.3,
-    0.2,
+    0.9,
     0.9
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0.2, printed 0.9."
   },
   "girls__upper_primary_6_8__chandigarh": {
    "name": "udise_41_girls__upper_primary_6_8__chandigarh",
@@ -941,9 +1149,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     0.8,
-    0.4,
+    0,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0.4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0.4, printed 0.0."
   },
   "total__upper_primary_6_8__chandigarh": {
    "name": "udise_41_total__upper_primary_6_8__chandigarh",
@@ -959,9 +1171,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     0.5,
-    0.3,
+    0.4,
     0.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0.3, printed 0.4."
   },
   "boys__secondary_9_10__chandigarh": {
    "name": "udise_41_boys__secondary_9_10__chandigarh",
@@ -977,9 +1193,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     1.6,
-    0,
+    4.2,
     2.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 4.2."
   },
   "girls__secondary_9_10__chandigarh": {
    "name": "udise_41_girls__secondary_9_10__chandigarh",
@@ -995,9 +1215,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     0.4,
-    0,
+    1.4,
     1.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.4."
   },
   "total__secondary_9_10__chandigarh": {
    "name": "udise_41_total__secondary_9_10__chandigarh",
@@ -1013,9 +1237,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     1.1,
-    0,
+    2.9,
     2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 2.9."
   },
   "boys__primary_1_5__chhattisgarh": {
    "name": "udise_41_boys__primary_1_5__chhattisgarh",
@@ -1031,9 +1259,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     5.7,
-    0,
+    2,
     1.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 2.0."
   },
   "girls__primary_1_5__chhattisgarh": {
    "name": "udise_41_girls__primary_1_5__chhattisgarh",
@@ -1049,9 +1281,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     5.1,
-    0,
+    1.5,
     0.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.5."
   },
   "total__primary_1_5__chhattisgarh": {
    "name": "udise_41_total__primary_1_5__chhattisgarh",
@@ -1067,9 +1303,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     5.4,
-    0,
+    1.8,
     0.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.8."
   },
   "boys__upper_primary_6_8__chhattisgarh": {
    "name": "udise_41_boys__upper_primary_6_8__chhattisgarh",
@@ -1085,9 +1325,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     7.3,
-    6.6,
+    6.2,
     4.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "6.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 6.6, printed 6.2."
   },
   "girls__upper_primary_6_8__chhattisgarh": {
    "name": "udise_41_girls__upper_primary_6_8__chhattisgarh",
@@ -1103,9 +1347,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     5.8,
-    4.7,
+    4.3,
     2.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "4.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 4.7, printed 4.3."
   },
   "total__upper_primary_6_8__chhattisgarh": {
    "name": "udise_41_total__upper_primary_6_8__chhattisgarh",
@@ -1121,9 +1369,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     6.6,
-    5.6,
+    5.3,
     3.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "5.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 5.6, printed 5.3."
   },
   "boys__secondary_9_10__chhattisgarh": {
    "name": "udise_41_boys__secondary_9_10__chhattisgarh",
@@ -1139,9 +1391,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     21.3,
-    19.9,
+    20.2,
     19.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "19.9"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 19.9, printed 20.2."
   },
   "girls__secondary_9_10__chhattisgarh": {
    "name": "udise_41_girls__secondary_9_10__chhattisgarh",
@@ -1157,9 +1413,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     15.3,
-    13.2,
+    12.6,
     11.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "13.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 13.2, printed 12.6."
   },
   "total__secondary_9_10__chhattisgarh": {
    "name": "udise_41_total__secondary_9_10__chhattisgarh",
@@ -1175,9 +1435,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     18.2,
-    16.5,
+    16.3,
     15.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "16.5"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 16.5, printed 16.3."
   },
   "boys__primary_1_5__dadra_nagar_haveli_and_daman_diu": {
    "name": "udise_41_boys__primary_1_5__dadra_nagar_haveli_and_daman_diu",
@@ -1193,9 +1457,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     0,
-    0,
+    1.8,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.8."
   },
   "girls__primary_1_5__dadra_nagar_haveli_and_daman_diu": {
    "name": "udise_41_girls__primary_1_5__dadra_nagar_haveli_and_daman_diu",
@@ -1211,9 +1479,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     0,
-    0,
+    1.5,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.5."
   },
   "total__primary_1_5__dadra_nagar_haveli_and_daman_diu": {
    "name": "udise_41_total__primary_1_5__dadra_nagar_haveli_and_daman_diu",
@@ -1229,9 +1501,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     0,
-    0,
+    1.6,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.6."
   },
   "boys__upper_primary_6_8__dadra_nagar_haveli_and_daman_diu": {
    "name": "udise_41_boys__upper_primary_6_8__dadra_nagar_haveli_and_daman_diu",
@@ -1247,9 +1523,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     0.5,
-    1,
+    3.2,
     2.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "1"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 1, printed 3.2."
   },
   "girls__upper_primary_6_8__dadra_nagar_haveli_and_daman_diu": {
    "name": "udise_41_girls__upper_primary_6_8__dadra_nagar_haveli_and_daman_diu",
@@ -1265,9 +1545,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     0.8,
-    0.3,
+    3,
     0.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0.3, printed 3.0."
   },
   "total__upper_primary_6_8__dadra_nagar_haveli_and_daman_diu": {
    "name": "udise_41_total__upper_primary_6_8__dadra_nagar_haveli_and_daman_diu",
@@ -1283,9 +1567,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     0.7,
-    0.7,
+    3.1,
     1.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0.7, printed 3.1."
   },
   "boys__secondary_9_10__dadra_nagar_haveli_and_daman_diu": {
    "name": "udise_41_boys__secondary_9_10__dadra_nagar_haveli_and_daman_diu",
@@ -1301,9 +1589,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     23.5,
-    27.3,
+    21.8,
     16.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "27.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 27.3, printed 21.8."
   },
   "girls__secondary_9_10__dadra_nagar_haveli_and_daman_diu": {
    "name": "udise_41_girls__secondary_9_10__dadra_nagar_haveli_and_daman_diu",
@@ -1319,9 +1611,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     13.3,
-    20.4,
+    15.4,
     8.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "20.4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 20.4, printed 15.4."
   },
   "total__secondary_9_10__dadra_nagar_haveli_and_daman_diu": {
    "name": "udise_41_total__secondary_9_10__dadra_nagar_haveli_and_daman_diu",
@@ -1337,9 +1633,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     18.8,
-    24,
+    18.7,
     12.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "24"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 24, printed 18.7."
   },
   "boys__primary_1_5__delhi": {
    "name": "udise_41_boys__primary_1_5__delhi",
@@ -1409,9 +1709,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     2.1,
-    1,
+    0.6,
     1.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "1"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 1, printed 0.6."
   },
   "girls__upper_primary_6_8__delhi": {
    "name": "udise_41_girls__upper_primary_6_8__delhi",
@@ -1427,9 +1731,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     1.7,
-    0.5,
+    0.6,
     0.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0.5"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0.5, printed 0.6."
   },
   "total__upper_primary_6_8__delhi": {
    "name": "udise_41_total__upper_primary_6_8__delhi",
@@ -1445,9 +1753,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     1.9,
-    0.7,
+    0.6,
     0.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0.7, printed 0.6."
   },
   "boys__secondary_9_10__delhi": {
    "name": "udise_41_boys__secondary_9_10__delhi",
@@ -1463,9 +1775,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     8.4,
-    10,
+    11.6,
     9.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "10"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 10, printed 11.6."
   },
   "girls__secondary_9_10__delhi": {
    "name": "udise_41_girls__secondary_9_10__delhi",
@@ -1481,9 +1797,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     6,
-    7.6,
+    9.1,
     5.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "7.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 7.6, printed 9.1."
   },
   "total__secondary_9_10__delhi": {
    "name": "udise_41_total__secondary_9_10__delhi",
@@ -1499,9 +1819,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     7.3,
-    8.9,
+    10.4,
     7.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "8.9"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 8.9, printed 10.4."
   },
   "boys__primary_1_5__goa": {
    "name": "udise_41_boys__primary_1_5__goa",
@@ -1517,9 +1841,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     0,
-    0,
+    0.8,
     0.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.8."
   },
   "girls__primary_1_5__goa": {
    "name": "udise_41_girls__primary_1_5__goa",
@@ -1535,9 +1863,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     0.7,
-    0,
+    0.9,
     0.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.9."
   },
   "total__primary_1_5__goa": {
    "name": "udise_41_total__primary_1_5__goa",
@@ -1553,9 +1885,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     0.3,
-    0,
+    0.8,
     0.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.8."
   },
   "boys__upper_primary_6_8__goa": {
    "name": "udise_41_boys__upper_primary_6_8__goa",
@@ -1571,9 +1907,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     1.7,
-    2.3,
+    1.2,
     0.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2.3, printed 1.2."
   },
   "girls__upper_primary_6_8__goa": {
    "name": "udise_41_girls__upper_primary_6_8__goa",
@@ -1589,9 +1929,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     2.1,
-    2.3,
+    1,
     0.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2.3, printed 1.0."
   },
   "total__upper_primary_6_8__goa": {
    "name": "udise_41_total__upper_primary_6_8__goa",
@@ -1607,9 +1951,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     1.9,
-    2.3,
+    1.1,
     0.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2.3, printed 1.1."
   },
   "boys__secondary_9_10__goa": {
    "name": "udise_41_boys__secondary_9_10__goa",
@@ -1625,9 +1973,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     10.9,
-    9,
+    10.2,
     12.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "9"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 9, printed 10.2."
   },
   "girls__secondary_9_10__goa": {
    "name": "udise_41_girls__secondary_9_10__goa",
@@ -1661,9 +2013,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     8.8,
-    7.5,
+    8.1,
     9.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "7.5"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 7.5, printed 8.1."
   },
   "boys__primary_1_5__gujarat": {
    "name": "udise_41_boys__primary_1_5__gujarat",
@@ -1679,9 +2035,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     0,
-    0,
+    0.2,
     0.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.2."
   },
   "girls__primary_1_5__gujarat": {
    "name": "udise_41_girls__primary_1_5__gujarat",
@@ -1697,9 +2057,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     0,
-    0,
+    0.1,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.1."
   },
   "total__primary_1_5__gujarat": {
    "name": "udise_41_total__primary_1_5__gujarat",
@@ -1715,9 +2079,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     0,
-    0,
+    0.1,
     0.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.1."
   },
   "boys__upper_primary_6_8__gujarat": {
    "name": "udise_41_boys__upper_primary_6_8__gujarat",
@@ -1733,9 +2101,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     4.1,
-    4.4,
+    3.5,
     5.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "4.4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 4.4, printed 3.5."
   },
   "girls__upper_primary_6_8__gujarat": {
    "name": "udise_41_girls__upper_primary_6_8__gujarat",
@@ -1751,9 +2123,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     7.7,
-    5.7,
+    4.9,
     6.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "5.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 5.7, printed 4.9."
   },
   "total__upper_primary_6_8__gujarat": {
    "name": "udise_41_total__upper_primary_6_8__gujarat",
@@ -1769,9 +2145,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     5.8,
-    5,
+    4.2,
     5.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "5"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 5, printed 4.2."
   },
   "boys__secondary_9_10__gujarat": {
    "name": "udise_41_boys__secondary_9_10__gujarat",
@@ -1787,9 +2167,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     25,
-    25.9,
+    23.3,
     18.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "25.9"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 25.9, printed 23.3."
   },
   "girls__secondary_9_10__gujarat": {
    "name": "udise_41_girls__secondary_9_10__gujarat",
@@ -1805,9 +2189,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     21.2,
-    21.8,
+    18.3,
     14.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "21.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 21.8, printed 18.3."
   },
   "total__secondary_9_10__gujarat": {
    "name": "udise_41_total__secondary_9_10__gujarat",
@@ -1823,9 +2211,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     23.3,
-    24,
+    21,
     16.9
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "24"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 24, printed 21.0."
   },
   "boys__primary_1_5__haryana": {
    "name": "udise_41_boys__primary_1_5__haryana",
@@ -1841,9 +2233,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     0.5,
-    0,
+    1.6,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.6."
   },
   "girls__primary_1_5__haryana": {
    "name": "udise_41_girls__primary_1_5__haryana",
@@ -1859,9 +2255,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     2.4,
-    0,
+    0.7,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.7."
   },
   "total__primary_1_5__haryana": {
    "name": "udise_41_total__primary_1_5__haryana",
@@ -1877,9 +2277,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     1.4,
-    0,
+    1.2,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.2."
   },
   "boys__upper_primary_6_8__haryana": {
    "name": "udise_41_boys__upper_primary_6_8__haryana",
@@ -1895,9 +2299,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     2.7,
-    5.1,
+    5.4,
     2.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "5.1"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 5.1, printed 5.4."
   },
   "girls__upper_primary_6_8__haryana": {
    "name": "udise_41_girls__upper_primary_6_8__haryana",
@@ -1913,9 +2321,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     4.6,
-    5.3,
+    3.7,
     0.9
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "5.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 5.3, printed 3.7."
   },
   "total__upper_primary_6_8__haryana": {
    "name": "udise_41_total__upper_primary_6_8__haryana",
@@ -1931,9 +2343,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     3.6,
-    5.2,
+    4.7,
     1.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "5.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 5.2, printed 4.7."
   },
   "boys__secondary_9_10__haryana": {
    "name": "udise_41_boys__secondary_9_10__haryana",
@@ -1949,9 +2365,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     16.7,
-    13.5,
+    15.7,
     8.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "13.5"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 13.5, printed 15.7."
   },
   "girls__secondary_9_10__haryana": {
    "name": "udise_41_girls__secondary_9_10__haryana",
@@ -1967,9 +2387,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     13.9,
-    9.6,
+    11.4,
     4.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "9.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 9.6, printed 11.4."
   },
   "total__secondary_9_10__haryana": {
    "name": "udise_41_total__secondary_9_10__haryana",
@@ -1985,9 +2409,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     15.4,
-    11.8,
+    13.8,
     6.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "11.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 11.8, printed 13.8."
   },
   "boys__primary_1_5__himachal_pradesh": {
    "name": "udise_41_boys__primary_1_5__himachal_pradesh",
@@ -2057,9 +2485,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     1.8,
-    0.5,
+    0.7,
     0.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0.5"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0.5, printed 0.7."
   },
   "girls__upper_primary_6_8__himachal_pradesh": {
    "name": "udise_41_girls__upper_primary_6_8__himachal_pradesh",
@@ -2075,9 +2507,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     2.2,
-    0.1,
+    0.4,
     0.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0.1"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0.1, printed 0.4."
   },
   "total__upper_primary_6_8__himachal_pradesh": {
    "name": "udise_41_total__upper_primary_6_8__himachal_pradesh",
@@ -2093,9 +2529,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     2,
-    0.3,
+    0.6,
     0.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0.3, printed 0.6."
   },
   "boys__secondary_9_10__himachal_pradesh": {
    "name": "udise_41_boys__secondary_9_10__himachal_pradesh",
@@ -2111,9 +2551,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     8,
-    7.3,
+    5.8,
     7.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "7.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 7.3, printed 5.8."
   },
   "girls__secondary_9_10__himachal_pradesh": {
    "name": "udise_41_girls__secondary_9_10__himachal_pradesh",
@@ -2129,9 +2573,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     5.3,
-    5.9,
+    4,
     4.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "5.9"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 5.9, printed 4.0."
   },
   "total__secondary_9_10__himachal_pradesh": {
    "name": "udise_41_total__secondary_9_10__himachal_pradesh",
@@ -2147,9 +2595,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     6.7,
-    6.6,
+    4.9,
     6.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "6.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 6.6, printed 4.9."
   },
   "boys__primary_1_5__jammu_kashmir": {
    "name": "udise_41_boys__primary_1_5__jammu_kashmir",
@@ -2165,9 +2617,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     8.4,
-    1.5,
+    1.9,
     1.9
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "1.5"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 1.5, printed 1.9."
   },
   "girls__primary_1_5__jammu_kashmir": {
    "name": "udise_41_girls__primary_1_5__jammu_kashmir",
@@ -2183,9 +2639,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     9.4,
-    2,
+    1.3,
     1.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2, printed 1.3."
   },
   "total__primary_1_5__jammu_kashmir": {
    "name": "udise_41_total__primary_1_5__jammu_kashmir",
@@ -2201,9 +2661,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     8.9,
-    1.7,
+    1.6,
     1.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "1.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 1.7, printed 1.6."
   },
   "boys__upper_primary_6_8__jammu_kashmir": {
    "name": "udise_41_boys__upper_primary_6_8__jammu_kashmir",
@@ -2219,9 +2683,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     3.5,
-    2.7,
+    3.2,
     3.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2.7, printed 3.2."
   },
   "girls__upper_primary_6_8__jammu_kashmir": {
    "name": "udise_41_girls__upper_primary_6_8__jammu_kashmir",
@@ -2237,9 +2705,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     5,
-    3,
+    3.3,
     3.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3, printed 3.3."
   },
   "total__upper_primary_6_8__jammu_kashmir": {
    "name": "udise_41_total__upper_primary_6_8__jammu_kashmir",
@@ -2255,9 +2727,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     4.2,
-    2.8,
+    3.2,
     3.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2.8, printed 3.2."
   },
   "boys__secondary_9_10__jammu_kashmir": {
    "name": "udise_41_boys__secondary_9_10__jammu_kashmir",
@@ -2273,9 +2749,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     8.6,
-    15,
+    14.1,
     13.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "15"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 15, printed 14.1."
   },
   "girls__secondary_9_10__jammu_kashmir": {
    "name": "udise_41_girls__secondary_9_10__jammu_kashmir",
@@ -2291,9 +2771,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     9.5,
-    14.4,
+    12.6,
     12.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "14.4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 14.4, printed 12.6."
   },
   "total__secondary_9_10__jammu_kashmir": {
    "name": "udise_41_total__secondary_9_10__jammu_kashmir",
@@ -2309,9 +2793,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     9,
-    14.7,
+    13.4,
     12.9
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "14.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 14.7, printed 13.4."
   },
   "boys__primary_1_5__jharkhand": {
    "name": "udise_41_boys__primary_1_5__jharkhand",
@@ -2327,9 +2815,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     11.7,
-    0,
+    1.1,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.1."
   },
   "girls__primary_1_5__jharkhand": {
    "name": "udise_41_girls__primary_1_5__jharkhand",
@@ -2345,9 +2837,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     11.4,
-    0,
+    0.6,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.6."
   },
   "total__primary_1_5__jharkhand": {
    "name": "udise_41_total__primary_1_5__jharkhand",
@@ -2363,9 +2859,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     11.5,
-    0,
+    0.9,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.9."
   },
   "boys__upper_primary_6_8__jharkhand": {
    "name": "udise_41_boys__upper_primary_6_8__jharkhand",
@@ -2381,9 +2881,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     14.4,
-    8,
+    9.4,
     3.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 8, printed 9.4."
   },
   "girls__upper_primary_6_8__jharkhand": {
    "name": "udise_41_girls__upper_primary_6_8__jharkhand",
@@ -2399,9 +2903,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     14.5,
-    6.3,
+    8.6,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "6.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 6.3, printed 8.6."
   },
   "total__upper_primary_6_8__jharkhand": {
    "name": "udise_41_total__upper_primary_6_8__jharkhand",
@@ -2417,9 +2925,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     14.5,
-    7.2,
+    9,
     1.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "7.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 7.2, printed 9.0."
   },
   "boys__secondary_9_10__jharkhand": {
    "name": "udise_41_boys__secondary_9_10__jharkhand",
@@ -2435,9 +2947,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     25.8,
-    15.8,
+    15.2,
     4.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "15.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 15.8, printed 15.2."
   },
   "girls__secondary_9_10__jharkhand": {
    "name": "udise_41_girls__secondary_9_10__jharkhand",
@@ -2453,9 +2969,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     25.5,
-    15.3,
+    15.1,
     2.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "15.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 15.3, printed 15.1."
   },
   "total__secondary_9_10__jharkhand": {
    "name": "udise_41_total__secondary_9_10__jharkhand",
@@ -2471,9 +2991,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     25.7,
-    15.6,
+    15.2,
     3.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "15.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 15.6, printed 15.2."
   },
   "boys__primary_1_5__karnataka": {
    "name": "udise_41_boys__primary_1_5__karnataka",
@@ -2489,9 +3013,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     0,
-    0,
+    1.9,
     0.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.9."
   },
   "girls__primary_1_5__karnataka": {
    "name": "udise_41_girls__primary_1_5__karnataka",
@@ -2507,9 +3035,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     0,
-    0,
+    1.5,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.5."
   },
   "total__primary_1_5__karnataka": {
    "name": "udise_41_total__primary_1_5__karnataka",
@@ -2525,9 +3057,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     0,
-    0,
+    1.7,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.7."
   },
   "boys__upper_primary_6_8__karnataka": {
    "name": "udise_41_boys__upper_primary_6_8__karnataka",
@@ -2543,9 +3079,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     0,
-    1.6,
+    2.9,
     2.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "1.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 1.6, printed 2.9."
   },
   "girls__upper_primary_6_8__karnataka": {
    "name": "udise_41_girls__upper_primary_6_8__karnataka",
@@ -2561,9 +3101,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     0,
-    1,
+    2.4,
     1.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "1"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 1, printed 2.4."
   },
   "total__upper_primary_6_8__karnataka": {
    "name": "udise_41_total__upper_primary_6_8__karnataka",
@@ -2579,9 +3123,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     0,
-    1.3,
+    2.7,
     2.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "1.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 1.3, printed 2.7."
   },
   "boys__secondary_9_10__karnataka": {
    "name": "udise_41_boys__secondary_9_10__karnataka",
@@ -2597,9 +3145,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     17.4,
-    25.7,
+    24.5,
     21.9
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "25.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 25.7, printed 24.5."
   },
   "girls__secondary_9_10__karnataka": {
    "name": "udise_41_girls__secondary_9_10__karnataka",
@@ -2615,9 +3167,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     12.3,
-    20.7,
+    19.6,
     14.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "20.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 20.7, printed 19.6."
   },
   "total__secondary_9_10__karnataka": {
    "name": "udise_41_total__secondary_9_10__karnataka",
@@ -2633,9 +3189,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     14.9,
-    23.2,
+    22.1,
     18.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "23.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 23.2, printed 22.1."
   },
   "boys__primary_1_5__kerala": {
    "name": "udise_41_boys__primary_1_5__kerala",
@@ -2759,9 +3319,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     8.1,
-    5.6,
+    4.3,
     5.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "5.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 5.6, printed 4.3."
   },
   "girls__secondary_9_10__kerala": {
    "name": "udise_41_girls__secondary_9_10__kerala",
@@ -2777,9 +3341,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     5.3,
-    4,
+    2.5,
     3.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 4, printed 2.5."
   },
   "total__secondary_9_10__kerala": {
    "name": "udise_41_total__secondary_9_10__kerala",
@@ -2795,9 +3363,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     6.7,
-    4.8,
+    3.4,
     4.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "4.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 4.8, printed 3.4."
   },
   "boys__primary_1_5__ladakh": {
    "name": "udise_41_boys__primary_1_5__ladakh",
@@ -2813,9 +3385,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     5.3,
-    3.2,
+    4.9,
     3.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3.2, printed 4.9."
   },
   "girls__primary_1_5__ladakh": {
    "name": "udise_41_girls__primary_1_5__ladakh",
@@ -2831,9 +3407,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     4.9,
-    2,
+    3.6,
     1.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2, printed 3.6."
   },
   "total__primary_1_5__ladakh": {
    "name": "udise_41_total__primary_1_5__ladakh",
@@ -2849,9 +3429,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     5.1,
-    2.6,
+    4.3,
     2.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2.6, printed 4.3."
   },
   "boys__upper_primary_6_8__ladakh": {
    "name": "udise_41_boys__upper_primary_6_8__ladakh",
@@ -2867,9 +3451,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     2.6,
-    3.2,
+    7.3,
     5.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3.2, printed 7.3."
   },
   "girls__upper_primary_6_8__ladakh": {
    "name": "udise_41_girls__upper_primary_6_8__ladakh",
@@ -2885,9 +3473,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     2.8,
-    1.1,
+    4.3,
     3.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "1.1"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 1.1, printed 4.3."
   },
   "total__upper_primary_6_8__ladakh": {
    "name": "udise_41_total__upper_primary_6_8__ladakh",
@@ -2903,9 +3495,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     2.7,
-    2.1,
+    5.8,
     4.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2.1"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2.1, printed 5.8."
   },
   "boys__secondary_9_10__ladakh": {
    "name": "udise_41_boys__secondary_9_10__ladakh",
@@ -2921,9 +3517,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     12.5,
-    25.1,
+    23.3,
     18.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "25.1"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 25.1, printed 23.3."
   },
   "girls__secondary_9_10__ladakh": {
    "name": "udise_41_girls__secondary_9_10__ladakh",
@@ -2939,9 +3539,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     10.7,
-    22.6,
+    16.7,
     14.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "22.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 22.6, printed 16.7."
   },
   "total__secondary_9_10__ladakh": {
    "name": "udise_41_total__secondary_9_10__ladakh",
@@ -2957,9 +3561,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     11.6,
-    23.8,
+    19.8,
     16.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "23.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 23.8, printed 19.8."
   },
   "boys__primary_1_5__lakshadweep": {
    "name": "udise_41_boys__primary_1_5__lakshadweep",
@@ -2993,9 +3601,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     4.1,
-    0.9,
+    1.4,
     0.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0.9"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0.9, printed 1.4."
   },
   "total__primary_1_5__lakshadweep": {
    "name": "udise_41_total__primary_1_5__lakshadweep",
@@ -3011,9 +3623,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     4.6,
-    2.1,
+    2.3,
     0.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2.1"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2.1, printed 2.3."
   },
   "boys__upper_primary_6_8__lakshadweep": {
    "name": "udise_41_boys__upper_primary_6_8__lakshadweep",
@@ -3029,9 +3645,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     11.1,
-    0,
+    6.3,
     3.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 6.3."
   },
   "girls__upper_primary_6_8__lakshadweep": {
    "name": "udise_41_girls__upper_primary_6_8__lakshadweep",
@@ -3047,9 +3667,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     3.9,
-    2.8,
+    0,
     1.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2.8, printed 0.0."
   },
   "total__upper_primary_6_8__lakshadweep": {
    "name": "udise_41_total__upper_primary_6_8__lakshadweep",
@@ -3065,9 +3689,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     7.7,
-    0,
+    3.1,
     2.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 3.1."
   },
   "boys__secondary_9_10__lakshadweep": {
    "name": "udise_41_boys__secondary_9_10__lakshadweep",
@@ -3083,9 +3711,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     11.2,
-    28.5,
+    3.1,
     3.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "28.5"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 28.5, printed 3.1."
   },
   "girls__secondary_9_10__lakshadweep": {
    "name": "udise_41_girls__secondary_9_10__lakshadweep",
@@ -3101,9 +3733,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     8.2,
-    23.9,
+    2.2,
     5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "23.9"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 23.9, printed 2.2."
   },
   "total__secondary_9_10__lakshadweep": {
    "name": "udise_41_total__secondary_9_10__lakshadweep",
@@ -3119,9 +3755,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     9.8,
-    26.2,
+    2.6,
     4.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "26.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 26.2, printed 2.6."
   },
   "boys__primary_1_5__madhya_pradesh": {
    "name": "udise_41_boys__primary_1_5__madhya_pradesh",
@@ -3137,9 +3777,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     6.5,
-    0,
+    1.2,
     0.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.2."
   },
   "girls__primary_1_5__madhya_pradesh": {
    "name": "udise_41_girls__primary_1_5__madhya_pradesh",
@@ -3155,9 +3799,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     7,
-    0,
+    0.7,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.7."
   },
   "total__primary_1_5__madhya_pradesh": {
    "name": "udise_41_total__primary_1_5__madhya_pradesh",
@@ -3173,9 +3821,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     6.8,
-    0,
+    1,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.0."
   },
   "boys__upper_primary_6_8__madhya_pradesh": {
    "name": "udise_41_boys__upper_primary_6_8__madhya_pradesh",
@@ -3191,9 +3843,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     9.4,
-    5.6,
+    7,
     6.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "5.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 5.6, printed 7.0."
   },
   "girls__upper_primary_6_8__madhya_pradesh": {
    "name": "udise_41_girls__upper_primary_6_8__madhya_pradesh",
@@ -3209,9 +3865,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     10.8,
-    5.7,
+    6.5,
     5.9
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "5.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 5.7, printed 6.5."
   },
   "total__upper_primary_6_8__madhya_pradesh": {
    "name": "udise_41_total__upper_primary_6_8__madhya_pradesh",
@@ -3227,9 +3887,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     10.1,
-    5.6,
+    6.7,
     6.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "5.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 5.6, printed 6.7."
   },
   "boys__secondary_9_10__madhya_pradesh": {
    "name": "udise_41_boys__secondary_9_10__madhya_pradesh",
@@ -3245,9 +3909,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     22,
-    17,
+    19.6,
     18.9
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "17"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 17, printed 19.6."
   },
   "girls__secondary_9_10__madhya_pradesh": {
    "name": "udise_41_girls__secondary_9_10__madhya_pradesh",
@@ -3263,9 +3931,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     20.7,
-    15.3,
+    15.5,
     14.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "15.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 15.3, printed 15.5."
   },
   "total__secondary_9_10__madhya_pradesh": {
    "name": "udise_41_total__secondary_9_10__madhya_pradesh",
@@ -3281,9 +3953,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     21.4,
-    16.2,
+    17.7,
     16.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "16.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 16.2, printed 17.7."
   },
   "boys__primary_1_5__maharashtra": {
    "name": "udise_41_boys__primary_1_5__maharashtra",
@@ -3353,9 +4029,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     5.7,
-    0,
+    0.7,
     0.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.7."
   },
   "girls__upper_primary_6_8__maharashtra": {
    "name": "udise_41_girls__upper_primary_6_8__maharashtra",
@@ -3371,9 +4051,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     6,
-    0.9,
+    0.5,
     0.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0.9"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0.9, printed 0.5."
   },
   "total__upper_primary_6_8__maharashtra": {
    "name": "udise_41_total__upper_primary_6_8__maharashtra",
@@ -3389,9 +4073,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     5.8,
-    0.3,
+    0.6,
     0.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0.3, printed 0.6."
   },
   "boys__secondary_9_10__maharashtra": {
    "name": "udise_41_boys__secondary_9_10__maharashtra",
@@ -3407,9 +4095,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     16.3,
-    13.4,
+    11,
     12.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "13.4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 13.4, printed 11.0."
   },
   "girls__secondary_9_10__maharashtra": {
    "name": "udise_41_girls__secondary_9_10__maharashtra",
@@ -3425,9 +4117,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     15.7,
-    11.3,
+    9,
     10.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "11.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 11.3, printed 9.0."
   },
   "total__secondary_9_10__maharashtra": {
    "name": "udise_41_total__secondary_9_10__maharashtra",
@@ -3443,9 +4139,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     16,
-    12.4,
+    10.1,
     11.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "12.4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 12.4, printed 10.1."
   },
   "boys__primary_1_5__manipur": {
    "name": "udise_41_boys__primary_1_5__manipur",
@@ -3461,9 +4161,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     12.9,
-    4.3,
+    4.5,
     3.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "4.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 4.3, printed 4.5."
   },
   "girls__primary_1_5__manipur": {
    "name": "udise_41_girls__primary_1_5__manipur",
@@ -3479,9 +4183,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     13,
-    3.4,
+    4.4,
     2.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3.4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3.4, printed 4.4."
   },
   "total__primary_1_5__manipur": {
    "name": "udise_41_total__primary_1_5__manipur",
@@ -3497,9 +4205,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     12.9,
-    3.8,
+    4.5,
     2.9
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3.8, printed 4.5."
   },
   "boys__upper_primary_6_8__manipur": {
    "name": "udise_41_boys__upper_primary_6_8__manipur",
@@ -3515,9 +4227,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     8.6,
-    2.8,
+    3.9,
     1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2.8, printed 3.9."
   },
   "girls__upper_primary_6_8__manipur": {
    "name": "udise_41_girls__upper_primary_6_8__manipur",
@@ -3533,9 +4249,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     9.2,
-    1.6,
+    3,
     0.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "1.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 1.6, printed 3.0."
   },
   "total__upper_primary_6_8__manipur": {
    "name": "udise_41_total__upper_primary_6_8__manipur",
@@ -3551,9 +4271,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     8.9,
-    2.2,
+    3.5,
     0.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2.2, printed 3.5."
   },
   "boys__secondary_9_10__manipur": {
    "name": "udise_41_boys__secondary_9_10__manipur",
@@ -3569,9 +4293,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     13,
-    16.4,
+    15.6,
     9.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "16.4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 16.4, printed 15.6."
   },
   "girls__secondary_9_10__manipur": {
    "name": "udise_41_girls__secondary_9_10__manipur",
@@ -3587,9 +4315,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     14.1,
-    16.2,
+    15,
     8.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "16.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 16.2, printed 15.0."
   },
   "total__secondary_9_10__manipur": {
    "name": "udise_41_total__secondary_9_10__manipur",
@@ -3605,9 +4337,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     13.5,
-    16.3,
+    15.3,
     9.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "16.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 16.3, printed 15.3."
   },
   "boys__primary_1_5__meghalaya": {
    "name": "udise_41_boys__primary_1_5__meghalaya",
@@ -3623,9 +4359,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     14.4,
-    10.1,
+    8.3,
     5.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "10.1"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 10.1, printed 8.3."
   },
   "girls__primary_1_5__meghalaya": {
    "name": "udise_41_girls__primary_1_5__meghalaya",
@@ -3641,9 +4381,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     12.9,
-    8.4,
+    6.8,
     3.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "8.4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 8.4, printed 6.8."
   },
   "total__primary_1_5__meghalaya": {
    "name": "udise_41_total__primary_1_5__meghalaya",
@@ -3659,9 +4403,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     13.6,
-    9.3,
+    7.5,
     4.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "9.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 9.3, printed 7.5."
   },
   "boys__upper_primary_6_8__meghalaya": {
    "name": "udise_41_boys__upper_primary_6_8__meghalaya",
@@ -3677,9 +4425,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     18.8,
-    8.8,
+    13.9,
     9.9
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "8.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 8.8, printed 13.9."
   },
   "girls__upper_primary_6_8__meghalaya": {
    "name": "udise_41_girls__upper_primary_6_8__meghalaya",
@@ -3695,9 +4447,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     14.2,
-    5.5,
+    11.1,
     6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "5.5"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 5.5, printed 11.1."
   },
   "total__upper_primary_6_8__meghalaya": {
    "name": "udise_41_total__upper_primary_6_8__meghalaya",
@@ -3713,9 +4469,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     16.4,
-    7,
+    12.4,
     7.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 7, printed 12.4."
   },
   "boys__secondary_9_10__meghalaya": {
    "name": "udise_41_boys__secondary_9_10__meghalaya",
@@ -3731,9 +4491,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     32.6,
-    23.7,
+    23.2,
     18.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "23.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 23.7, printed 23.2."
   },
   "girls__secondary_9_10__meghalaya": {
    "name": "udise_41_girls__secondary_9_10__meghalaya",
@@ -3749,9 +4513,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     25.8,
-    22.2,
+    21.1,
     16.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "22.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 22.2, printed 21.1."
   },
   "total__secondary_9_10__meghalaya": {
    "name": "udise_41_total__secondary_9_10__meghalaya",
@@ -3767,9 +4535,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     28.9,
-    22.9,
+    22,
     17.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "22.9"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 22.9, printed 22.0."
   },
   "boys__primary_1_5__mizoram": {
    "name": "udise_41_boys__primary_1_5__mizoram",
@@ -3785,9 +4557,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     15,
-    6.3,
+    3.7,
     10.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "6.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 6.3, printed 3.7."
   },
   "girls__primary_1_5__mizoram": {
    "name": "udise_41_girls__primary_1_5__mizoram",
@@ -3803,9 +4579,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     14.6,
-    6.3,
+    3.3,
     10.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "6.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 6.3, printed 3.3."
   },
   "total__primary_1_5__mizoram": {
    "name": "udise_41_total__primary_1_5__mizoram",
@@ -3821,9 +4601,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     14.8,
-    6.3,
+    3.5,
     10.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "6.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 6.3, printed 3.5."
   },
   "boys__upper_primary_6_8__mizoram": {
    "name": "udise_41_boys__upper_primary_6_8__mizoram",
@@ -3839,9 +4623,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     12,
-    5.2,
+    6.7,
     12.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "5.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 5.2, printed 6.7."
   },
   "girls__upper_primary_6_8__mizoram": {
    "name": "udise_41_girls__upper_primary_6_8__mizoram",
@@ -3857,9 +4645,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     8.9,
-    3.5,
+    4.9,
     10.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3.5"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3.5, printed 4.9."
   },
   "total__upper_primary_6_8__mizoram": {
    "name": "udise_41_total__upper_primary_6_8__mizoram",
@@ -3875,9 +4667,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     10.5,
-    4.4,
+    5.9,
     11.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "4.4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 4.4, printed 5.9."
   },
   "boys__secondary_9_10__mizoram": {
    "name": "udise_41_boys__secondary_9_10__mizoram",
@@ -3892,10 +4688,15 @@
    "geo": "Mizoram",
    "group": "Boys, Secondary (9-10)",
    "data": [
-    25.3,
-    17,
+    25.2,
+    15.2,
     18.9
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "17",
+    "2022-04-01": "25.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 17, printed 15.2; 2022-23: API 25.3, printed 25.2."
   },
   "girls__secondary_9_10__mizoram": {
    "name": "udise_41_girls__secondary_9_10__mizoram",
@@ -3911,9 +4712,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     22.8,
-    15.2,
+    14.4,
     16
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "15.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 15.2, printed 14.4."
   },
   "total__secondary_9_10__mizoram": {
    "name": "udise_41_total__secondary_9_10__mizoram",
@@ -3929,9 +4734,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     24,
-    16.1,
+    14.8,
     17.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "16.1"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 16.1, printed 14.8."
   },
   "boys__primary_1_5__nagaland": {
    "name": "udise_41_boys__primary_1_5__nagaland",
@@ -3947,9 +4756,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     9.7,
-    3.7,
+    4.8,
     3.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3.7, printed 4.8."
   },
   "girls__primary_1_5__nagaland": {
    "name": "udise_41_girls__primary_1_5__nagaland",
@@ -3965,9 +4778,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     10,
-    2.9,
+    4.2,
     2.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2.9"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2.9, printed 4.2."
   },
   "total__primary_1_5__nagaland": {
    "name": "udise_41_total__primary_1_5__nagaland",
@@ -3983,9 +4800,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     9.8,
-    3.3,
+    4.5,
     2.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3.3, printed 4.5."
   },
   "boys__upper_primary_6_8__nagaland": {
    "name": "udise_41_boys__upper_primary_6_8__nagaland",
@@ -4001,9 +4822,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     10.1,
-    3.4,
+    6.4,
     5.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3.4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3.4, printed 6.4."
   },
   "girls__upper_primary_6_8__nagaland": {
    "name": "udise_41_girls__upper_primary_6_8__nagaland",
@@ -4019,9 +4844,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     7.9,
-    1.6,
+    5.2,
     3.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "1.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 1.6, printed 5.2."
   },
   "total__upper_primary_6_8__nagaland": {
    "name": "udise_41_total__upper_primary_6_8__nagaland",
@@ -4037,9 +4866,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     9,
-    2.5,
+    5.8,
     4.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2.5"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2.5, printed 5.8."
   },
   "boys__secondary_9_10__nagaland": {
    "name": "udise_41_boys__secondary_9_10__nagaland",
@@ -4055,9 +4888,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     23.1,
-    16.2,
+    12.2,
     13
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "16.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 16.2, printed 12.2."
   },
   "girls__secondary_9_10__nagaland": {
    "name": "udise_41_girls__secondary_9_10__nagaland",
@@ -4073,9 +4910,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     20,
-    13.5,
+    11.1,
     11.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "13.5"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 13.5, printed 11.1."
   },
   "total__secondary_9_10__nagaland": {
    "name": "udise_41_total__secondary_9_10__nagaland",
@@ -4091,9 +4932,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     21.5,
-    14.8,
+    11.6,
     12.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "14.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 14.8, printed 11.6."
   },
   "boys__primary_1_5__odisha": {
    "name": "udise_41_boys__primary_1_5__odisha",
@@ -4163,9 +5008,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     3.1,
-    4.6,
+    2.2,
     3.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "4.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 4.6, printed 2.2."
   },
   "girls__upper_primary_6_8__odisha": {
    "name": "udise_41_girls__upper_primary_6_8__odisha",
@@ -4181,9 +5030,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     3.2,
-    3.8,
+    1.7,
     2.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3.8, printed 1.7."
   },
   "total__upper_primary_6_8__odisha": {
    "name": "udise_41_total__upper_primary_6_8__odisha",
@@ -4199,9 +5052,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     3.1,
-    4.2,
+    2,
     3.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "4.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 4.2, printed 2.0."
   },
   "boys__secondary_9_10__odisha": {
    "name": "udise_41_boys__secondary_9_10__odisha",
@@ -4217,9 +5074,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     19.3,
-    15.1,
+    14.1,
     17.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "15.1"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 15.1, printed 14.1."
   },
   "girls__secondary_9_10__odisha": {
    "name": "udise_41_girls__secondary_9_10__odisha",
@@ -4235,9 +5096,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     16.1,
-    12.4,
+    11.3,
     12.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "12.4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 12.4, printed 11.3."
   },
   "total__secondary_9_10__odisha": {
    "name": "udise_41_total__secondary_9_10__odisha",
@@ -4253,9 +5118,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     17.7,
-    13.8,
+    12.8,
     15
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "13.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 13.8, printed 12.8."
   },
   "boys__primary_1_5__puducherry": {
    "name": "udise_41_boys__primary_1_5__puducherry",
@@ -4271,9 +5140,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     3.2,
-    0,
+    1.5,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.5."
   },
   "girls__primary_1_5__puducherry": {
    "name": "udise_41_girls__primary_1_5__puducherry",
@@ -4289,9 +5162,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     3.2,
-    0,
+    0.9,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.9."
   },
   "total__primary_1_5__puducherry": {
    "name": "udise_41_total__primary_1_5__puducherry",
@@ -4307,9 +5184,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     3.2,
-    0,
+    1.2,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.2."
   },
   "boys__upper_primary_6_8__puducherry": {
    "name": "udise_41_boys__upper_primary_6_8__puducherry",
@@ -4325,9 +5206,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     2.2,
-    0,
+    1.5,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.5."
   },
   "girls__upper_primary_6_8__puducherry": {
    "name": "udise_41_girls__upper_primary_6_8__puducherry",
@@ -4343,9 +5228,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     2.2,
-    0,
+    1.2,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.2."
   },
   "total__upper_primary_6_8__puducherry": {
    "name": "udise_41_total__upper_primary_6_8__puducherry",
@@ -4361,9 +5250,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     2.2,
-    0,
+    1.4,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.4."
   },
   "boys__secondary_9_10__puducherry": {
    "name": "udise_41_boys__secondary_9_10__puducherry",
@@ -4379,9 +5272,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     9.7,
-    8.6,
+    10.4,
     8.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "8.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 8.6, printed 10.4."
   },
   "girls__secondary_9_10__puducherry": {
    "name": "udise_41_girls__secondary_9_10__puducherry",
@@ -4397,9 +5294,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     5.2,
-    3.5,
+    5,
     3.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3.5"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3.5, printed 5.0."
   },
   "total__secondary_9_10__puducherry": {
    "name": "udise_41_total__secondary_9_10__puducherry",
@@ -4415,9 +5316,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     7.5,
-    6.1,
+    7.8,
     5.9
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "6.1"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 6.1, printed 7.8."
   },
   "boys__primary_1_5__punjab": {
    "name": "udise_41_boys__primary_1_5__punjab",
@@ -4433,9 +5338,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     3.2,
-    0,
+    0.1,
     2.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.1."
   },
   "girls__primary_1_5__punjab": {
    "name": "udise_41_girls__primary_1_5__punjab",
@@ -4469,9 +5378,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     3.1,
-    0,
+    0.1,
     2.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.1."
   },
   "boys__upper_primary_6_8__punjab": {
    "name": "udise_41_boys__upper_primary_6_8__punjab",
@@ -4487,9 +5400,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     5.6,
-    1.4,
+    3,
     3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "1.4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 1.4, printed 3.0."
   },
   "girls__upper_primary_6_8__punjab": {
    "name": "udise_41_girls__upper_primary_6_8__punjab",
@@ -4505,9 +5422,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     4.9,
-    0.3,
+    2.2,
     2.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0.3, printed 2.2."
   },
   "total__upper_primary_6_8__punjab": {
    "name": "udise_41_total__upper_primary_6_8__punjab",
@@ -4523,9 +5444,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     5.3,
-    0.9,
+    2.6,
     2.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0.9"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0.9, printed 2.6."
   },
   "boys__secondary_9_10__punjab": {
    "name": "udise_41_boys__secondary_9_10__punjab",
@@ -4541,9 +5466,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     10.5,
-    6.5,
+    6.9,
     7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "6.5"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 6.5, printed 6.9."
   },
   "girls__secondary_9_10__punjab": {
    "name": "udise_41_girls__secondary_9_10__punjab",
@@ -4559,9 +5488,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     8.8,
-    6.1,
+    5,
     5.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "6.1"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 6.1, printed 5.0."
   },
   "total__secondary_9_10__punjab": {
    "name": "udise_41_total__secondary_9_10__punjab",
@@ -4577,9 +5510,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     9.7,
-    6.3,
+    6,
     6.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "6.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 6.3, printed 6.0."
   },
   "boys__primary_1_5__rajasthan": {
    "name": "udise_41_boys__primary_1_5__rajasthan",
@@ -4595,9 +5532,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     4.6,
-    0,
+    8.1,
     3.9
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 8.1."
   },
   "girls__primary_1_5__rajasthan": {
    "name": "udise_41_girls__primary_1_5__rajasthan",
@@ -4613,9 +5554,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     4.1,
-    0,
+    7,
     3.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 7.0."
   },
   "total__primary_1_5__rajasthan": {
    "name": "udise_41_total__primary_1_5__rajasthan",
@@ -4631,9 +5576,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     4.4,
-    0,
+    7.6,
     3.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 7.6."
   },
   "boys__upper_primary_6_8__rajasthan": {
    "name": "udise_41_boys__upper_primary_6_8__rajasthan",
@@ -4649,9 +5598,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     5.6,
-    3.9,
+    7.1,
     3.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3.9"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3.9, printed 7.1."
   },
   "girls__upper_primary_6_8__rajasthan": {
    "name": "udise_41_girls__upper_primary_6_8__rajasthan",
@@ -4667,9 +5620,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     5.9,
-    4.5,
+    6.4,
     3.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "4.5"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 4.5, printed 6.4."
   },
   "total__upper_primary_6_8__rajasthan": {
    "name": "udise_41_total__upper_primary_6_8__rajasthan",
@@ -4685,9 +5642,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     5.7,
-    4.2,
+    6.8,
     3.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "4.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 4.2, printed 6.8."
   },
   "boys__secondary_9_10__rajasthan": {
    "name": "udise_41_boys__secondary_9_10__rajasthan",
@@ -4703,9 +5664,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     12.3,
-    11,
+    12.2,
     8.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "11"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 11, printed 12.2."
   },
   "girls__secondary_9_10__rajasthan": {
    "name": "udise_41_girls__secondary_9_10__rajasthan",
@@ -4721,9 +5686,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     11.5,
-    11.3,
+    9.7,
     7.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "11.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 11.3, printed 9.7."
   },
   "total__secondary_9_10__rajasthan": {
    "name": "udise_41_total__secondary_9_10__rajasthan",
@@ -4739,9 +5708,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     11.9,
-    11.2,
+    11.1,
     7.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "11.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 11.2, printed 11.1."
   },
   "boys__primary_1_5__sikkim": {
    "name": "udise_41_boys__primary_1_5__sikkim",
@@ -4757,9 +5730,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     5.5,
-    0,
+    3.3,
     2.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 3.3."
   },
   "girls__primary_1_5__sikkim": {
    "name": "udise_41_girls__primary_1_5__sikkim",
@@ -4775,9 +5752,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     3.5,
-    0,
+    1.7,
     0.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.7."
   },
   "total__primary_1_5__sikkim": {
    "name": "udise_41_total__primary_1_5__sikkim",
@@ -4793,9 +5774,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     4.5,
-    0,
+    2.6,
     1.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 2.6."
   },
   "boys__upper_primary_6_8__sikkim": {
    "name": "udise_41_boys__upper_primary_6_8__sikkim",
@@ -4811,9 +5796,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     2.3,
-    0,
+    5.9,
     3.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 5.9."
   },
   "girls__upper_primary_6_8__sikkim": {
    "name": "udise_41_girls__upper_primary_6_8__sikkim",
@@ -4829,9 +5818,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     2.1,
-    0,
+    4,
     1.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 4.0."
   },
   "total__upper_primary_6_8__sikkim": {
    "name": "udise_41_total__upper_primary_6_8__sikkim",
@@ -4847,9 +5840,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     2.2,
-    0,
+    4.9,
     2.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 4.9."
   },
   "boys__secondary_9_10__sikkim": {
    "name": "udise_41_boys__secondary_9_10__sikkim",
@@ -4865,9 +5862,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     18.9,
-    13.4,
+    21,
     14.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "13.4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 13.4, printed 21.0."
   },
   "girls__secondary_9_10__sikkim": {
    "name": "udise_41_girls__secondary_9_10__sikkim",
@@ -4883,9 +5884,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     12.1,
-    8.3,
+    17.2,
     8.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "8.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 8.3, printed 17.2."
   },
   "total__secondary_9_10__sikkim": {
    "name": "udise_41_total__secondary_9_10__sikkim",
@@ -4901,9 +5906,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     15.4,
-    10.8,
+    19,
     11.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "10.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 10.8, printed 19.0."
   },
   "boys__primary_1_5__tamil_nadu": {
    "name": "udise_41_boys__primary_1_5__tamil_nadu",
@@ -4973,9 +5982,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     0,
-    0.6,
+    0,
     3.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0.6, printed 0.0."
   },
   "girls__upper_primary_6_8__tamil_nadu": {
    "name": "udise_41_girls__upper_primary_6_8__tamil_nadu",
@@ -4991,9 +6004,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     0.1,
-    0.3,
+    0,
     2.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0.3, printed 0.0."
   },
   "total__upper_primary_6_8__tamil_nadu": {
    "name": "udise_41_total__upper_primary_6_8__tamil_nadu",
@@ -5009,9 +6026,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     0,
-    0.4,
+    0,
     2.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0.4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0.4, printed 0.0."
   },
   "boys__secondary_9_10__tamil_nadu": {
    "name": "udise_41_boys__secondary_9_10__tamil_nadu",
@@ -5027,9 +6048,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     13.9,
-    11.6,
+    10.8,
     11.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "11.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 11.6, printed 10.8."
   },
   "girls__secondary_9_10__tamil_nadu": {
    "name": "udise_41_girls__secondary_9_10__tamil_nadu",
@@ -5045,9 +6070,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     6.4,
-    4.8,
+    4.4,
     5.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "4.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 4.8, printed 4.4."
   },
   "total__secondary_9_10__tamil_nadu": {
    "name": "udise_41_total__secondary_9_10__tamil_nadu",
@@ -5063,9 +6092,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     10.3,
-    8.3,
+    7.7,
     8.5
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "8.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 8.3, printed 7.7."
   },
   "boys__primary_1_5__telangana": {
    "name": "udise_41_boys__primary_1_5__telangana",
@@ -5135,9 +6168,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     5.6,
-    3.6,
+    0.1,
     0.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3.6, printed 0.1."
   },
   "girls__upper_primary_6_8__telangana": {
    "name": "udise_41_girls__upper_primary_6_8__telangana",
@@ -5153,9 +6190,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     4.4,
-    2.8,
+    0,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2.8, printed 0.0."
   },
   "total__upper_primary_6_8__telangana": {
    "name": "udise_41_total__upper_primary_6_8__telangana",
@@ -5171,9 +6212,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     5,
-    3.2,
+    0,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3.2, printed 0.0."
   },
   "boys__secondary_9_10__telangana": {
    "name": "udise_41_boys__secondary_9_10__telangana",
@@ -5189,9 +6234,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     12.3,
-    15.7,
+    13.3,
     15.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "15.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 15.7, printed 13.3."
   },
   "girls__secondary_9_10__telangana": {
    "name": "udise_41_girls__secondary_9_10__telangana",
@@ -5207,9 +6256,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     10.9,
-    12,
+    9.5,
     10.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "12"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 12, printed 9.5."
   },
   "total__secondary_9_10__telangana": {
    "name": "udise_41_total__secondary_9_10__telangana",
@@ -5225,9 +6278,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     11.6,
-    13.9,
+    11.4,
     13.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "13.9"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 13.9, printed 11.4."
   },
   "boys__primary_1_5__tripura": {
    "name": "udise_41_boys__primary_1_5__tripura",
@@ -5243,9 +6300,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     1.7,
-    0,
+    0.8,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.8."
   },
   "girls__primary_1_5__tripura": {
    "name": "udise_41_girls__primary_1_5__tripura",
@@ -5261,9 +6322,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     1.2,
-    0,
+    0.3,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.3."
   },
   "total__primary_1_5__tripura": {
    "name": "udise_41_total__primary_1_5__tripura",
@@ -5279,9 +6344,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     1.4,
-    0,
+    0.5,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.5."
   },
   "boys__upper_primary_6_8__tripura": {
    "name": "udise_41_boys__upper_primary_6_8__tripura",
@@ -5297,9 +6366,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     6.8,
-    5,
+    4.5,
     4.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "5"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 5, printed 4.5."
   },
   "girls__upper_primary_6_8__tripura": {
    "name": "udise_41_girls__upper_primary_6_8__tripura",
@@ -5315,9 +6388,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     5,
-    3.7,
+    3.6,
     2.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3.7, printed 3.6."
   },
   "total__upper_primary_6_8__tripura": {
    "name": "udise_41_total__upper_primary_6_8__tripura",
@@ -5333,9 +6410,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     5.9,
-    4.4,
+    4.1,
     3.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "4.4"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 4.4, printed 4.1."
   },
   "boys__secondary_9_10__tripura": {
    "name": "udise_41_boys__secondary_9_10__tripura",
@@ -5351,9 +6432,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     18.6,
-    10.2,
+    10.7,
     12.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "10.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 10.2, printed 10.7."
   },
   "girls__secondary_9_10__tripura": {
    "name": "udise_41_girls__secondary_9_10__tripura",
@@ -5369,9 +6454,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     17.2,
-    9,
+    10.1,
     10.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "9"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 9, printed 10.1."
   },
   "total__secondary_9_10__tripura": {
    "name": "udise_41_total__secondary_9_10__tripura",
@@ -5387,9 +6476,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     17.9,
-    9.6,
+    10.4,
     11.3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "9.6"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 9.6, printed 10.4."
   },
   "boys__primary_1_5__uttarakhand": {
    "name": "udise_41_boys__primary_1_5__uttarakhand",
@@ -5405,9 +6498,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     7.3,
-    0,
+    0.3,
     1.2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.3."
   },
   "girls__primary_1_5__uttarakhand": {
    "name": "udise_41_girls__primary_1_5__uttarakhand",
@@ -5441,9 +6538,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     7.4,
-    0,
+    0.1,
     0.9
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 0.1."
   },
   "boys__upper_primary_6_8__uttarakhand": {
    "name": "udise_41_boys__upper_primary_6_8__uttarakhand",
@@ -5459,9 +6560,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     5.9,
-    3.1,
+    2.6,
     2
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3.1"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3.1, printed 2.6."
   },
   "girls__upper_primary_6_8__uttarakhand": {
    "name": "udise_41_girls__upper_primary_6_8__uttarakhand",
@@ -5477,9 +6582,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     5.7,
-    1.8,
+    1.9,
     0.8
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "1.8"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 1.8, printed 1.9."
   },
   "total__upper_primary_6_8__uttarakhand": {
    "name": "udise_41_total__upper_primary_6_8__uttarakhand",
@@ -5495,9 +6604,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     5.8,
-    2.5,
+    2.3,
     1.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2.5"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2.5, printed 2.3."
   },
   "boys__secondary_9_10__uttarakhand": {
    "name": "udise_41_boys__secondary_9_10__uttarakhand",
@@ -5513,9 +6626,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     9.5,
-    3.7,
+    8.6,
     6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "3.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 3.7, printed 8.6."
   },
   "girls__secondary_9_10__uttarakhand": {
    "name": "udise_41_girls__secondary_9_10__uttarakhand",
@@ -5531,9 +6648,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     7.2,
-    2,
+    5.3,
     3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2, printed 5.3."
   },
   "total__secondary_9_10__uttarakhand": {
    "name": "udise_41_total__secondary_9_10__uttarakhand",
@@ -5549,9 +6670,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     8.4,
-    2.9,
+    7,
     4.6
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "2.9"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 2.9, printed 7.0."
   },
   "boys__primary_1_5__uttar_pradesh": {
    "name": "udise_41_boys__primary_1_5__uttar_pradesh",
@@ -5567,9 +6692,13 @@
    "group": "Boys, Primary (1-5)",
    "data": [
     18.6,
-    0,
+    1.7,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.7."
   },
   "girls__primary_1_5__uttar_pradesh": {
    "name": "udise_41_girls__primary_1_5__uttar_pradesh",
@@ -5585,9 +6714,13 @@
    "group": "Girls, Primary (1-5)",
    "data": [
     19,
-    0,
+    1.7,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.7."
   },
   "total__primary_1_5__uttar_pradesh": {
    "name": "udise_41_total__primary_1_5__uttar_pradesh",
@@ -5603,9 +6736,13 @@
    "group": "Total, Primary (1-5)",
    "data": [
     18.8,
-    0,
+    1.7,
     0
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "0"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 0, printed 1.7."
   },
   "boys__upper_primary_6_8__uttar_pradesh": {
    "name": "udise_41_boys__upper_primary_6_8__uttar_pradesh",
@@ -5621,9 +6758,13 @@
    "group": "Boys, Upper Primary (6-8)",
    "data": [
     15,
-    7.3,
+    3.1,
     2.9
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "7.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 7.3, printed 3.1."
   },
   "girls__upper_primary_6_8__uttar_pradesh": {
    "name": "udise_41_girls__upper_primary_6_8__uttar_pradesh",
@@ -5639,9 +6780,13 @@
    "group": "Girls, Upper Primary (6-8)",
    "data": [
     17.2,
-    8.2,
+    4.8,
     3.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "8.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 8.2, printed 4.8."
   },
   "total__upper_primary_6_8__uttar_pradesh": {
    "name": "udise_41_total__upper_primary_6_8__uttar_pradesh",
@@ -5657,9 +6802,13 @@
    "group": "Total, Upper Primary (6-8)",
    "data": [
     16,
-    7.7,
+    3.9,
     3
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "7.7"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 7.7, printed 3.9."
   },
   "boys__secondary_9_10__uttar_pradesh": {
    "name": "udise_41_boys__secondary_9_10__uttar_pradesh",
@@ -5675,9 +6824,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     14.9,
-    1.5,
+    9.8,
     8.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "1.5"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 1.5, printed 9.8."
   },
   "girls__secondary_9_10__uttar_pradesh": {
    "name": "udise_41_girls__secondary_9_10__uttar_pradesh",
@@ -5693,9 +6846,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     14.4,
-    1.2,
+    7.3,
     5.1
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "1.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 1.2, printed 7.3."
   },
   "total__secondary_9_10__uttar_pradesh": {
    "name": "udise_41_total__secondary_9_10__uttar_pradesh",
@@ -5711,9 +6868,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     14.7,
-    1.3,
+    8.7,
     7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "1.3"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 1.3, printed 8.7."
   },
   "boys__primary_1_5__west_bengal": {
    "name": "udise_41_boys__primary_1_5__west_bengal",
@@ -5837,9 +6998,13 @@
    "group": "Boys, Secondary (9-10)",
    "data": [
     9.6,
-    25,
+    21.5,
     23.4
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "25"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 25, printed 21.5."
   },
   "girls__secondary_9_10__west_bengal": {
    "name": "udise_41_girls__secondary_9_10__west_bengal",
@@ -5855,9 +7020,13 @@
    "group": "Girls, Secondary (9-10)",
    "data": [
     7.6,
-    17.2,
+    14.2,
     16.7
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "17.2"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 17.2, printed 14.2."
   },
   "total__secondary_9_10__west_bengal": {
    "name": "udise_41_total__secondary_9_10__west_bengal",
@@ -5873,9 +7042,13 @@
    "group": "Total, Secondary (9-10)",
    "data": [
     8.5,
-    21,
+    17.8,
     20
-   ]
+   ],
+   "sourceValues": {
+    "2023-04-01": "21"
+   },
+   "note": "Where MoSPI's API differs from the printed UDISE+ report (Table 6.13), the printed figure is shown; the API figure stays in the raw archive. 2023-24: API 21, printed 17.8."
   }
  }
 }
