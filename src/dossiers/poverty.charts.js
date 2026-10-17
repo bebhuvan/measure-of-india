@@ -111,9 +111,9 @@ export function gap() {
         ...[p1993, p2011, p2022].map((b) => ({ name: "Survey reading", data: b.dates.map((d, i) => [Yd(yearOf(d)), b.series.headcount_3_00.data[i]]).filter(([d]) => yearOf(d) >= 2004), role: "lead", dots: true, label: false })),
       ],
       shade: [{ from: Yd(S11.year + 1), to: Yd(SNEXT.year), label: `${nGap} calendar years with no survey` }],
-      // a phone has no room for the two adjacent HCES rounds: the latest keeps its note, set high
-      notes: surveys.filter((s) => width >= 520 || s.year !== SNEXT.year).map((s, i, A) => { const lastOne = s === surveys.at(-1);
-        return { d: Yd(s.year), v: v(s, "headcount_3_00"), text: `Survey ${s.round}\n${pct1(v(s, "headcount_3_00"))}`, side: i === 0 ? "right" : "left", below: width >= 520 && lastOne, ...(width < 520 && lastOne ? { dy: 50 } : {}) }; }),
+      // a phone or a tablet has no room for the two adjacent HCES rounds: the latest keeps its note, set high
+      notes: surveys.filter((s) => width >= 1000 || s.year !== SNEXT.year).map((s, i, A) => { const lastOne = s === surveys.at(-1);
+        return { d: Yd(s.year), v: v(s, "headcount_3_00"), text: `Survey ${s.round}\n${pct1(v(s, "headcount_3_00"))}`, side: i === 0 ? "right" : "left", below: width >= 1000 && lastOne, ...(width < 1000 && lastOne ? { dy: 50 } : {}) }; }),
     }),
   });
 }

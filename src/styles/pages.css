@@ -6,6 +6,18 @@
 .spage .titleblock h1{font-size:3.6rem}
 .spage .titleblock .lede{max-width:40ch;margin-top:18px}
 .spage section{padding-top:88px}
+/* the text pages (about, method) have short parts: the space before each rule and the space under it
+   are balanced so a part reads as one block under its rule, not a heading pressed to the rule over a void */
+.spage > section:has(> .sec-head){padding-top:64px}
+.spage > section > .sec-head .no{padding-top:22px}
+.spage > section > .sec-head h2{padding-top:24px}
+.spage > section > :nth-child(2){margin-top:24px}
+@media (max-width:860px){
+  .spage > section:has(> .sec-head){padding-top:48px}
+  .spage > section > .sec-head .no{padding-top:20px}
+  .spage > section > .sec-head h2{padding-top:2px}
+  .spage > section > :nth-child(2){margin-top:18px}
+}
 .spage .provenance{margin-top:128px}
 .spage p a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--rule-2);text-underline-offset:3px}
 .spage p a:hover{text-decoration-color:var(--ink)}
@@ -22,7 +34,14 @@
 .home .hm-lab a:hover{color:var(--accent);border-bottom-color:var(--accent)}
 .home .hm-kicker .dot{display:inline-block;width:6px;height:6px;background:var(--accent);border-radius:50%;margin-right:8px;vertical-align:1px}
 
-.home .hm-cover{padding-top:56px}
+/* the promise (2026-10-17): what the site is, in one sentence, its counts, and search */
+.home .hm-promise{padding-top:56px;padding-bottom:8px}
+.home .hm-promise .hm-m{padding-top:10px}
+.home .hm-pitch{font:400 1.875rem/1.3 var(--serif);letter-spacing:-.012em;font-variation-settings:"opsz" 36;color:var(--ink);max-width:26em;text-wrap:pretty;margin:0}
+.home .hm-proof{list-style:none;margin:20px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px 28px;font:400 .875rem/1.4 var(--sans);color:var(--ink-soft)}
+.home .hm-proof b{font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.home .hm-promise .find{margin-top:32px}
+.home .hm-cover{padding-top:88px}
 .home .hm-cover .hm-m{padding-top:6px}
 .home .fig-xl{font:300 8.25rem/1 var(--serif);letter-spacing:-.045em;font-variation-settings:"opsz" 72;font-variant-numeric:lining-nums proportional-nums;margin:22px 0 18px;white-space:nowrap}
 .home .fig-xl small{font-size:.38em;letter-spacing:-.01em;color:var(--muted);margin-left:4px;font-weight:300}
@@ -35,8 +54,6 @@
 .home .hm-fig .plotfoot{grid-template-columns:minmax(0,1fr) auto}
 .home .hm-fig .dl a{color:var(--ink);font-weight:600}
 
-.home .hm-find{padding-top:72px}
-.home .hm-find .hm-m{padding-top:14px}
 .home .find{max-width:720px}
 .home .find label{display:block;font-family:var(--sans);font-size:.875rem;font-weight:500;color:var(--ink);margin-bottom:10px}
 .home .qwrap{position:relative}
@@ -75,7 +92,8 @@
 .home .hm-ledger th{font:500 .75rem/1.3 var(--sans);color:var(--muted);text-align:right;padding:0 0 10px 16px;border-bottom:1px solid var(--ink);white-space:nowrap}
 .home .hm-ledger th:first-child{text-align:left;padding-left:0}
 .home .hm-ledger td{padding:14px 0 14px 16px;border-bottom:1px solid var(--rule);text-align:right;vertical-align:middle;white-space:nowrap}
-.home .hm-ledger td:first-child{text-align:left;padding-left:0;white-space:normal}
+.home .hm-ledger td:first-child{text-align:left;padding-left:0;white-space:normal;width:100%}
+.home .hm-ledger th:not(:first-child),.home .hm-ledger td:not(:first-child){padding-left:32px}
 .home .hm-ledger td:first-child a{text-decoration:none;color:inherit;display:block}
 .home .hm-ledger .nm{font:500 1.1875rem/1.2 var(--serif);color:var(--ink);font-variation-settings:"opsz" 24}
 .home .hm-ledger .wh{display:block;font:400 .8125rem/1.35 var(--sans);color:var(--muted);margin-top:3px}
@@ -85,9 +103,9 @@
 .home .hm-ledger td.pd{font-size:.8125rem;color:var(--muted)}
 .home .hm-ledger td.sp{width:160px}
 .home .hm-ledger td.sp svg{display:block;margin-left:auto}
-.home .hm-ledger tbody tr:hover td{background:var(--wash)}
-.home .hm-ledger tbody tr:hover td:first-child{box-shadow:inset 2px 0 0 var(--accent)}
-.home .hm-ledger tbody tr:hover .nm{color:var(--accent)}
+/* a row's hover is a wash (DESIGN §0.6), never a colour, and only on a pointer that hovers: on a
+   phone a tap left the row stuck washed, its name blue and a bar cutting its first letter */
+@media (hover:hover){.home .hm-ledger tbody tr:hover td{background:var(--wash)}}
 
 /* across India: the extremes in the margin, the tiles in the field */
 .home .hm-rank{list-style:none;margin:0;padding:0;font:400 .875rem/1.5 var(--sans);color:var(--ink-soft)}
@@ -107,16 +125,22 @@
 .home .ix-n{font:400 1.125rem/1.25 var(--serif);color:var(--ink);font-variation-settings:"opsz" 20}
 .home .ix-l{border-bottom:1px dotted var(--rule-2);transform:translateY(-4px);min-width:12px}
 .home .ix-v{font:500 .875rem/1 var(--sans);font-variant-numeric:tabular-nums;color:var(--ink);white-space:nowrap}
-.home .ix-w{grid-column:1 / -1;font:400 .78125rem/1.35 var(--sans);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home .ix-w{grid-column:1 / -1;font:400 .8125rem/1.4 var(--sans);color:var(--muted);text-wrap:pretty}
 .home .ix-w i{font-style:normal;color:var(--ink-soft)}
 .home .ix-grp .vt{display:none}   /* the vintage is on each guide; qc still reads it here */
 .home .ix-grp li a:hover .ix-n{color:var(--accent)}
 
 /* the states and union territories: a set list in columns */
-.home .st-links{list-style:none;margin:0;padding:0;columns:4 180px;column-gap:40px;font-family:var(--sans);font-size:.9375rem}
-.home .st-links li{break-inside:avoid;padding:6px 0;border-bottom:1px solid var(--rule)}
-.home .st-links a{color:var(--ink);text-decoration:none}
-.home .st-links a:hover{color:var(--accent)}
+/* states as equal tiles (DESIGN v5): each unit's income per person and a thin bar against the highest */
+.home .st-cap{font:500 .8125rem/1.4 var(--sans);color:var(--muted);margin:0 0 14px}
+.home .st-tiles{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:0 28px}
+.home .st-tiles a{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto 1fr;padding:12px 0 14px;border-top:1px solid var(--rule);color:inherit;text-decoration:none;height:100%;box-sizing:border-box}
+.home .st-n{font:400 1.0625rem/1.25 var(--serif);color:var(--ink);font-variation-settings:"opsz" 20}
+.home .st-v{font:500 .875rem/1 var(--sans);color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap;margin-top:6px}
+.home .st-na{font-weight:400;font-size:.8125rem;color:var(--muted)}
+.home .st-bar{grid-column:1 / -1;align-self:end;display:block;height:3px;margin-top:10px;background:var(--rule)}
+.home .st-bar i{display:block;height:100%;background:var(--accent)}
+@media (hover:hover){.home .st-tiles a:hover .st-n{text-decoration:underline;text-decoration-color:var(--rule-2);text-underline-offset:3px}}
 
 /* the ideas: Learn notes, the family in the margin */
 .home .ln-grp{padding:0 0 24px}
@@ -125,7 +149,9 @@
 .home .ln-grp li{break-inside:avoid}
 .home .ln-grp a{display:block;padding:7px 0;border-bottom:1px solid var(--rule);font-family:var(--serif);font-size:1.0625rem;line-height:1.35;color:var(--ink);text-decoration:none}
 .home .ln-grp a:hover{color:var(--accent)}
-.home .provenance{margin-top:128px}
+.home .provenance{margin-top:128px;padding-bottom:8px}
+/* one footer: the site's beta note follows the colophon directly, not after another 96px */
+main:has(.home) + .sitefoot{margin-top:0}
 .home .provenance a{color:var(--ink)}
 
 @media (max-width:960px){
@@ -135,30 +161,46 @@
   .home .hm-cover .hm-kicker{grid-column:1 / -1}
   .home .fig-xl{font-size:5.5rem;margin:12px 0 0}
   .home .hm-ph .hm-m{padding:0 0 8px}
-  .home .hm-find .hm-m{padding:0 0 10px}
+  .home .hm-promise .hm-m{display:none}
   .home .hm-rank{display:none}
   .home .hm-more{margin:0 0 16px}
 }
 @media (max-width:760px){
   .home .hm-ledger .ya,.home .hm-ledger th.ya,.home .hm-ledger .pd,.home .hm-ledger th.pd{display:none}
+  .home .hm-ledger th:not(:first-child),.home .hm-ledger td:not(:first-child){padding-left:14px}
   .home .hm-ledger td.sp{width:96px}
   .home .hm-ledger td.sp svg{width:96px;height:auto}
   .home .hm-ledger .lv{font-size:1.5rem}
 }
 @media (max-width:640px){
   .home .hm-sec{padding-top:72px}
-  .home .hm-cover{padding-top:32px}
+  .home .hm-promise{padding-top:28px}
+  .home .hm-pitch{font-size:1.375rem;line-height:1.32}
+  .home .hm-proof{gap:4px 18px;font-size:.8125rem;margin-top:14px}
+  .home .hm-promise .find{margin-top:22px}
+  .home .hm-cover{padding-top:64px}
   .home .cover-h{font-size:1.875rem;line-height:1.14}
   .home .hm-lede{font-size:1.125rem}
   .home .hm-ph h2{font-size:1.75rem}
   .home .hm-ph p{font-size:.9375rem}
   .home .hm-fig .plotfoot{grid-template-columns:minmax(0,1fr)}
   .home .hm-fig .plotfoot .dl{justify-self:start}
+  .home .st-tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}
+  .home .st-tiles a{padding:10px 0 12px}
+  .home .st-n{font-size:1rem}
 }
 @media (max-width:480px){
   .home .hm-ledger td.sp,.home .hm-ledger th.sp{display:none}
   .home .fig-xl{font-size:4.5rem}
 }
+
+/* ---------- about: contact rows ---------- */
+.ab-contact{list-style:none;margin:20px 0 24px;padding:0;max-width:30rem;font-family:var(--sans)}
+.ab-contact li{display:grid;grid-template-columns:6.5rem minmax(0,1fr);align-items:baseline;padding:10px 0;border-bottom:1px solid var(--rule)}
+.ab-contact li:first-child{border-top:1px solid var(--rule)}
+.ab-contact span{font-size:.8125rem;color:var(--muted)}
+.ab-contact a{font-size:1rem;color:var(--ink);text-decoration:underline;text-decoration-color:var(--rule-2);text-underline-offset:3px}
+.ab-contact a:hover{text-decoration-color:var(--ink)}
 
 /* ---------- guides index, on the ledger margin ---------- */
 .guides .feat{display:grid;grid-template-columns:var(--rail) minmax(0,1fr);column-gap:var(--rail-gap);align-items:start;margin-top:80px;padding:36px 0 40px;border-top:1px solid var(--ink);border-bottom:1px solid var(--rule)}
@@ -214,7 +256,6 @@
 }
 @media (max-width:860px){
   .spage .titleblock h1{font-size:2.4rem}
-  .home .st-links{columns:2;column-gap:20px}
   #results li{grid-template-columns:minmax(0,1fr) 84px}
   #results .rs{display:none}
   .guides .feat{grid-template-columns:1fr;gap:20px;margin-top:44px}
@@ -226,4 +267,4 @@
   .guides .ents{grid-template-columns:1fr}
   .guides .ent{grid-template-columns:minmax(0,1fr) 120px}
 }
-@media (max-width:960px){.home .hm-find .hm-m{display:none}}
+

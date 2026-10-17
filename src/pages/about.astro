@@ -1,54 +1,63 @@
 ---
 import Base from "../layouts/Base.astro";
+import { SITE } from "../site.js";
 import "../styles/pages.css";
 ---
 <Base
-  title="About · Measure of India"
-  description="What Measure of India is, and who it is for."
+  title={`About · ${SITE.name}`}
+  description={`Why ${SITE.name} exists: India publishes a staggering amount of data and hides most of it on websites that feel like punishment. This site breaks it out and puts it in one place.`}
   nav="about"
   dateStamp="October 2026"
   crumbLeft="<b>About</b>"
-  crumbRight="What this is, and who it is for"
+  crumbRight="Why this exists, and how to reach me"
   canonical="/about/"
 >
 <div class="page spage">
 
   <div class="titleblock">
     <div class="kicker">About</div>
-    <h1>Built for the curious, <i>not the credentialed.</i></h1>
-    <p class="lede">India produces some of the world's richest economic data and publishes it in some of the world's least readable forms. Measure of India exists to close that gap.</p>
+    <h1>Why this exists</h1>
+    <p class="lede">India publishes a staggering amount of data and hides most of it on websites that feel like punishment. This site breaks it out and puts it in one place.</p>
   </div>
 
   <section>
-    <div class="sec-head"><span class="no">01</span><h2>The problem</h2><span class="line"></span></div>
-    <p>A citizen who wants to know "how fast are prices rising, really?" currently faces a trek through badly designed government portals, scanned PDFs, and press releases written for wire services. Even seasoned observers struggle to assemble a clean series, let alone interpret it. The data is public; the understanding is gated.</p>
-    <p>Dashboards have not fixed this. A wall of charts without explanation is just a faster way to be confused. What is missing is the middle layer: patient, well-designed interpretation that treats the reader as intelligent but not expert.</p>
+    <div class="sec-head"><span class="no">01</span><h2>A frustration</h2><span class="line"></span></div>
+    <p>I write <a href={SITE.parent.url}>{SITE.parent.name}</a> to explain India through government data, and getting at that data is a pain in the ass. Most of it sits on websites last updated around the time Moses parted the Red Sea, built, it seems, to teach Indians patience rather than answer their questions.</p>
+    <p>Using them feels like penance for sins committed in a previous life. I can find no other explanation for how bad they are.</p>
   </section>
 
   <section>
-    <div class="sec-head"><span class="no">02</span><h2>The artifact</h2><span class="line"></span></div>
-    <p>Measure of India is not a dashboard and not a news site. Its unit of publication is the <b>guide</b>: a whole page devoted to one statistical subject: the consumer price index, the national accounts, jobs, household spending, bank credit, college enrolment, the family health survey, the monsoon and the heat. Each guide combines carefully designed charts of every related series, evergreen explanation of what the measure means, dated commentary on the latest print, and an explicit guide to the ways the number is most often misread.</p>
-    <p>Guides are revised with each new data release but are built to last: closer to a continuously updated reference work than to journalism. Read how we handle sources, revisions and uncertainty in <a href="/method/">our method</a>.</p>
+    <div class="sec-head"><span class="no">02</span><h2>More than you think</h2><span class="line"></span></div>
+    <p>For all the talk of India being data-starved, and of its official numbers being untrustworthy, the government publishes an enormous amount: on the economy, money, farms, health, society and culture. Most Indians have no idea it exists.</p>
+    <p>Academics have built up an immunity to the portals; everyone else gives up. As for journalists, there are about three in this country. The rest write in a way that makes ChatGPT and Claude look like Hemingway and Shakespeare.</p>
   </section>
 
   <section>
-    <div class="sec-head"><span class="no">03</span><h2>The reader</h2><span class="line"></span></div>
-    <p>We write for curious non-specialists: students, journalists on a deadline, citizens trying to verify a claim, founders watching input costs, civil servants outside the statistical service. We assume intelligence and zero training. Every unusual term is explained where it is used; every chart teaches you how to read it.</p>
-    <p>If you are an economist, you are welcome too: the register tables, downloadable data and vintage discipline are built for you. But the prose will never pretend you are the only audience.</p>
+    <div class="sec-head"><span class="no">03</span><h2>A sister project</h2><span class="line"></span></div>
+    <p><a href={SITE.parent.url}>{SITE.parent.name}</a> explains life in India through this data, tied to how people actually live rather than to abstract mental, linguistic and semantic ejaculations about a data set. {SITE.name} is its sister project: it breaks the data out of those portals and puts it in one place. The explaining happens on {SITE.parent.name}.</p>
   </section>
 
   <section>
-    <div class="sec-head"><span class="no">04</span><h2>Colophon</h2><span class="line"></span></div>
-    <p>Measure of India is a static website: no trackers, no cookies, no accounts, no app. Pages are plain HTML built with Astro; charts are drawn when the site is built and download as SVG, PNG or CSV. Data is fetched from the statistical agencies by a scheduled pipeline, checked, committed, and baked into the page when the site is built. The text is set in Source Serif 4 and Golos Text, self-hosted.</p>
-      <p>Corrections, questions and suggestions: <a href="mailto:bhuvan@bebhuvan.com">bhuvan@bebhuvan.com</a>. If a number here differs from its source, tell us which chart and we will check it against the release.</p>
+    <div class="sec-head"><span class="no">04</span><h2>Where this is going</h2><span class="line"></span></div>
+    <p>It is slow work, because these data sets come with no shortage of problems: base years that change, series that stop, tables that disagree with the printed report. How I handle them is in <a href="/method/">the method</a>.</p>
+    <p>The goal is for this to become the place to discover every data set the government publishes, wherever it is published.</p>
   </section>
 
-  <footer class="provenance">
-    <div class="fine">
-      <span>Measure of India, About</span>
-      <span>Revised October 2026</span>
-    </div>
-  </footer>
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>Get in touch</h2><span class="line"></span></div>
+    <p>Ideas, feedback, suggestions, or want to work on this together? Write to me.</p>
+    <ul class="ab-contact">
+      <li><span>Email</span><a href="mailto:bhuvan@bebhuvan.com">bhuvan@bebhuvan.com</a></li>
+      <li><span>X</span><a href="https://twitter.com/bebhuvan">@bebhuvan</a></li>
+      <li><span>LinkedIn</span><a href="https://www.linkedin.com/in/bebhuvan/">in/bebhuvan</a></li>
+    </ul>
+    <p>If a number here differs from its source, tell me which chart and I will check it against the release.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>How it's built</h2><span class="line"></span></div>
+    <p>{SITE.name} is a static website: no trackers, no cookies, no accounts. Data is fetched from the statistical agencies by a scheduled pipeline, checked, and built into the pages; charts are drawn when the site is built and download as an image or as data, with the source attached. The text is set in Newsreader and Libre Franklin.</p>
+  </section>
 
 </div>
 </Base>

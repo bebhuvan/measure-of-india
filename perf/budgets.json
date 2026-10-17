@@ -204,7 +204,7 @@
    "fonts": 249856
   },
   "/guides/ilo/": {
-   "html": 52224,
+   "html": 52736,
    "js": 9216,
    "css": 12288,
    "json": 1024,
@@ -933,6 +933,11 @@
    "date": "2026-10-16",
    "what": "browser: phone ceilings re-set for the chart kit from seven full runs on a shared, busy machine (run-to-run swing up to 1.8x per page): every guide shares one ceiling, every state profile another, each the worst median any page of its kind showed, in the recording machine's terms",
    "why": "the kit took CPI's longest phone task from 8,196 ms to about 300 ms and energy's blocking time from 15.6 s to under 0.2 s; recording the lowest run (--record keeps the minimum) left 100-300 ms pages failing on run-to-run noise"
+  },
+  {
+   "date": "2026-10-17",
+   "what": "/guides/ilo/ html 51 -> 51.5 KB",
+   "why": "phone line charts run the full width (gutter and end-label column reclaimed, a key above the plot where end labels cannot sit inside) and a lead line over grey context lines wears a paper casing: about 0.4 KB gzip on ILO's seven annual comparison plates. The same change left external and public-finance flat or smaller once dense series thin by 2 px columns on a phone"
   }
  ]
 }

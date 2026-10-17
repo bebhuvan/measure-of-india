@@ -49,7 +49,7 @@
 .skip:focus-visible{left:12px;top:12px;outline-offset:0}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none !important;animation:none !important}}
-html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-tap-highlight-color:rgba(21,23,26,.06)}
 body{
   background:var(--bg);color:var(--ink);
   font-family:var(--serif);font-weight:400;font-optical-sizing:auto;
@@ -599,6 +599,11 @@ figure[id^="cb-"] .plate-val .v{font-size:2.75rem;font-weight:300}
 .dl button,.dl a,.acts button,.acts a,.dl .acts button,.dl .acts a{font-size:.78125rem;font-weight:500}
 .dl button:hover,.dl a:hover,.acts button:hover,.acts a:hover{color:var(--accent);border-bottom-color:var(--accent)}
 section .break + .break > figure[id^="cb-"]{margin-top:88px !important;padding-top:40px}
+/* in a run of plates the hairline and the figure's own margin set the space; the wrapper's inline
+   margin (88 to 104px, authored before the run rule) stacked on top of it, ~216px between plates */
+section .break + .break{margin-top:0 !important}
+@media (max-width:860px){section .break + .break > figure[id^="cb-"]{margin-top:64px !important;padding-top:32px}}
+@media (max-width:640px){section .break + .break > figure[id^="cb-"]{margin-top:40px !important;padding-top:32px}}
 
 /* notes */
 .margin-note{border-left:0;padding:12px 0 0;border-top:1px solid var(--rule);font-size:.875rem;line-height:1.5}
@@ -652,6 +657,10 @@ section .break + .break > figure[id^="cb-"]{margin-top:88px !important;padding-t
   .page > section > .sec-head h2{padding-top:8px;font-size:1.75rem}
   .plate-head .t h3{font-size:1.3125rem}
   .provenance{margin-top:96px}
+}
+/* a phone fits all six sections on one line rather than cutting the last ("Ab…") at the edge */
+@media (max-width:440px){
+  .sh-nav{gap:10px;justify-content:space-between;font-size:.8125rem}
 }
 /* the smallest phones: the full name and its Beta mark need one size less to fit */
 @media (max-width:340px){

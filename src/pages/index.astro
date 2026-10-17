@@ -11,6 +11,7 @@ import { STATES } from "../dossiers/states-key.js";   // profiles (lb/profiles)
 import { MONTHS_FULL as MF } from "../../pipeline/lib/periods.mjs";
 import { EXPLAINERS } from "../learn/registry.js";
 import { qualityRegistryVersion } from '../explore/source-quality.js';
+import { BY_ID as PROFILE, commonDate, measureAll, periodOf, FMT } from "../dossiers/profiles.js";
 const MONTHS_FULL = MF.map((m) => m[0].toUpperCase() + m.slice(1));
 
 // The front page is a briefing: what the latest data says, in sentences computed from the
@@ -25,6 +26,11 @@ const nStates = UNITS.filter((u) => u.kind === "state").length, nUTs = UNITS.len
 const LEARN = EXPLAINERS.filter((e) => e.live);
 const WORDS = ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve"];
 const LEARN_FAMILIES = [...new Set(LEARN.map((e) => e.family))];
+// the state tiles: each unit's income per person in the year most of them have published (the
+// profiles' comparison year), a thin bar against the highest; a unit without that year says so
+const PC = PROFILE.pc, PC_ISO = commonDate(PC), PC_PERIOD = periodOf(PC, PC_ISO);
+const PC_BY = new Map(measureAll(PC, PC_ISO).map((x) => [x.slug, x.v]));
+const PC_MAX = Math.max(...PC_BY.values());
 ---
 <Base
   title={`${SITE.name}: ${SITE.tagline}`}
@@ -34,6 +40,28 @@ const LEARN_FAMILIES = [...new Set(LEARN.map((e) => e.family))];
   canonical="/"
 >
 <div class="page home spage">
+
+  <section class="hm-sec hm-promise hm-row" aria-label={`About ${SITE.name}`}>
+    <div class="hm-m"><div class="hm-lab"><a href="/about/">About the site</a></div></div>
+    <div>
+      <p class="hm-pitch">India publishes a staggering amount of data and hides most of it on websites that feel like punishment. This site breaks it out and puts it in one place, every figure from the agency that published it, every chart explained.</p>
+      <ul class="hm-proof">
+        <li><b>{DOSSIERS.length}</b> guides</li>
+        <li><b>{UNITS.length}</b> states and union territories</li>
+        <li><b>{N}</b> series</li>
+        <li><b>{LEARN.length}</b> notes on the ideas</li>
+        <li>No trackers, no cookies</li>
+      </ul>
+      <div class="find" id="find" role="search" data-quality-version={qualityRegistryVersion}>
+        <label id="find-l" for="q">Search every guide, series and chart</label>
+        <div class="qwrap">
+          <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Inflation in Kerala, the rupee, wheat"
+            role="combobox" aria-expanded="false" aria-controls="results" aria-autocomplete="list" aria-labelledby="find-l">
+          <ul id="results" role="listbox" hidden></ul>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <section class="hm-sec hm-cover hm-row" aria-labelledby="cv-h">
     <div class="hm-m">
@@ -52,27 +80,15 @@ const LEARN_FAMILIES = [...new Set(LEARN.map((e) => e.family))];
     </div>
   </section>
 
-  <section class="hm-sec hm-find hm-row" aria-label="Search">
-    <div class="hm-m"><div class="hm-lab">Search</div></div>
-    <div class="find" id="find" role="search" data-quality-version={qualityRegistryVersion}>
-      <label id="find-l" for="q">Search {N} series, every guide and every chart</label>
-      <div class="qwrap">
-        <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Inflation in Kerala, the rupee, wheat"
-          role="combobox" aria-expanded="false" aria-controls="results" aria-autocomplete="list" aria-labelledby="find-l">
-        <ul id="results" role="listbox" hidden></ul>
-      </div>
-    </div>
-  </section>
-
   <section class="hm-sec" aria-labelledby="lg-h">
     <div class="hm-ph hm-row"><div class="hm-m"><div class="hm-lab">The ledger</div></div><div><h2 id="lg-h">{WORDS[LEDGER.length]} measures that move every month or quarter, as they last printed</h2><p>Newest first. Change is on the print before; the trend is the last three years.</p></div></div>
     <div class="hm-ledger">
       <table>
-        <thead><tr><th>Measure</th><th>Latest</th><th>Change</th><th class="ya">A year ago</th><th class="sp">Last three years</th><th class="pd">Period</th></tr></thead>
+        <thead><tr><th>Measure</th><th class="pd">Period</th><th>Latest</th><th>Change</th><th class="ya">A year ago</th><th class="sp">Last three years</th></tr></thead>
         <tbody>{LEDGER.map((r) => (
           <tr><td><a href={`/guides/${r.slug}/`}><span class="nm">{r.name}</span><span class="wh">{r.what}</span></a></td>
-            <td><span class="lv">{r.value}<small>{r.suffix}</small></span></td>
-            <td class="ch">{r.change}</td><td class="ya">{r.yearAgo}</td><td class="sp" set:html={r.spark} /><td class="pd">{r.period}</td></tr>
+            <td class="pd">{r.period}</td><td><span class="lv">{r.value}<small>{r.suffix}</small></span></td>
+            <td class="ch">{r.change}</td><td class="ya">{r.yearAgo}</td><td class="sp" set:html={r.spark} /></tr>
         ))}</tbody>
       </table>
     </div>
@@ -116,7 +132,14 @@ const LEARN_FAMILIES = [...new Set(LEARN.map((e) => e.family))];
 
   <section class="hm-sec st-entry" aria-labelledby="st-h">
     <div class="hm-ph hm-row"><div class="hm-m"><div class="hm-lab"><a href="/states/">All {UNITS.length}, compared</a></div></div><div><h2 id="st-h">States and union territories</h2><p>A page for each of the {nStates} states and {nUTs} union territories: how it earns, spends, works, borrows and falls ill, against India and its neighbours.</p></div></div>
-    <ul class="st-links">{UNITS.map((u) => <li><a href={`/states/${u.slug}/`}>{u.name}</a></li>)}</ul>
+    <p class="st-cap">Income per person, {PC_PERIOD}, at current prices</p>
+    <ul class="st-tiles">{UNITS.map((u) => { const v = PC_BY.get(u.slug); return (
+      <li><a href={`/states/${u.slug}/`}>
+        <span class="st-n">{u.short ?? u.name}</span>
+        {v != null ? <span class="st-v">{FMT[PC.fmt](v)}</span> : <span class="st-v st-na">Not yet published</span>}
+        <span class="st-bar" aria-hidden="true"><i style={v != null ? `width:${(v / PC_MAX * 100).toFixed(1)}%` : "width:0"}></i></span>
+      </a></li>
+    ); })}</ul>
   </section>
 
   <section class="hm-sec learn" aria-labelledby="ln-h">
@@ -135,7 +158,6 @@ const LEARN_FAMILIES = [...new Set(LEARN.map((e) => e.family))];
       <div><h6>Sources</h6><p>MoSPI and the National Statistics Office, the Reserve Bank of India, the Office of the Economic Adviser, the Registrar General, the ministries of agriculture, education, health, commerce and renewable energy, and, for the comparisons with the world, the World Bank, the UN, the ILO and the BIS. Each guide cites its release.</p></div>
       <div><h6>Before you cite</h6><p>Read <a href="/method/">how we work</a>. Every chart downloads as an image or as data, with its source attached.</p></div>
     </div>
-    <div class="fine"><span>{SITE.name}</span><span>Static, no trackers, no cookies</span><span>Set in Newsreader and Libre Franklin</span></div>
   </footer>
 </div>
 <script>

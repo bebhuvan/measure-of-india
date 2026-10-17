@@ -266,7 +266,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
         <div class="plate-head">
           <div class="t">
             <h3><span id="h-sell" set:html={W["h-sell"]}></span></h3>
-            <div class="sub">Exports by the Ministry's 21 principal-commodity groups, US$ billion, {T.groups.firstFy} (circle) and {T.groups.lastFy} (bar).</div>
+            <div class="sub">Exports by the Ministry's 21 principal-commodity groups, US$ billion, {T.groups.lastFy} against {T.groups.firstFy}.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-sell" set:html={W["pv-sell"]}></div><div class="c">electronics exports, {T.groups.lastFy}</div></div>
         </div>
@@ -280,7 +280,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>The groups are the Ministry's own: they follow how industries are organised (engineering, chemicals, textiles) rather than the customs chapters. Each bar is the latest full year; the circle is the same group fifteen years earlier, in dollars of each year, so some of the growth is inflation.</p>
+            <p>The groups are the Ministry's own: they follow how industries are organised (engineering, chemicals, textiles) rather than the customs chapters. Each group has two bars: the latest full year, and under it in grey the same group fifteen years earlier, in dollars of each year, so some of the growth is inflation.</p>
           </div>
           <div class="now">
             <span class="mk">As of {T.groups.lastFy}</span>
@@ -295,7 +295,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
         <div class="plate-head">
           <div class="t">
             <h3><span id="h-buy" set:html={W["h-buy"]}></span></h3>
-            <div class="sub">Imports by the same 21 groups, US$ billion, {T.groups.firstFy} (circle) and {T.groups.lastFy} (bar).</div>
+            <div class="sub">Imports by the same 21 groups, US$ billion, {T.groups.lastFy} against {T.groups.firstFy}.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-buy" set:html={W["pv-buy"]}></div><div class="c">petroleum imports, {T.groups.lastFy}</div></div>
         </div>
@@ -324,7 +324,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
         <div class="plate-head">
           <div class="t">
             <h3><span id="h-chapx" set:html={W["h-chapx"]}></span></h3>
-            <div class="sub">The twelve largest HS chapters (2 digits) of India's exports, US$ billion, {T.chapters.exports.fy} (bar), with {T.chapters.exports.prevFy} as a circle.</div>
+            <div class="sub">The twelve largest HS chapters (2 digits) of India's exports, US$ billion, {T.chapters.exports.fy} against {T.chapters.exports.prevFy}.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-chapx" set:html={W["pv-chapx"]}></div><div class="c">of exports in these twelve chapters</div></div>
         </div>
@@ -353,7 +353,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
         <div class="plate-head">
           <div class="t">
             <h3><span id="h-chapm" set:html={W["h-chapm"]}></span></h3>
-            <div class="sub">The twelve largest HS chapters of India's imports, US$ billion, {T.chapters.imports.fy} (bar), with {T.chapters.imports.prevFy} as a circle.</div>
+            <div class="sub">The twelve largest HS chapters of India's imports, US$ billion, {T.chapters.imports.fy} against {T.chapters.imports.prevFy}.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-chapm" set:html={W["pv-chapm"]}></div><div class="c">of imports in these twelve chapters</div></div>
         </div>

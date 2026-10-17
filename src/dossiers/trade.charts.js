@@ -367,17 +367,17 @@ export function oilm() {
   });
 }
 
-// ranked bars, the latest year as the bar and the earlier one as a hollow circle on it
-const bnRows = (rows, prevFy) => (width) => K.bars({ width, rows, unit: { prefix: "$" }, dp: 1, markName: prevFy, nameMax: 330 });
+// ranked bars, the latest year as the bar and the earlier one as a thin grey bar under it
+const bnRows = (rows, lastFy, prevFy) => (width) => K.bars({ width, rows, unit: { prefix: "$" }, dp: 1, pair: { a: lastFy, b: prevFy }, nameMax: 330 });
 
 /** § 06: the 21 principal-commodity groups, exports or imports. */
 export function groups(flow) {
   const G = groupRows(flow);
   return figure({
     bare: true, file: `india-atlas_trade-${flow}-by-group`,
-    label: `India's ${flow} by the Ministry's principal-commodity groups, US$ billion, ${T.groups.lastFy} as bars with ${T.groups.firstFy} as circles`,
+    label: `India's ${flow} by the Ministry's principal-commodity groups, US$ billion, ${T.groups.lastFy} against ${T.groups.firstFy}, two bars per group`,
     data: { cols: ["group", `${T.groups.firstFy}_usd_mn`, `${T.groups.lastFy}_usd_mn`], rows: G.map((g) => [g.name, g.first, g.last]) },
-    draw: bnRows(G.map((g) => ({ name: g.name, value: toBn(g.last), mark: toBn(g.first), highlight: g.key === HL[flow] })), T.groups.firstFy),
+    draw: bnRows(G.map((g) => ({ name: g.name, value: toBn(g.last), mark: toBn(g.first), highlight: g.key === HL[flow] })), T.groups.lastFy, T.groups.firstFy),
   });
 }
 
@@ -386,9 +386,9 @@ export function chapters(flow) {
   const C = T.chapters[flow];
   return figure({
     bare: true, file: `india-atlas_trade-${flow}-by-chapter`,
-    label: `The twelve largest HS chapters of India's ${flow}, US$ billion, ${C.fy} as bars with ${C.prevFy} as circles`,
+    label: `The twelve largest HS chapters of India's ${flow}, US$ billion, ${C.fy} against ${C.prevFy}, two bars per chapter`,
     data: { cols: ["hs_chapter", "description", `${C.prevFy}_usd_mn`, `${C.fy}_usd_mn`], rows: C.rows.map((r) => [r.code, r.label, r.prev, r.last]) },
-    draw: bnRows(C.rows.slice(0, 12).map((r, i) => ({ name: `${shortChap(r.label, r.code)} (${r.code})`, value: toBn(r.last), mark: toBn(r.prev), highlight: i === 0 })), C.prevFy),
+    draw: bnRows(C.rows.slice(0, 12).map((r, i) => ({ name: `${shortChap(r.label, r.code)} (${r.code})`, value: toBn(r.last), mark: toBn(r.prev), highlight: i === 0 })), C.fy, C.prevFy),
   });
 }
 
@@ -433,16 +433,16 @@ export function cxc() {
   });
 }
 
-/** § 07: exports and imports by region; the gap between the dots is the balance. */
+/** § 07: exports and imports by region, two bars each; the difference is the balance. */
 export function regions() {
   const R = T.regions.filter((r) => r.exp != null && r.imp != null);
   return figure({
     bare: true, file: "india-atlas_trade-by-region",
     label: `India's exports and imports by region, US$ billion, ${T.partners.fy}`,
     data: { cols: ["region", "exports_usd_mn", "imports_usd_mn"], rows: T.regions.map((r) => [r.name, r.exp, r.imp]) },
-    draw: (width) => K.dumbbell({
-      width, rows: R.map((r) => ({ name: r.name.replace(/ Region$/, ""), a: toBn(r.imp), b: toBn(r.exp), highlight: /^Asia$/i.test(r.name) })),
-      keys: { a: "Imports", b: "Exports" }, sortBy: "a", labelAll: true, fmt: (v) => K.num(v, { dp: 1, prefix: "$" }),
+    draw: (width) => K.bars({
+      width, rows: R.map((r) => ({ name: r.name.replace(/ Region$/, ""), value: toBn(r.exp), mark: toBn(r.imp), highlight: /^Asia$/i.test(r.name) })),
+      pair: { a: "Exports", b: "Imports", aColor: K.C.lead, bColor: K.C.comp }, sortBy: "mark", unit: { prefix: "$" }, dp: 1,
     }),
   });
 }

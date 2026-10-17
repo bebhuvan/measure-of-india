@@ -15,10 +15,20 @@ raises its proportion and type. Where v5 and anything below disagree, v5 wins.
 - **Masthead.** Name and line, sections, search; then the dateline, an ink rule over where you are
   and how fresh the page is (`.sh-date`, which qc reads).
 - **Charts.** Every chart is drawn at build time by the chart kit (`src/kit/`, plan
-  `docs/PLAN-chartkit-port.md`); §0.4 and §5's Plot-era recipes are history.
-- **Front page.** The newest print as a finding with its figure in the margin and its chart; search;
-  the ledger of the measures that move every month or quarter; states as equal tiles; the guides
-  on dotted leaders (`src/dossiers/home.charts.js`). Reference mocks: `design-mocks/pages/`.
+  `docs/PLAN-chartkit-port.md`); §0.4 and §5's Plot-era recipes are history. On a phone a line chart
+  uses the full width: y labels over the plot's left edge where no line passes, end labels inside the
+  plot or, failing that, a one-line key of names and last values above it; the axis names its first
+  and last periods (17 October 2026). Ranked bars fit their scale so each bar and its label end inside
+  the drawing; two values per row (then and now, exports and imports) are two bars, the second thinner,
+  with a key, never a circle on the bar.
+- **Front page.** The promise first (17 October 2026): one serif sentence on what the site is, its
+  counts, and search beneath them. Then the newest print as a finding with its figure in the margin
+  and its chart; the ledger of the measures that move every month or quarter (the measure's name
+  takes the slack, the figures sit together); states as equal tiles; the guides on dotted leaders,
+  their descriptions whole, never cut with an ellipsis; the states and union territories as equal
+  tiles, each with its income per person in the profiles' comparison year and a thin bar against
+  the highest (`src/dossiers/home.charts.js`). Row hovers are a wash and only on a pointer that
+  hovers. Reference mocks: `design-mocks/pages/`.
 
 
 v3 (10 October 2026) is the whole-site design pass on the v2 lineage: one left axis, one type

@@ -18,7 +18,7 @@ import METRICS from './metrics.js';
 
 export const C = {
   ink: '#15171A', ink2: '#3D4148', muted: '#6B7078', faint: '#9CA0A7',
-  grid: '#E6E7E9', base: '#1E2126', ctx: '#A7ABB2', ctx2: '#CBCED3', wash: '#F4F5F6', paper: '#FFFFFF',
+  grid: '#EBECEE', base: '#1E2126', ctx: '#B0B4BA', ctx2: '#CBCED3', wash: '#F4F5F6', paper: '#FFFFFF',
   lead: '#2E4BC4', leadTint: '#AAB4D8', leadSoft: '#8C9BD3', leadWash: '#F0F2FA',
   comp: '#D04A2E', compTint: '#E9B6AA',
   teal: '#00897A', turmeric: '#B57D00', plum: '#93479A',
@@ -144,12 +144,12 @@ function yAxis({ ticks, y, x0, x1, unit = {}, dp, fmt = null }) {
 }
 function xTimeAxis({ ticks, x, y, tick = true, lo = 0, hi = Infinity }) {
   let s = '', last = -Infinity; // a label that would touch the one before it is skipped (wide FY labels on a phone)
-  for (const k of ticks) {
-    const half = tw(k.label, 12) / 2;
-    if (x(k.t) - half < lo - 2 || x(k.t) + half > hi + 2 || x(k.t) - half < last + 8) continue;
-    last = x(k.t) + half;
-    if (tick) s += Lv(x(k.t), y, y + 5, C.base);
-    s += T(x(k.t), y + 19, k.label, { size: 12, fill: C.muted, anchor: 'middle', cls: 'tab' });
+  for (const k of ticks) { // k.anchor 'start' | 'end': a label set from its tick inward (the ends of a phone axis)
+    const w = tw(k.label, 12), a0 = k.anchor === 'start' ? x(k.t) : k.anchor === 'end' ? x(k.t) - w : x(k.t) - w / 2;
+    if (a0 < lo - 2 || a0 + w > hi + 2 || a0 < last + 8) continue;
+    last = a0 + w;
+    if (tick) s += Lv(x(k.t), y, y + 4, C.faint);
+    s += T(x(k.t), y + 18, k.label, { size: 12, fill: C.muted, anchor: k.anchor ?? 'middle', cls: 'tab' });
   }
   return s;
 }
@@ -222,7 +222,9 @@ const hoverAttr = o => ` data-ak='${JSON.stringify(o).replace(/&/g, '&amp;').rep
 // More points than pixels (a weekly series over decades, drawn 360 px wide) only adds bytes:
 // keep, for each pixel column, the first, lowest, highest and last point in time order, so the
 // drawn shape is exactly the same. Gaps (nulls) and staged points pass through untouched.
-function thinPts(pts, x) {
+// A phone drawing thins by 2 px columns: its lines are 2.25 px thick, so the shape is unchanged and
+// a dense series costs half the bytes (the plot running to the edge had doubled them; 2026-10-17).
+function thinPts(pts, x, colW = 1) {
   if (pts.length < 400) return pts;
   const out = []; let col = null, buf = [];
   const flush = () => { if (!buf.length) return; if (buf.length <= 4) { out.push(...buf); buf = []; return; }
@@ -230,7 +232,7 @@ function thinPts(pts, x) {
     const keep = new Set([buf[0], lo, hi, buf.at(-1)]); out.push(...buf.filter(q => keep.has(q))); buf = []; };
   for (const p of pts) {
     if (p.v == null || p.stage) { flush(); col = null; out.push(p); continue; }
-    const c = Math.floor(x(p.t)); if (c !== col) { flush(); col = c; }
+    const c = Math.floor(x(p.t) / colW); if (c !== col) { flush(); col = c; }
     buf.push(p);
   }
   flush();
@@ -244,7 +246,7 @@ function thinPts(pts, x) {
 export const line = (spec) => finish(_line(spec));
 function _line(spec) {
   const W = spec.width, phone = W < 520;
-  const H = spec.height ?? (phone ? 260 : Math.round(Math.min(420, Math.max(300, W * 0.42))));
+  let H = spec.height ?? (phone ? 260 : Math.round(Math.min(420, Math.max(300, W * 0.42))));
   // optional (public-finance port): series.stages:[[date, v, 're'|'be']], a budget's revised and budget
   // estimates after the accounts: drawn as marks (re filled pale, be hollow), never joined to the line
   const S = spec.series.map((s, i) => { const st = new Map((s.stages ?? []).map(([d, v, k]) => [d, { v, k }]));
@@ -276,10 +278,65 @@ function _line(spec) {
   const inside = phone && labelled.length === 1 && spec.inside !== false;
   // optional (debt port): spec.right, a fixed right margin, so stacked panels share one time axis
   const right = spec.right ?? (inside ? 6 : labelled.length ? Math.min(phone ? 92 : 170, maxLab + 14) : 8);
-  const top = 26 + (spec.events?.length || spec.seam ? 18 : 0), bottom = 30;
+  let top = 26 + (spec.events?.length || spec.seam ? 18 : 0); const bottom = 30;
   // optional (learn port): spec.gutter, a fixed left gutter, so two stacked charts share one time axis (with spec.right)
-  const G = spec.gutter != null ? spec.gutter : spec.log ? Math.ceil(Math.max(...N.ticks.map(v => tw(logLab(v), 12)))) + 10 : gutterFor(N.ticks, spec.unit, dp);
-  const x = lin(t0, t1, G, W - right), y = spec.log ? (ly => v => ly(Math.log10(v)))(lin(Math.log10(N.lo), Math.log10(N.hi), H - bottom, top)) : lin(N.lo, N.hi, H - bottom, top);
+  let G = spec.gutter != null ? spec.gutter : spec.log ? Math.ceil(Math.max(...N.ticks.map(v => tw(logLab(v), 12)))) + 10 : gutterFor(N.ticks, spec.unit, dp);
+  const yOf = () => spec.log ? (ly => v => ly(Math.log10(v)))(lin(Math.log10(N.lo), Math.log10(N.hi), H - bottom, top)) : lin(N.lo, N.hi, H - bottom, top);
+  let y = yOf();
+  // phone (2026-10-17): the plot takes the width its labels leave it. The y labels sit on their
+  // gridlines over the plot's left edge wherever no line passes under them, so the gutter is only as
+  // wide as the lines need; and the end labels go inside the plot, left of their dots, when every one
+  // finds clear space, so the right margin is only the dot's. When two or more cannot, they become a
+  // key above the plot, each series' line, name and last value, and the plot still runs to the edge.
+  let insideEnds = null, R = right, yLabBoxes = [], phoneKey = null;
+  if (phone && !spec.shade?.length && !spec.ranges?.length && !spec.notes?.length && !spec.pointLabels?.length) {
+    const top1 = N.ticks.at(-1), labsAt = () => N.ticks.filter(v => v >= N.lo - 1e-9).map(v => {
+      const w = tw(spec.log ? logLab(v) : num(v, { dp, prefix: v === top1 ? spec.unit?.prefix ?? '' : '', suffix: v === top1 ? spec.unit?.suffix ?? '' : '' }), 12);
+      return { x0: -2, x1: w + 4, y0: y(v) - 16, y1: y(v) - 1 };
+    });
+    let yLabs = labsAt();
+    const segsAt = (g, r) => { const xs = lin(t0, t1, g, W - r);
+      return segsOf(S, xs, y).concat([...(spec.events ?? []).map(e => tnum(e.t)), ...(spec.seam ? [tnum(spec.seam.t)] : [])].map(t => [xs(t), 0, xs(t), H - bottom])); };
+    const gutterAt = r => { if (spec.gutter != null) return G;
+      for (let g = 4; g < G; g += 2) if (yLabs.every(b => clearance(b, segsAt(g, r)) >= 2)) return g;
+      return G; };
+    // each end label as a box right-aligned just left of its dot, above or below it, clear of every
+    // stroke, every y label and the labels placed before it
+    const fitEnds = (g, r) => {
+      const xs = lin(t0, t1, g, W - r), segs = segsAt(g, r), taken = yLabs.slice(), out = [];
+      const two = (spec.nameOnEnd !== false && labelled.length > 1) || !!spec.endSub, yMin = spec.events?.length || spec.seam ? top + 4 : 2;
+      for (const sr of labelled.slice().sort((a, b) => y(a.pts.filter(p => p.v != null).at(-1).v) - y(b.pts.filter(p => p.v != null).at(-1).v))) {
+        const last = sr.pts.filter(p => p.v != null).at(-1), e = endText(sr), n = spec.endSub ?? e.n;
+        const ex = xs(last.t), ey = y(last.v), w = Math.max(tw(e.v, 13, 600), two ? tw(n, 12) : 0), h = two ? 29 : 14;
+        let best = null;
+        for (const k of [0, 1, 2, 3, 4]) for (const below of [false, true]) {
+          const y0 = below ? ey + 6 + k * 5 : ey - 6 - k * 5 - h, box = { x0: ex - 7 - w, x1: ex - 5, y0, y1: y0 + h };
+          if (box.x0 < g + 2 || y0 < yMin || box.y1 > H - bottom - 3) continue;
+          const c = Math.min(clearance(box, segs, taken), 12) - k * 0.75;
+          if (c >= 3 && (!best || c > best.c + 0.5)) best = { c, box, ly: y0 + 11 };
+        }
+        if (!best) return null;
+        taken.push(best.box); out.push({ sr, last, e: { ...e, n }, two, xr: best.box.x1, ly: best.ly, box: best.box });
+      }
+      return out;
+    };
+    if (labelled.length && spec.right == null && !inside && labelled.length <= 3) {
+      const g = gutterAt(6), fit = fitEnds(g, 6);
+      if (fit) { insideEnds = fit; R = 6; G = g; }
+      else if (labelled.length >= 2 && spec.phoneKey !== false) { // optional: spec.phoneKey:false keeps the margin labels
+        const items = labelled.map(sr => ({ sr, last: sr.pts.filter(p => p.v != null).at(-1), e: endText(sr) })).sort((a, b) => b.last.v - a.last.v);
+        const rows = [[]]; let cx = 0;
+        for (const it of items) { it.w = 16 + tw(it.sr.short ?? it.e.n, 12) + 5 + tw(it.e.v, 13, 600);
+          if (cx && cx + 20 + it.w > W) { rows.push([]); cx = 0; }
+          it.x = cx ? cx + 20 : 0; cx = it.x + it.w; rows.at(-1).push(it); }
+        const kh = rows.length * 20 + 6; H += kh; top += kh; y = yOf(); yLabs = labsAt();
+        phoneKey = rows.map((r, i) => r.map(it => ({ ...it, ly: 15 + i * 20 }))).flat(); R = 6;
+      }
+    }
+    G = insideEnds ? G : gutterAt(R);
+    yLabBoxes = yLabs;
+  }
+  const x = lin(t0, t1, G, W - R);
   const colorOf = s => s.color ?? (s.role === 'lead' ? C.lead : s.role === 'comp' ? C.comp : s.role === 'ctx2' ? C.ctx2 : C.ctx);
   let s = svgOpen(W, H, spec.title, hoverAttr({
     x: [r1(G), r1(x(t1)), t0, t1], y: [r1(y(N.lo)), r1(y(N.hi)), N.lo, N.hi], f: spec.freq ?? 'month', ...(spec.log ? { l: 1 } : {}),
@@ -318,7 +375,22 @@ function _line(spec) {
   // freq 'fy' (dates at 1 April): ticks sit on the financial years and read 2011-12
   // optional (gdp port): spec.xTicks:[{t, label, short?}], ticks of the caller's own (the stages of an
   // estimate drawn at t = 0, 1, 2...); a phone shows the short label
-  const xt = spec.xTicks ? spec.xTicks.map(k => ({ t: tnum(k.t), label: phone && k.short ? k.short : k.label })) : spec.freq === 'fy' ? timeTicks(t0 - 0.25, t1 - 0.25, W - right - G).map(k => ({ t: k.t + 0.25, label: tlabel(Math.round(k.t) + '-04', 'fy') })).filter(k => k.t >= t0 - 1e-6 && k.t <= t1 + 1e-6) : timeTicks(t0, t1, W - right - G);
+  let xt = spec.xTicks ? spec.xTicks.map(k => ({ t: tnum(k.t), label: phone && k.short ? k.short : k.label })) : spec.freq === 'fy' ? timeTicks(t0 - 0.25, t1 - 0.25, W - R - G).map(k => ({ t: k.t + 0.25, label: tlabel(Math.round(k.t) + '-04', 'fy') })).filter(k => k.t >= t0 - 1e-6 && k.t <= t1 + 1e-6) : timeTicks(t0, t1, W - R - G);
+  // phone: the first and last periods are named at the ends of the axis, so the span reads at a
+  // glance; the round years between stay where they clear both
+  if (phone && !spec.xTicks && spec.tDomain == null) {
+    const dOf = t => all.reduce((a, p) => Math.abs(p.t - t) < Math.abs(a.t - t) ? p : a).d;
+    const yearly = S.some(sr => sr.pts.length > 1 && sr.pts[1].t - sr.pts[0].t > 0.9);
+    const lab = d => tlabel(d, spec.freq ?? (yearly ? 'year' : 'month'));
+    const a = { t: t0, label: lab(dOf(t0)), anchor: 'start' }, b = { t: t1, label: lab(dOf(t1)), anchor: 'end' };
+    const ax1 = x(t0) + tw(a.label, 12) + 10, bx0 = x(t1) - tw(b.label, 12) - 10;
+    // between the ends, the round periods that clear them by a label's width, kept from the middle
+    // outward so the ones shown are evenly spread
+    const mid = xt.filter(k => { const h = tw(k.label, 12) / 2; return x(k.t) - h > ax1 + 6 && x(k.t) + h < bx0 - 6; })
+      .sort((p, q) => Math.abs(x(p.t) - (x(t0) + x(t1)) / 2) - Math.abs(x(q.t) - (x(t0) + x(t1)) / 2)), keep = [];
+    for (const k of mid) { const h = tw(k.label, 12) / 2; if (keep.every(q => Math.abs(x(q.t) - x(k.t)) > h + tw(q.label, 12) / 2 + 24)) keep.push(k); }
+    xt = [a, ...keep.sort((p, q) => p.t - q.t), b];
+  }
   if (spec.xUnit && xt.length) xt[xt.length - 1] = { ...xt.at(-1), label: xt.at(-1).label + spec.xUnit }; // optional (rates port): a unit on the last x label ("30 years")
   s += xTimeAxis({ ticks: xt, x, y: H - bottom, lo: spec.xTicks ? -1e9 : 0, hi: spec.xTicks ? 1e9 : W }); // the caller's own ticks are all kept; finish() pulls an edge label inside
 
@@ -346,9 +418,9 @@ function _line(spec) {
   // series: context first, lead last (on top)
   const order = { ctx: 0, cat: 1, comp: 2, lead: 3 };
   for (const sr of S.slice().sort((a, b) => (order[a.role] ?? 1) - (order[b.role] ?? 1))) {
-    const col = colorOf(sr), w = sr.role === 'lead' || sr.role === 'comp' ? 2 : sr.role === 'cat' ? 2 : 1.5;
+    const col = colorOf(sr), w = sr.role === 'lead' || sr.role === 'comp' ? 2.25 : sr.role === 'cat' ? 2 : 1.25;
     let d = '', pen = false, prev = null;
-    for (const p of sr.step ? sr.pts : thinPts(sr.pts, x)) {
+    for (const p of sr.step ? sr.pts : thinPts(sr.pts, x, phone ? 2 : 1)) {
       if (p.v == null || p.stage) { pen = false; continue; }
       if (sr.step && pen) d += `H${r1(x(p.t))}V${r1(y(p.v))}`;
       else d += `${pen ? 'L' : 'M'}${r1(x(p.t))},${r1(y(p.v))}`;
@@ -378,6 +450,10 @@ function _line(spec) {
       s += `<path d="${path(sr.pts.slice(iEst - 1))}" fill="none" stroke="${pale}" stroke-width="${w}" stroke-dasharray="3 3" stroke-linejoin="round"/>`;
       continue;
     }
+    // the lead line drawn over grey context lines wears a thin paper casing, so where it crosses one
+    // the two stay distinct; never over a coloured series, which it would erase where they meet, and
+    // not on a dense line (300 vertices or more), where it doubles the bytes for nothing seen (2026-10-17)
+    if (sr.line !== false && sr.role === 'lead' && !sr.dash && S.length > 1 && (d.match(/[ML]/g) ?? []).length < 300 && S.every(o => o === sr || o.role === 'ctx' || o.role === 'ctx2' || (!o.role && !o.color))) s += `<path d="${d}" fill="none" stroke="#fff" stroke-width="${w + 1.5}" stroke-linejoin="round" stroke-linecap="round"/>`;
     if (sr.line !== false) s += `<path d="${d}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"${sr.dash ? ` stroke-dasharray="${sr.dash}"` : ''}/>`; // series.line:false, dots only (with series.dots)
   }
   for (const sr of S) for (const p of sr.pts) if (p.stage) { const col = colorOf(sr); // stage marks, over every line
@@ -413,7 +489,7 @@ function _line(spec) {
   }
   // in-plot labels go where no stroke and no other label is; one that finds no clear spot
   // becomes a line of the key under the chart instead of sitting on the data
-  const segs = segsOf(S, x, y), taken = [...noteBoxes], keyNotes = [];
+  const segs = segsOf(S, x, y), taken = [...noteBoxes, ...yLabBoxes, ...(insideEnds ?? []).map(p => p.box)], keyNotes = [];
   if (inside) { const lp = labelled[0].pts.filter(p => p.v != null).at(-1), ex = x(lp.t), ey = y(lp.v), w = tw(fmtEnd(lp.v), 13, 600); taken.push({ x0: ex - w - 8, x1: ex + 6, y0: ey - 40, y1: ey + 40 }); }
   for (const l of inPlot) {
     const w = tw(l.text, 11.5), cands = l.ly.filter(v => v - 11 > top - 2 && v < H - bottom - 2);
@@ -446,6 +522,22 @@ function _line(spec) {
     const cands = [ey - 11, ey + 21, ey - 26, ey + 36, ey - 41, ey + 51].filter(ly => ly - 12 > top - 14 && ly < H - bottom - 2);
     const ly = cands.reduce((a, b) => clear(b) > clear(a) + 2 ? b : a, cands[0] ?? ey - 11);
     s += T(ex - 2, ly, p.e.v, { size: 13, fill: C.ink, weight: 600, anchor: 'end', cls: 'tab halo' });
+  }
+  else if (phoneKey) for (const k of phoneKey) {
+    const col = colorOf(k.sr), ex = x(k.last.t), ey = y(k.last.v);
+    if (!k.last.stage) s += k.sr.est && k.last.t >= tnum(k.sr.est) - 1e-6 ? `<circle cx="${r1(ex)}" cy="${r1(ey)}" r="3.5" fill="#fff" stroke="${col}" stroke-width="1.75"/>` : `<circle cx="${r1(ex)}" cy="${r1(ey)}" r="3.75" fill="${col}" stroke="#fff" stroke-width="2"/>`;
+    s += `<line x1="${r1(k.x)}" x2="${r1(k.x + 12)}" y1="${k.ly - 4}" y2="${k.ly - 4}" stroke="${col}" stroke-width="${k.sr.role === 'lead' || k.sr.role === 'comp' ? 2.5 : 2}" stroke-linecap="round"/>`;
+    const nm = k.sr.short ?? k.e.n;
+    s += T(k.x + 16, k.ly, nm, { size: 12, fill: C.ink2 });
+    s += T(k.x + 16 + tw(nm, 12) + 5, k.ly, k.e.v, { size: 13, fill: C.ink, weight: 600, cls: 'tab' });
+  }
+  else if (insideEnds) for (const p of insideEnds) {
+    const col = colorOf(p.sr), ex = x(p.last.t), ey = y(p.last.v);
+    if (p.last.stage) {}
+    else if (p.sr.est && p.last.t >= tnum(p.sr.est) - 1e-6) s += `<circle cx="${r1(ex)}" cy="${r1(ey)}" r="3.5" fill="#fff" stroke="${col}" stroke-width="1.75"/>`;
+    else s += `<circle cx="${r1(ex)}" cy="${r1(ey)}" r="3.75" fill="${col}" stroke="#fff" stroke-width="2"/>`;
+    s += T(p.xr, p.ly, p.e.v, { size: 13, fill: C.ink, weight: 600, anchor: 'end', cls: 'tab halo' });
+    if (p.two) s += T(p.xr, p.ly + 15, p.e.n, { size: 12, fill: C.ink2, anchor: 'end', cls: 'halo' });
   }
   else for (const p of settle(ends, 16, top - 4, H - bottom + 4)) {
     const lx = x(t1) + 10, col = colorOf(p.sr), ey = y(p.last.v);
@@ -538,10 +630,13 @@ function _columns(spec) {
 // ============================================================================ BARS (ranked)
 // spec: { width, rows:[{name,value,highlight?}], unit, dp, ref:{value,label}, sort:true, maxRows? }
 export const bars = (spec) => finish(_bars(spec));
+// optional (2026-10-17): spec.pair:{a, b, aColor?, bColor?}, the mark drawn as a second, thinner bar under
+// each row's bar (then and now, exports and imports) with its own value, and a key of the two at the top;
+// spec.sortBy:'mark' ranks by the second value
 function _bars(spec) {
-  const W = spec.width, phone = W < 560;
+  const W = spec.width, phone = W < 560, PR = spec.pair;
   let rows = spec.rows.filter(r => r.value != null);
-  if (spec.sort !== false) rows = rows.slice().sort((a, b) => b.value - a.value);
+  if (spec.sort !== false) rows = rows.slice().sort((a, b) => spec.sortBy === 'mark' ? (b.mark ?? -Infinity) - (a.mark ?? -Infinity) : b.value - a.value);
   const vals = rows.map(r => r.value);
   // optional: row.mark, a second value drawn as a hollow circle on the bar's line (a year earlier,
   // a share of accounts); the bar's value label steps past the circle when it would sit on it.
@@ -560,8 +655,22 @@ function _bars(spec) {
     0) + 8;
   // optional: spec.nameMax, a wider name column for long names (industries), default 200
   const nameW = phone ? 0 : Math.min(spec.nameMax ?? 200, Math.max(...rows.map(r => tw(r.name, 13, r.highlight ? 600 : 400))) + 14);
-  const bh = phone ? 10 : 13, row = phone ? 36 : 25, top = spec.ref ? 54 : 34;
-  const x0 = nameW + (lo < 0 ? valW : 0), x1 = W - valW;
+  const bh = phone ? 10 : PR ? 12 : 13, bh2 = phone ? 6 : 7, row = (phone ? 36 : 25) + (PR ? (phone ? 10 : 8) : 0), top = (spec.ref ? 54 : phone && !spec.dots ? 14 : 34) + (PR ? 22 : 0); // a phone draws no scale: no room kept for one
+  const x0 = nameW + (lo < 0 ? valW : 0) + (phone && marks.length && !PR ? 5 : 0); // a phone's names sit at the edge: a circle near zero keeps its whole ring inside
+  // the scale is fitted so each bar and its own label end inside the drawing (the widest label no longer
+  // reserves a column beside every bar; 2026-10-17); negative values, log scales and shared bounds keep
+  // the reserved column
+  let x1 = W - valW;
+  if (lo >= 0 && !spec.log && spec.max == null) {
+    const lw = (r, v) => tw(fmt(v), 12.5, r.highlight ? 600 : 400) + noteW(r) + 3;
+    let k = Infinity;
+    for (const r of rows) {
+      const need = [[r.value, (spec.dots ? 9 : 5) + lw(r, r.value)]];
+      if (r.mark != null) need.push(PR ? [r.mark, 5 + tw(fmt(r.mark), 11.5) + 3] : [Math.max(r.value, r.mark), 10 + lw(r, r.value)]);
+      for (const [v, pad] of need) if (v > lo) k = Math.min(k, (W - x0 - pad) / (v - lo));
+    }
+    if (isFinite(k) && k > 0) x1 = Math.max(W - valW, Math.min(W - 4, x0 + k * (hi - lo)));
+  }
   // optional (payments port): spec.log, a log scale for values that span powers of ten; bars
   // start at the power of ten below the smallest, gridlines at each power (label them with tickFmt)
   const LG = spec.log ? [Math.floor(Math.log10(Math.min(...vals)) + 1e-9), Math.ceil(Math.log10(Math.max(...vals)) - 1e-9)] : null;
@@ -573,7 +682,7 @@ function _bars(spec) {
   const bands = phone ? rows.map((_, i) => { const yy = top + i * row + 18; return [yy - 3, yy + bh + 3]; }) : null;
   if (spec.band) { const a = x(Math.max(lo, spec.band.from)), b = x(Math.min(hi, spec.band.to)); if (b > a) s += `<rect x="${r1(a)}" y="${top - 8}" width="${r1(b - a)}" height="${r1(H - 6 - top + 8)}" fill="${C.leadWash}"/>`; }
   // every bar carries its value, so a phone keeps only the zero line; the scale is for desktop
-  if (phone && !spec.dots) s += rowRules(x(0), 0, 0, bands, C.base); // a phone shows no scale, so a dot plot's stems (from spec.from, not zero) are left off there
+  if (phone && !spec.dots) { if (lo < 0) s += rowRules(x(0), 0, 0, bands, C.base); } // all bars from one edge: the edge is the zero line (no stub per row) // a phone shows no scale, so a dot plot's stems (from spec.from, not zero) are left off there
   else for (const v of N.ticks) { if (!LG && (v < lo - 1e-9 || v > hi + 1e-9)) continue; s += Lv(x(v), top - 8, H - 6, v === 0 ? C.base : C.grid); s += T(x(v), top - 14, spec.tickFmt ? spec.tickFmt(v) : num(v, { dp: dpOf(N.step), suffix: v === N.ticks.filter(t => t <= hi).at(-1) ? spec.unit?.suffix ?? '' : '' }), { size: 12, fill: C.muted, anchor: 'middle', cls: 'tab' }); }
   if (spec.ref) { // the rule runs row by row and stops short of any value label it would strike
     const rx = x(spec.ref.value);
@@ -590,10 +699,26 @@ function _bars(spec) {
       else { s += Lv(rx, y0, yy - 1, C.ink, 1, dsh); s += Lv(rx, yy + bh + 1, y0 + row, C.ink, 1, dsh); }
     });
   }
+  if (PR) { // the key: a swatch of each bar and its name, above the scale
+    const ca = PR.aColor ?? C.lead, cb = PR.bColor ?? C.ctx2, kx = x0, kb = kx + 20 + tw(PR.a, 12.5) + 18;
+    s += `<rect x="${kx}" y="7" width="14" height="${bh}" fill="${ca}"/>` + T(kx + 20, 16, PR.a, { size: 12.5, fill: C.ink2 });
+    s += `<rect x="${r1(kb)}" y="9" width="14" height="${bh2}" fill="${cb}"/>` + T(kb + 20, 16, PR.b, { size: 12.5, fill: C.ink2 });
+  }
   rows.forEach((r, i) => {
-    const yy = top + i * row + (phone ? 18 : (row - bh) / 2);
+    const yy = top + i * row + (phone ? 18 : (row - bh - (PR ? bh2 + 3 : 0)) / 2);
     const a = x(Math.min(0, r.value)), b = x(Math.max(0, r.value));
     const above = spec.ref && spec.refFill !== false ? r.value > spec.ref.value : r.highlight;
+    if (PR) {
+      const fa = PR.aColor ?? r.color ?? (r.highlight ? C.lead : C.leadTint), fb = PR.bColor ?? C.ctx2, y2 = yy + bh + (phone ? 4 : 3);
+      if (phone) s += T(x0, yy - 5, r.name, { size: 12.5, fill: C.ink, weight: r.highlight ? 600 : 400 });
+      else s += T(nameW - 12, yy + (bh + 3 + bh2) / 2 + 4.5, r.name, { size: 13, fill: C.ink, weight: r.highlight ? 600 : 400, anchor: 'end' });
+      s += `<rect x="${r1(a)}" y="${r1(yy)}" width="${r1(Math.max(1, b - a))}" height="${bh}" fill="${fa}" data-tip="${esc(r.name + ', ' + PR.a + ': ' + fmt(r.value))}"/>`;
+      s += T(b + 5, yy + bh / 2 + 4.5, fmt(r.value), { size: 12.5, fill: r.highlight ? C.ink : C.ink2, weight: r.highlight ? 600 : 400, cls: 'tab halo' });
+      if (r.mark != null) { const bm = x(Math.max(0, r.mark));
+        s += `<rect x="${r1(x(0))}" y="${r1(y2)}" width="${r1(Math.max(1, bm - x(0)))}" height="${bh2}" fill="${fb}" data-tip="${esc(r.name + ', ' + PR.b + ': ' + fmt(r.mark))}"/>`;
+        s += T(bm + 5, y2 + bh2 / 2 + 4, fmt(r.mark), { size: 11.5, fill: C.muted, cls: 'tab halo' }); }
+      return;
+    }
     const fill = r.color ?? (above || r.highlight ? (r.value < 0 ? C.comp : C.lead) : r.value < 0 ? C.compTint : C.leadTint); // r.color: a row's own fill (a group's colour)
     if (phone) s += T(x0, yy - 5, r.name, { size: 12.5, fill: C.ink, weight: r.highlight ? 600 : 400 });
     else s += T(nameW - 12, yy + bh / 2 + 4.5, r.name, { size: 13, fill: C.ink, weight: r.highlight ? 600 : 400, anchor: 'end' });

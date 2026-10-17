@@ -167,3 +167,29 @@ log below.
   Checks: validate, `npm test` (315/315), coverage (49 ledgers), prose:dry all exit 0. Full build 816 pages exit 0; gates
   passed everything up to perf-browser, which failed after two pages because the worktree's dist/ was deleted from outside
   this session mid-run. perf-browser still needs a rerun on a fresh build (the data change touches no page weight).
+- 2026-10-17 kit `line`, phone drawing (W < 520), design-fix session (uncommitted). The plot takes the width its labels
+  leave it: the gutter shrinks to what the lines need (y labels sit on their gridlines over the plot's left edge wherever
+  no stroke passes under them); end labels go inside the plot, left of their dots, when all of up to three find clear
+  space; otherwise two or more become a one-line key above the plot (line swatch, name, last value; `spec.phoneKey:false`
+  keeps the margin labels), and the plot runs to the edge. The x axis names the first and last periods at its ends, with
+  evenly spread round periods between. Specs with `shade`, `ranges`, `notes` or `pointLabels` keep the old layout. All
+  widths: lead and comparison lines 2.25 px (was 2), context 1.25 (was 1.5), x ticks 4 px in `faint` (were 5 px ink);
+  `C.grid` #EBECEE (was #E6E7E9), `C.ctx` #B0B4BA (was #A7ABB2); a lead line over only grey context lines wears a
+  1.5 px paper casing so crossings stay distinct (never over a coloured series: it erased imports where they met exports).
+  A taller phone chart (280) was tried and dropped: it moved two noted charts' notes onto their lines.
+  Bytes: the wider phone plot doubled a dense series' points (external's reserves 22 -> 48 KB raw), so a phone drawing
+  thins by 2 px columns (`thinPts(..., colW)`; shape unchanged at 2.25 px strokes) and the casing skips lines of 300+
+  vertices. Net, gzip of every phone drawing per guide: external -29 B, public-finance -288 B, ILO +425 B (its html
+  ceiling raised 51 -> 51.5 KB, entry in `perf/budgets.json` `raised`). Poverty's gap plate drops the earlier of its two
+  adjacent HCES notes below 1000 px too (they collided at 720 after the x labels moved up 1 px).
+  Specimen lint 0 finds; all 395 phone drawings from every guide's charts module lint clean.
+- 2026-10-17 kit `bars`, design-fix session (uncommitted). The scale is fitted so each bar and its own label end inside
+  the drawing (the widest label, often a pale row's year note, no longer reserves a column beside every bar; negative
+  values, log scales and `spec.max` keep the reserved column). A phone draws no zero stub per row when every value is
+  positive, keeps no room at the top for the scale it does not draw, and insets the bars 5 px when rows carry circles (a
+  near-zero ring was half off the edge). New `spec.pair:{a, b, aColor?, bColor?}`: the mark as a second, thinner bar under
+  each row's bar with its own value, a key of the two at the top; `spec.sortBy:'mark'`. Trade's groups and chapters
+  (latest year against the earlier one) and regions (exports against imports, was a dumbbell) use it; their subtitles and
+  notes no longer mention circles. Page spacing: in a run of plates the wrapper's inline margin is zeroed (it stacked on
+  the run rule: ~216 px between plates, 243 on a phone); the v5 layer had restated the run rule without a media query,
+  overriding the phone value, so 64/32 below 860 px and 40/32 below 640 px now come after it.
