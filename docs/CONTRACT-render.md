@@ -74,6 +74,11 @@ build.
   files.** Data rides in the bundle the page was built from, or in the content-named static files
   the build writes beside it: search shards, explorer shards and every-cut packs. The deployed
   site makes no request beyond its own static assets.
+- **Structured data (JSON-LD) is metadata, not payload** (2026-10-17). `perf-budget` reports it as
+  `ld`, apart from inline `json` data, with its own ceiling per page kind in `perf/budgets.json`
+  (4 KB gzipped for guides and data-file pages, 2 KB for state profiles, 1 KB elsewhere). Its bytes
+  still count inside the page's `html` ceiling. A guide's Dataset does not list its files; each
+  file's Dataset, on `/data/<file>/`, names the guide's as the one it is part of.
 - **No file in dist over 20 MB** (Cloudflare Workers static assets refuse any file over 25 MiB; qc fails at 20 MB).
 - **Site search: a core of fixed size, everything per row fetched by need** (index v2, 2026-10-15).
   Static files the build writes under `/search/` (`scripts/search-index.mjs`, run by the build

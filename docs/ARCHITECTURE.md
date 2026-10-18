@@ -34,6 +34,9 @@ a file, every file has a gate, every gate exits non-zero on failure.
 | `scripts/lib/products/*.mjs` | one adapter per source product |
 | `scripts/lib/tabular.mjs` | THE parsing kit: CSV, Indian numerals, messy dates |
 | `src/dossiers/registry.js` | **[live]** THE dossier registry — every dossier's metadata |
+| `src/seo/` | **[live]** search, citation and feeds: structured data (`graph.js`, `dataset.js`, `agency.js`), sitemap `lastmod` (`lastmod.js`), feeds (`feeds.js`), the release log reader (`releases.js`), `llms.txt` (`llms.js`), the anchor record (`anchors.json`) |
+| `src/pwa/sw.js` | **[live]** the service worker template; the build writes `dist/sw.js` |
+| `data/releases.json` | **[live]** the release log: one entry per print of each guide's headline figure, appended by `scripts/releases.mjs` |
 | `src/dossiers/<slug>.client.js` | one client module per dossier page |
 | `src/charts/plumbing.js` | shared chart kit — normative (`docs/DESIGN.md` §5) |
 | `src/learn/registry.js` | Learn-section registry — the pattern the dossier registry mirrors |
@@ -191,3 +194,37 @@ every change is in `docs/status/performance-scale.md`; the plan, with 2x and 5x 
   outline is proven identical to the original.
 - **Row derivation** (`everycut.js`) is 2.8x faster with identical output. It runs in the build,
   the search index, the explorer pack, qc and the tests.
+
+## Search, feeds and the app (17 October 2026) **[live]**
+
+Plan and reasons: `docs/PLAN-seo-pwa.md`. Every page's head is written by `src/layouts/Base.astro`
+from facts the page already has; the decisions live in `src/seo/`.
+
+- **Head.** `lang="en-IN"`; a self canonical on every indexable page (from the page's own path when
+  it names none) and `noindex` on 404 and `/offline/`; Open Graph and Twitter tags; a guide's
+  description leads with its headline figure (`headline.js`). Feed autodiscovery, manifest and
+  theme colour on every page. Search-engine verification is by DNS; `GOOGLE_SITE_VERIFICATION`
+  and `BING_SITE_VERIFICATION` in the build environment add meta tags as a fallback.
+- **Structured data** (`src/seo/graph.js`). `WebSite` with a `SearchAction` (`/?q=` runs the front
+  page's search) and the publisher `Person` on the front page; a `Dataset` for every guide and one
+  for every bundle on its own page, `/data/<bundle>/` (`src/pages/data/[bundle]/`), with the
+  agency as creator (`agency.js`), coverage, vintage and the CSV and JSON downloads; the catalogue
+  at `/data/`; `BreadcrumbList` from each page's crumb; `Article` on learn notes.
+- **Sitemap and robots.** `lastmod` is the data vintage of what the page shows (`lastmod.js`), absent
+  where a page has none. `robots.txt` is generated (`src/pages/robots.txt.js`): every page open to
+  search and AI crawlers, named; search shards, every-cut packs and explorer chunks closed.
+- **GEO.** `/llms.txt` and `/llms-full.txt` (`src/seo/llms.js`) are built from `headline.js`, the
+  verified prose in `pipeline/out` and the state profiles' bundle cells. Sections get their ids at
+  build time (`astro.config.mjs` siteFiles), plates already carry theirs; `src/seo/anchors.json`
+  records them and the gate fails if one disappears.
+- **Feeds.** `/rss.xml` (guide revisions, unchanged), `/feeds/releases.xml` and `.json` (every
+  print, from the release log), `/guides/<slug>/feed.xml`, `/feeds/` for people. Browsers style a
+  feed with `/feeds/feed.css` (CSS, not XSLT, which browsers are removing).
+- **App.** `/manifest.webmanifest` from `src/site.js` and the `:root` tokens; icons from
+  `scripts/brand.mjs` (`public/icons/`, maskable included); `dist/sw.js` written at build with the
+  release id and shell. Pages and `kit.json` network first with a four-second fallback to a saved
+  copy that says it is one; hashed files cache first; downloads and feeds network only. Every
+  `:hover` rule is moved behind `@media (hover:hover)` by `scripts/lib/postcss-hover-only.mjs`.
+- **Gate.** `scripts/seo-check.mjs` (`npm run seo`, in `gates`, `update.yml` and `deploy.yml`).
+  IndexNow pings after a deploy when the `INDEXNOW_KEY` secret is set (`scripts/indexnow.mjs`).
+

@@ -1,0 +1,83 @@
+---
+// /data/<bundle>/: one page per canonical bundle, the landing page of a data file. It says what
+// the file holds, who published it, the span, the vintage and the series, links the downloads and
+// the guide that uses it, and carries the file's schema.org Dataset (src/seo/dataset.js), so dataset
+// search and AI assistants can find and cite each file on its own. Everything is read from the bundle.
+import fs from "node:fs";
+import Base from "../../../layouts/Base.astro";
+import { SITE } from "../../../site.js";
+import { bundleFacts, bundleDataset, rowsHref, periodName } from "../../../seo/dataset.js";
+import { vintageText } from "../../../../scripts/lib/vintage.mjs";
+import { longDate } from "../../../seo/feeds.js";
+import "../../../styles/pages.css";
+export function getStaticPaths() {
+  return fs.readdirSync("data/series").filter((f) => f.endsWith(".json")).map((f) => ({ params: { bundle: f.replace(/\.json$/, "") } }));
+}
+const { bundle: id } = Astro.params;
+const f = bundleFacts(id, { full: true });
+const ds = bundleDataset(id, f);
+const guide = f.owners[0];
+const clean = (t) => String(t ?? "").replace(/ — /g, ": ").replace(/ · /g, ", ");
+const SHOWN = 300;
+const series = f.keys.slice(0, SHOWN).map((k, i) => {
+  const s = f.j.series[k], a = s.data.findIndex((v) => v != null), b = s.data.findLastIndex((v) => v != null);
+  const from = a < 0 ? "" : periodName(f.j.dates[a], f.freq), to = b < 0 ? "" : periodName(f.j.dates[b], f.freq);
+  return { label: f.labels[i], span: a < 0 ? "no published value" : from === to ? from : `${from} to ${to}`, n: s.data.filter((v) => v != null).length };
+});
+const rows = rowsHref(id);
+const base = f.meta.base && /\d/.test(f.meta.base) ? clean(f.meta.base) : "";
+const vt = f.vintage ? longDate(f.vintage) : vintageText(f.meta);
+const csvLabel = f.governed && !f.governed.eligible.length ? "CSV (list of series)" : "CSV";
+---
+<Base
+  title={`${f.title}: data file · ${SITE.name}`}
+  description={`${f.title}. ${f.keys.length.toLocaleString("en-IN")} series, ${f.freq}, ${f.span}, from ${f.source}. Download as CSV or JSON.`}
+  dateStamp={f.vintage ? `Vintage ${vt}` : ""}
+  crumbLeft={`<a href="/data/">Data</a>${guide ? ` / <a href="/guides/${guide.slug}/">${guide.title}</a>` : ""} / <b>${id}</b>`}
+  crumbRight={`${f.keys.length.toLocaleString("en-IN")} series, ${f.span}`}
+  canonical={`/data/${id}/`}
+  ogImage={guide ? `/og/${guide.slug}.png` : "/og/site.png"}
+  ogType="website"
+  jsonld={[ds]}
+  charts={false}
+>
+<div class="page spage dfile">
+  <div class="titleblock">
+    <div class="kicker">{guide ? <a href={`/guides/${guide.slug}/`}>Data file: {guide.title}</a> : "Data file"}</div>
+    <h1>{f.title}</h1>
+    <p class="lede">{f.keys.length.toLocaleString("en-IN")} series, {f.freq}, {f.span}. Published by {f.source}.</p>
+    <div class="meta">
+      <span>Download <b><a href={`/data/${id}.csv`} download>{csvLabel}</a>, <a href={`/data/${id}.json`} download>JSON</a>{f.governed?.source?.href && <>, <a href={f.governed.source.href} download>the publisher's original file</a></>}</b></span>
+      {base && <span>Base <b>{base}</b></span>}
+      <span>Vintage <b>{vt}</b></span>
+      {f.released && <span>Released <b>{longDate(f.released)}</b></span>}
+      <span>File <b>{id}</b></span>
+    </div>
+  </div>
+
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>What the file holds</h2><span class="line"></span></div>
+    {f.meta.coverage && <p>{clean(f.meta.coverage)}.</p>}
+    {f.meta.note && <p>{clean(f.meta.note)}</p>}
+    {f.meta.revisionPolicy && <p>Revisions: {clean(f.meta.revisionPolicy)}</p>}
+    <p>Missing values are left empty, never zero. {rows && <a href={rows}>Every series with its latest value and trend</a>}{rows && guide && ", in the guide to "}{guide && <a href={`/guides/${guide.slug}/`}>{guide.title.toLowerCase()}</a>}{(rows || guide) && "."}</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>The series</h2><span class="line"></span></div>
+    <div class="em-table">
+      <table>
+        <thead><tr><th>Series</th><th>Published values</th><th class="n">Values</th></tr></thead>
+        <tbody>{series.map((s) => <tr><td class="w">{s.label}</td><td class="nw">{s.span}</td><td class="n">{s.n.toLocaleString("en-IN")}</td></tr>)}</tbody>
+      </table>
+    </div>
+    {f.keys.length > SHOWN && <p class="df-more">The first {SHOWN} of {f.keys.length.toLocaleString("en-IN")} series. The JSON and CSV hold all of them{rows && <>, and <a href={rows}>the every-cut table</a> lists each one</>}.</p>}
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>Cite this data</h2><span class="line"></span></div>
+    <p>{f.source}, compiled by {SITE.name}, “{f.title}”, vintage {vt}. {SITE.host}/data/{id}/</p>
+    <p>The figures keep the terms of the agency that publishes them. Our compilation and layout are under <a href={SITE.license}>CC BY 4.0</a>.</p>
+  </section>
+</div>
+</Base>

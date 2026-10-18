@@ -19,3 +19,12 @@
   Cache-Control: public, max-age=31536000, immutable
 /ec/*
   Cache-Control: public, max-age=31536000, immutable
+# the app: the service worker and manifest must reach a browser fresh, so a release reaches readers
+# (src/pwa/sw.js; Workers' default revalidation would allow this too, but it is stated here)
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+/manifest.webmanifest
+  Cache-Control: public, max-age=0, must-revalidate
+  Content-Type: application/manifest+json
+/icons/*
+  Cache-Control: public, max-age=86400

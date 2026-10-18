@@ -13,6 +13,8 @@
 //   css      linked stylesheets
 //   json     inline <script type="application/json"> payloads (already counted inside html,
 //            reported separately because they are the usual cause of a heavy page)
+//   ld       structured data, <script type="application/ld+json"> (also inside html): metadata for
+//            search engines that no browser runs, so it has its own ceiling (docs/PLAN-seo-pwa.md)
 //   fonts    the woff2 files the page can need: preloads, plus every @font-face whose
 //            unicode-range covers a character of the page's text (an upper bound: the browser
 //            also needs the family and style to be used, which this does not try to prove)
@@ -112,14 +114,15 @@ for (const abs of files) {
   const rel = path.relative(DIST, abs).split(path.sep).join("/");
   const html = fs.readFileSync(abs, "utf8");
   if (/^<!doctype html><title>Redirecting/i.test(html.slice(0, 60))) continue;   // astro redirect stubs
-  const m = { route: route(rel), type: typeOf(rel), html: gzOf(abs), js: 0, css: 0, json: 0, fonts: 0, fontFiles: [] };
+  const m = { route: route(rel), type: typeOf(rel), html: gzOf(abs), js: 0, css: 0, json: 0, ld: 0, fonts: 0, fontFiles: [] };
   const js = new Set();
   for (const s of html.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/g)) { const f = urlToFile(s[1], abs); if (f) moduleGraph(f, js); }
   // inline module scripts can import chunks too
   for (const s of html.matchAll(/<script\b[^>]*type=["']module["'][^>]*>([\s\S]*?)<\/script>/g))
     for (const i of s[1].matchAll(/(?:import|from)\s*["']([^"']+\.js)["']/g)) { const f = urlToFile(i[1], abs); if (f) moduleGraph(f, js); }
   for (const f of js) m.js += gzOf(f);
-  for (const s of html.matchAll(/<script\b[^>]*type=["']application\/(?:ld\+)?json["'][^>]*>([\s\S]*?)<\/script>/g)) m.json += gz(Buffer.from(s[1]));
+  for (const s of html.matchAll(/<script\b[^>]*type=["']application\/json["'][^>]*>([\s\S]*?)<\/script>/g)) m.json += gz(Buffer.from(s[1]));
+  for (const s of html.matchAll(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/g)) m.ld += gz(Buffer.from(s[1]));
   const faces = [];
   for (const l of html.matchAll(/<link\b[^>]*rel=["']stylesheet["'][^>]*>/g)) {
     const href = l[0].match(/href=["']([^"']+)["']/)?.[1]; const f = urlToFile(href, abs);
@@ -144,7 +147,7 @@ for (const abs of files) {
 for (const [f, r] of missingFonts) failures.push(`font file ${f} is named by a stylesheet or preload (first on ${r}) but is not in the build`);
 
 // ---- check against ceilings
-const METRICS = ["html", "js", "css", "json", "fonts"];
+const METRICS = ["html", "js", "css", "json", "ld", "fonts"];
 const ceilingOf = (p, k) => budgets.pages?.[p.route]?.[k] ?? budgets.types[p.type]?.[k];
 for (const p of pages) for (const k of METRICS) {
   const c = ceilingOf(p, k);

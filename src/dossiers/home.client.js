@@ -132,6 +132,11 @@ if (q && res) {
     if (e.key === "Enter" && sel >= 0) { e.preventDefault(); activate(opts[sel]); }
   });
   q.addEventListener("blur", () => { invalidate(); setTimeout(() => { if (document.activeElement !== q) close(); }, 150); });
+  // /?q=words runs that search (the WebSite SearchAction in src/seo/graph.js, and shared links);
+  // /#find (the masthead link, the app's Search shortcut) puts the cursor in the box
+  const asked = new URLSearchParams(location.search).get("q")?.trim();
+  if (asked) { q.value = asked.slice(0, 200); q.focus(); search(); }
+  else if (location.hash === "#find") q.focus({ preventScroll: true });
 }
 // "/" jumps to search from anywhere on the page
 document.addEventListener("keydown", (e) => {

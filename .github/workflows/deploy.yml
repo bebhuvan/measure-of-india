@@ -55,6 +55,17 @@ jobs:
       - name: Performance, static
         run: npm run perf:static
 
+      # titles, canonicals, structured data, sitemap, feeds, llms.txt, manifest and service worker
+      - name: Search, feeds and app
+        run: node scripts/seo-check.mjs
+
+      # IndexNow (Bing and others): the key file goes into dist before the deploy, the changed
+      # pages are sent after it. Skipped when the INDEXNOW_KEY secret is not set.
+      - name: IndexNow, prepare
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        run: node scripts/indexnow.mjs prepare dist
+
       - name: Deploy to Cloudflare Workers (static assets)
         uses: cloudflare/wrangler-action@v3
         with:
@@ -62,3 +73,8 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: "4.147.0"
           command: deploy
+
+      - name: IndexNow, submit
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        run: node scripts/indexnow.mjs submit

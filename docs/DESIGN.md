@@ -29,6 +29,15 @@ raises its proportion and type. Where v5 and anything below disagree, v5 wins.
   tiles, each with its income per person in the profiles' comparison year and a thin bar against
   the highest (`src/dossiers/home.charts.js`). Row hovers are a wash and only on a pointer that
   hovers. Reference mocks: `design-mocks/pages/`.
+- **The app and touch (17 October 2026).** Installing is offered once, as one line in the footer
+  with *Install* and *Not now* as text buttons, never a banner or a pop-up; *Not now* holds for a
+  quarter. A page the app shows from its saved copy carries one wash line under the masthead naming
+  the day it was saved. Every `:hover` applies only on a pointer that hovers (the build moves each
+  rule behind `@media (hover:hover)`), so nothing sticks after a tap. The tap highlight is a faint
+  indigo wash. No page transitions: a reference work turns pages, it does not animate them.
+- **Data files and feeds.** Each data file has a plain page (`/data/<file>/`): title block, what the
+  file holds, its series as a set table, how to cite it. `/feeds/` lists the feeds as labelled rows.
+  A feed opened in a browser is set in the house type by a CSS stylesheet.
 
 
 v3 (10 October 2026) is the whole-site design pass on the v2 lineage: one left axis, one type

@@ -11,6 +11,7 @@ import { DOSSIERS, bySlug } from "../../../../../dossiers/registry.js";
 import {governedDownloadPlan} from "../../../../../dossiers/governed-downloads.js";
 import { bundleTitle, loadBundle, everyCutPlan } from "../../../../../dossiers/everycut.js";
 import { tailSpec, packLink } from "../../../../../dossiers/everycut-html.js";
+import { bundleFacts } from "../../../../../seo/dataset.js";
 export function getStaticPaths() {
   // ATLAS_SKIP_EVERY_CUT=1: a local verification build of everything but these long-tail pages
   // (most of dist's 4.8 GB), for a machine short of memory. Never set in CI or a release build.
@@ -31,6 +32,9 @@ const downloadInfo=b=>governedDownloadPlan(b,loadBundle(b),{required:governed});
 const snapshot = t.bundles.every(b=>loadBundle(b).meta.frequency === "cross-sectional");
 const B = loadBundle(t.bundles[0]);
 const title = single ? bundleTitle(id) : t.label;
+// the head's name is unique across the site: a bundle sharing a plain name with another carries its
+// file name (src/seo/dataset.js), and the overflow view names its guide
+const headTitle = single ? bundleFacts(id).title : t.kind === "more" ? `${d.title}, ${t.label.toLowerCase()}` : t.label;
 const hasGroups = single && rows.some((r) => r.group);
 const base = `/guides/${slug}/every-cut/${id}/`;
 const href = (i) => (i ? `${base}${i + 1}/` : base);
@@ -41,8 +45,8 @@ const src = sources.length === 1 ? sources[0] : `${sources.length} sources, name
 const titles = Object.fromEntries((single ? [] : [...new Set(rows.map((r) => r.bundle))]).map((b) => [b, bundleTitle(b)]));
 ---
 <Base
-  title={`${title}: every series · Measure of India`}
-  description={`Every series of ${title}, from Measure of India guide to ${d.title.toLowerCase()}: ${governed ? "every series, with the publisher's original files" : snapshot ? "source estimates and downloads" : "latest values, change on a year earlier, and downloads"}.`}
+  title={`${headTitle}: every series${total > 1 ? `, page ${n + 1} of ${total}` : ""} · Measure of India`}
+  description={`Every series of ${headTitle}, from the Measure of India guide to ${d.title.toLowerCase()}: ${governed ? "every series, with the publisher's original files" : snapshot ? "source estimates and downloads" : "latest values, change on a year earlier, and downloads"}.${total > 1 ? ` Page ${n + 1} of ${total}, ${rows.length.toLocaleString("en-IN")} series.` : ""}`}
   nav="guides"
   crumbLeft={`<a href="/guides/">Guides</a> / <a href="/guides/${slug}/">${d.crumbTitle}</a> / <b>Every cut</b>`}
   canonical={`${href(n)}`}
@@ -68,7 +72,7 @@ const titles = Object.fromEntries((single ? [] : [...new Set(rows.map((r) => r.b
     {!single && (
       <details class="ec-files" id="files">
         <summary>All {t.bundles.length.toLocaleString("en-IN")} {t.bundles.length === 1 ? "file" : "files"}{governed?", with the publisher's original files":", to download whole"}</summary>
-        <ul>{t.bundles.map((b) => <li>{bundleTitle(b)} <a href={`/data/${b}.csv`} download>{governed?(downloadInfo(b).eligible.length?"CSV":"CSV (list only)"):"CSV"}</a> <a href={`/data/${b}.json`} download>JSON</a>{governed&&<><small> {downloadInfo(b).eligible.length} checked, {downloadInfo(b).pending.length} still being checked </small><a href={downloadInfo(b).source.href} download>{downloadInfo(b).source.linkLabel||"Original workbook"}</a></>}</li>)}</ul>
+        <ul>{t.bundles.map((b) => <li><a class="em-file" href={`/data/${b}/`}>{bundleTitle(b)}</a> <a href={`/data/${b}.csv`} download>{governed?(downloadInfo(b).eligible.length?"CSV":"CSV (list only)"):"CSV"}</a> <a href={`/data/${b}.json`} download>JSON</a>{governed&&<><small> {downloadInfo(b).eligible.length} checked, {downloadInfo(b).pending.length} still being checked </small><a href={downloadInfo(b).source.href} download>{downloadInfo(b).source.linkLabel||"Original workbook"}</a></>}</li>)}</ul>
       </details>
     )}
     {total > 1 && (

@@ -1,0 +1,53 @@
+---
+// /feeds/: the site's feeds, for people (src/seo/feeds.js). The newest prints are listed from the
+// same release log the feeds read, so this page and the feeds always agree.
+import Base from "../../layouts/Base.astro";
+import { SITE } from "../../site.js";
+import { DOSSIERS } from "../../dossiers/registry.js";
+import { FEEDS, guideFeed, releaseItems, longDate } from "../../seo/feeds.js";
+import "../../styles/pages.css";
+const items = releaseItems().slice(0, 12);
+const what = {
+  "/feeds/releases.xml": "Every new figure as it is released, across all guides. RSS.",
+  "/feeds/releases.json": "The same releases as a JSON Feed, for readers and scripts that prefer JSON.",
+  "/rss.xml": "One entry per guide, revised as its figure changes. The site's first feed.",
+};
+---
+<Base
+  title={`Feeds · ${SITE.name}`}
+  description={`Follow ${SITE.name} in a feed reader: every new official figure as it is released, a feed for each guide, and a JSON Feed.`}
+  dateStamp={items[0]?.date ? `Updated ${longDate(items[0].date)}` : ""}
+  crumbLeft="<b>Feeds</b>"
+  crumbRight="Follow new releases in a feed reader"
+  canonical="/feeds/"
+>
+<div class="page spage">
+  <div class="titleblock">
+    <div class="kicker">Feeds</div>
+    <h1>New figures, as they are released</h1>
+    <p class="lede">Copy a feed's address into a feed reader and each new official figure arrives there: the measure, the figure, the period it describes and the date it was released.</p>
+  </div>
+
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The feeds</h2><span class="line"></span></div>
+    <ul class="fd-list fd-feeds">
+      {FEEDS.map((f) => <li><a href={f.href}>{SITE.host}{f.href}</a><span>{what[f.href]}</span></li>)}
+    </ul>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>The latest releases</h2><span class="line"></span></div>
+    <ul class="fd-list fd-items">
+      {items.map((i) => <li><a href={i.url.replace(SITE.url, "")}>{i.title}</a><span>{i.summary}</span></li>)}
+    </ul>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>One guide at a time</h2><span class="line"></span></div>
+    <p>Each guide has its own feed, carrying only its own releases.</p>
+    <ul class="fd-list fd-guides">
+      {DOSSIERS.map((d) => <li><a href={guideFeed(d).href}>{d.title}</a><span>{SITE.host}{guideFeed(d).href}</span></li>)}
+    </ul>
+  </section>
+</div>
+</Base>

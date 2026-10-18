@@ -268,3 +268,21 @@ main:has(.home) + .sitefoot{margin-top:0}
   .guides .ent{grid-template-columns:minmax(0,1fr) 120px}
 }
 
+
+/* ---------- feeds (/feeds/) ---------- */
+.fd-list{list-style:none;margin:20px 0 24px;padding:0;font-family:var(--sans)}
+.fd-list li{display:grid;grid-template-columns:minmax(0,22rem) minmax(0,1fr);column-gap:32px;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--rule)}
+.fd-list li:first-child{border-top:1px solid var(--rule)}
+.fd-list a{font-size:1rem;color:var(--ink);text-decoration:underline;text-decoration-color:var(--rule-2);text-underline-offset:3px;overflow-wrap:anywhere}
+.fd-list a:hover{text-decoration-color:var(--ink)}
+.fd-list span{font-size:.875rem;line-height:1.5;color:var(--muted)}
+.fd-guides li{grid-template-columns:minmax(0,16rem) minmax(0,1fr)}
+.fd-feeds li{grid-template-columns:minmax(0,30rem) minmax(0,1fr)}
+.fd-feeds a{overflow-wrap:normal;word-break:normal}
+@media (max-width:680px){.fd-list li,.fd-guides li,.fd-feeds li{grid-template-columns:minmax(0,1fr);row-gap:4px}.fd-feeds a{overflow-wrap:anywhere}}
+
+/* ---------- data files (/data/<bundle>/) ---------- */
+.dfile h1{overflow-wrap:anywhere}
+.dfile .kicker a{color:inherit;text-decoration:none;border-bottom:1px solid var(--rule-2)}
+.dfile .em-table td.nw{white-space:nowrap}
+.dfile .df-more{font-family:var(--sans);font-size:.875rem;color:var(--muted);margin-top:12px}

@@ -61,6 +61,8 @@ Hard rules — breaking any of these is a bug regardless of what else works:
 | `npm run perf` | performance gates on a build: bytes per page, labelled search queries, throttled phone (part of `gates`) |
 | `npm run perf:static` | the same without the browser: font freshness, `perf-budget`, `perf-search` (seconds) |
 | `npm run fonts` | re-cut the web fonts from `fonts/source/` after editing `fonts/primary.txt` |
+| `npm run seo` | search, feeds and app gate on a build: titles, canonicals, JSON-LD, sitemap, anchors, feeds, llms.txt, manifest, sw.js (part of `gates`; `--record` adds new anchors) |
+| `npm run releases` | append each guide's new print to `data/releases.json` (the update workflow runs it) |
 
 ## Where things live
 
@@ -92,6 +94,9 @@ Hard rules — breaking any of these is a bug regardless of what else works:
   rows and streams the rest from its gzip pack (`/ec/…`).
 - Builds can go to a RAM disk: `ATLAS_OUT_DIR=/dev/shm/x npx astro build`, then run the gates
   with `QC_DIST=/dev/shm/x`.
+- `src/seo/` — search, structured data, sitemap lastmod, feeds, llms.txt; `src/pwa/sw.js` the
+  service worker. Plan and rules: `docs/PLAN-seo-pwa.md`; shape: `docs/ARCHITECTURE.md`.
+  `data/releases.json` is the release log the feeds read: appended by script, never by hand.
 - `src/dossiers/registry.js` — THE dossier registry: every dossier's metadata,
   current bundle, calendar, policy band, spark spec. Homepage, register, RSS,
   404, OG cards, qc and lint-charts all derive from it. Adding a dossier

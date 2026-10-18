@@ -5,6 +5,11 @@ import FONTS from "../styles/fonts.generated.js";
 import KitScript from "../kit/KitScript.astro";
 import { SITE } from "../site.js";
 import { markSVG } from "../brand/mark.js";
+import { bySlug } from "../dossiers/registry.js";
+import { headlineOf } from "../dossiers/headline.js";
+import { pageGraph, ldJSON } from "../seo/graph.js";
+import { lastmodFor } from "../seo/lastmod.js";
+import { FEEDS, guideFeed } from "../seo/feeds.js";
 
 interface Props {
   title: string;
@@ -16,6 +21,9 @@ interface Props {
   canonical?: string;
   ogImage?: string;
   charts?: boolean;    // false on pages that draw no kit figure (every-cut tables): no chart script
+  noindex?: boolean;   // pages that must not be indexed (404, offline); also left out of the sitemap
+  jsonld?: object[];   // structured data the page adds to its graph (src/seo/graph.js)
+  ogType?: "website" | "article";
 }
 const {
   title,
@@ -27,34 +35,63 @@ const {
   canonical,
   ogImage = "/og/site.png",
   charts = true,
+  noindex = false,
+  jsonld = [],
 } = Astro.props;
 const ogUrl = SITE.url + ogImage;
-// pages pass their path ("/guides/cpi/"); the host comes from SITE, so moving the site is one edit
-const canonicalUrl = canonical ? (canonical.startsWith("/") ? SITE.url + canonical : canonical) : SITE.url + "/";
+// the page's own path ("/guides/cpi/"); a page may name a different canonical, and the host comes
+// from SITE, so moving the site is one edit. Every indexable page carries a canonical.
+const path = Astro.url.pathname.replace(/index\.html$/, "").replace(/\.html$/, "/");
+const canonicalUrl = canonical ? (canonical.startsWith("/") ? SITE.url + canonical : canonical) : SITE.url + path;
+// a guide's description leads with its latest figure, the same one the front page and feeds quote
+const guide = bySlug[path.match(/^\/guides\/([^/]+)\/$/)?.[1]];
+const h = guide ? headlineOf(guide) : null;
+const desc = h ? `Latest: ${h.value}, ${h.what} (${h.period}). ${description}` : description;
+const ogType = Astro.props.ogType ?? (guide || path.startsWith("/learn/") && path !== "/learn/" ? "article" : "website");
+const graph = noindex ? null : pageGraph({ path, url: canonicalUrl, title, description: desc, crumbLeft, image: ogImage, extra: jsonld });
+const feed = guide ? guideFeed(guide) : null;
+// the sitemap's lastmod for this page, handed to the sitemap integration (astro.config.mjs)
+if (!noindex) { const lm = await lastmodFor(path); if (lm) (globalThis.__seoLastmod ??= new Map()).set(path, lm); }
+// search-engine verification, from the build's environment (never in code): DNS verification
+// needs neither, these are the fallback (docs/PLAN-seo-pwa.md)
+const verify = [["google-site-verification", process.env.GOOGLE_SITE_VERIFICATION], ["msvalidate.01", process.env.BING_SITE_VERIFICATION]].filter(([, v]) => v);
 ---
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-IN">
 <head>
 <script is:inline>document.documentElement.classList.add("akjs")</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
-<meta name="description" content={description}>
-{canonical && <link rel="canonical" href={canonicalUrl}>}
+<meta name="description" content={desc}>
+{noindex ? <meta name="robots" content="noindex"> : <link rel="canonical" href={canonicalUrl}>}
+{verify.map(([n, v]) => <meta name={n} content={v}>)}
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="alternate" type="application/rss+xml" title={`${SITE.short}: guide revisions`} href="/rss.xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="apple-mobile-web-app-title" content={SITE.short}>
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="mobile-web-app-capable" content="yes">
+{FEEDS.map((f) => <link rel="alternate" type={f.type} title={f.title} href={f.href}>)}
+{feed && <link rel="alternate" type="application/rss+xml" title={feed.title} href={feed.href}>}
 <meta property="og:title" content={title}>
-<meta property="og:description" content={description}>
-<meta property="og:type" content="article">
+<meta property="og:description" content={desc}>
+<meta property="og:type" content={ogType}>
 <meta property="og:url" content={canonicalUrl}>
 <meta property="og:site_name" content={SITE.name}>
+<meta property="og:locale" content="en_IN">
 <meta property="og:image" content={ogUrl}>
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content={title}>
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content={SITE.publisher.twitter}>
+<meta name="twitter:creator" content={SITE.publisher.twitter}>
 <meta name="twitter:image" content={ogUrl}>
+<meta name="twitter:image:alt" content={title}>
+{graph && <script type="application/ld+json" set:html={ldJSON(graph)} />}
 {FONTS.preload.map((f) => <link rel="preload" href={`/fonts/${f}`} as="font" type="font/woff2" crossorigin>)}
 </head>
 <body>
@@ -75,8 +112,10 @@ const canonicalUrl = canonical ? (canonical.startsWith("/") ? SITE.url + canonic
 <main id="main"><slot /></main>
 <footer class="sitefoot">
   <p><b>{SITE.name}</b> is in beta. Its figures come from official publications and their data services, which can contain errors. Where we have checked a figure against the printed report and the two disagree, we publish the printed figure and say so on the page. Nothing here is investment, legal or policy advice.</p>
-  <p>A <a href={SITE.parent.url}>{SITE.parent.name}</a> project. Text and charts under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>; each source's data keeps its own terms.</p>
+  <p>A <a href={SITE.parent.url}>{SITE.parent.name}</a> project. Text and charts under <a href={SITE.license}>CC BY 4.0</a>; each source's data keeps its own terms. <a href="/data/">Data</a>, <a href="/feeds/">feeds</a>.</p>
+  <p class="install" hidden><span></span> <button type="button" data-act="install">Install</button> <button type="button" data-act="later">Not now</button></p>
 </footer>
 {charts && <KitScript />}
+<script src="../pwa/app.js"></script>
 </body>
 </html>

@@ -59,7 +59,7 @@ const citationVintage = sourceDateSummary === "Mixed dated and unknown revisions
       <tbody>
         {rows.map((r) => (
           <tr class={r.current ? "cur" : ""}>
-            <td class="w">{r.what}<small>{r.src}{r.current ? ". The current series this guide leads with" : ""}</small>
+            <td class="w"><a class="em-file" href={`/data/${r.b}/`}>{r.what}</a><small>{r.src}{r.current ? ". The current series this guide leads with" : ""}</small>
               {r.arc && <small><a class="archive-link" href={r.arc.href}>Finer detail: {r.arc.tables.toLocaleString("en-IN")} {r.arc.tables === 1 ? "table" : "tables"} in the archive</a></small>}
               <span class="em-m">{[r.base, r.from === r.to ? r.from : `${r.from} to ${r.to}`, r.freq, `${r.n} series`, `vintage ${r.vintageText}`].filter(Boolean).join(", ")}</span></td>
             <td>{r.base}</td>

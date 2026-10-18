@@ -18,7 +18,7 @@ const read = (slug) =>
 // guides index quote from, so the feed can never print a figure the site does not.
 import { headlineOf } from "../dossiers/headline.js";
 
-export function GET(context) {
+export async function GET(context) {
   const items = DOSSIERS.map((d) => {
     const h = headlineOf(d);
     const b = read(d.currentBundle);
@@ -30,10 +30,14 @@ export function GET(context) {
       ...(stamp ? {pubDate: new Date(stamp + "T00:00:00Z")} : {}),
     };
   });
-  return rss({
+  const res = await rss({
     title: SITE.name,
     description: "Guides to India's official economic statistics, revised with each release.",
     site: context.site,
+    stylesheet: "/feeds/feed.css",   // readable when opened in a browser (src/seo/feeds.js)
     items,
   });
+  // @astrojs/rss writes the stylesheet instruction without a type, which browsers need for CSS
+  const xml = (await res.text()).replace('<?xml-stylesheet href="/feeds/feed.css"?>', '<?xml-stylesheet type="text/css" href="/feeds/feed.css"?>');
+  return new Response(xml, { headers: { "Content-Type": "application/rss+xml; charset=utf-8" } });
 }

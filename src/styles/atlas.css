@@ -75,6 +75,19 @@ body{
 .sitefoot p{max-width:78ch;margin:0 0 8px}
 .sitefoot b{font-weight:600;color:var(--ink-soft)}
 .sitefoot a{color:var(--ink-soft)}
+.sitefoot .install{margin-top:14px;color:var(--ink-soft)}
+.sitefoot .install button{font:inherit;color:var(--ink);background:none;border:0;border-bottom:1px solid var(--rule-2);padding:0;margin-left:12px;cursor:pointer}
+.sitefoot .install button:hover{border-bottom-color:var(--ink)}
+.sitefoot .install button[data-act=later]{color:var(--muted)}
+.sitefoot .install [hidden]{display:none}
+/* a page the app shows from its saved copy says so (src/pwa/sw.js) */
+.saved-copy{max-width:calc(var(--wrap) + 2 * var(--gutter));margin:0 auto;padding:12px var(--gutter);background:var(--wash);border-bottom:1px solid var(--rule);font:400 .875rem/1.5 var(--sans);color:var(--ink-soft)}
+.saved-copy a{color:var(--ink)}
+/* touch: a faint indigo wash for the tap (not the system grey), no double-tap delay, no sideways
+   bounce of the page; tables that scroll sideways keep the swipe to themselves */
+html{-webkit-tap-highlight-color:rgba(46,75,196,.12);touch-action:manipulation}
+body{overscroll-behavior-x:none}
+.em-table,.pf-table,.ec-wrap,.explore-table{overscroll-behavior-x:contain}
 .sh-nav{display:flex;gap:26px;font:500 .875rem/1 var(--sans)}
 .sh-nav a{color:var(--ink-soft);text-decoration:none;padding:4px 0;border-bottom:1px solid transparent;transition:color .15s ease,border-color .15s ease}
 .sh-nav a:hover{color:var(--ink)}
@@ -427,6 +440,8 @@ figure[id^="cb-"] .frame > .plotfoot .acts .gap{flex-basis:100%;height:0;width:a
 .em-table .nw{white-space:nowrap}
 .em-table td a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--rule-2);margin-left:12px}
 .em-table td a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+.em-table td a.em-file,.ec-files a.em-file{margin:0;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule-2)}
+.em-table td a.em-file:hover,.ec-files a.em-file:hover{border-bottom-color:var(--ink)}
 .em-table .em-m{display:none}
 .em-cite{margin-top:40px;padding:18px 24px;background:var(--wash);border-radius:0;max-width:68ch}
 .em-cite h3{font-family:var(--sans);font-size:.875rem;font-weight:500;color:var(--ink);margin-bottom:4px}
@@ -535,6 +550,7 @@ figure[id^="cb-"] .frame > .plotfoot .acts .gap{flex-basis:100%;height:0;width:a
   .em-table td.w .em-m{display:block;font-size:.8125rem;color:var(--muted);margin-top:6px}
   .em-table td.n.nw{display:block;text-align:left;margin-top:8px;font-size:.875rem}
   .em-table td a{margin:0 14px 0 0}
+  .em-table td a.em-file{margin:0}
 }
 
 @media print{

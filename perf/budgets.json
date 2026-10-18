@@ -9,6 +9,7 @@
    "js": 529408,
    "css": 14336,
    "json": 1024,
+   "ld": 4096,
    "fonts": 573440
   },
   "explore": {
@@ -16,6 +17,7 @@
    "js": 135168,
    "css": 9216,
    "json": 1024,
+   "ld": 1024,
    "fonts": 177152
   },
   "everycut": {
@@ -23,6 +25,7 @@
    "js": 6144,
    "css": 12288,
    "json": 1024,
+   "ld": 1024,
    "fonts": 309248
   },
   "guide": {
@@ -30,6 +33,7 @@
    "js": 542720,
    "css": 10240,
    "json": 66560,
+   "ld": 4096,
    "fonts": 573440
   },
   "state": {
@@ -37,6 +41,7 @@
    "js": 126976,
    "css": 8192,
    "json": 6144,
+   "ld": 2048,
    "fonts": 309248
   }
  },
@@ -48,13 +53,13 @@
    "js": 41984
   },
   "/explore/food-inflation/": {
-   "html": 4096,
+   "html": 5120,
    "fonts": 130048,
    "css": 11264,
    "js": 41984
   },
   "/explore/household-land-snapshot/": {
-   "html": 4096,
+   "html": 5120,
    "fonts": 130048,
    "css": 11264,
    "js": 41984
@@ -65,7 +70,7 @@
    "js": 41984
   },
   "/explore/retail-inflation/": {
-   "html": 4096,
+   "html": 5120,
    "fonts": 130048,
    "css": 11264,
    "js": 41984
@@ -204,7 +209,7 @@
    "fonts": 249856
   },
   "/guides/ilo/": {
-   "html": 52736,
+   "html": 55296,
    "js": 9216,
    "css": 12288,
    "json": 1024,
@@ -938,6 +943,16 @@
    "date": "2026-10-17",
    "what": "/guides/ilo/ html 51 -> 51.5 KB",
    "why": "phone line charts run the full width (gutter and end-label column reclaimed, a key above the plot where end labels cannot sit inside) and a lead line over grey context lines wears a paper casing: about 0.4 KB gzip on ILO's seven annual comparison plates. The same change left external and public-finance flat or smaller once dense series thin by 2 px columns on a phone"
+  },
+  {
+   "date": "2026-10-17",
+   "what": "explore.html: 3 ceiling(s), e.g. /explore/retail-inflation/ 4 -> 5 KB",
+   "why": "search, feeds and app head on every page (docs/PLAN-seo-pwa.md): canonical, Open Graph and X card tags, feed autodiscovery, manifest and theme colour, about 0.25 KB gzip; these pages sat within 0.2 KB of a ceiling recorded at 1.05x. Measured 4.08 KB."
+  },
+  {
+   "date": "2026-10-17",
+   "what": "guide.html: 1 ceiling(s), /guides/ilo/ 51.5 -> 54 KB",
+   "why": "the same head (about 0.5 KB gzip) plus the guide's schema.org Dataset for dataset search (0.9 KB gzip); the page was at 99% of its ceiling before. Measured 52.4 KB. Trimming redundant tags saved 0.1 KB and was not worth the lost tags."
   }
  ]
 }

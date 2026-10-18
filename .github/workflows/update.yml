@@ -61,6 +61,10 @@ jobs:
       - name: Fetch and validate data
         run: node scripts/fetch.mjs && node scripts/validate.mjs
 
+      # a new print of a guide's headline figure enters the release log the feeds read
+      - name: Release log
+        run: node scripts/releases.mjs
+
       # A print advance flags every .now paragraph bound to it. The release
       # PR is still opened so a human can re-read the flagged paragraphs on
       # it — ci.yml (which runs this gate hard) is what blocks the merge.
@@ -91,6 +95,9 @@ jobs:
       - name: Performance, static (bytes per page, files per deploy, search)
         run: npm run perf:static
 
+      - name: Search, feeds and app
+        run: node scripts/seo-check.mjs
+
       - name: Open release PR
         env:
           GH_TOKEN: ${{ github.token }}
@@ -99,7 +106,7 @@ jobs:
           git config user.email "bot@measure.thisindianlife.today"
           BRANCH="release/$(date -u +%Y-%m-%d)"
           git checkout -b "$BRANCH"
-          git add data/series data/raw data/coverage pipeline/out
+          git add data/series data/raw data/coverage data/releases.json pipeline/out
           if git diff --cached --quiet; then
             echo "no data change — no release PR needed"
             exit 0

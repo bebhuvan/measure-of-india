@@ -1,0 +1,51 @@
+---
+// /data/: the data catalogue. Every guide with its count of files and series, linking to the
+// guide's "Data and downloads" table, where each file has its own page (/data/<bundle>/). Carries
+// the schema.org DataCatalog the file pages say they belong to.
+import fs from "node:fs";
+import Base from "../../layouts/Base.astro";
+import { SITE } from "../../site.js";
+import { DOSSIERS } from "../../dossiers/registry.js";
+import { guideBundles } from "../../dossiers/everycut.js";
+import { bundleSummary, allBundleIds } from "../../seo/bundles.js";
+import "../../styles/pages.css";
+const ALL = allBundleIds().length;
+const rows = DOSSIERS.map((d) => {
+  const ids = guideBundles(d);
+  return { d, files: ids.length, series: ids.reduce((n, b) => n + bundleSummary(b).n, 0) };
+});
+const nSeries = allBundleIds().reduce((n, b) => n + bundleSummary(b).n, 0);
+const catalog = {
+  "@type": "DataCatalog", "@id": SITE.url + "/data/#catalog", name: `${SITE.name}: data`, url: SITE.url + "/data/",
+  description: `${ALL.toLocaleString("en-IN")} data files of Indian official statistics, ${nSeries.toLocaleString("en-IN")} series, each downloadable as CSV and JSON with its source, coverage and vintage.`,
+  inLanguage: "en", license: SITE.license, publisher: { "@type": "Person", name: SITE.publisher.name, url: SITE.url + SITE.publisher.url },
+  dataset: DOSSIERS.map((d) => ({ "@id": `${SITE.url}/guides/${d.slug}/#dataset` })),
+};
+---
+<Base
+  title={`Data: every file to download · ${SITE.name}`}
+  description={`${ALL.toLocaleString("en-IN")} data files of Indian official statistics, ${nSeries.toLocaleString("en-IN")} series, each with its source, coverage and vintage, to download as CSV or JSON.`}
+  crumbLeft="<b>Data</b>"
+  crumbRight={`<b>${ALL.toLocaleString("en-IN")}</b> files, ${nSeries.toLocaleString("en-IN")} series`}
+  canonical="/data/"
+  jsonld={[catalog]}
+  charts={false}
+>
+<div class="page spage">
+  <div class="titleblock">
+    <div class="kicker">Data</div>
+    <h1>Every file, to download</h1>
+    <p class="lede">{ALL.toLocaleString("en-IN")} files and {nSeries.toLocaleString("en-IN")} series, as each agency published them. Every file has its own page, listed in its guide's data table, and downloads as CSV or JSON.</p>
+  </div>
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>By guide</h2><span class="line"></span></div>
+    <div class="em-table">
+      <table>
+        <thead><tr><th>Guide</th><th class="n">Files</th><th class="n">Series</th></tr></thead>
+        <tbody>{rows.map((r) => <tr><td class="w"><a href={`/guides/${r.d.slug}/#data-h`}>{r.d.title}</a><small>{r.d.section}</small></td><td class="n">{r.files.toLocaleString("en-IN")}</td><td class="n">{r.series.toLocaleString("en-IN")}</td></tr>)}</tbody>
+      </table>
+    </div>
+    <p>The state profiles draw on further files of their own; each profile lists its sources at its foot, and every file is in the <a href="/sitemap-index.xml">sitemap</a>.</p>
+  </section>
+</div>
+</Base>
