@@ -686,3 +686,11 @@ section .break + .break{margin-top:0 !important}
   h1{font-size:2.5rem}
   .dateline{font-size:.75rem}
 }
+
+/* phone reading size (2026-10-18): Newsreader's small x-height made 17px read small at arm's
+   length; reading text is 18px and its small sans labels 15px. Last in the file so it outranks the
+   1.0625rem rules above. */
+@media (max-width:860px){
+  body,.reading-col p,.explain p,.misread p,.defbox p,.method ol.rules p{font-size:1.125rem}
+  .reading-col .mk,.explain .mk{font-size:.9375rem}
+}

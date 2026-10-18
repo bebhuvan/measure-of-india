@@ -289,7 +289,9 @@ function _line(spec) {
   // finds clear space, so the right margin is only the dot's. When two or more cannot, they become a
   // key above the plot, each series' line, name and last value, and the plot still runs to the edge.
   let insideEnds = null, R = right, yLabBoxes = [], phoneKey = null;
-  if (phone && !spec.shade?.length && !spec.ranges?.length && !spec.notes?.length && !spec.pointLabels?.length) {
+  // notes (2026-10-18) take part: an end label keeps clear of each note's ringed point, and a note
+  // keeps clear of the end labels and of the y labels over the plot (it picks among four sides)
+  if (phone && !spec.shade?.length && !spec.ranges?.length && !spec.pointLabels?.length) {
     const top1 = N.ticks.at(-1), labsAt = () => N.ticks.filter(v => v >= N.lo - 1e-9).map(v => {
       const w = tw(spec.log ? logLab(v) : num(v, { dp, prefix: v === top1 ? spec.unit?.prefix ?? '' : '', suffix: v === top1 ? spec.unit?.suffix ?? '' : '' }), 12);
       return { x0: -2, x1: w + 4, y0: y(v) - 16, y1: y(v) - 1 };
@@ -303,7 +305,8 @@ function _line(spec) {
     // each end label as a box right-aligned just left of its dot, above or below it, clear of every
     // stroke, every y label and the labels placed before it
     const fitEnds = (g, r) => {
-      const xs = lin(t0, t1, g, W - r), segs = segsAt(g, r), taken = yLabs.slice(), out = [];
+      const xs = lin(t0, t1, g, W - r), segs = segsAt(g, r), out = [];
+      const taken = yLabs.concat((spec.notes ?? []).map(n => { const px = xs(tnum(n.d)), py = y(n.v); return { x0: px - 7, x1: px + 7, y0: py - 7, y1: py + 7 }; }));
       const two = (spec.nameOnEnd !== false && labelled.length > 1) || !!spec.endSub, yMin = spec.events?.length || spec.seam ? top + 4 : 2;
       for (const sr of labelled.slice().sort((a, b) => y(a.pts.filter(p => p.v != null).at(-1).v) - y(b.pts.filter(p => p.v != null).at(-1).v))) {
         const last = sr.pts.filter(p => p.v != null).at(-1), e = endText(sr), n = spec.endSub ?? e.n;
@@ -320,8 +323,9 @@ function _line(spec) {
       }
       return out;
     };
-    if (labelled.length && spec.right == null && !inside && labelled.length <= 3) {
-      const g = gutterAt(6), fit = fitEnds(g, 6);
+    // four or more end labels never fit inside the plot; they go straight to the key (2026-10-18)
+    if (labelled.length && spec.right == null && !inside) {
+      const g = gutterAt(6), fit = labelled.length <= 3 ? fitEnds(g, 6) : null;
       if (fit) { insideEnds = fit; R = 6; G = g; }
       else if (labelled.length >= 2 && spec.phoneKey !== false) { // optional: spec.phoneKey:false keeps the margin labels
         const items = labelled.map(sr => ({ sr, last: sr.pts.filter(p => p.v != null).at(-1), e: endText(sr) })).sort((a, b) => b.last.v - a.last.v);
@@ -474,12 +478,19 @@ function _line(spec) {
     const nw = Math.max(...lines.map((ln, k) => tw(ln, 12, k ? 400 : 600))), nh = lines.length * 14;
     // the asked-for side and height first, then the others; the clearest wins
     const pref = [[n.side ?? 'right', n.below ?? false], [n.side ?? 'right', !(n.below ?? false)], [(n.side ?? 'right') === 'right' ? 'left' : 'right', n.below ?? false], [(n.side ?? 'right') === 'right' ? 'left' : 'right', !(n.below ?? false)]];
-    const yLabs = N.ticks.map(v => ({ x0: 0, x1: G - 6, y0: y(v) - 16, y1: y(v) - 1 })); // a note never sits on a y-axis label (gdp port)
-    const far = n.dy ?? 0; // optional (gdp port): n.dy, extra px between the point and its note (a longer leader into clear space)
-    const fits = ([sd, bl]) => { const tx = sd === 'right' ? px + 14 : px - 14, ty = bl ? py + 22 + far : py - 14 - (lines.length - 1) * 14 - far; const x0 = sd === 'right' ? tx : tx - nw;
+    const yLabs = (yLabBoxes.length ? yLabBoxes : N.ticks.map(v => ({ x0: 0, x1: G - 6, y0: y(v) - 16, y1: y(v) - 1 }))).concat((insideEnds ?? []).map(p => p.box)); // a note never sits on a y-axis label (gdp port) or an end label inside the plot
+    // optional (gdp port): n.dy, extra px between the point and its note (a longer leader into clear space);
+    // when no side is clear at that distance, the note tries 14 and 28 px further out (2026-10-18)
+    const far0 = n.dy ?? 0;
+    // a note that would cross the drawing's edge slides back inside, as long as it still begins (or
+    // ends) at its point (2026-10-18)
+    const txOf = sd => sd === 'right' ? Math.max(px - 4, Math.min(px + 14, W - nw)) : Math.min(px + 4, Math.max(px - 14, nw));
+    const fits = ([sd, bl, far]) => { const tx = txOf(sd), ty = bl ? py + 22 + far : py - 14 - (lines.length - 1) * 14 - far; const x0 = sd === 'right' ? tx : tx - nw;
       if (x0 < 0 || x0 + nw > W || ty - 11 < 0 || ty + nh - 14 > H - bottom) return -99; return clearance({ x0: x0 - 3, x1: x0 + nw + 3, y0: ty - 11, y1: ty + nh - 11 }, noteSegs, yLabs.concat(drawnLabs, spec.noteAvoid ? noteBoxes : [])); }; // optional (learn port): spec.noteAvoid, each note keeps clear of the notes placed before it
-    const [side, below] = pref.reduce((a, b) => fits(b) > fits(a) + 1 ? b : a, pref[0]);
-    const tx = side === 'right' ? px + 14 : px - 14, anchor = side === 'right' ? 'start' : 'end';
+    const near = pref.map(([sd, bl]) => [sd, bl, far0]).reduce((a, b) => fits(b) > fits(a) + 1 ? b : a);
+    const score = c => fits(c) - (c[2] - far0) / 7;
+    const [side, below, far] = fits(near) >= 2 ? near : [14, 28].flatMap(d => pref.map(([sd, bl]) => [sd, bl, far0 + d])).reduce((a, b) => score(b) > score(a) + 1 ? b : a, near);
+    const tx = txOf(side), anchor = side === 'right' ? 'start' : 'end';
     const ty = below ? py + 22 + far : py - 14 - (lines.length - 1) * 14 - far;
     { const x0 = side === 'right' ? tx : tx - nw; noteBoxes.push({ x0: x0 - 3, x1: x0 + nw + 3, y0: ty - 12, y1: ty + nh - 10 }); }
     s += `<circle cx="${r1(px)}" cy="${r1(py)}" r="4" fill="none" stroke="${C.ink}" stroke-width="1.25"/>`;
@@ -656,12 +667,15 @@ function _bars(spec) {
   // optional: spec.nameMax, a wider name column for long names (industries), default 200
   const nameW = phone ? 0 : Math.min(spec.nameMax ?? 200, Math.max(...rows.map(r => tw(r.name, 13, r.highlight ? 600 : 400))) + 14);
   const bh = phone ? 10 : PR ? 12 : 13, bh2 = phone ? 6 : 7, row = (phone ? 36 : 25) + (PR ? (phone ? 10 : 8) : 0), top = (spec.ref ? 54 : phone && !spec.dots ? 14 : 34) + (PR ? 22 : 0); // a phone draws no scale: no room kept for one
-  const x0 = nameW + (lo < 0 ? valW : 0) + (phone && marks.length && !PR ? 5 : 0); // a phone's names sit at the edge: a circle near zero keeps its whole ring inside
+  // only a negative bar needs the label column on the left; a circle below zero (a year earlier)
+  // needs room for its ring alone, so the scale still fits the width (2026-10-18)
+  const loV = spec.dots ? lo : Math.min(0, ...vals);
+  const x0 = nameW + (loV < 0 ? valW : 0) + (phone && marks.length && !PR ? 5 : 0); // a phone's names sit at the edge: a circle near zero keeps its whole ring inside
   // the scale is fitted so each bar and its own label end inside the drawing (the widest label no longer
   // reserves a column beside every bar; 2026-10-17); negative values, log scales and shared bounds keep
   // the reserved column
   let x1 = W - valW;
-  if (lo >= 0 && !spec.log && spec.max == null) {
+  if (loV >= 0 && !spec.log && spec.max == null) {
     const lw = (r, v) => tw(fmt(v), 12.5, r.highlight ? 600 : 400) + noteW(r) + 3;
     let k = Infinity;
     for (const r of rows) {
@@ -738,6 +752,9 @@ function _bars(spec) {
         const mt = spec.markFmt(r.mark), mw = tw(mt, 11.5), free = (inside ? b : vx + lw) + 8;
         if (xm + 9 + mw <= W) s += T(xm + 9, yy + bh / 2 + 4.5, mt, { size: 11.5, fill: C.muted, cls: 'tab halo' });
         else if (xm - 9 - mw >= free) s += T(xm - 9, yy + bh / 2 + 4.5, mt, { size: 11.5, fill: C.muted, anchor: 'end', cls: 'tab halo' });
+        // a phone has a name line above each bar: a circle far out on its own is labelled there,
+        // ending over the circle, when it clears the name (2026-10-18)
+        else if (phone) { const xe = Math.min(W - 1, xm + 5); if (xe - mw >= x0 + tw(r.name, 12.5, r.highlight ? 600 : 400) + 12) s += T(xe, yy - 5, mt, { size: 11.5, fill: C.muted, anchor: 'end', cls: 'tab halo' }); }
       }
     }
     if (inside) s += T(vx, yy + bh / 2 + 4.5, fmt(r.value), { size: 12.5, fill: fill === C.lead || fill === C.comp ? '#fff' : C.ink, weight: r.highlight ? 600 : 500, anchor: 'end', cls: 'tab' });

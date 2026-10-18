@@ -93,7 +93,7 @@ of two columns on one left axis:
 | Section head (h2) | Serif 500, opsz 48 | 2.125rem / 1.12; 1.75rem |
 | Chart title, the finding (h3) | Serif 500, opsz 32 | 1.625rem / 1.22; 1.375rem |
 | Lede | Serif 400, ink-soft | 1.375rem / 1.45; 1.1875rem |
-| Body | Serif 400 | 1.1875rem / 1.62; 1.0625rem / 1.6 |
+| Body | Serif 400 | 1.1875rem / 1.62; 1.125rem / 1.6 (reading paragraphs 1.0625rem on desktop, 1.125rem on a phone; their sans labels .875rem, .9375rem on a phone) |
 | Notes under a chart | Serif 400 | 1.0625rem / 1.6 |
 | Big figure | Serif 300, lining | 2.75rem (titleblock), 2.25rem (chart readout), 6rem (the reading) |
 | UI and labels | Golos 400/500 | .9375rem (subtitles, nav), .875rem (labels, meta), .8125rem (source lines, captions; the floor) |

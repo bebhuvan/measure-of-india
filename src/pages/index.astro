@@ -16,9 +16,10 @@ const MONTHS_FULL = MF.map((m) => m[0].toUpperCase() + m.slice(1));
 
 // The front page is a briefing: what the latest data says, in sentences computed from the
 // bundles at build time. Nothing here is typed by hand, so it can never describe a stale print.
-const read = (b) => JSON.parse(fs.readFileSync(`data/series/${b}.json`, "utf8"));
 const SERIES_FILES = fs.readdirSync("data/series").filter((f) => f.endsWith(".json"));
-const N = SERIES_FILES.reduce((n, f) => n + Object.keys(read(f.replace(/\.json$/, "")).series).length, 0).toLocaleString("en-IN");
+// datasets, not series (2026-10-18): six in ten "series" were one survey cell, so the count a reader
+// can check is the published tables themselves, each a page under /data/
+const N = SERIES_FILES.length.toLocaleString("en-IN");
 
 const SECTIONS = [...new Set(DOSSIERS.map((d) => d.section))];
 const UNITS = [...STATES].sort((a, b) => a.name.localeCompare(b.name, "en-IN"));
@@ -48,7 +49,7 @@ const PC_MAX = Math.max(...PC_BY.values());
       <ul class="hm-proof">
         <li><b>{DOSSIERS.length}</b> guides</li>
         <li><b>{UNITS.length}</b> states and union territories</li>
-        <li><b>{N}</b> series</li>
+        <li><a href="/data/"><b>{N}</b> datasets</a></li>
         <li><b>{LEARN.length}</b> notes on the ideas</li>
         <li>No trackers, no cookies</li>
       </ul>

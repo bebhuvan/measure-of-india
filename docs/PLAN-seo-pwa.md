@@ -191,7 +191,12 @@ All seven pieces are built, and the whole gate set is green on a full build (3,4
 - Final check, 18 October 2026: a fresh build from source (3,462 pages in 705 s; dist 18,767 files,
   3.6 GB, inside the 90,000-file deploy gate) passed `ATLAS_CHROME_CHANNEL=chrome npm run gates`
   in full, and `npm test` passed 324 of 324. Committed on lb/seo-pwa and merged into lb/chartkit;
-  not deployed.
+  deployed by hand the same day (Worker version 40f033ba).
+- Follow-up, 18 October 2026 (Bhuvan from his phone): phone reading text 17 to 18px; the home page
+  counts 2,643 datasets (linked to /data/) instead of 16.9 lakh "series", six in ten of which were
+  one survey cell; chart kit on phones: lines with notes or four or more end labels run to the edge,
+  a below-zero circle no longer indents a bar chart, a far circle is labelled on its name line, and
+  a note slides inside the edge rather than onto an event label.
 
 ### Needs Bhuvan
 
