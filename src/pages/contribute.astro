@@ -1,0 +1,59 @@
+---
+// /contribute/: how a reader follows new figures and helps the site (the repository's
+// CONTRIBUTING.md says the same for people working in the code)
+import Base from "../layouts/Base.astro";
+import { SITE } from "../site.js";
+import "../styles/pages.css";
+const issue = (t) => `${SITE.repo}/issues/new?template=${t}.yml`;
+---
+<Base
+  title={`Contribute · ${SITE.name}`}
+  description={`How to follow every new figure on ${SITE.name} by RSS, report a number that differs from its source, suggest a dataset, or work on the open-source code.`}
+  nav="about"
+  dateStamp="October 2026"
+  crumbLeft='<a href="/about/">About</a> / <b>Contribute</b>'
+  crumbRight="Follow, correct, suggest, build"
+  canonical="/contribute/"
+>
+<div class="page spage">
+
+  <div class="titleblock">
+    <div class="kicker">Contribute</div>
+    <h1>Help build the measure</h1>
+    <p class="lede">{SITE.name} is open: the code, the data and every check it passes are on GitHub. You can follow new figures as they are released, tell us when a number is wrong, suggest what is missing, or work on the site itself.</p>
+  </div>
+
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>Follow new figures</h2><span class="line"></span></div>
+    <p>Every new official figure goes into a feed the day it is built into the site. Copy a feed's address into a feed reader and each release arrives there, with the figure, the period and the date it was released.</p>
+    <ul class="ab-contact">
+      <li><span>Every release</span><a href="/feeds/releases.xml">RSS</a></li>
+      <li><span>The same</span><a href="/feeds/releases.json">JSON Feed</a></li>
+      <li><span>By guide</span><a href="/feeds/">a feed for each of the guides</a></li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>Report a wrong number</h2><span class="line"></span></div>
+    <p>If a figure here differs from its source, <a href={issue("wrong-number")}>open an issue</a> with the page, the figure we show, the figure in the source, and where the source prints it. Every chart's "Copy link" button gives its exact address. We check it against the release and reply on the issue.</p>
+    <p>Where a data table and the printed report disagree, we publish the printed figure and say so on the page.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>Suggest a dataset</h2><span class="line"></span></div>
+    <p>The aim is to carry every dataset the government publishes. If you know one that belongs here, <a href={issue("new-dataset")}>suggest it</a>: what it measures, who publishes it, where it lives and how often it is released. Official sources only: the ministries, the statistical system, the RBI and the regulators, and for comparisons the World Bank, the ILO and the BIS.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>Work on the site</h2><span class="line"></span></div>
+    <p>The code is at <a href={SITE.repo}>{SITE.repo.replace("https://", "")}</a> under the MIT licence. Fixes to a label, a layout on a phone or a source adapter are welcome as pull requests; for anything larger, open an issue first. <a href={`${SITE.repo}/blob/main/CONTRIBUTING.md`}>The contribution guide</a> explains how to build the site and run its checks.</p>
+    <p>A few rules hold for every change. Each number in the prose is traced to the data by a script before it is published. Missing data stays missing, never zero. Two methods are never joined into one series. And the archive of what each agency published is never edited by hand.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>Or write</h2><span class="line"></span></div>
+    <p>For anything that does not fit an issue, write to <a href={`mailto:${SITE.publisher.email}`}>{SITE.publisher.email}</a>.</p>
+  </section>
+
+</div>
+</Base>

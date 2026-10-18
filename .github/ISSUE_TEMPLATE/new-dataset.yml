@@ -1,0 +1,30 @@
+name: Suggest a dataset
+description: An official dataset the site should carry
+labels: ["new dataset"]
+body:
+  - type: input
+    id: what
+    attributes:
+      label: What it measures
+    validations: { required: true }
+  - type: input
+    id: who
+    attributes:
+      label: Who publishes it
+      description: The ministry, agency or international body.
+    validations: { required: true }
+  - type: input
+    id: link
+    attributes:
+      label: Where it lives
+      description: A link to the release, the table or the portal.
+    validations: { required: true }
+  - type: input
+    id: cadence
+    attributes:
+      label: How often it is released, and from when
+      placeholder: Monthly, from April 2012
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it matters

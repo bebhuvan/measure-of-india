@@ -1,0 +1,27 @@
+name: A number differs from its source
+description: A figure on the site does not match the release it comes from
+labels: ["wrong number"]
+body:
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: The page, and the chart or sentence. A chart's "Copy link" button gives its address.
+      placeholder: https://measure.thisindianlife.today/guides/cpi/#cb-...
+    validations: { required: true }
+  - type: input
+    id: ours
+    attributes:
+      label: The figure we show
+    validations: { required: true }
+  - type: input
+    id: theirs
+    attributes:
+      label: The figure in the source
+    validations: { required: true }
+  - type: textarea
+    id: source
+    attributes:
+      label: The source
+      description: The document or table, its page or row, and a link.
+    validations: { required: true }

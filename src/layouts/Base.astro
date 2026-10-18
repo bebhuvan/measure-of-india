@@ -112,7 +112,7 @@ const verify = [["google-site-verification", process.env.GOOGLE_SITE_VERIFICATIO
 <main id="main"><slot /></main>
 <footer class="sitefoot">
   <p><b>{SITE.name}</b> is in beta. Its figures come from official publications and their data services, which can contain errors. Where we have checked a figure against the printed report and the two disagree, we publish the printed figure and say so on the page. Nothing here is investment, legal or policy advice.</p>
-  <p>A <a href={SITE.parent.url}>{SITE.parent.name}</a> project. Text and charts under <a href={SITE.license}>CC BY 4.0</a>; each source's data keeps its own terms. <a href="/data/">Data</a>, <a href="/feeds/">feeds</a>.</p>
+  <p>A <a href={SITE.parent.url}>{SITE.parent.name}</a> project. Text and charts under <a href={SITE.license}>CC BY 4.0</a>; each source's data keeps its own terms. <a href="/data/">Data</a>, <a href="/feeds/">RSS feeds</a>, <a href={SITE.repo}>code on GitHub</a>, <a href="/contribute/">contribute</a>.</p>
   <p class="install" hidden><span></span> <button type="button" data-act="install">Install</button> <button type="button" data-act="later">Not now</button></p>
 </footer>
 {charts && <KitScript />}

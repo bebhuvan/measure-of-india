@@ -7,6 +7,10 @@ line: "Read AGENTS.md and follow it."
 
 ## What this site is
 
+Public repository: https://github.com/bebhuvan/measure-of-india (MIT code; text and charts CC BY 4.0).
+Outside contributors start at `CONTRIBUTING.md`; readers at `/contribute/`. GitHub Actions stay off on
+the repository until its secrets are set (deploys are by hand from lb/chartkit for now).
+
 A static reference work on Indian economic statistics: 36 guides and 36
 state profiles at the 2026-10-15 cleanup (the registry is the count), build-time-rendered charts,
 mechanically verified prose. Live inventory: `npm run coverage:expansion`. No

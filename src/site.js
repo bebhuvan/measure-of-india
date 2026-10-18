@@ -7,6 +7,8 @@ export const SITE = {
   host: "measure.thisindianlife.today",
   url: "https://measure.thisindianlife.today",
   parent: { name: "This Indian Life", url: "https://thisindianlife.today/" },
+  // the public repository (MIT code; created 2026-10-18): footer, /about/, /contribute/
+  repo: "https://github.com/bebhuvan/measure-of-india",
   locale: "en-IN",
   // the person behind the site, as structured data and social cards name him (owner's choice,
   // 2026-10-17); the same contacts as /about/
