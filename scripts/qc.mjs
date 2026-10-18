@@ -818,7 +818,7 @@ for (const page of PAGES) {
   };
 
   // evaluate the page's module scripts (they import shared chunks from _astro)
-  const scripts = [...html.matchAll(/<script[^>]+src="([^"]+\.js)"/g)].map((m) => m[1]);
+  const scripts = [...html.matchAll(/<script[^>]+src="([^"]+\.js)"/g)].map((m) => m[1]).filter((u) => !/^(?:https?:)?\/\//.test(u)); // our own scripts; a third-party beacon is not ours to run
   const inline = [...html.matchAll(/<script type="module">([^<]+)<\/script>/g)].map((m) => m[1]).join("\n");
   try {
     for (const src of scripts) {

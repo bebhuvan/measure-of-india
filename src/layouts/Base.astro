@@ -117,5 +117,6 @@ const verify = [["google-site-verification", process.env.GOOGLE_SITE_VERIFICATIO
 </footer>
 {charts && <KitScript />}
 <script src="../pwa/app.js"></script>
+{SITE.beacon && <script is:inline defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: SITE.beacon })}></script>}
 </body>
 </html>

@@ -181,7 +181,7 @@ for (const url of PAGES) {
     const ok = !/kit\.json$/.test(f) && fs.existsSync(f) && fs.statSync(f).isFile();
     return { ok, status: ok ? 200 : 404, json: async () => JSON.parse(fs.readFileSync(f, "utf8")), text: async () => fs.readFileSync(f, "utf8") };
   };
-  const scripts = [...html.matchAll(/<script[^>]+src="([^"]+\.js)"/g)].map((m) => m[1]);
+  const scripts = [...html.matchAll(/<script[^>]+src="([^"]+\.js)"/g)].map((m) => m[1]).filter((u) => !/^(?:https?:)?\/\//.test(u)); // our own scripts; a third-party beacon is not ours to run
   try {
     // per-page query: a shared entry module runs once per page, not once per process (lb/profiles)
     for (const src of scripts) await import(pathToFileURL(path.join(DIST, src)).href + "?page=" + encodeURIComponent(url));

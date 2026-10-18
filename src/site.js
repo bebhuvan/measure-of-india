@@ -19,6 +19,9 @@ export const SITE = {
   },
   // our text and charts; each source's data keeps its own terms (footer, /method/)
   license: "https://creativecommons.org/licenses/by/4.0/",
+  // Cloudflare Web Analytics for this host alone (a site of its own, created 2026-10-18): cookieless,
+  // no cross-site tracking. The token is public; it ships in every page. Empty turns the beacon off.
+  beacon: "bb6ff569bd6947aba88bb23f535fad57",
 };
 // names the site has carried; none may reach a reader again
 export const RETIRED_NAMES = ["India Atlas", "Economic Atlas of India", "the Atlas", "The Atlas"];
