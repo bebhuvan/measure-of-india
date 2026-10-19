@@ -25,3 +25,10 @@ test('a chart\'s phone drawing becomes its search thumbnail: marks only, rounded
   assert.match(th, /<circle cx="40" cy="61" r="3" fill="#2E4BC4">/);
   assert.equal(thumbSVG('<svg width="10" height="10"><text>only text</text></svg>'), null);
 });
+test('a panel chart (nested svg) keeps its marks, moved to the panel and cropped in root units', () => {
+  const svg = '<svg width="360" height="900" viewBox="0 0 360 900"><svg x="0" y="0" width="360" height="200" viewBox="0 0 360 200"><text>Panel</text><rect x="10" y="20" width="50" height="8" fill="#2E4BC4"/></svg><svg x="0" y="600" width="360" height="200" viewBox="0 0 360 200"><rect x="10" y="20" width="50" height="8" fill="#2E4BC4"/></svg></svg>';
+  const th = thumbSVG(svg);
+  assert.match(th, /<g transform="translate\(0,0\)"><rect x="10" y="20" width="50" height="8" fill="#2E4BC4"><\/g>|<g transform="translate\(0,0\)"><rect x="10" y="20" width="50" height="8" fill="#2E4BC4"\/><\/g>/);
+  assert.doesNotMatch(th, /translate\(0,600\)/);
+  assert.doesNotMatch(th, /<svg[^>]*><svg|<text/);
+});

@@ -58,14 +58,26 @@ export function thumbSVG(svg, { w = THUMB.w, h = THUMB.h } = {}) {
   const vh = Math.min(H, Math.round(W * h / w * 1.15));
   let out = "", marks = 0;
   const open = [];   // for each open element, whether it is written
+  const dy = [0];    // the y offset of each open nested <svg> (a panel), so the crop test is in root units
   for (const m of body.matchAll(/<(\/?)([a-z]+)\b([^>]*?)(\/?)>/g)) {
     const [, closing, tag, attrText, self] = m;
-    if (closing) { if (open.pop()) out += `</${tag}>`; continue; }
+    if (closing) { if (tag === "svg") dy.pop(); const kept = open.pop(); if (kept) out += tag === "svg" ? "</g>" : `</${tag}>`; continue; }
     const attrs = {};
     for (const a of attrText.matchAll(/([a-z-]+)="([^"]*)"/g)) attrs[a[1]] = a[2];
     // hover targets and invisible boxes are not marks; nothing inside a dropped element is written
     // a mark wholly below the thumbnail's crop is not drawn either
-    const below = (+(attrs.y ?? attrs.cy ?? Math.min(+(attrs.y1 ?? 0), +(attrs.y2 ?? 0))) - +(attrs.r ?? 0)) > vh;
+    const below = (dy.at(-1) + +(attrs.y ?? attrs.cy ?? Math.min(+(attrs.y1 ?? 0), +(attrs.y2 ?? 0))) - +(attrs.r ?? 0)) > vh;
+    // a nested <svg> (the kit's panels, src/kit: panels) becomes a group moved to its place; the kit
+    // draws each panel at its own size, so its viewBox is its width and height and needs no scaling
+    if (tag === "svg" && self) continue;
+    if (tag === "svg") {
+      const x = +(attrs.x ?? 0), y = +(attrs.y ?? 0);
+      dy.push(dy.at(-1) + y);
+      const keep = !open.includes(false) && dy.at(-1) <= vh;
+      open.push(keep);
+      if (keep) out += `<g transform="translate(${round(x)},${round(y)})">`;
+      continue;
+    }
     const keep = KEEP.has(tag) && !open.includes(false) && !/\bak-hit\b/.test(attrs.class ?? "") && attrs.fill !== "transparent" && !(tag !== "g" && tag !== "path" && below);
     if (!self) open.push(keep);
     if (!keep) continue;
