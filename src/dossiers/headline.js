@@ -33,6 +33,7 @@ function pensionHeadlineRecord(b) {
 }
 
 export const HEADLINE = {
+  'time-use': {value:b=>last(b,'c_7ccfb7219d39cbca6e961c14').toLocaleString('en-IN')+' min',what:'unpaid domestic work per day across females aged six and above',period:b=>b.meta.latestPeriod},
   pensions: {value:b=>pensionHeadlineRecord(b).value.toLocaleString('en-IN'),what:'APY subscribers, published stock',period:b=>pensionHeadlineRecord(b).period,asOf:b=>pensionHeadlineRecord(b).date},
   "digital-access": { value: b => last(b, "c_9dfb5647c122b90f0409fc15").toFixed(1) + "%", what: "households with internet within their premises", period: b => b.meta.latestPeriod },
   // farm-households: historical income after paid-out costs
@@ -93,6 +94,7 @@ export const HEADLINE = {
 // sits beside a figure from a different base. `n` keeps the most recent points; `slope` marks
 // two-round surveys drawn as a before-and-after.
 export const SPARK = {
+  'time-use': {bundle:'time-use-2024-t8-minutes',series:'c_7ccfb7219d39cbca6e961c14'},
   pensions: {bundle:"pensions-m3",series:"apy_ca7e68f6"},
   "digital-access": {bundle:"digital-access-cmst2025-18", series:"c_9dfb5647c122b90f0409fc15"},
   "farm-households": {bundle:"farm-households-nss77-24-03",series:"c_f933a5307465e8a32ad64e2d"},

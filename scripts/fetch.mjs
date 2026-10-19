@@ -64,6 +64,7 @@ import { buildWpp } from "./lib/products/wpp.mjs";
 import { buildCore, buildIip1980 } from "./lib/products/industry-dbie.mjs";   // industry (lb/industry)
 import { buildHouseholds } from "./lib/products/households.mjs";
 import { buildSchools } from "./lib/products/schools.mjs";
+import { buildTimeUse } from "./lib/products/time-use.mjs";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
 const ONLY = args.includes("only") ? args.slice(args.indexOf("only") + 1) : null;
@@ -78,6 +79,7 @@ import { buildDigitalAccessProduct } from "./lib/products/digital-access.mjs";
 import {buildFarmHouseholds} from "./lib/products/farm-households.mjs";
 const REGISTRY = { households: buildHouseholds, schools: buildSchools, cpi: buildCpi, nas: buildNas, wpi: buildWpi, cpialrl: buildCpialrl, plfs: buildPlfs, rbi: buildRbi, isp: buildIsp, iip: buildIip, hces: buildHces, asi: buildAsi, asuse: buildAsuse, aishe: buildAishe, gender: buildGender, mnre: buildMnre, nfhs: buildNfhs, "worldbank-wdi": buildWorldbankWdi, bsr2: buildBsr2, "owid-climate": buildOwidClimate, cckp: buildCckp, ilostat: buildIlostat, rbirates: buildRbiRates };
 Object.assign(REGISTRY, {"farm-households": buildFarmHouseholds});
+Object.assign(REGISTRY, {"time-use": buildTimeUse});
 Object.assign(REGISTRY, {energy: buildEnergy});
 // Verified launch archive replay; live source-refresh contract is not yet wired.
 Object.assign(REGISTRY, {"digital-access": buildDigitalAccessProduct});

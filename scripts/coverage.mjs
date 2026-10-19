@@ -14,6 +14,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import YAML from "yaml";
 import { readCatalogue } from "./lib/catalogue.mjs";
+import {coverageMatcher} from './lib/coverage-match.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const COV = path.join(ROOT, "data", "coverage");
@@ -26,7 +27,6 @@ const fail = (m) => { failures++; console.error("FAIL:", m); };
 const ok = (m) => console.log("  ok:", m);
 
 // glob over colon-separated ids: '*' matches any run of characters (including ':').
-const toRegex = (g) => new RegExp("^" + g.split("*").map((s) => s.replace(/[.+?^${}()|[\]\\]/g, "\\$&")).join(".*") + "$");
 const asList = (x) => (x == null ? [] : Array.isArray(x) ? x : [x]);
 
 const bundleCache = new Map();
@@ -54,7 +54,7 @@ for (const file of ledgers) {
   const ids = new Set();
   for (const it of items) { if (ids.has(it.id)) fail(`${where}: duplicate catalogue id ${it.id}`); ids.add(it.id); }
 
-  const rules = (L.rules || []).map((r, i) => ({ ...r, i, res: asList(r.match).map(toRegex), hits: 0 }));
+  const rules = (L.rules || []).map((r, i) => ({ ...r, i, matches: coverageMatcher(asList(r.match)), hits: 0 }));
   for (const r of rules) {
     const tag = `${where} rule ${r.i + 1} (${asList(r.match).join(", ")})`;
     if (!STATUSES.has(r.status)) fail(`${tag}: status "${r.status}" is not one of ${[...STATUSES].join("/")}`);
@@ -81,7 +81,7 @@ for (const file of ledgers) {
   const tally = { shown: 0, baked: 0, excluded: 0, blocked: 0, pending: 0 };
   let undecided = [];
   for (const it of items) {
-    const r = rules.find((r) => r.res.some((re) => re.test(it.id)));
+    const r = rules.find((r) => r.matches(it.id));
     if (!r) { undecided.push(it.id); continue; }
     r.hits++;
     if (tally[r.status] != null) tally[r.status]++;

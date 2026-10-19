@@ -779,11 +779,12 @@ function _dumbbell(spec) {
   // urban means); r.a0/r.b0, the earlier round as small pale dots; r.bColor, a row's own b fill (a sector);
   // spec.from, the scale's lower end when zero means nothing (a Gini)
   const REFS = spec.refs ?? [];
-  const vals = rows.flatMap(r => [r.a, r.b, r.m, r.a0, r.b0]).concat(spec.ref ? [spec.ref.value] : [], REFS.map(f => f.value)).filter(v => v != null);
+  // optional (time-use port): spec.max, the scale's upper end, so panels side by side share one scale
+  const vals = rows.flatMap(r => [r.a, r.b, r.m, r.a0, r.b0]).concat(spec.ref ? [spec.ref.value] : [], REFS.map(f => f.value), spec.max != null ? [spec.max] : []).filter(v => v != null);
   const N = nice(spec.from ?? Math.min(0, ...vals), Math.max(...vals), phone ? 3 : 5);
   // optional (survey port): spec.nameMax, a wider name column for long names (default 190), so they stay on one line
   const nameW = phone ? 0 : Math.min(spec.nameMax ?? 190, Math.max(...rows.map(r => tw(r.name, 13, r.highlight ? 600 : 400))) + 14);
-  rows.forEach(r => { r._lines = phone ? [r.name] : wrap(r.name, nameW - 14, 13, r.highlight ? 600 : 400, 2); });
+  rows.forEach(r => { r._lines = phone ? [r.name] : wrap(r.name, nameW - 13.5, 13, r.highlight ? 600 : 400, 2); });
   const row = phone ? 34 : 24, top = spec.ref || REFS.length ? 70 : 52, H = top + rows.length * row + 10; // a ref label takes its own row under the key
   // optional (banks port): spec.endText(r), one label per row in place of the values, after the
   // right-hand dot (on a phone, at the right end of the name line); spec.room, px kept clear at the right
@@ -1421,12 +1422,14 @@ function _stackBars(spec) {
   // spec.absolute:{unit,dp} draws values, not shares, on a shared scale with each row's total
   // (and row.note) at its end
   // optional (debt port): spec.dim:true draws rows that are not highlighted in each part's pale `tint`
+  // optional (time-use port): row.total, a published total printed at the bar's end in place of the sum of
+  // its parts (the two can differ by rounding); the bar is still drawn from the parts
   const abs = spec.absolute;
   const rows = spec.rows.map(r => { const t = r.parts.reduce((a, b) => a + (b ?? 0), 0); return { ...r, tot: t, sh: r.parts.map(v => abs ? v ?? 0 : (v ?? 0) / t * 100) }; });
   const k = spec.sortBy ?? 0; if (spec.sort !== false) rows.sort((a, b) => (b.highlight ? 1e9 : 0) + b.sh[k] - (a.highlight ? 1e9 : 0) - a.sh[k]);
   const fmtA = abs?.fmt ?? (v => num(v, { dp: abs?.dp ?? 1, prefix: abs?.unit?.prefix ?? '', suffix: abs?.unit?.suffix ?? '' })); // absolute.fmt: the guide's own number renderer
-  const AN = abs ? nice(0, Math.max(...rows.map(r => r.tot)), phone ? 3 : 4) : null;
-  const endW = abs ? Math.max(...rows.map(r => tw(fmtA(r.tot), 12.5, 500) + (r.note ? tw(r.note, 12) + 10 : 0))) + 10 : 2;
+  const AN = abs ? nice(0, Math.max(...rows.map(r => Math.max(r.tot, r.total ?? 0))), phone ? 3 : 4) : null;
+  const endW = abs ? Math.max(...rows.map(r => tw(fmtA(r.total ?? r.tot), 12.5, 500) + (r.note ? tw(r.note, 12) + 10 : 0))) + 10 : 2;
   const nameW = phone ? 0 : Math.max(...rows.map(r => tw(r.name, 12.5, r.highlight ? 600 : 400))) + 14;
   const bh = phone ? 14 : 16, row = phone ? 38 : 26, keyRows = (() => { let n = 1, kx = phone ? 0 : nameW; for (const p of spec.parts) { const w = tw(p.name, 12) + 34; if (kx + w > W) { n++; kx = phone ? 0 : nameW; } kx += w; } return n; })(), top = keyRows * 20 + 26;
   const H = top + rows.length * row + 4, x0 = nameW, x = v => x0 + v / (abs ? AN.hi : 100) * (W - x0 - endW);
@@ -1443,8 +1446,8 @@ function _stackBars(spec) {
     r.sh.forEach((v, j) => { if (!v) return; const a = x(acc), b = x(acc + v); acc += v;
       s += `<rect x="${r1(a)}" y="${yy}" width="${r1(Math.max(0, b - a - 1))}" height="${bh}" fill="${spec.dim && !r.highlight ? spec.parts[j].tint ?? spec.parts[j].color : spec.parts[j].color}" data-tip="${esc(r.name + ' · ' + spec.parts[j].name + ': ' + (abs ? fmtA(v) : num(v, { dp: 1, suffix: '%' })))}"/>`;
       if (!abs && b - a > 34 && (j === k || spec.labels === 'all')) s += T(a + 5, yy + bh / 2 + 4, num(v, { dp: 0, suffix: '%' }), { size: 11, fill: spec.parts[j].ink ? C.ink : '#fff', weight: 600, cls: 'tab' }); });
-    if (abs) { const ex = x(acc) + 6; s += T(ex, yy + bh / 2 + 4.5, fmtA(r.tot), { size: 12.5, fill: C.ink, weight: r.highlight ? 600 : 500, cls: 'tab' });
-      if (r.note) s += T(ex + tw(fmtA(r.tot), 12.5, r.highlight ? 600 : 500) + 10, yy + bh / 2 + 4.5, r.note, { size: 12, fill: C.muted, cls: 'tab' }); }
+    if (abs) { const ex = x(acc) + 6; s += T(ex, yy + bh / 2 + 4.5, fmtA(r.total ?? r.tot), { size: 12.5, fill: C.ink, weight: r.highlight ? 600 : 500, cls: 'tab' });
+      if (r.note) s += T(ex + tw(fmtA(r.total ?? r.tot), 12.5, r.highlight ? 600 : 500) + 10, yy + bh / 2 + 4.5, r.note, { size: 12, fill: C.muted, cls: 'tab' }); }
   });
   return s + '</svg>';
 }
@@ -1505,6 +1508,95 @@ function _standings(spec) {
     if (b) s += T(x1, yy + (clash ? 35 : 21), b, { size: 11.5, fill: C.muted, anchor: 'end' });
   });
   return s + '</svg>';
+}
+
+// ============================================================================ DAY BARS (time-use port)
+// A whole day, or any fixed total, as one bar per group: the parts in a fixed order and colour, each
+// labelled with its own duration where it fits, on an hours scale. A row whose published parts add to
+// a minute more or less than the day (rounding) is drawn to its own total, never padded or trimmed.
+// spec: { width, rows:[{name, parts:[minutes], gap?:true (space before the row), sub?:true (regular weight)}],
+//         parts:[{name, color, ink?:true (dark text on a pale part)}], total:1440 }
+export const dayBars = (spec) => finish(_dayBars(spec));
+export const hm = (m) => { const h = Math.floor(m / 60), r = Math.round(m - h * 60); return h ? (r ? `${h}h ${r}m` : `${h}h`) : `${r}m`; };
+function _dayBars(spec) {
+  const W = spec.width, phone = W < 560, total = spec.total ?? 1440;
+  const nameW = phone ? 0 : Math.max(...spec.rows.map(r => tw(r.name, 13, r.sub ? 400 : 600))) + 16;
+  const bh = phone ? 26 : 30, step = phone ? 50 : 40, top = 30;
+  const x = v => nameW + v / total * (W - nameW);
+  let s = '', y = top;
+  for (let h = 0; h <= total / 60; h += 6) {
+    const xx = x(h * 60), last = h * 60 >= total;
+    s += Lv(xx, top - 7, top - 1, C.ctx);
+    s += T(xx, top - 12, last ? `${h} hours` : String(h), { size: 11.5, fill: C.muted, anchor: h === 0 ? 'start' : last ? 'end' : 'middle', cls: 'tab' });
+  }
+  spec.rows.forEach((r) => {
+    if (r.gap) y += phone ? 14 : 14;
+    if (phone) s += T(0, y + 13, r.name, { size: 12.5, fill: C.ink, weight: r.sub ? 400 : 600 });
+    const by = phone ? y + 20 : y;
+    if (!phone) s += T(nameW - 12, by + bh / 2 + 4.5, r.name, { size: 13, fill: C.ink, weight: r.sub ? 400 : 600, anchor: 'end' });
+    const sum = r.parts.reduce((a, b) => a + (b ?? 0), 0), k = total / sum;
+    let acc = 0;
+    r.parts.forEach((m, j) => {
+      if (!m) return;
+      const a = x(acc * k), b = x((acc + m) * k); acc += m;
+      const p = spec.parts[j];
+      s += `<rect x="${r1(a)}" y="${r1(by)}" width="${r1(Math.max(0.5, b - a - 1))}" height="${bh}" fill="${p.color}" data-tip="${esc(r.name + ' · ' + p.name + ': ' + hm(m) + ' (' + num(m, { dp: 0 }) + ' min)')}"/>`;
+      const lab = hm(m);
+      if (b - a - 1 >= tw(lab, 11.5, 600) + 10) s += T(a + 5, by + bh / 2 + 4, lab, { size: 11.5, fill: p.ink ? C.ink2 : '#fff', weight: 600, cls: 'tab' });
+    });
+    y += step + (phone ? 0 : 0);
+  });
+  y += phone ? 18 : 10;
+  let kx = phone ? 0 : nameW;
+  for (const p of spec.parts) {
+    const w = tw(p.name, 12) + 30;
+    if (kx + w > W) { kx = phone ? 0 : nameW; y += 20; }
+    s += `<rect x="${r1(kx)}" y="${r1(y - 9)}" width="10" height="10" fill="${p.color}"/>` + T(kx + 15, y, p.name, { size: 12, fill: C.ink2 });
+    kx += w;
+  }
+  return svgOpen(W, r1(y + 8), spec.title) + s + '</svg>';
+}
+
+// ============================================================================ RECTS (time-use port)
+// Two measures whose product is a third: the share who did something (width) and the time among
+// those who did it (height) give the time across everyone (the area). One panel per activity or
+// group, two rectangles from the same corner (b in indigo, a outlined in sindoor), the arithmetic
+// written above. Panels share both scales. Text is in ink; a swatch says which line is which.
+// spec: { width, panels:[{name, a:{share, minutes, per?}, b:{share, minutes, per?}}], keys:{a,b}, max?, minPanel? }
+export const rects = (spec) => _rects(spec); // each panel is finished; panels() only places them
+function _rects(spec) {
+  const W = spec.width, n = spec.panels.length, gap = 28;
+  const across = [n, Math.ceil(n / 2), 1].find(c => (W - gap * (c - 1)) / c >= (spec.minPanel ?? 230)) ?? 1;
+  const pw = Math.floor((W - gap * (across - 1)) / across);
+  const N = nice(0, spec.max ?? Math.max(...spec.panels.flatMap(p => [p.a.minutes, p.b.minutes])), 5);
+  const ka = spec.keys.a, kb = spec.keys.b;
+  // d.per is the published average across everyone; without one, the product is shown as approximate
+  const per = d => d.per ?? d.share * d.minutes / 100;
+  const line = (side, d) => `${(side === 'b' ? kb : ka)}: ${num(d.share, { dp: 1 })}% × ${num(d.minutes, { dp: 0 })} min ${d.per == null ? '≈' : '='} ${num(per(d), { dp: 0 })} min`;
+  const svgs = spec.panels.map(p => {
+    const L = 0, top = 74, bot = 24, h = top + 150 + bot, R = 2;
+    const X = v => L + v / 100 * (pw - L - R), Y = v => top + (1 - v / N.hi) * (h - top - bot);
+    let s = T(0, 13, p.name, { size: 13, fill: C.ink, weight: 600 });
+    s += `<rect x="0" y="23" width="10" height="10" fill="${C.leadWash}" stroke="${C.lead}" stroke-width="1.5"/>` + T(16, 32.5, line('b', p.b), { size: 12, fill: C.ink2, cls: 'tab' });
+    s += `<rect x="0" y="41" width="10" height="10" fill="none" stroke="${C.comp}" stroke-width="1.5"/>` + T(16, 50.5, line('a', p.a), { size: 12, fill: C.ink2, cls: 'tab' });
+    for (const v of N.ticks) s += Lh(L, pw - R, Y(v), v === 0 ? C.base : C.grid);
+    for (const v of [0, 50, 100]) s += T(X(v), h - 6, v === 100 ? '100% did it' : String(v), { size: 11, fill: C.muted, anchor: v === 0 ? 'start' : v === 100 ? 'end' : 'middle', cls: 'tab' });
+    // the larger area underneath, so both outlines stay visible
+    const order = per(p.b) >= per(p.a) ? [['b', p.b], ['a', p.a]] : [['a', p.a], ['b', p.b]];
+    for (const [side, d] of order) {
+      const tip = esc(p.name + ' · ' + line(side, d));
+      s += side === 'b'
+        ? `<rect x="${r1(X(0))}" y="${r1(Y(d.minutes))}" width="${r1(X(d.share) - X(0))}" height="${r1(Y(0) - Y(d.minutes))}" fill="${C.leadWash}" fill-opacity=".85" stroke="${C.lead}" stroke-width="1.75" data-tip="${tip}"/>`
+        : `<rect x="${r1(X(0))}" y="${r1(Y(d.minutes))}" width="${r1(X(d.share) - X(0))}" height="${r1(Y(0) - Y(d.minutes))}" fill="${C.comp}" fill-opacity=".06" stroke="${C.comp}" stroke-width="1.75" data-tip="${tip}"/>`;
+    }
+    // scale labels last, haloed, so a rectangle never hides them
+    for (const v of N.ticks) if (v) s += T(L + 3, Y(v) - 4, num(v, { dp: 0, suffix: v === N.ticks.at(-1) ? ' min' : '' }), { size: 11, fill: C.muted, cls: 'tab halo' });
+    return finish(svgOpen(pw, h, p.name) + s + '</svg>');
+  });
+  // a grid of panels: rows of `across`, each row side by side
+  const rowsOf = []; for (let i = 0; i < svgs.length; i += across) rowsOf.push(svgs.slice(i, i + across));
+  const rowSvgs = rowsOf.map(r => r.length > 1 ? panels(r, { gap, across: true }) : r[0]);
+  return rowSvgs.length > 1 ? panels(rowSvgs, { gap: 30 }) : rowSvgs[0];
 }
 
 // ============================================================================ PANELS

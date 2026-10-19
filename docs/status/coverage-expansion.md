@@ -1,5 +1,11 @@
 # Coverage expansion
 
+18 October 2026: Time Use report/API evaluation and the first report-backed
+2024 appendix guide edition are implemented and locally verified. See `time-use-expansion.md` for the 62 original
+workbooks, complete source-cell replay, API discrepancies, reader scope and
+unfinished historical/state-statement work. This does not mark the whole TUS
+family complete.
+
 Updated 10 October 2026. Plan: `docs/PLAN-coverage-expansion.md`.
 Owner guardrail: `skills/atlas-comprehensive-expansion/SKILL.md`.
 

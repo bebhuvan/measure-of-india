@@ -68,7 +68,11 @@ const investorMods=guideRegistry["investor-participation"]?await Promise.all([im
 const investorFormat=investorMods?.[1].investorFormat;
 const investorQC=investorMods?investorMods[0].investorModel():null;
 const pensionQC=guideRegistry.pensions?pensionsModel():null;
+import {timeUseModel} from '../src/dossiers/time-use.model.js';
+import {timeUseFormat} from '../src/dossiers/time-use.format.js';
+const timeUseQC=timeUseModel();
 const PAGES = [
+  {url:'/guides/time-use/',slug:null,minPlots:timeUseQC.plates.length,exactPlots:timeUseQC.plates.length,checks:[...Object.entries(timeUseQC.facts).map(([id,f])=>['n-'+id,()=>timeUseFormat(f.value,f.unit)]),...timeUseQC.plates.map(p=>['pv-'+p.id,()=>timeUseFormat(p.lead.value,p.lead.unit)])]},
   ...(investorQC?[{url:"/guides/investor-participation/",slug:null,minPlots:investorQC.plates.length,exactPlots:investorQC.plates.length,sourceTableSelector:'[data-investor-layout="source-table"] table',checks:[...investorQC.facts.map(f=>["n-"+f.id,()=>investorFormat(f.value,f.unit)]),...investorQC.plates.map(p=>["pv-"+p.id,()=>investorFormat(p.rows[0].value,p.unit)])]}]:[]),
   ...(pensionQC?[{url:'/guides/pensions/',slug:null,minPlots:pensionQC.plates.length,checks:[['n-pensions-apy',()=>pensionFormat(pensionQC.headline.lastSourceValue,pensionQC.headline.unit)],...pensionQC.plates.map(p=>['pv-'+p.id,()=>pensionFormat(p.rows[0].value,p.unit)]),['prov-vintage',()=> 'Source revision date: not published.']]}]:[]),
   {url:"/guides/digital-access/",slug:null,minPlots:digitalQC.plates.length,checks:[

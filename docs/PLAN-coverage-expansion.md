@@ -1,5 +1,13 @@
 # Coverage expansion after the thirty-guide checkpoint
 
+Implementation update, 18 October 2026: Time Use now has a report-backed first
+edition implemented and locally verified. All 46 original detailed workbooks and 16 RSE
+workbooks are archived and source-cell replayed. Direct API discrepancies make
+the original report the canonical source for this edition. Current scope,
+reader work, verification and the still-scheduled preceding survey/state
+statements are recorded in `docs/status/time-use-expansion.md`; the older
+readiness numbers below remain the dated assessment baseline.
+
 Owner direction: 10 October 2026. Build breadth and depth before launch. When in
 doubt, more data points, granularity, cuts, explanations and charts. Operational
 skill: `skills/atlas-comprehensive-expansion/SKILL.md`. This extends the launch

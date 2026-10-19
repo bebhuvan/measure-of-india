@@ -35,6 +35,14 @@
 // dateText/vintageText are allowed only where no bundle fact exists) —
 // hand-typed display strings that embed data facts rotted silently.
 
+const TIME_USE_BUNDLES = [
+  ...Array.from({length:46},(_,i)=>i+1).flatMap(n=>{
+    const units=[35,36,37,38,41,42,43,44].includes(n)?['pct','minutes']:
+      [5,7,8,10,11,13,14,16,18,20,22,24,26,28,30,32,34,40].includes(n)?['minutes']:n===1?['count']:['pct'];
+    return units.flatMap(unit=>[4,5].includes(n)?['rural','urban','combined'].map(sector=>`time-use-2024-t${n}-${sector}-${unit}`):[`time-use-2024-t${n}-${unit}`]);
+  }),
+  ...Array.from({length:8},(_,i)=>i+1).flatMap(n=>['india','state'].map(scope=>`time-use-2024-rse${n}_${scope}-pct_rse`))
+];
 export const DOSSIERS = [
   {
     slug: "cpi",
@@ -1383,6 +1391,19 @@ export const DOSSIERS = [
   "sourceQualityMode": "required",
   "everyCutChangeMode": "none"
 },
+  {
+    slug:'time-use',no:'37',section:'Households',name:'Time use',title:'Time use',kickerTitle:'Time Use Survey, National Statistics Office',crumbTitle:'Time use',
+    headline:'The work inside <i>an ordinary day.</i>',ogTitle:'The work inside an ordinary day.',
+    blurb:'Paid work, housework, care, learning and rest: who does them, how long they take, and what changes across age, employment, marriage and spending groups.',
+    description:'India’s Time Use Survey explained through its original detailed tables: participation, time per participant and time across everyone, unpaid work, care, employment, learning, leisure and sampling uncertainty.',
+    rssDescription:'How India spends its time, from the National Statistics Office’s original report tables, with explicit denominators and source quality checks.',
+    stamp:{dateStyle:'edition',vintageStyle:'edition'},statusNote:'Survey snapshot; original report edition',version:'v1.0',
+    currentBundle:'time-use-2024-t8-minutes',calendar:'calendar',bands:null,prose:false,proseConstants:[],
+    factsGenerator:'scripts/time-use-editorial.mjs',everyCutChangeMode:'none',everyCutInline:100,
+    spark:{bundle:'time-use-2024-t8-minutes',series:'c_7ccfb7219d39cbca6e961c14'},
+    register:{id:'reg-time-use',label:'Time use',unit:'Survey snapshot; minutes per person per day; age six and above',historyCol:'Survey year'},
+    bundles:TIME_USE_BUNDLES,
+  },
 ];
 export const bySlug = Object.fromEntries(DOSSIERS.map((d) => [d.slug, d]));
 

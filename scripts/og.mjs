@@ -113,8 +113,19 @@ function plotSvg({ S, keys, d0, d1, band, trend, suffix = "%", yStep, fmt, mr })
 // come from src/dossiers/registry.js at render time (single source of truth);
 // the "site" card is the only one with local kicker/title.
 import {farmHouseholdsOg} from "./lib/farm-households-og.mjs";
+import * as K from "../src/kit/kit.js";
+import {timeUseModel} from "../src/dossiers/time-use.model.js";
+import {DAY as TIME_USE_DAY} from "../src/dossiers/time-use.charts.js";
 import {digitalAccessOg} from "./lib/digital-access-og.mjs";
 const CARDS = [
+  // time use: the guide's own day bars (kit dayBars), females and males, drawn at 640 and scaled to the card
+  {slug:'time-use',bundleSlug:'time-use-2024-t8-minutes',keys:['c_7ccfb7219d39cbca6e961c14'],fmt:v=>Math.round(v)+' min',
+    render:()=>{
+      const p=timeUseModel().plates.find(p=>p.id==='day'),v=i=>p.rows[i].value;
+      const svg=K.dayBars({width:640,parts:TIME_USE_DAY,rows:p.shape.rows.slice(0,2).map(r=>({name:r.name,parts:r.parts.map(v)}))});
+      const [,w,h]=svg.match(/width="([\d.]+)" height="([\d.]+)"/);
+      return `<svg width="852" height="${(h*852/w).toFixed(1)}" viewBox="0 0 ${w} ${h}" font-family="Libre Franklin">${svg.replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'')}</svg>`;
+    },foot:b=>`How the average day divides, everyone aged six and above, ${b.meta.latestPeriod}. Source: NSO, Time Use Survey`},
   ...(bySlug.pensions?[{
     slug:'pensions',bundleSlug:'pensions-m3',keys:['apy_ca7e68f6'],fmt:v=>Math.round(v).toLocaleString('en-IN'),
     prep:S=>{headlineOf(bySlug.pensions);S.apy_ca7e68f6={...S.apy_ca7e68f6,label:'APY subscribers',color:'#2E4BC4'};},

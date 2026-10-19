@@ -89,7 +89,7 @@ export function dumbbellDraw(rows, keys, o = {}) {
   return (width) => {
     const phoneText = width < 560 && rows.every((r) => K.tw(r.name, 12.5) + 14 + K.tw(both(r), 12) <= width);
     return K.dumbbell({ width, rows, keys, fmt, unit: o.unit ?? {}, sortBy: o.sortBy ?? "none", labelAll: o.labelAll ?? true,
-      from: o.from, ref: o.ref, refs: o.refs, aColor: o.aColor, room: phoneText ? 12 : Math.max(40, room), nameMax: Math.min(Math.round(width * 0.36), Math.max(190, longest)),
+      from: o.from, max: o.max, ref: o.ref, refs: o.refs, aColor: o.aColor, room: phoneText ? 12 : Math.max(40, room), nameMax: Math.min(Math.round(width * 0.36), Math.max(190, longest)),
       ...(phoneText ? { endText: both } : {}) });
   };
 }

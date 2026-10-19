@@ -119,6 +119,7 @@ Hard rules — breaking any of these is a bug regardless of what else works:
 - `site/` — design-phase reference implementation (plain HTML visual spec)
 - `docs/reference/` — source reverse-engineering notes (eSankhyiki API, TradeStat)
 - `skills/` — task playbooks for agents (see skills/README.md)
+- Time Use Survey source decision, checks and remaining scope: `docs/status/time-use-expansion.md`.
 - Current coverage expansion: read `skills/atlas-comprehensive-expansion/SKILL.md`
   and `docs/PLAN-coverage-expansion.md`. The owner's rule is: when in doubt,
   more data points, granularity, cuts, explanations and charts. Account for every

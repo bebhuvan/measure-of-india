@@ -4172,5 +4172,13 @@ if (cfg.dossiers?.pensions) {
 }
 
 
+if(cfg.dossiers['time-use']){
+ try{
+  const {validateTimeUse}=await import('./lib/time-use-validation.mjs');
+  const manifest=JSON.parse(fs.readFileSync(path.join(ROOT,'data/coverage/time-use.manifest.json')));
+  for(const {slug}of manifest.bundles){const b=load(slug);checkMeta(b,slug,'time-use');checkRange(b,0,b.meta.unit==='pct'?100:b.meta.unit==='minutes'?1440:b.meta.unit==='pct_rse'?1000:1e13,slug,envelopeRanges(b,slug));}
+  const result=validateTimeUse(ROOT);ok('time-use: '+JSON.stringify(result));
+ }catch(error){fail('time-use: '+error.message);}
+}
 if (failures) { console.error(`\n${failures} validation failure(s)`); process.exit(1); }
 console.log("validate: all checks passed");

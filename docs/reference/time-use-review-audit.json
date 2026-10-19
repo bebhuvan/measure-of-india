@@ -1,0 +1,1037 @@
+{
+  "date": "2026-10-18",
+  "scope": "Review of the complete 2024 appendix guide model, all canonical entries, original report definitions, selected original workbook anchors and actual desktop/phone rendering. Source history/state-statement omissions remain separately scheduled.",
+  "status": "All seven review findings implemented and locally verified. Full rendered QC, both geometry sweeps and integrated explorer verification pass. Overall release gates remain blocked by two pre-existing public-finance metadata failures.",
+  "canonicalSeriesReviewed": 221630,
+  "bundlesReviewed": 74,
+  "platesReviewed": 121,
+  "distinctExplanationTexts": 33,
+  "focusedTestsPassed": 9,
+  "sourceIdentitiesPassed": 11087,
+  "repositoryGateStatus": "Two pre-existing public-finance base/seam failures; Time Use validation passes.",
+  "findings": [
+    {
+      "id": "TUS-R1",
+      "priority": "required",
+      "file": "src/dossiers/time-use.model.js",
+      "line": 100,
+      "finding": "Location rates overlap; the caption implies a distribution, and the title promises unpaid work while the filter selects paid work only.",
+      "evidence": {
+        "sourceTable": "t39",
+        "femalePaidLocationRates": [
+          28.2,
+          78.7,
+          0.5
+        ],
+        "sum": 107.4,
+        "groupsWithOverlappingRates": 27,
+        "totalGroups": 27,
+        "pairedLocationTimeMaximumResidualMinutes": 0.664
+      },
+      "remedy": "Explain overlapping location participation, name its participant universe, distinguish paid and unpaid panels, and keep the all-locations control separate from actual locations.",
+      "resolution": {
+        "status": "implemented",
+        "change": "Six paid/unpaid/combined location plates, explicit overlap and participant universe, control excluded from plotted locations, 27 rounding-bounded duration identities."
+      }
+    },
+    {
+      "id": "TUS-R2",
+      "priority": "required",
+      "file": "src/dossiers/time-use.model.js",
+      "line": 90,
+      "finding": "All six age participation captions refer to participant-duration companions, but the age-duration plots use Table 8 per-person time.",
+      "remedy": "Use measure-specific age explanations and name population averages and participant averages consistently.",
+      "resolution": {
+        "status": "implemented",
+        "change": "Age participation explicitly paired with per-person time; measure stored in chart payload and facts."
+      }
+    },
+    {
+      "id": "TUS-R3",
+      "priority": "required for the stated comprehensive edition",
+      "file": "src/dossiers/time-use.model.js",
+      "line": 86,
+      "finding": "The six-category allowlist omits volunteering, social/religious time and personal care/sleep across the six detailed dimensions.",
+      "remedy": "Review and explain those published cuts; EveryCut access alone does not complete the analytical treatment.",
+      "resolution": {
+        "status": "implemented",
+        "change": "All nine divisions now shown for all six demographic dimensions and rural/urban comparisons."
+      }
+    },
+    {
+      "id": "TUS-R4",
+      "priority": "editorial improvement",
+      "file": "src/dossiers/time-use.model.js",
+      "line": 82,
+      "finding": "Spending groups are sector-relative fifths from the survey short consumption module; source labels 0-20 to 80-100 are opaque in standalone charts.",
+      "remedy": "Use lowest-to-highest fifth labels and explain sector-specific ranks beside the lead claim, with no implied rupee, income or HCES equivalence.",
+      "resolution": {
+        "status": "implemented",
+        "change": "Human fifth labels and sector-relative short-module definitions beside lead claims and at chapter level."
+      }
+    },
+    {
+      "id": "TUS-R5",
+      "priority": "editorial improvement",
+      "file": "src/dossiers/time-use.model.js",
+      "line": 19,
+      "finding": "121 plates use only 33 distinct explainers, frequently reusing methodological caveats without a data-specific reading.",
+      "remedy": "Give each substantive comparison a source-traced takeaway; put recurring methodological notes at chapter level.",
+      "resolution": {
+        "status": "implemented",
+        "change": "Every plate now has a deterministic reading from plotted source cells, retained in facts and checked by rendered QC; recurring dimension definitions moved to chapters."
+      }
+    },
+    {
+      "id": "TUS-R6",
+      "priority": "chart improvement",
+      "file": "src/dossiers/time-use.plot.js",
+      "line": 8,
+      "finding": "Female and male rows repeat category labels; long labels set a tall row height for every item.",
+      "evidence": {
+        "desktopViewport": 1280,
+        "desktopPageHeight": 165606,
+        "phoneViewport": 390,
+        "phonePageHeight": 242510,
+        "largestPhoneFigureHeight": 2539,
+        "renderedCharts": 121,
+        "phoneHorizontalOverflow": false
+      },
+      "remedy": "Use paired gender dots on a shared category row, readable value columns, chapter navigation and coordinated measures; preserve all observations.",
+      "resolution": {
+        "status": "implemented",
+        "change": "One category label with paired dots and labelled gender value columns; equal values remain visible; spacing follows each individual label."
+      }
+    },
+    {
+      "id": "TUS-R7",
+      "priority": "chart improvement",
+      "file": "src/dossiers/time-use.model.js",
+      "line": 22,
+      "finding": "Alphabetical sorting places age groups 15-29,15-59,6-14,60+ in that order; nested ages are visually mixed.",
+      "remedy": "Order broad age groups naturally and distinguish the nested young-adult group rather than suggesting disjoint life stages.",
+      "resolution": {
+        "status": "implemented",
+        "change": "Age groups ordered from children to older people; nested young-adult group labelled explicitly."
+      }
+    }
+  ],
+  "bundleLedger": [
+    {
+      "bundle": "time-use-2024-rse1_india-pct_rse",
+      "series": 405,
+      "shown": 18,
+      "tail": 387,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Relative standard error"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-rse1_state-pct_rse",
+      "series": 2970,
+      "shown": 0,
+      "tail": 2970,
+      "withheld": 27,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Relative standard error"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-rse2_india-pct_rse",
+      "series": 405,
+      "shown": 18,
+      "tail": 387,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Relative standard error"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-rse2_state-pct_rse",
+      "series": 2970,
+      "shown": 0,
+      "tail": 2970,
+      "withheld": 27,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Relative standard error"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-rse3_india-pct_rse",
+      "series": 405,
+      "shown": 18,
+      "tail": 387,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Relative standard error"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-rse3_state-pct_rse",
+      "series": 2970,
+      "shown": 0,
+      "tail": 2970,
+      "withheld": 27,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Relative standard error"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-rse4_india-pct_rse",
+      "series": 180,
+      "shown": 0,
+      "tail": 180,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Relative standard error"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-rse4_state-pct_rse",
+      "series": 1320,
+      "shown": 0,
+      "tail": 1320,
+      "withheld": 12,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Relative standard error"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-rse5_india-pct_rse",
+      "series": 180,
+      "shown": 0,
+      "tail": 180,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Relative standard error"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-rse5_state-pct_rse",
+      "series": 1320,
+      "shown": 0,
+      "tail": 1320,
+      "withheld": 12,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Relative standard error"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-rse6_india-pct_rse",
+      "series": 180,
+      "shown": 0,
+      "tail": 180,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Relative standard error"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-rse6_state-pct_rse",
+      "series": 1320,
+      "shown": 0,
+      "tail": 1320,
+      "withheld": 12,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Relative standard error"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-rse7_india-pct_rse",
+      "series": 1440,
+      "shown": 0,
+      "tail": 1440,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Relative standard error"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-rse7_state-pct_rse",
+      "series": 2640,
+      "shown": 0,
+      "tail": 2640,
+      "withheld": 24,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Relative standard error"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-rse8_india-pct_rse",
+      "series": 1440,
+      "shown": 0,
+      "tail": 1440,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Relative standard error"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-rse8_state-pct_rse",
+      "series": 2640,
+      "shown": 0,
+      "tail": 2640,
+      "withheld": 24,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Relative standard error"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t1-count",
+      "series": 740,
+      "shown": 0,
+      "tail": 740,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "number of surveyed FSU* / rural",
+        "number of surveyed FSU* / urban",
+        "number of households surveyed / rural",
+        "number of households surveyed / urban",
+        "number of persons surveyed (all ages) / rural / male",
+        "number of persons surveyed (all ages) / rural / female",
+        "number of persons surveyed (all ages) / rural / trans-gender",
+        "number of persons surveyed (all ages) / rural / persons",
+        "number of persons surveyed (all ages) / urban / male",
+        "number of persons surveyed (all ages) / urban / female",
+        "number of persons surveyed (all ages) / urban / transgender",
+        "number of persons surveyed (all ages) / urban / persons",
+        "number of persons surveyed (age 6 years and above) / rural / male",
+        "number of persons surveyed (age 6 years and above) / rural / female",
+        "number of persons surveyed (age 6 years and above) / rural / trans-gender",
+        "number of persons surveyed (age 6 years and above) / rural / persons",
+        "number of persons surveyed (age 6 years and above) / urban / male",
+        "number of persons surveyed (age 6 years and above) / urban / female",
+        "number of persons surveyed (age 6 years and above) / urban / transgender",
+        "number of persons surveyed (age 6 years and above) / urban / persons"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t10-minutes",
+      "series": 945,
+      "shown": 0,
+      "tail": 945,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t11-minutes",
+      "series": 945,
+      "shown": 0,
+      "tail": 945,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Minutes per person"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t12-pct",
+      "series": 945,
+      "shown": 0,
+      "tail": 945,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Participation rate"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t13-minutes",
+      "series": 945,
+      "shown": 0,
+      "tail": 945,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Minutes per person"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t14-minutes",
+      "series": 945,
+      "shown": 0,
+      "tail": 945,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t15-pct",
+      "series": 7586,
+      "shown": 0,
+      "tail": 7586,
+      "withheld": 136,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Participation rate",
+        "Source group composition"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t16-minutes",
+      "series": 7469,
+      "shown": 0,
+      "tail": 7469,
+      "withheld": 136,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t17-pct",
+      "series": 7481,
+      "shown": 156,
+      "tail": 7325,
+      "withheld": 124,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Participation rate"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t18-minutes",
+      "series": 7481,
+      "shown": 156,
+      "tail": 7325,
+      "withheld": 124,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t19-pct",
+      "series": 2358,
+      "shown": 0,
+      "tail": 2358,
+      "withheld": 18,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Participation rate",
+        "Source group composition"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t2-pct",
+      "series": 888,
+      "shown": 0,
+      "tail": 888,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Published percentage"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t20-minutes",
+      "series": 2322,
+      "shown": 0,
+      "tail": 2322,
+      "withheld": 18,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t21-pct",
+      "series": 2362,
+      "shown": 48,
+      "tail": 2314,
+      "withheld": 14,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Participation rate",
+        "Source group composition"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t22-minutes",
+      "series": 2326,
+      "shown": 48,
+      "tail": 2278,
+      "withheld": 14,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t23-pct",
+      "series": 3560,
+      "shown": 0,
+      "tail": 3560,
+      "withheld": 4,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Participation rate",
+        "Source group composition"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t24-minutes",
+      "series": 3506,
+      "shown": 0,
+      "tail": 3506,
+      "withheld": 4,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t25-pct",
+      "series": 3560,
+      "shown": 72,
+      "tail": 3488,
+      "withheld": 4,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Participation rate",
+        "Source group composition"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t26-minutes",
+      "series": 3506,
+      "shown": 72,
+      "tail": 3434,
+      "withheld": 4,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t27-pct",
+      "series": 5233,
+      "shown": 0,
+      "tail": 5233,
+      "withheld": 32,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Participation rate"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t28-minutes",
+      "series": 5233,
+      "shown": 0,
+      "tail": 5233,
+      "withheld": 32,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t29-pct",
+      "series": 5235,
+      "shown": 108,
+      "tail": 5127,
+      "withheld": 30,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Participation rate"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t3-pct",
+      "series": 720,
+      "shown": 6,
+      "tail": 714,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Published percentage"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t30-minutes",
+      "series": 5235,
+      "shown": 108,
+      "tail": 5127,
+      "withheld": 30,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t31-pct",
+      "series": 2966,
+      "shown": 0,
+      "tail": 2966,
+      "withheld": 4,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Participation rate",
+        "Source group composition"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t32-minutes",
+      "series": 2921,
+      "shown": 0,
+      "tail": 2921,
+      "withheld": 4,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t33-pct",
+      "series": 2966,
+      "shown": 60,
+      "tail": 2906,
+      "withheld": 4,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Participation rate",
+        "Source group composition"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t34-minutes",
+      "series": 2921,
+      "shown": 60,
+      "tail": 2861,
+      "withheld": 4,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t35-pct",
+      "series": 720,
+      "shown": 0,
+      "tail": 720,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Participation rate"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t35-minutes",
+      "series": 720,
+      "shown": 0,
+      "tail": 720,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t36-pct",
+      "series": 720,
+      "shown": 12,
+      "tail": 708,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Participation rate"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t36-minutes",
+      "series": 720,
+      "shown": 12,
+      "tail": 708,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t37-pct",
+      "series": 540,
+      "shown": 12,
+      "tail": 528,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Participation rate"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t37-minutes",
+      "series": 540,
+      "shown": 12,
+      "tail": 528,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t38-pct",
+      "series": 540,
+      "shown": 12,
+      "tail": 528,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Participation rate"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t38-minutes",
+      "series": 540,
+      "shown": 12,
+      "tail": 528,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t39-pct",
+      "series": 108,
+      "shown": 8,
+      "tail": 100,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Published percentage"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t4-rural-pct",
+      "series": 9792,
+      "shown": 0,
+      "tail": 9792,
+      "withheld": 478,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Participation rate"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t4-urban-pct",
+      "series": 9449,
+      "shown": 0,
+      "tail": 9449,
+      "withheld": 726,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Participation rate"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t4-combined-pct",
+      "series": 9908,
+      "shown": 0,
+      "tail": 9908,
+      "withheld": 372,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Participation rate"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t40-minutes",
+      "series": 108,
+      "shown": 8,
+      "tail": 100,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t41-pct",
+      "series": 270,
+      "shown": 0,
+      "tail": 270,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Participation rate"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t41-minutes",
+      "series": 540,
+      "shown": 0,
+      "tail": 540,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Minutes per person",
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t42-pct",
+      "series": 270,
+      "shown": 10,
+      "tail": 260,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Participation rate"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t42-minutes",
+      "series": 540,
+      "shown": 20,
+      "tail": 520,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Minutes per person",
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t43-pct",
+      "series": 270,
+      "shown": 0,
+      "tail": 270,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Participation rate"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t43-minutes",
+      "series": 540,
+      "shown": 0,
+      "tail": 540,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Minutes per person",
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t44-pct",
+      "series": 270,
+      "shown": 0,
+      "tail": 270,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Participation rate"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t44-minutes",
+      "series": 540,
+      "shown": 0,
+      "tail": 540,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Minutes per person",
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t45-pct",
+      "series": 4950,
+      "shown": 74,
+      "tail": 4876,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Published percentage"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t46-pct",
+      "series": 2970,
+      "shown": 0,
+      "tail": 2970,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Published percentage"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t5-rural-minutes",
+      "series": 9792,
+      "shown": 0,
+      "tail": 9792,
+      "withheld": 478,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t5-urban-minutes",
+      "series": 9449,
+      "shown": 0,
+      "tail": 9449,
+      "withheld": 726,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t5-combined-minutes",
+      "series": 9908,
+      "shown": 0,
+      "tail": 9908,
+      "withheld": 372,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t6-pct",
+      "series": 9962,
+      "shown": 178,
+      "tail": 9784,
+      "withheld": 338,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Participation rate"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t7-minutes",
+      "series": 9962,
+      "shown": 18,
+      "tail": 9944,
+      "withheld": 338,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Minutes per participant"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t8-minutes",
+      "series": 9962,
+      "shown": 247,
+      "tail": 9715,
+      "withheld": 338,
+      "skipReason": "Exact source dash: no sample observation; not a zero.",
+      "measure": [
+        "Minutes per person"
+      ]
+    },
+    {
+      "bundle": "time-use-2024-t9-pct",
+      "series": 945,
+      "shown": 0,
+      "tail": 945,
+      "withheld": 0,
+      "skipReason": null,
+      "measure": [
+        "Participation rate"
+      ]
+    }
+  ],
+  "fixes": {
+    "date": "2026-10-18",
+    "plates": 167,
+    "sourceObservationsShown": 2131,
+    "sourceBoundReadings": 167,
+    "sourceIdentitiesPassed": 11114,
+    "focusedTestsPassed": 12,
+    "repositoryTestsPassed": 352,
+    "strictCoveragePassed": true,
+    "proseDryRunPassed": true,
+    "asofPassed": true,
+    "timeUseGeometry": {
+      "desktop": 167,
+      "phone": 167,
+      "passed": true
+    },
+    "browser": {
+      "desktopWidth": 1280,
+      "desktopPageHeight": 185349,
+      "phoneWidth": 390,
+      "phonePageHeight": 260625,
+      "phoneTallestPlotHeight": 2014,
+      "horizontalOverflow": false,
+      "runtimeErrorsOrWarnings": 0
+    },
+    "guideHTMLBytes": 692685,
+    "downloads": {
+      "csvObservations": 18,
+      "svgObservations": 18,
+      "svgDimensions": [
+        447,
+        1018
+      ],
+      "pngDimensions": [
+        1341,
+        3054
+      ],
+      "canonicalEqualityPassed": true
+    },
+    "additionalCorrections": [
+      "Household social group follows the household head’s informant-reported group.",
+      "Three combined paid/unpaid age comparisons, including the working-age source facts.",
+      "Provenance moved before explorer/download endmatter."
+    ],
+    "remainingValidation": [],
+    "fullBuild": {
+      "passed": true,
+      "pages": 2370
+    },
+    "integratedExplorer": {
+      "passed": true,
+      "bundles": 2717,
+      "records": 1914883,
+      "observations": 15747610,
+      "assets": 15380
+    },
+    "postBuildGateFailures": [
+      "Existing public-finance-ratios-backcast base metadata mismatch",
+      "Existing public-finance seam check for the same metadata mismatch"
+    ],
+    "displayPunctuationCheck": "Rendered reading checks use the existing guide formatter’s middle-dot/comma and spaced-dash/colon house style, with numeric strings still compared exactly.",
+    "fullRenderedQC": {
+      "passed": true,
+      "sourceBoundReadingsChecked": 167,
+      "siteGeometrySVGs": 1162,
+      "siteGeometryPages": 94,
+      "desktopPassed": true,
+      "phone390Passed": true
+    },
+    "publication": "Uncommitted local changes; no push or publication."
+  },
+  "baselineNote": "Top-level review counts and per-bundle dispositions record the pre-fix review. The fixes section records the revised guide and subsequent verification."
+}
