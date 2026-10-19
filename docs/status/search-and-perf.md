@@ -161,3 +161,14 @@ systemd-oomd and killed the desktop session. Heavy commands now take `flock /tmp
 - Thumbnails crop a tall drawing to its top; a few dot-plot thumbnails show only legend dots.
 - The masthead box's results open about as fast as the module loads (13 KB of script and the 110 KB
   core on first use); on a slow connection the first query shows "Loading search…" until they do.
+
+## 6. Live (2026-10-19)
+
+At the owner's go, lb/search was fast-forwarded into lb/chartkit (`99c670b8`) and the gated build
+was deployed by hand with `wrangler deploy` (Worker `india-atlas`, version `92696dbd`; the previous
+version, the rollback target, is `e1fd18a4`). Checked on https://measure.thisindianlife.today/:
+status codes for the home page, a guide, a profile, the explorer, an every-cut page, a `/dossiers/`
+redirect (301), the sitemap, feeds, an OG image, CSV and JSON downloads, the search core, a 404
+and `sw.js` (no-cache); in Chrome, the masthead search on a guide at 1280 px (results, thumbnails,
+Escape), `/?q=rural` on a 390 px phone, and the phone sheet on a state profile (page held, Close).
+No page errors.
