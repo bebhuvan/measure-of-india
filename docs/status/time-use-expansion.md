@@ -1,8 +1,48 @@
 # Time Use Survey expansion
 
-18 October 2026. Current work: direct-source evaluation and the first report-backed
-guide edition. The first report-backed appendix edition is implemented and locally verified.
-No commit, push or deployment is authorized or performed.
+Live since 19 October 2026 (Worker version 6b8f24d6). The newest section comes first; the
+sections after "Chart-kit edition" are the history of the source work and the first edition.
+
+## Live, 19 October 2026
+
+The guide is live at measure.thisindianlife.today/guides/time-use/: lb/time-use was rebased onto
+lb/chartkit 5a8b773a (search, thumbnails, build memory) without conflicts, lb/chartkit was
+fast-forwarded to b0b7bd81 and that commit's gated build was deployed by hand (Worker india-atlas,
+version 6b8f24d6; the rollback is 92696dbd). Not pushed to GitHub.
+
+Finished in this pass:
+
+- **Search.** Every plate has a thumbnail: `scripts/lib/search-thumbs.mjs` now turns a nested
+  `<svg>` (the kit's panels) into a group moved into place, which also gave thumbnails to other
+  guides' panel charts (628 of 637 charts site-wide, was 599). The registry names the guide's formal
+  name, Time Use Survey. Six labelled queries in `perf/search-queries.json` ("time use", "time use
+  survey", "unpaid work", "housework", "childcare", "cooking") all pass.
+- **Chart kit.** `rects` carries its minutes scale in a gutter left of the plot, so rectangle edges
+  no longer cross the numbers; a dumbbell's value labels are haloed where a dotted reference rule
+  runs under them (the All India rule had run through the state labels near 19.6%).
+- **Reader titles.** The 74 bundles' `meta.coverage` is a plain title per table ("Table 8: Minutes
+  per person, every activity in the classification, all activities in each half-hour"), set in the
+  adapter (`TIME_USE_TITLES`); the NSO caption stays in `sourceTitle`. Offline replay; a check
+  confirmed no other field of any bundle changed. Every-cut notes no longer say "in 1 groups".
+- **Wording.** An untraced "one interview in nine" (the table says 10.4% of females) was removed; the
+  status plate's explainer claimed salaried women did less domestic work than any woman without a
+  salaried job, which students contradict (120 min), and now names the groups it is true for; the
+  tasks finding names hands-on childcare beside cooking; no straight quotes in a title.
+- **Build memory.** The full build now fits Node's default heap (13 min, 5.6 GB peak RSS), so the
+  earlier 8 GB flag is not needed.
+
+Checks on the deployed build: `npm test` 340 of 340; `ATLAS_CHROME_CHANNEL=chrome npm run gates`
+passes in full (validate with 11,114 Time Use identities, 50 coverage ledgers, as-of, QC with every
+rendered figure, chart lint of 2,675 SVGs, explorer verify, SEO, perf budgets, search 48 of 51 with
+the 3 recorded misses, phone performance on 76 pages). No perf ceiling was raised; the guide has its
+own new entry in `perf/budgets.json` (HTML 45 KB). Chrome at 1280 and 390 px, local and live: no
+console errors, no sideways scroll, all 20 charts drawn; live home, a state profile and the
+masthead search for "time use" and "unpaid work" checked.
+
+Left undone: the 2019 survey's tables (not checked against this edition, so no trend), the report
+chapter's state Statements 1.1 to 17.1, and search ranking for "time use", where the guide comes
+first but the next two charts are unrelated ones that contain "use" and "time" (a search-core
+ranking question, not specific to this guide).
 
 ## Chart-kit edition (lb/time-use, 18 October 2026)
 

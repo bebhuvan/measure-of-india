@@ -11,8 +11,8 @@ Public repository: https://github.com/bebhuvan/measure-of-india (MIT code; text 
 Outside contributors start at `CONTRIBUTING.md`; readers at `/contribute/`. GitHub Actions stay off on
 the repository until its secrets are set (deploys are by hand from lb/chartkit for now).
 
-A static reference work on Indian economic statistics: 36 guides and 36
-state profiles at the 2026-10-15 cleanup (the registry is the count), build-time-rendered charts,
+A static reference work on Indian economic statistics: 37 guides and 36
+state profiles on 2026-10-19, with Time Use live (the registry is the count), build-time-rendered charts,
 mechanically verified prose. Live inventory: `npm run coverage:expansion`. No
 framework runtime, no database, no client-side fetching of data. Everything
 is a file, every file has a gate, every gate exits non-zero on failure.
@@ -119,7 +119,8 @@ Hard rules — breaking any of these is a bug regardless of what else works:
 - `site/` — design-phase reference implementation (plain HTML visual spec)
 - `docs/reference/` — source reverse-engineering notes (eSankhyiki API, TradeStat)
 - `skills/` — task playbooks for agents (see skills/README.md)
-- Time Use Survey source decision, checks and remaining scope: `docs/status/time-use-expansion.md`.
+- Time Use Survey (guide 37, live 2026-10-19): source decision, checks and remaining scope in
+  `docs/status/time-use-expansion.md`. Browser gates here need `ATLAS_CHROME_CHANNEL=chrome` (no Playwright download).
 - Current coverage expansion: read `skills/atlas-comprehensive-expansion/SKILL.md`
   and `docs/PLAN-coverage-expansion.md`. The owner's rule is: when in doubt,
   more data points, granularity, cuts, explanations and charts. Account for every
