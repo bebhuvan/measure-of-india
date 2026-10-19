@@ -119,3 +119,33 @@ test("a valuation basis is no topic, in the index and in the query", () => {
   assert.deepEqual(parseQuery("Exports of goods, current prices ").map((w) => w.w), ["exports", "goods", "current"]);
   assert.ok(parseQuery("prices in bihar ")[0].forms.includes("inflation"));
 });
+
+// reader feedback (2026-10-18): guides and charts were below the fold of a list the series filled
+test("the reader's list: guides and charts before the series; broad words group charts by guide", async () => {
+  const { layout, byGuide, broadQuery } = await import("../src/dossiers/search-core.js");
+  const guides = [["cpi", "Consumer prices", ""], ["schools", "Schools", ""], ["households", "Household amenities", ""]];
+  const plates = [[0, "cb-rural", "Rural prices rose faster", "Rural inflation was 3.2%"], [1, "cb-water", "Rural schools with water", "Most rural schools have taps", 1],
+    [2, "cb-san", "Rural sanitation", "Toilets in rural homes", 1], [2, "cb-tap", "Tap water at home", "Rural homes with a tap"]];
+  const thumbs = new Map([["schools/cb-water", "<svg/>"], ["households/cb-san", "<svg/>"]]);
+  const { core, files, load } = searchFixture({ guides, plates, thumbs, bundles: [
+    { slug: "cpi-r", title: "Rural index", cut: "State", guide: 0, rows: [["Goa, rural", "", "4.1%", "Aug 2026", "s0000001", []], ["Egg, rural", "", "2%", "Aug 2026", "s0000002", []]] }] });
+  const S = createSearch(core, load);
+  const quick = S.quick("rural", { plateLimit: 60 });
+  assert.equal(quick.n.plates, 4);
+  assert.equal(quick.plates.find((p) => p.title === "Rural sanitation").thumb, `th/households/cb-san.${core.rel}.svg`);
+  assert.ok(`th/households/cb-san.${core.rel}.svg` in files, "the thumbnail is a file of the release");
+  assert.equal(quick.plates.find((p) => p.title === "Tap water at home").thumb, null);
+  const series = await S.series("rural");
+  const kinds = layout(quick, series).filter((s) => s.items.length).map((s) => s.kind);
+  assert.ok(kinds.indexOf("top") < kinds.indexOf("series"), `charts after series: ${kinds}`);
+  // the list does not reorder when the series arrive: everything before them is the same
+  const before = layout(quick, null).flatMap((s) => s.kind === "series" ? [] : s.items.map((x) => x.href));
+  const after = layout(quick, series).flatMap((s) => s.kind === "series" || s.kind === "files" ? [] : s.items.map((x) => x.href));
+  assert.deepEqual(after, before.filter((h) => after.includes(h)));
+  assert.ok(broadQuery("rural", quick.plates));
+  assert.ok(!broadQuery("rural water", quick.plates));
+  const groups = byGuide(quick.plates);
+  assert.equal(groups.length, 3);
+  assert.equal(groups.find((g) => g.title === "Household amenities").items.length, 2);
+  assert.ok(series.nFiles >= 1);
+});

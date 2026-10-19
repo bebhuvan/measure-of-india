@@ -92,9 +92,26 @@ body{overscroll-behavior-x:none}
 .sh-nav a{color:var(--ink-soft);text-decoration:none;padding:4px 0;border-bottom:1px solid transparent;transition:color .15s ease,border-color .15s ease}
 .sh-nav a:hover{color:var(--ink)}
 .sh-nav a[aria-current]{color:var(--ink);border-bottom-color:var(--ink)}
-.sh-search{display:flex;align-items:center;gap:10px;width:236px;padding:9px 12px;border:1px solid var(--rule-2);font:400 .875rem/1 var(--sans);color:var(--muted);text-decoration:none;white-space:nowrap;transition:border-color .15s ease,color .15s ease}
-.sh-search kbd{margin-left:auto;font:500 .6875rem/1 var(--sans);color:var(--muted);border:1px solid var(--rule-2);padding:3px 6px}
-.sh-search:hover{color:var(--ink);border-color:var(--ink-soft)}
+/* the masthead's search (src/search/header.client.js): a real box on every page. Reached for, it
+   opens as a panel with an ink edge, the box at its top and the results under it; on a phone, as
+   a sheet over the whole screen. The results' own rules load with them (src/search/search.css). */
+.sx{position:relative;flex:none;width:236px;height:36px}
+.sx-box{height:100%}
+.sx-bar{position:relative;display:flex;align-items:center;height:100%;border:1px solid var(--rule-2);background:var(--bg);transition:border-color .15s ease}
+.sx-bar:hover{border-color:var(--ink-soft)}
+.sx-q{flex:1;min-width:0;height:100%;border:0;border-radius:0;background:transparent;font:400 .875rem/1 var(--sans);color:var(--ink);padding:0 0 0 12px;outline:none;-webkit-appearance:none;appearance:none}
+.sx-q::placeholder{color:var(--muted);opacity:1}
+.sx-q::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
+.sx-k{margin:0 10px 0 8px;font:500 .6875rem/1 var(--sans);color:var(--muted);border:1px solid var(--rule-2);padding:3px 6px}
+.sx-bar:focus-within{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.sx .sx-panel{display:none}
+#results[hidden]{display:none}
+.sx.open .sx-box{position:absolute;z-index:60;height:auto;top:-8px;right:-8px;width:min(720px,calc(100vw - 2 * var(--gutter) + 16px));background:var(--bg);
+  border:1px solid var(--ink-soft);box-shadow:0 28px 56px -32px rgba(21,23,26,.42)}
+.sx.open .sx-bar{height:auto;border:0;border-bottom:1px solid var(--rule-2);box-shadow:none}
+.sx.open .sx-q{height:52px;font-size:1.0625rem;padding:0 16px}
+.sx.open .sx-k{display:none}
+.sx.open .sx-panel:not([hidden]){display:block}
 .dateline{display:flex;justify-content:space-between;align-items:baseline;gap:24px;padding:10px 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--rule);
   font:400 .8125rem/1.35 var(--sans);color:var(--ink-soft)}
 .dateline b{font-weight:600;color:var(--ink)}
@@ -639,10 +656,18 @@ section .break + .break{margin-top:0 !important}
 @media (max-width:1140px){
   .sh-in{gap:24px}
   .sh-nav{gap:20px}
-  .sh-search{width:40px;height:40px;padding:0;justify-content:center}
-  .sh-search span{display:none}
-  .sh-search kbd{margin:0;border:0;font-size:0;padding:0}
-  .sh-search kbd::before{content:"";display:block;width:14px;height:14px;border:1.75px solid var(--ink-soft);border-radius:50%;box-shadow:5px 5px 0 -3.5px var(--ink-soft)}
+  /* folded to its icon, the box still takes the tap: the input covers the square, its text unseen until it opens */
+  .sx{width:40px;height:40px}
+  .sx:not(.open) .sx-q{padding:0;color:transparent;caret-color:transparent;cursor:pointer}
+  .sx:not(.open) .sx-q::placeholder{color:transparent}
+  .sx:not(.open) .sx-k{position:absolute;inset:0;margin:auto;width:14px;height:14px;padding:0;border:1.75px solid var(--ink-soft);border-radius:50%;box-shadow:5px 5px 0 -3.5px var(--ink-soft);font-size:0;pointer-events:none}
+}
+/* a phone: the open box is a sheet over the page, the box at its top, the results filling the rest */
+@media (max-width:600px){
+  .sx.open .sx-box{position:fixed;inset:0;width:auto;border:0;box-shadow:none;display:flex;flex-direction:column}
+  .sx.open .sx-bar{flex:none;border-bottom:1px solid var(--ink)}
+  .sx.open .sx-q{font-size:1.0625rem;padding:0 var(--gutter)}
+  html:has(.sx.open),html:has(.sx.open) body{overflow:hidden}
 }
 @media (max-width:960px){
   .sh-in{gap:20px}

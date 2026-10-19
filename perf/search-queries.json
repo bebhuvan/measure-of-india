@@ -1,5 +1,5 @@
 {
- "note": "Labelled reader queries for scripts/perf-search.mjs. href/label/bundle: a regex one of the top N results must match; series: a regex the first series result (label + bundle) must match; known: a failure we have not fixed yet, reported but not fatal; a known query that passes fails the gate until its mark is removed.",
+ "note": "Labelled reader queries for scripts/perf-search.mjs. href/label/bundle: a regex one of the top N results must match; series: a regex the first series result (label + bundle) must match; kind: a regex the matching result's kind (guide, chart, series, state, files...) must match; why: what the reader should get, where the site cannot give more yet; known: a failure we have not fixed yet, reported but not fatal; a known query that passes fails the gate until its mark is removed.",
  "queries": [
   {
    "q": "inflation in Kerala",
@@ -136,8 +136,7 @@
   {
    "q": "fiscal deficit",
    "href": "^/guides/public-finance/",
-   "top": 3,
-   "known": "the states' gross fiscal deficit rows lead; the Centre's deficit chart title says deficit, not fiscal deficit"
+   "top": 3
   },
   {
    "q": "household debt",
@@ -192,8 +191,7 @@
   {
    "q": "school enrolment",
    "href": "^/guides/schools/",
-   "top": 3,
-   "known": "a gender-parity index of enrolment from the state handbook leads over enrolment itself"
+   "top": 3
   },
   {
    "q": "pension",
@@ -210,6 +208,26 @@
    "q": "rural wages",
    "href": "^/guides/jobs/",
    "top": 3
+  },
+  {
+   "q": "rural",
+   "kind": "^(chart|guide)$",
+   "href": "^/guides/[a-z-]+/#cb-",
+   "top": 1,
+   "why": "reader feedback 2026-10-18: a broad word opens on the charts that name it (grouped by guide in the box), not on the first of 8 lakh rural series (Goa, rural; Egg, rural)"
+  },
+  {
+   "q": "tap water",
+   "series": "Tap Water",
+   "bundle": "^schools-udise",
+   "top": 3,
+   "why": "the site has tap water only as schools with a tap (UDISE+); households' tap water and sanitation are a coverage gap (the WASH guide, docs/PLAN-coverage-expansion.md section 5), so search must not pretend otherwise"
+  },
+  {
+   "q": "rural sanitation",
+   "series": "improved sanitation facility, All India, rural",
+   "top": 3,
+   "why": "no chart is about rural sanitation yet (WASH coverage gap); the NFHS household rows for all India, rural, are the answer"
   },
   {
    "q": "inflaton",

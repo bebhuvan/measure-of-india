@@ -11,7 +11,7 @@
 import { indexTokens, STOP } from "../src/dossiers/search-core.js";
 import { packSearchIndex } from "../src/dossiers/search-pack.js";
 
-export function searchFixture({ guides, plates = [], views = [], profiles = [], bundles, quality, units = {}, own }) {
+export function searchFixture({ guides, plates = [], thumbs, views = [], profiles = [], bundles, quality, units = {}, own }) {
   const rows = [], post = new Map(), bpost = new Map(), packed = [];
   const add = (m, t, id) => { if (STOP.has(t)) return; if (!m.has(t)) m.set(t, []); if (m.get(t).at(-1) !== id) m.get(t).push(id); };
   bundles.forEach((b, bi) => {
@@ -30,7 +30,7 @@ export function searchFixture({ guides, plates = [], views = [], profiles = [], 
     ownTopics[bi] ??= [...new Set([...indexTokens(`${b.title} ${b.cut}`), ...(b.guide >= 0 && guides[b.guide] ? indexTokens(`${guides[b.guide][1]} ${guides[b.guide][2] ?? ""}`) : [])])];
   }
   const q = quality && { ...quality, bundles: Object.fromEntries(Object.entries(quality.bundles ?? {}).map(([slug, id]) => [packed.findIndex((b) => b.slug === slug), id])) };
-  const { core, files } = packSearchIndex({ guides, plates, views, profiles, bundles: packed, rows, post, bpost, units, own, ownTopics, quality: q });
+  const { core, files } = packSearchIndex({ guides, plates, thumbs, views, profiles, bundles: packed, rows, post, bpost, units, own, ownTopics, quality: q });
   const load = async (p) => { if (!(p in files)) throw new Error(`fixture: no ${p}`); return files[p]; };
   const fetch = async (url) => ({ ok: true, json: async () => (url.endsWith("core.json") ? core : load(url.split("/search/")[1])) });
   return { core, files, rows, load, fetch };

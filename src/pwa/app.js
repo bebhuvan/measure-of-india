@@ -1,6 +1,7 @@
-// src/pwa/app.js, on every page (src/layouts/Base.astro): registers the service worker
-// (src/pwa/sw.js) and makes a quiet offer to install, one line in the footer, shown at most once a
-// quarter after "Not now", never in the installed app itself.
+// src/pwa/app.js, on every page (imported by src/search/header.client.js, the one script
+// src/layouts/Base.astro loads everywhere): registers the service worker (src/pwa/sw.js) and
+// makes a quiet offer to install, one line in the footer, shown at most once a quarter after
+// "Not now", never in the installed app itself.
 (() => {
   if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
   const box = document.querySelector(".sitefoot .install");

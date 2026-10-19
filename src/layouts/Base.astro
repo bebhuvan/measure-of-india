@@ -10,6 +10,7 @@ import { headlineOf } from "../dossiers/headline.js";
 import { pageGraph, ldJSON } from "../seo/graph.js";
 import { lastmodFor } from "../seo/lastmod.js";
 import { FEEDS, guideFeed } from "../seo/feeds.js";
+import { qualityRegistryVersion } from "../explore/source-quality.js";
 
 interface Props {
   title: string;
@@ -102,7 +103,7 @@ const verify = [["google-site-verification", process.env.GOOGLE_SITE_VERIFICATIO
     <nav class="sh-nav" aria-label="Main">
       <a href="/guides/" aria-current={nav === "guides" ? "page" : undefined}>Guides</a><a href="/states/" aria-current={nav === "states" ? "page" : undefined}>States</a><a href="/learn/" aria-current={nav === "learn" ? "page" : undefined}>Learn</a><a href="/explore/" aria-current={nav === "register" ? "page" : undefined}>Indicators</a><a href="/method/" aria-current={nav === "method" ? "page" : undefined}>Method</a><a href="/about/" aria-current={nav === "about" ? "page" : undefined}>About</a>
     </nav>
-    <a class="sh-search" href="/#find" aria-label="Search guides and series"><span>Search guides and series</span><kbd>/</kbd></a>
+    <form class="sh-search sx" id="sx" role="search" action="/" method="get" data-quality-version={qualityRegistryVersion}><div class="sx-box"><div class="sx-bar"><input id="sxq" class="sx-q" name="q" type="search" aria-label="Search guides, charts and series" autocomplete="off" spellcheck="false" enterkeyhint="search" placeholder="Search guides and series"><kbd class="sx-k" aria-hidden="true">/</kbd></div><div class="sx-panel" hidden></div></div></form>
   </div>
   <div class="dateline">
     <span class="dl-l">{crumbLeft ? <span set:html={crumbLeft} /> : <span>Revised as each figure is released</span>}</span>
@@ -116,7 +117,7 @@ const verify = [["google-site-verification", process.env.GOOGLE_SITE_VERIFICATIO
   <p class="install" hidden><span></span> <button type="button" data-act="install">Install</button> <button type="button" data-act="later">Not now</button></p>
 </footer>
 {charts && <KitScript />}
-<script src="../pwa/app.js"></script>
+<script src="../search/header.client.js"></script>
 {SITE.beacon && <script is:inline defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: SITE.beacon })}></script>}
 </body>
 </html>

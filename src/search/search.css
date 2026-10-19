@@ -1,0 +1,63 @@
+/* src/search/search.css: the search results (src/search/ui.js), under the home page's box and in
+   the masthead's panel. The search module brings it as text and adds it as a <style>, so a page
+   pays for it only once a reader searches (the home page, whose box is the module, at load). Set like a table (DESIGN §0.6): no capitals, no colour on text; the selected tab is ink
+   with a 2px ink underline (§0.7); the selected result a wash with an indigo edge. */
+/* the masthead box's Close and its hint, made by ui.js when the box first opens */
+.sx .sx-close,.sx .sx-hint{display:none}
+.sx.open .sx-close{display:block;margin-right:12px;padding:6px 2px;border:0;background:none;font:500 .875rem/1 var(--sans);color:var(--ink-soft);cursor:pointer;border-bottom:1px solid var(--rule-2)}
+.sx.open .sx-close:hover{color:var(--ink);border-bottom-color:var(--ink)}
+.sx.open .sx-hint{display:block;padding:14px 16px 16px;font:400 .875rem/1.5 var(--sans);color:var(--muted)}
+.sx.open .sx-panel:not([hidden]) + .sx-hint{display:none}
+.sx-panel{font-family:var(--sans);overflow-y:auto;overscroll-behavior:contain;background:var(--bg)}
+.sx-tabs{position:sticky;top:0;z-index:2;display:flex;gap:22px;padding:0 16px;background:var(--bg);border-bottom:1px solid var(--rule-2);
+  overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.sx-tabs::-webkit-scrollbar{display:none}
+.sx-tabs button{flex:none;display:flex;align-items:baseline;gap:6px;margin:0;padding:12px 0 10px;border:0;border-bottom:2px solid transparent;background:none;
+  font:500 .875rem/1 var(--sans);color:var(--ink-soft);cursor:pointer;white-space:nowrap}
+.sx-tabs button:hover{color:var(--ink)}
+.sx-tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--ink)}
+.sx-tabs button:focus-visible{outline-offset:-2px}
+.sx-tabs .n{font-weight:400;color:var(--muted);font-variant-numeric:tabular-nums}
+.sx-tabs .zero{color:var(--muted)}
+.sx-list{list-style:none;margin:0;padding:0 0 4px}
+.sx-list li{border-top:1px solid var(--rule)}
+.sx-list li.ro > a{display:grid;grid-template-columns:minmax(0,1fr) 90px 108px;gap:18px;align-items:center;padding:11px 16px;color:inherit;text-decoration:none;cursor:pointer}
+.sx-list li[aria-selected=true]{background:var(--hover);box-shadow:inset 2px 0 0 var(--accent)}
+.sx-list .rn{font-size:.9375rem;font-weight:500;color:var(--ink);line-height:1.35;min-width:0}
+.sx-list mark{background:none;color:inherit;text-decoration:underline;text-decoration-color:var(--accent-soft);text-decoration-thickness:2px;text-underline-offset:3px}
+.sx-list .rm{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:.8125rem;font-weight:400;color:var(--muted);margin-top:2px}
+.sx-list .rv{text-align:right;font-size:1rem;font-weight:600;font-variant-numeric:tabular-nums}
+.sx-list .rv small{display:block;font-size:.8125rem;font-weight:400;color:var(--muted)}
+.sx-list .rs svg{display:block}
+/* a chart: its thumbnail (the chart's own phone drawing, marks only), title, finding and guide */
+.sx-list li.rc > a{grid-template-columns:96px minmax(0,1fr);gap:16px;align-items:start}
+.sx-list .th{display:block;width:96px;height:64px;border:1px solid var(--rule);background:var(--bg)}
+.sx-list .th img{display:block;width:94px;height:62px;object-fit:contain}
+/* a chart the kit does not draw (a table, a map) has no thumbnail: its column stays, with no empty frame */
+.sx-list .th:empty{border-color:transparent}
+.sx-list .rf{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin-top:3px;font-size:.8125rem;font-weight:400;line-height:1.4;color:var(--ink-soft)}
+.sx-list li.sec{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:16px 16px 6px;border-top:1px solid var(--rule-2);font-size:.8125rem;font-weight:500;color:var(--ink);cursor:default}
+.sx-list li.sec:first-child{border-top:0}
+.sx-list li.sec .c{font-weight:400;color:var(--muted);font-variant-numeric:tabular-nums}
+.sx-list li.sec a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule-2)}
+.sx-list li.sec a:hover{border-bottom-color:var(--ink)}
+.sx-list li.sec + li{border-top:0}
+.sx-list li.more{padding:10px 16px 12px;border-top:0;font-size:.875rem;font-weight:500;color:var(--ink);cursor:pointer}
+.sx-list li.more span{border-bottom:1px solid var(--rule-2)}
+.sx-list li.more:hover span{border-bottom-color:var(--ink)}
+.sx-list li.wait,.sx-list li.none{padding:12px 16px;font-size:.875rem;color:var(--muted);cursor:default}
+@media (max-width:600px){
+  .sx.open .sx-close{margin-right:var(--gutter)}
+  .sx.open .sx-hint{padding:16px var(--gutter)}
+  .sx-tabs{gap:16px;padding:0 var(--gutter, 16px)}
+  .sx-tabs button{font-size:.8125rem;gap:4px}
+  /* a long series label reads in four lines at most; its file in one */
+  .sx-list li.ro:not(.rc) .rn{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;overflow:hidden}
+  .sx-list li.ro:not(.rc) .rm{-webkit-line-clamp:1}
+  .sx-list li.ro > a{grid-template-columns:minmax(0,1fr) 84px;gap:12px;padding:11px var(--gutter, 16px)}
+  .sx-list li.rc > a{grid-template-columns:72px minmax(0,1fr)}
+  .sx-list .th{width:72px;height:48px}
+  .sx-list .th img{width:70px;height:46px}
+  .sx-list .rs{display:none}
+  .sx-list li.sec,.sx-list li.more,.sx-list li.wait,.sx-list li.none{padding-left:var(--gutter, 16px);padding-right:var(--gutter, 16px)}
+}

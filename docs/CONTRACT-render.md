@@ -97,13 +97,26 @@ build.
     - row chunks (512 rows);
     - bundle records (64 per file);
     - quantity-group rows;
-    - the vocabulary, fetched only to suggest a spelling.
+    - the vocabulary, fetched only to suggest a spelling;
+    - chart thumbnails (`th/<guide>/<figure>.svg`, 2026-10-18): the chart kit's own phone drawing
+      with its text, hover targets and data attributes removed and its coordinates rounded
+      (`scripts/lib/search-thumbs.mjs`), about 0.5 KB gzipped at the median and 4 KB at most. The
+      browser fetches one only when its result is on screen; a plate with one carries a `1` as its
+      fifth field in the core, so thumbnails cost the core a few bytes, not their own weight.
   - **A cold query fetches ≤ 300 KB gzipped beyond the core.** `perf-search` measures every
     labelled query.
   - Every result links to a plate (`#<figure id>`), an every-cut row (`#s…`, everycut.js
     `rowAnchor`, stable across releases) or a bundle's download.
-  - **The result order is `layout()`**, rendered by the home page and judged by `perf-search`
-    against `perf/search-queries.json`. A query marked `known` there is a recorded miss. A new
+  - **The result order is `layout()`**, rendered by the search box (`src/search/ui.js`: the
+    home page's and the masthead's on every page) as its "All" view and judged by `perf-search`
+    against `perf/search-queries.json`. Guides and charts that name every word come before the
+    series (2026-10-18), and they answer from the core alone, so the list never reorders when the
+    series arrive. A chart that only begins with a word ("petroleum" for "petrol")
+    or finds it in its guide's description comes after the series. The search module (with its
+    styles, as text) is no part of any page's own script: the masthead box loads it when a reader
+    reaches for it, the home page's box when the page goes idle or at the first keystroke. On every
+    page the masthead box costs about 1 KB of script (with the service worker's registration) and
+    0.3 KB of HTML. A query marked `known` there is a recorded miss. A new
     miss, or a known one that starts passing without its mark removed, fails the gate.
 
   qc fails a core over budget, any file over 1 MB, and any of a sample of series from every guide

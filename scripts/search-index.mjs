@@ -19,6 +19,7 @@ import { indexTokens, STOP, rankUnitGroups } from "../src/dossiers/search-core.j
 import { packSearchIndex } from "../src/dossiers/search-pack.js";
 import { getSourceQuality, qualityPublicLabel, qualityRegistryVersion } from '../src/explore/source-quality.js';
 import { discoverSearchPlates } from "./lib/search-plates.mjs";
+import { thumbSVG } from "./lib/search-thumbs.mjs";
 import { unitOf } from '../src/dossiers/units.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -35,6 +36,7 @@ const clip = (s, n) => (s.length > n ? s.slice(0, n - 1).replace(/\s+\S*$/, "") 
 const guides = DOSSIERS.map((d) => [d.slug, d.title, clip(String(d.blurb ?? d.description ?? ""), 220), d.crumbTitle && d.crumbTitle !== d.title ? d.crumbTitle : ""]);
 const gIdx = Object.fromEntries(DOSSIERS.map((d, i) => [d.slug, i]));
 const plates = [];
+const thumbs = new Map();   // "<guide>/<figure id>" -> thumbnail svg (scripts/lib/search-thumbs.mjs)
 for (const d of DOSSIERS) {
   const f = path.join(DIST, "guides", d.slug, "index.html");
   if (!fs.existsSync(f)) throw new Error(`search-index: ${f} missing; run after astro build`);
@@ -43,7 +45,9 @@ for (const d of DOSSIERS) {
     let title = decode(plate.titleHTML), finding = plate.findingHTML == null ? "" : decode(plate.findingHTML);
     if (!/[a-z0-9]/i.test(title)) [title, finding] = [clip(finding, 100), ""];
     if (!/[a-z0-9]/i.test(title)) continue;
-    plates.push([gIdx[d.slug], plate.id, title, clip(finding, 200)]);
+    const th = plate.phoneSVG ? thumbSVG(plate.phoneSVG) : null;
+    if (th) thumbs.set(`${d.slug}/${plate.id}`, th);
+    plates.push([gIdx[d.slug], plate.id, title, clip(finding, 200), ...(th ? [1] : [])]);
   }
 }
 
@@ -162,12 +166,12 @@ const ownTopics = {};
   }
 }
 // ---- end datafix
-const { core, files } = packSearchIndex({ guides, plates, views, profiles, bundles, rows, post, bpost, units, own, ownTopics, quality: { ...quality, rowOverrides: quality.rowOverrides } });
+const { core, files } = packSearchIndex({ guides, plates, thumbs, views, profiles, bundles, rows, post, bpost, units, own, ownTopics, quality: { ...quality, rowOverrides: quality.rowOverrides } });
 core.built = new Date().toISOString().slice(0, 10);
 fs.rmSync(OUT, { recursive: true, force: true });
 let big = 0, tot = 0, nf = 0;
 for (const [name, value] of Object.entries(files)) {
-  const f = path.join(OUT, name), text = JSON.stringify(value);
+  const f = path.join(OUT, name), text = typeof value === "string" ? value : JSON.stringify(value);
   fs.mkdirSync(path.dirname(f), { recursive: true });
   fs.writeFileSync(f, text);
   const sz = Buffer.byteLength(text); tot += sz; nf++; big = Math.max(big, sz);
@@ -176,4 +180,4 @@ for (const [name, value] of Object.entries(files)) {
 fs.writeFileSync(path.join(OUT, "core.json"), JSON.stringify(core));
 const coreBytes = fs.statSync(path.join(OUT, "core.json")).size;
 const nOf = (d) => Object.keys(files).filter((k) => k.startsWith(d + "/")).length;
-console.log(`search index v2: ${rows.length.toLocaleString("en-IN")} series, ${plates.length} plates, ${bundles.length} files; core ${(coreBytes / 1024).toFixed(0)} KB; ${nOf("t")} token shards, ${nOf("r")} row chunks, ${nOf("b")} bundle files (${nf} files, ${(tot / 1e6).toFixed(1)} MB, largest ${(big / 1024).toFixed(0)} KB); ${core.shards.frequent.length} frequent words without postings`);
+console.log(`search index v2: ${rows.length.toLocaleString("en-IN")} series, ${plates.length} plates (${thumbs.size} thumbnails), ${bundles.length} files; core ${(coreBytes / 1024).toFixed(0)} KB; ${nOf("t")} token shards, ${nOf("r")} row chunks, ${nOf("b")} bundle files (${nf} files, ${(tot / 1e6).toFixed(1)} MB, largest ${(big / 1024).toFixed(0)} KB); ${core.shards.frequent.length} frequent words without postings`);

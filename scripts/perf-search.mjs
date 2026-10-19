@@ -49,15 +49,15 @@ for (const q of queries) {
   // the reader's list, in the order the home page shows it (search-core.js layout)
   const list = layout(quick, series).flatMap((sec) => sec.items.map((x) => sec.kind === "series"
     ? { kind: "series", href: x.guideHref, label: x.label + (x.group ? ` (${x.group})` : ""), bundle: x.bundle }
-    : { kind: sec.kind === "top" ? x.kind.toLowerCase() : sec.kind, href: x.href, label: x.title }));
+    : { kind: sec.kind === "top" || sec.kind === "more" ? x.kind.toLowerCase() : sec.kind, href: x.href, label: x.title }));
   const top = list.slice(0, q.top ?? 3);
-  const hit = (x) => (!q.href || re(q.href).test(x.href)) && (!q.label || re(q.label).test(x.label)) && (!q.bundle || re(q.bundle).test(x.bundle ?? ""));
+  const hit = (x) => (!q.href || re(q.href).test(x.href)) && (!q.label || re(q.label).test(x.label)) && (!q.bundle || re(q.bundle).test(x.bundle ?? "")) && (!q.kind || re(q.kind).test(x.kind));
   const firstSeries = series.rows[0];
   const seriesOk = !q.series || (firstSeries && re(q.series).test(firstSeries.label + " " + firstSeries.bundle));
   const suggestOk = !q.suggest || (await S.suggest(q.q)) === q.suggest;
   const ok = (q.none ? list.length === 0 : q.suggest ? true : top.some(hit)) && seriesOk && suggestOk;
   if (q.known) { if (ok) failures.push(`"${q.q}": now passes; remove its known mark ("${q.known}") so it stays fixed`); else known.push(`"${q.q}": ${q.known}`); }
-  else if (!ok) failures.push(`"${q.q}": expected ${JSON.stringify({ href: q.href, label: q.label, series: q.series, none: q.none })} in top ${q.top ?? 3}; got ${top.map((x) => `${x.kind}:${x.label}`).join(" | ") || "nothing"}${q.series ? `; first series ${firstSeries?.label ?? "none"} [${firstSeries?.bundle}]` : ""}`);
+  else if (!ok) failures.push(`"${q.q}": expected ${JSON.stringify({ href: q.href, label: q.label, kind: q.kind, bundle: q.bundle, series: q.series, none: q.none })} in top ${q.top ?? 3}; got ${top.map((x) => `${x.kind}:${x.label}`).join(" | ") || "nothing"}${q.series ? `; first series ${firstSeries?.label ?? "none"} [${firstSeries?.bundle}]` : ""}`);
   if (budgets.maxQueryGz && bytes > budgets.maxQueryGz) failures.push(`"${q.q}": cold query fetched ${(bytes / 1024).toFixed(0)} KB gzip in ${fetched.length} files, over ${(budgets.maxQueryGz / 1024).toFixed(0)} KB`);
   out.push({ q: q.q, ok, ms: Math.round(ms), files: fetched.length, gzBytes: bytes, total: series.total, top: list.slice(0, 8) });
   console.log(`${ok ? "pass" : q.known ? "know" : "FAIL"}  ${q.q.padEnd(34)} ${String(fetched.length).padStart(2)} files ${String(Math.round(bytes / 1024)).padStart(4)} KB gz ${String(Math.round(ms)).padStart(5)} ms  ${series.total.toLocaleString("en-IN")} rows`);

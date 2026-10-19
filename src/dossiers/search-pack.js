@@ -14,6 +14,8 @@
 //                    count, segs, ctx, reviewAnchor?]
 //   u/<group>.json   rows of each quantity group (money, count, index...), for unit intent
 //   lex.json         every indexed word, loaded only to suggest a spelling for a query that finds nothing
+//   th/<guide>/<figure>.svg  a chart's thumbnail (scripts/lib/search-thumbs.mjs), shown beside it in
+//                    the results; a plate with one carries a 1 as its fifth field
 // Every name carries the release hash (core.rel), so an open tab can never mix releases, and
 // every file is immutable.
 import crypto from "node:crypto";
@@ -29,7 +31,8 @@ export { encodeIds };
 /**
  * @param {object} c
  *   guides   [[slug, title, blurb, formalName]]
- *   plates   [[guideIdx, figureId, title, finding]]
+ *   plates   [[guideIdx, figureId, title, finding, hasThumb?]]
+ *   thumbs   Map "<guide slug>/<figure id>" -> thumbnail svg (written as is, not JSON)
  *   views    [[guideIdx, label, href, rows]]
  *   profiles [[slug, name, aliases]]
  *   bundles  [{ slug, title, cut, guide, segs, ctx, reviewAnchor }] in row order; rows of bundle k
@@ -70,15 +73,18 @@ export function packSearchIndex(c) {
   const groups = Object.keys(c.units ?? {}).sort();
   for (const g of groups) files.set(`u/${g}`, encodeIds(c.units[g]));
   files.set("x/lex", [...c.post.keys()].sort());
+  const svgs = [...(c.thumbs ?? new Map())].sort(([a], [b]) => (a < b ? -1 : 1));
   // one hash over every file names the release
   const h = crypto.createHash("sha256");
   for (const [k, v] of [...files].sort(([a], [b]) => (a < b ? -1 : 1))) h.update(k + "\0" + JSON.stringify(v) + "\0");
+  for (const [k, v] of svgs) h.update("th/" + k + "\0" + v + "\0");
   const quality = c.quality && { ...c.quality, rowOverrides: Object.fromEntries(Object.entries(c.quality.rowOverrides ?? {}).map(([k, ids]) => [k, encodeIds(ids)])) };
   const core0 = { guides: c.guides, plates: c.plates, views: c.views, profiles: c.profiles ?? [], quality };
   h.update(JSON.stringify(core0));
   const rel = h.digest("hex").slice(0, 12);
   const out = {};
   for (const [k, v] of files) out[`${k}.${rel}.json`] = v;
+  for (const [k, v] of svgs) out[`th/${k}.${rel}.svg`] = v;
   const core = {
     v: 2, identityVersion: 1, rel, nSeries: c.rows.length, ...core0,
     ...(quality ? {} : { quality: undefined }),

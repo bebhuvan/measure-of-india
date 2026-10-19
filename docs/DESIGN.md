@@ -35,6 +35,14 @@ raises its proportion and type. Where v5 and anything below disagree, v5 wins.
   the day it was saved. Every `:hover` applies only on a pointer that hovers (the build moves each
   rule behind `@media (hover:hover)`), so nothing sticks after a tap. The tap highlight is a faint
   indigo wash. No page transitions: a reference work turns pages, it does not animate them.
+- **Search (18 October 2026).** The masthead carries a real search box on every page, `/` to reach
+  it. Reached for, it opens as a panel with an ink edge, the box at its top and the results directly
+  under it; on a phone, as a sheet over the screen with a text *Close*. Results have tabs with
+  counts (All, Charts, Guides, Data series, Files), set as §0.7 tabs. On All, guides and charts
+  come first, then the series, so nothing moves when the series arrive. A chart result reads like
+  an article: a thumbnail drawn from the chart itself (its marks only, no text), the title, the
+  finding in two lines and the guide. A one-word query grouping charts from three guides or more
+  shows them under their guides' names.
 - **Data files and feeds.** Each data file has a plain page (`/data/<file>/`): title block, what the
   file holds, its series as a set table, how to cite it. `/feeds/` lists the feeds as labelled rows.
   A feed opened in a browser is set in the house type by a CSS stylesheet.

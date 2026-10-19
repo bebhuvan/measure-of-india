@@ -3,7 +3,7 @@
 // network at 1.6 Mbps down / 750 kbps up / 150 ms round trip, types each labelled query
 // (perf/search-queries.json) and times:
 //   first   from the keystroke to the first result row on screen (guides and charts, from the core)
-//   series  from the keystroke to the series rows on screen (the shards)
+//   series  from the keystroke to the series on screen (the shards): the Data series tab has its count
 // cold: a fresh browser context, the query typed as soon as the page has loaded (the core not yet
 //       fetched); idle: the same, typed after the page has been idle 3 s (the core warmed on idle);
 // warm: a second query in the same tab. A report, not a gate (timings are noisy; bytes are gated
@@ -43,13 +43,13 @@ async function phone() {
   await cdp.send("Network.emulateNetworkConditions", { offline: false, latency: 150, downloadThroughput: 1.6e6 / 8, uploadThroughput: 750e3 / 8 });
   return { ctx, page };
 }
-// type the query, then time the first option and the series section (render() in home.client.js)
+// type the query, then time the first option and the series count (draw() in src/search/ui.js)
 async function ask(page, q) {
   await page.fill("#q", "");
-  await page.evaluate(() => { document.getElementById("results").innerHTML = ""; });
+  await page.evaluate(() => { const l = document.querySelector("#results .sx-list"), n = document.querySelector('#results [data-tab="series"] .n'); if (l) l.innerHTML = ""; if (n) n.textContent = ""; });
   const t0 = await page.evaluate((text) => { const el = document.getElementById("q"); el.focus(); el.value = text; const t = performance.now(); el.dispatchEvent(new Event("input", { bubbles: true })); return t; }, q);
   const first = await page.waitForFunction(() => { const li = document.querySelector('#results li[role="option"]'); return li ? performance.now() : null; }, null, { timeout: 60_000, polling: "raf" }).then((h) => h.jsonValue());
-  const series = await page.waitForFunction(() => { const r = document.getElementById("results"); return !r.querySelector(".wait") && /Series|Nothing matches/.test(r.textContent) ? performance.now() : null; }, null, { timeout: 60_000, polling: "raf" }).then((h) => h.jsonValue()).catch(() => null);
+  const series = await page.waitForFunction(() => { const n = document.querySelector('#results [data-tab="series"] .n')?.textContent; return n && n !== "…" && !document.querySelector("#results .wait") ? performance.now() : null; }, null, { timeout: 60_000, polling: "raf" }).then((h) => h.jsonValue()).catch(() => null);
   return { first: Math.round(first - t0), series: series == null ? null : Math.round(series - t0) };
 }
 

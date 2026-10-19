@@ -40,25 +40,45 @@ let PROMINENCE = Number(globalThis.process?.env?.ATLAS_SEARCH_PROMINENCE ?? 0.5)
 const NATIONAL = /\b(all[- ]india|india)\b/i, TOTAL = /\b(total|all)\b/i;
 
 /** The reader's list, in order: a state profile the query names, then a guide every word of the
- *  query names (a topic query opens on its guide), then the series, then guides and charts,
- *  other state profiles and whole files. The home page renders exactly this; perf-search judges it. */
+ *  query names (a topic query opens on its guide) or, with none, a chart whose title holds every
+ *  word; then the other guides and charts, then the series, other state profiles and whole files.
+ *  Guides and charts come before the series (reader feedback, 2026-10-18: they sat below the fold
+ *  of a list the series filled), and they answer from the core alone, so the list never reorders
+ *  when the series arrive: they only fill in below. The search box renders exactly this as its
+ *  "All" view; perf-search judges it. */
 export function layout(quick, series) {
   const states = quick.states ?? [];
   const leadGuide = quick.guides[0]?.strong ? [quick.guides[0]] : [];
-  // with no guide to lead, a chart whose title holds every word leads, unless a series label is
-  // the query itself ("repo rate": the policy repo rate, with its value, beats a chart about it)
-  // (decided once the series are in, so the list does not reorder under the reader's finger)
-  const leadChart = !leadGuide.length && series?.rows && !series.rows[0]?.exact ? quick.plates.filter((p) => p.strong).slice(0, 1) : [];
-  const top = [...quick.guides.filter((g) => !leadGuide.includes(g)).slice(0, 1).map((g) => ({ ...g, kind: "Guide" })), ...quick.plates.filter((p) => !leadChart.includes(p)).slice(0, 3).map((p) => ({ ...p, kind: "Chart" }))].slice(0, 3);
+  const leadChart = !leadGuide.length ? quick.plates.filter((p) => p.strong).slice(0, 1) : [];
+  // charts that name every word whole come before the series; one that only begins with a word
+  // ("petroleum" for "petrol") or finds it in its guide's description comes after them
+  const charts = quick.plates.filter((p) => !leadChart.includes(p)).slice(0, 4);
+  const top = [...quick.guides.filter((g) => !leadGuide.includes(g)).slice(0, 2).map((g) => ({ ...g, kind: "Guide" })),
+    ...charts.filter((p) => p.whole !== false).map((p) => ({ ...p, kind: "Chart" }))];
   return [
     { kind: "state", items: states.filter((x) => x.lead) },
     { kind: "guide", items: [...leadGuide.map((g) => ({ ...g, kind: "Guide" })), ...leadChart.map((p) => ({ ...p, kind: "Chart" }))] },
-    { kind: "series", items: series?.rows?.slice(0, 6) ?? [] },
     { kind: "top", items: top },
+    { kind: "series", items: series?.rows?.slice(0, 6) ?? [] },
+    { kind: "more", items: charts.filter((p) => p.whole === false).map((p) => ({ ...p, kind: "Chart" })) },
     { kind: "states", items: states.some((x) => x.lead) ? [] : states },
     { kind: "files", items: (series?.files ?? quick.files).slice(0, 3) },
   ];
 }
+
+/** Charts grouped by their guide, the guides in the order of their best chart:
+ *  [{ g, title, href, items }]. A broad query ("rural", "water") finds charts across many guides;
+ *  grouped, a reader sees which guides hold them before reading titles. */
+export function byGuide(plates) {
+  const out = new Map();
+  for (const p of plates) {
+    if (!out.has(p.g)) out.set(p.g, { g: p.g, title: p.guide, href: p.guideHref, items: [] });
+    out.get(p.g).items.push(p);
+  }
+  return [...out.values()];
+}
+/** A query broad enough to group its charts by guide: one word, charts from three guides or more. */
+export const broadQuery = (q, plates) => parseQuery(q).length === 1 && new Set(plates.map((p) => p.g)).size >= 3;
 
 /** Lower-cased words of a text, accents stripped, split on anything not a letter or digit. */
 export function tokens(text) {
@@ -125,6 +145,8 @@ export function parseQuery(q) {
   });
 }
 const tokenMatches = (word, t) => word.forms.some((f) => (word.prefix && f === word.w ? t.startsWith(f) : t === f));
+// the word or a synonym, whole, or a plural or singular of it: never a longer word it begins
+const whole = (word, t) => word.forms.includes(t) || t === word.w + "s" || (word.w.endsWith("s") && t === word.w.slice(0, -1));
 // the word itself, as typed, or its plural or singular (not a synonym)
 const own = (word, t) => (word.prefix ? t.startsWith(word.w) : t === word.w || t === word.w + "s" || (word.w.endsWith("s") && t === word.w.slice(0, -1)));
 
@@ -168,6 +190,9 @@ export function createSearch(core, load, { expectedQualityVersion } = {}) {
   }
   const { guides, plates, views, shards } = core;
   const file = (name) => `${name}${core.rel ? "." + core.rel : ""}.json`;
+  // a chart's thumbnail: a static SVG beside the index (scripts/search-thumbs.mjs), named with the
+  // release like every other search file, fetched by the browser only when the result is shown
+  const thumbOf = (x) => `th/${guides[x[0]][0]}/${x[1]}${core.rel ? "." + core.rel : ""}.svg`;
   const counts = core.bundles.count, bGuide = core.bundles.guide;
   const starts = []; { let acc = 0; for (const n of counts) { starts.push(acc); acc += n; } }
   const frequent = new Set(shards.frequent);
@@ -248,9 +273,9 @@ export function createSearch(core, load, { expectedQualityVersion } = {}) {
   const isTopic = (w) => gTok.some((g) => g.some((t) => tokenMatches(w, t))) || [...bTopic.values()].some((ts) => [...ts].some((t) => tokenMatches(w, t)));
 
   // ----- instant: guides, charts, every-cut views and state profiles, from core.json alone
-  function quick(q, { limit = 6 } = {}) {
+  function quick(q, { limit = 6, plateLimit = limit } = {}) {
     const words = parseQuery(q);
-    if (!words.length) return { guides: [], plates: [], files: [], states: [] };
+    if (!words.length) return { guides: [], plates: [], files: [], states: [], n: { guides: 0, plates: 0, files: 0, states: 0 } };
     const score = (title, all) => {
       let s = 0;
       for (const w of words) {
@@ -261,20 +286,26 @@ export function createSearch(core, load, { expectedQualityVersion } = {}) {
       }
       return s;
     };
-    const rank = (items) => items.filter((x) => x.s > 0).sort((a, b) => b.s - a.s || a.i - b.i).slice(0, limit);
+    const n = {};
+    const rank = (items, key, lim = limit) => { const hits = items.filter((x) => x.s > 0); n[key] = hits.length; return hits.sort((a, b) => b.s - a.s || a.i - b.i).slice(0, lim); };
     // a guide needs at least one word in its title-level names (a blurb that mentions rupees does not
     // make a guide about the rupee); one with every word there is a strong answer and leads
     const g = rank(guides.map((x, i) => {
       const s = score(gTitle[i], gTok[i]), titled = words.filter((w) => gTitle[i].some((t) => tokenMatches(w, t))).length;
       return { i, s: titled ? s : 0, strong: titled === words.length, href: `/guides/${x[0]}/`, title: x[1], note: x[2] };
-    }));
+    }), "guides");
     // a chart in a guide that is itself about the query's words ranks before the same match in a
     // guide that only mentions them ("rupee": the external account's rupee, not CPI's labourer's rupee)
     const about = (gi) => words.every((w) => gTok[gi].some((t) => tokenMatches(w, t)));
+    // a chart carries its finding, its guide and, where the build drew one, a thumbnail (thumbOf)
     const p = rank(plates.map((x, i) => { const tt = tokens(x[2]), s0 = score(tt, [...tt, ...tokens(x[3]), ...gTok[x[0]]]); return { i, s: s0 && s0 + (about(x[0]) ? 1 : 0),
-      strong: words.every((w) => tt.some((t) => tokenMatches(w, t))), href: `/guides/${guides[x[0]][0]}/#${x[1]}`, title: x[2], note: guides[x[0]][1] }; }));
+      // a chart leads only when its title names every word whole ("petrol" is not a "petroleum"
+      // plant); it sits above the series when its title or finding does (whole: layout())
+      strong: words.every((w) => tt.some((t) => whole(w, t))), whole: words.every((w) => tt.some((t) => whole(w, t)) || tokens(x[3]).some((t) => whole(w, t))),
+      href: `/guides/${guides[x[0]][0]}/#${x[1]}`, title: x[2], note: guides[x[0]][1],
+      finding: x[3], g: x[0], guide: guides[x[0]][1], guideHref: `/guides/${guides[x[0]][0]}/`, thumb: x[4] ? thumbOf(x) : null }; }), "plates", plateLimit);
     const files = rank(views.map((v, i) => ({ i, s: score(tokens(v[1]), [...tokens(v[1]), ...gTok[v[0]]]), href: v[2], title: v[1],
-      note: `${guides[v[0]][1]}, every cut, ${v[3].toLocaleString("en-IN")} series` })));
+      note: `${guides[v[0]][1]}, every cut, ${v[3].toLocaleString("en-IN")} series` })), "files");
     // profiles (lb/profiles): a unit whose name or a spelling of it the query's words make up
     // (all of them: "orissa"; lead: true) or contain ("inflation in kerala")
     const st = (core.profiles ?? []).map((x, i) => {
@@ -289,8 +320,9 @@ export function createSearch(core, load, { expectedQualityVersion } = {}) {
       // a state and a topic the site covers ("inflation in kerala"): the profile leads too
       if (best && !lead) { const named = stateIn(words); if (named?.i === i && named.rest.length && named.rest.every(isTopic)) lead = true; }
       return { i, s: best, lead, href: `/states/${x[0]}/`, title: x[1], note: "State profile" };
-    }).filter((x) => x.s > 0).sort((a, b) => b.lead - a.lead || b.s - a.s || a.i - b.i).slice(0, 3);
-    return { guides: g, plates: p, files, states: st };
+    }).filter((x) => x.s > 0).sort((a, b) => b.lead - a.lead || b.s - a.s || a.i - b.i);
+    n.states = st.length;
+    return { guides: g, plates: p, files, states: st.slice(0, 3), n };
   }
 
   // ----- series: token shards (row and bundle postings), then the row chunks of the best rows
@@ -305,12 +337,25 @@ export function createSearch(core, load, { expectedQualityVersion } = {}) {
     const loaded = await Promise.all([...want].map(shard));
     for (const s of loaded) for (const [k, d] of Object.entries(s)) {
       if (k[0] === "~") { if (tokenMatches(word, k.slice(1))) for (const id of decodeIds(d)) bids.push(id); }
-      else if (tokenMatches(word, k)) for (const id of decodeIds(d)) ids.push(id);
+      else if (tokenMatches(word, k)) ids.push(decodeIds(d));
     }
     const loose = [...frequent].some((t) => tokenMatches(word, t));
-    return { ids: [...new Set(ids)].sort((x, y) => x - y), bids: new Set(bids), loose };
+    return { ids: sortedUnique(ids), bids: new Set(bids), loose };
   }
   const rowsOfBundles = (bs) => bs.flatMap((bi) => Array.from({ length: counts[bi] }, (_, k) => starts[bi] + k));
+  // sorted lists of ids (each already ascending) as one ascending list without repeats; a typed
+  // array sorts a broad word's 8 lakh ids natively, where a comparator sort took most of a second
+  function sortedUnique(lists) {
+    if (lists.length === 1) return lists[0];
+    const all = new Int32Array(lists.reduce((a, l) => a + l.length, 0));
+    let n = 0; for (const l of lists) { all.set(l, n); n += l.length; }
+    all.sort();
+    const out = [];
+    for (let i = 0; i < all.length; i++) if (!i || all[i] !== all[i - 1]) out.push(all[i]);
+    return out;
+  }
+  // whether a sorted list holds an id
+  const holds = (list, id) => { let lo = 0, hi = list.length - 1; while (lo <= hi) { const m = (lo + hi) >> 1; if (list[m] === id) return true; if (list[m] < id) lo = m + 1; else hi = m - 1; } return false; };
 
   /** Every row matching the query, before the frequent-word check: { words, ids (ranked), score, deferred } */
   async function candidates(q, { signal } = {}) {
@@ -322,7 +367,7 @@ export function createSearch(core, load, { expectedQualityVersion } = {}) {
     if (named0) { const canon = tokens(core.profiles[named0.i][1]).filter((t) => !STOP.has(t)); for (const w of named0.nameWords) w.forms = [...new Set([...w.forms, ...canon])]; }
     const intent=unitIntent(words,q);
     const [per, ranges] = await Promise.all([
-      Promise.all(words.map(async w => { const { ids, bids, loose } = await postingsFor(w); return { w, ids: new Set(ids), list: ids, loose, ctx: bids }; })),
+      Promise.all(words.map(async w => { const { ids, bids, loose } = await postingsFor(w); return { w, list: ids, loose, ctx: bids }; })),
       unitGroup(intent),
     ]);
     check(signal);
@@ -332,32 +377,46 @@ export function createSearch(core, load, { expectedQualityVersion } = {}) {
     const seeds = per.filter((p) => p.list.length).sort((a, b) => size(a) - size(b));
     // the bundles every word names somewhere (title, cut, source or guide): the files a query finds
     const fileHits = per.reduce((acc, p) => (acc === null ? new Set(p.ctx) : new Set([...acc].filter((bi) => p.ctx.has(bi)))), null) ?? new Set();
-    if (!seeds.length) return { words, ids: [], score: new Map(), deferred: new Set(), tooBroad: per.some((p) => p.loose), fileHits, named: named0 };
+    if (!seeds.length) return { words, ids: [], score: { get: () => undefined }, deferred: new Set(), tooBroad: per.some((p) => p.loose), fileHits, named: named0 };
     const seed = seeds[0];
-    const pool = [...new Set([...seed.list, ...rowsOfBundles([...seed.ctx])])];
-    const score = new Map();
-    const deferred = [];
-    const keep = [];
+    // the pool in ascending row order, so each word's postings are walked with a cursor (no sets),
+    // the bundle advances rather than being searched, and rows of equal score come out in row order
+    // without a sort (the order the engine has always given: score, then row id)
+    const pool = seed.ctx.size ? sortedUnique([seed.list, rowsOfBundles([...seed.ctx].sort((a, b) => a - b))]) : seed.list;
     const named = ownW.size ? named0 : null;
-    let scanned = 0;
-    for (const r of pool) {
-      if (signal && ++scanned % 16384 === 0) { await new Promise(resolve => setTimeout(resolve, 0)); check(signal); }
-      const bi = bundleOf(r);
+    const restIdx = named ? named.rest.map((w) => per.findIndex((p) => p.w === w)) : [];
+    const topic = (bi, k) => [...(bTopic.get(bi) ?? [])].some((t) => tokenMatches(per[k].w, t));
+    // a row's score, from whether each word's own postings hold it (inList[k]); null when a word misses
+    const scoreRow = (r, bi, inList) => {
       // the boost needs the topic words in the row's label or in what its bundle is about
-      const own = named && ownW.has(r) && named.rest.every((w) => per.find((p) => p.w === w)?.ids.has(r) || [...(bTopic.get(bi) ?? [])].some((t) => tokenMatches(w, t)));
-      let s = own ? ownW.get(r) : 0, ok = true, wait = false;
-      for (const p of per) {
-        if (p.ids.has(r)) s += 2;
+      const own = named && ownW.has(r) && restIdx.every((k) => k >= 0 && (inList[k] || topic(bi, k)));
+      let s = own ? ownW.get(r) : 0, wait = false;
+      for (let k = 0; k < per.length; k++) {
+        const p = per[k];
+        if (inList[k]) s += 2;
         else if (p.ctx.has(bi)) s += 1;
         else if (p.loose) { s += 2; wait = true; }
-        else { ok = false; break; }
+        else return null;
       }
-      if (!ok) continue;
-      if(ranges&&inRanges(ranges,r))s+=4;
-      score.set(r, s); keep.push(r);
-      if (wait) deferred.push(r);
+      if (ranges && inRanges(ranges, r)) s += 4;
+      return { s, wait };
+    };
+    const buckets = new Map(), deferred = [];
+    const cur = per.map(() => 0), inList = per.map(() => false);
+    let bi = 0, scanned = 0;
+    for (const r of pool) {
+      if (signal && ++scanned % 16384 === 0) { await new Promise(resolve => setTimeout(resolve, 0)); check(signal); }
+      while (bi + 1 < starts.length && starts[bi + 1] <= r) bi++;
+      for (let k = 0; k < per.length; k++) { const l = per[k].list; let c = cur[k]; while (c < l.length && l[c] < r) c++; cur[k] = c; inList[k] = l[c] === r; }
+      const sc = scoreRow(r, bi, inList);
+      if (!sc) continue;
+      if (!buckets.has(sc.s)) buckets.set(sc.s, []);
+      buckets.get(sc.s).push(r);
+      if (sc.wait) deferred.push(r);
     }
-    keep.sort((a, b) => score.get(b) - score.get(a) || a - b);
+    const keep = [...buckets.keys()].sort((a, b) => b - a).flatMap((s) => buckets.get(s));
+    // a kept row's score, for the few rows series() ranks further
+    const score = { get: (r) => scoreRow(r, bundleOf(r), per.map((p) => holds(p.list, r)))?.s };
     return { words, ids: keep, score, deferred: new Set(deferred), looseWords: per.filter((p) => p.loose && !p.list.length).map((p) => p.w), named: named0, fileHits };
   }
   /** The rows (and their bundles' records) for these ids. */
@@ -392,12 +451,14 @@ export function createSearch(core, load, { expectedQualityVersion } = {}) {
   }
 
   /** The best `limit` series, fetching at most `maxChunks` row chunks, and the files the query names. */
-  async function series(q, { limit = 8, maxChunks = 6, signal, onCandidates } = {}) {
+  async function series(q, { limit = 8, maxChunks = 6, fileLimit = 6, signal, onCandidates } = {}) {
     const c = await candidates(q, { signal });
     check(signal);
-    if (!c) return { rows: [], total: 0, tooBroad: false, files: [] };
-    const filesP = filesFor(c, q);
-    if (!c.ids.length) { const files = await filesP; check(signal); return { rows: [], total: 0, tooBroad: c.tooBroad ?? false, files }; }
+    if (!c) return { rows: [], total: 0, tooBroad: false, files: [], nFiles: 0 };
+    const filesP = filesFor(c, q, fileLimit);
+    // every file the query names: the bundles every word names and the every-cut views
+    const nFiles = c.fileHits.size + quick(q).n.files;
+    if (!c.ids.length) { const files = await filesP; check(signal); return { rows: [], total: 0, tooBroad: c.tooBroad ?? false, files, nFiles }; }
     if(onCandidates) {
       const seen=new Set(), hits=[];
       for(const id of c.ids.slice(0,128)) {
@@ -442,7 +503,7 @@ export function createSearch(core, load, { expectedQualityVersion } = {}) {
       out.push({ id: r, row, exact: inLabel === words.length && extra <= 1, rank: c.score.get(r) + inLabel + national + featured - Math.min(extra / 4,1) - Math.min(row[0].length / 300,.25) });
     }
     out.sort((a, b) => b.rank - a.rank || a.id - b.id);
-    return { rows: out.slice(0, limit).map(({ id, row, exact }) => ({ ...describe(id, row), exact })), total: c.ids.length, approx: c.deferred.size > 0, files };
+    return { rows: out.slice(0, limit).map(({ id, row, exact }) => ({ ...describe(id, row), exact })), total: c.ids.length, approx: c.deferred.size > 0, files, nFiles };
   }
   /** Where a row lives: its guide, its every-cut page and the anchor of its row there.
    *  Its bundle's record must be loaded (rowsAt loads it). */

@@ -36,6 +36,7 @@ a file, every file has a gate, every gate exits non-zero on failure.
 | `src/dossiers/registry.js` | **[live]** THE dossier registry — every dossier's metadata |
 | `src/seo/` | **[live]** search, citation and feeds: structured data (`graph.js`, `dataset.js`, `agency.js`), sitemap `lastmod` (`lastmod.js`), feeds (`feeds.js`), the release log reader (`releases.js`), `llms.txt` (`llms.js`), the anchor record (`anchors.json`) |
 | `src/pwa/sw.js` | **[live]** the service worker template; the build writes `dist/sw.js` |
+| `src/search/` | **[live]** the search box: `ui.js` (tabs, results, chart thumbnails; the home page's box and the masthead's), `header.client.js` (the masthead box on every page, loading `ui.js` on first use; the one script every page loads, with `src/pwa/app.js`), `search.css` (brought by `ui.js` as text). Engine: `src/dossiers/search-core.js`; index: `scripts/search-index.mjs` |
 | `data/releases.json` | **[live]** the release log: one entry per print of each guide's headline figure, appended by `scripts/releases.mjs` |
 | `src/dossiers/<slug>.client.js` | one client module per dossier page |
 | `src/charts/plumbing.js` | shared chart kit — normative (`docs/DESIGN.md` §5) |

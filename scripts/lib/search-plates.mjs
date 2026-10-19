@@ -1,4 +1,4 @@
-import {parse, serialize} from 'parse5';
+import {parse, serialize, serializeOuter} from 'parse5';
 
 // Build-time inert HTML parsing creates no windows, listeners or resource loader.
 // Return only strings; the per-page syntax tree cannot escape into the index.
@@ -12,12 +12,14 @@ export function discoverSearchPlates(html) {
     if(!id)throw Error('search-index: empty figure id');
     if(ids.has(id))throw Error(`search-index: duplicate figure id ${id}`);
     ids.add(id);
-    let title, finding;
+    let title, finding, phone;
     for(const node of descendants(figure)){
       if(!title&&node.tagName==='h3')title=node;
       if(!finding&&node.tagName==='div'&&(attr(node,'class')??'').split(/\s+/).includes('sub'))finding=node;
+      // the chart kit's phone drawing, inline in every page (src/kit/figure.js): the search thumbnail's source
+      if(!phone&&node.tagName==='svg'&&(attr(node.parentNode,'class')??'').split(/\s+/).includes('akf-phone'))phone=node;
     }
-    if(title)plates.push({id,titleHTML:serialize(title),findingHTML:finding?serialize(finding):null});
+    if(title)plates.push({id,titleHTML:serialize(title),findingHTML:finding?serialize(finding):null,phoneSVG:phone?serializeOuter(phone):null});
   }
   return plates;
 }
