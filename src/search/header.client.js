@@ -10,6 +10,8 @@ const root = document.getElementById("sx");
 const input = document.getElementById("sxq");
 if (root && input) {
   let ui = null, wanted = null;
+  // the box open, and the page under a phone's sheet held still (html.sx-on, atlas.css)
+  const open = (on) => { root.classList.toggle("open", on); document.documentElement.classList.toggle("sx-on", on); };
   // the extra parentheses keep Vite from wrapping this import in its preload helper (it wraps only
   // an import whose argument starts with a quote), about 650 bytes gzip on every page; the module
   // has no stylesheet to preload (its styles come as text) and loads its one shared chunk itself.
@@ -18,12 +20,12 @@ if (root && input) {
     ui = m.mount({ input, panel: root.querySelector(".sx-panel"), sheet: root });
     m.engine().catch(() => {});
     // a reader who left the box before the module arrived finds it closed
-    if (!root.contains(document.activeElement)) root.classList.remove("open");
+    if (!root.contains(document.activeElement)) open(false);
     return ui;
-  }).catch((e) => { wanted = null; root.classList.remove("open"); throw e; });
+  }).catch((e) => { wanted = null; open(false); throw e; });
   // the sheet or panel (atlas.css) opens with the box, before any result, so the reader sees where
   // they type; what they type before the module arrives is searched once it has
-  input.addEventListener("focus", () => { root.classList.add("open"); if (!ui) ready().then((u) => { if (input.value.trim()) u.search(); }).catch(() => {}); });
+  input.addEventListener("focus", () => { open(true); if (!ui) ready().then((u) => { if (input.value.trim()) u.search(); }).catch(() => {}); });
   // "/" puts the cursor in search from anywhere; on the home page its own box takes it (home.client.js)
   document.addEventListener("keydown", (e) => {
     if (e.key !== "/" || e.metaKey || e.ctrlKey || e.altKey || e.target.closest?.("input,textarea,select,[contenteditable]") || document.getElementById("q")) return;

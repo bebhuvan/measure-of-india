@@ -667,7 +667,9 @@ section .break + .break{margin-top:0 !important}
   .sx.open .sx-box{position:fixed;inset:0;width:auto;border:0;box-shadow:none;display:flex;flex-direction:column}
   .sx.open .sx-bar{flex:none;border-bottom:1px solid var(--ink)}
   .sx.open .sx-q{font-size:1.0625rem;padding:0 var(--gutter)}
-  html:has(.sx.open),html:has(.sx.open) body{overflow:hidden}
+  /* a class the script sets, not html:has(.sx.open): a :has() on the root made Chrome recheck style
+     on every insertion while charts drew and tables streamed (guide TBT 129 to 373 ms, 2026-10-19) */
+  html.sx-on,html.sx-on body{overflow:hidden}
 }
 @media (max-width:960px){
   .sh-in{gap:20px}

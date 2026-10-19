@@ -58,6 +58,8 @@ export function mount({ input, panel, sheet = null }) {
   input.setAttribute("aria-controls", list.id);
   input.setAttribute("aria-autocomplete", "list");
   input.setAttribute("aria-expanded", "false");
+  // the masthead's box open, and the page under a phone's sheet held still (html.sx-on, atlas.css)
+  const sheetOpen = (on) => { if (sheet) { sheet.classList.toggle("open", on); document.documentElement.classList.toggle("sx-on", on); } };
   let tab = "all", sel = -1, seq = 0, timer = 0, pending = null, last = null;
 
   const invalidate = () => { ++seq; clearTimeout(timer); pending?.abort(); pending = null; };
@@ -69,7 +71,7 @@ export function mount({ input, panel, sheet = null }) {
     const top = panel.getBoundingClientRect().top;
     panel.style.maxHeight = `${Math.max(220, Math.floor(vh - Math.max(top, 0) - 12))}px`;
   };
-  const show = () => { if (!isOpen()) { panel.hidden = false; sheet?.classList.add("open"); } input.setAttribute("aria-expanded", "true"); fit(); };
+  const show = () => { if (!isOpen()) { panel.hidden = false; sheetOpen(true); } input.setAttribute("aria-expanded", "true"); fit(); };
   const close = () => { invalidate(); if (isOpen()) panel.hidden = true; input.setAttribute("aria-expanded", "false"); input.removeAttribute("aria-activedescendant"); };
   const options = () => [...list.querySelectorAll("li[role=option]")];
   const mark = () => {
@@ -255,7 +257,7 @@ export function mount({ input, panel, sheet = null }) {
     panel.insertAdjacentHTML("afterend", `<p class="sx-hint">Every guide, chart, series and file. Try rural, repo rate or inflation in Kerala.</p>`);
     // the results may empty (the box cleared) while the reader is still in the box: the sheet or
     // panel stays open until they leave it, press Escape or Close (which also clears the box)
-    const shut = () => { sheet.classList.remove("open"); close(); };
+    const shut = () => { sheetOpen(false); close(); };
     sheet.addEventListener("click", (e) => { if (e.target.closest(".sx-close")) { shut(); input.value = ""; } });
     sheet.addEventListener("keydown", (e) => { if (e.key === "Escape") { shut(); document.activeElement?.blur(); } });
     sheet.addEventListener("focusout", (e) => { if (!sheet.contains(e.relatedTarget)) setTimeout(() => { if (!sheet.contains(document.activeElement)) shut(); }, 0); });
