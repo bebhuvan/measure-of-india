@@ -13,7 +13,7 @@
    "fonts": 573440
   },
   "explore": {
-   "html": 5120,
+   "html": 6144,
    "js": 135168,
    "css": 9216,
    "json": 1024,
@@ -47,7 +47,7 @@
  },
  "pages": {
   "/explore/": {
-   "html": 4096,
+   "html": 5120,
    "fonts": 130048,
    "css": 11264,
    "js": 41984
@@ -953,6 +953,16 @@
    "date": "2026-10-17",
    "what": "guide.html: 1 ceiling(s), /guides/ilo/ 51.5 -> 54 KB",
    "why": "the same head (about 0.5 KB gzip) plus the guide's schema.org Dataset for dataset search (0.9 KB gzip); the page was at 99% of its ceiling before. Measured 52.4 KB. Trimming redundant tags saved 0.1 KB and was not worth the lost tags."
+  },
+  {
+   "date": "2026-10-19",
+   "what": "types.explore.html 5 -> 6 KB",
+   "why": "the masthead search box on every page (lb/search, reader feedback 2026-10-18): about 90 B gzip of HTML; these ceilings had 25 and 56 B of headroom, and every other page absorbed it. Measured 4,161 and 5,160 B against 4,071 and 5,064 B at 5d3e5100 (docs/status/search-and-perf.md)"
+  },
+  {
+   "date": "2026-10-19",
+   "what": "explore.html: 1 ceiling(s), /explore/ 4 -> 5 KB",
+   "why": "the masthead search box on every page (lb/search, reader feedback 2026-10-18): about 90 B gzip of HTML; these ceilings had 25 and 56 B of headroom, and every other page absorbed it. Measured 4,161 and 5,160 B against 4,071 and 5,064 B at 5d3e5100 (docs/status/search-and-perf.md)"
   }
  ]
 }

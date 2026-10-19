@@ -8,10 +8,9 @@ with `npx astro build`, measured with the repository's own tools (`scripts/perf-
 `scripts/perf-search.mjs`, `/usr/bin/time -v`) plus a heap sampler that logged the build
 process's `heapUsed` every 2 s.
 
-Gates on the final build: `npm test` 326 of 326; `npm run gates` passes validate, kit lint,
-coverage, as-of, qc, both chart lints, masthead fit, explorer verify and seo, then stops at
-perf-budget on the two explore pages in section 5; perf-search (42 of 45, the 3 recorded misses)
-and perf-browser (all 75 pages within budget) pass when run on their own.
+Gates on the final build: `npm test` 326 of 326; `npm run gates` passes in full (exit 0), after
+the two explore ceilings were raised at the owner's go (section 5): perf-search 42 of 45 (the 3
+recorded misses), perf-browser all 75 pages within budget.
 
 ## 1. Search (reader feedback, 18 October 2026)
 
@@ -153,11 +152,9 @@ systemd-oomd and killed the desktop session. Heavy commands now take `flock /tmp
 
 ## 5. Left undone, and owner decisions
 
-- **The two explore pages' HTML ceilings** (above). The masthead box is about 90 B of gzip HTML
-  there and their ceilings had 25 and 56 B to spare. Per the brief no ceiling was raised, so
-  `npm run gates` stops at perf-budget on these two pages. Options: record a `raised` entry for
-  `/explore/` (4,096 → 4,198 B) and the explore default (5,120 → 5,222 B) giving the masthead
-  search as the reason, or drop something from those pages' head.
+- **The two explore pages' HTML ceilings** (above): raised at the owner's go on 2026-10-19,
+  `/explore/` 4 → 5 KB and the explore default 5 → 6 KB, with `raised` entries in
+  perf/budgets.json. `npm run gates` then passed in full on a fresh build (exit 0).
 - **Household water and sanitation charts** do not exist yet (the WASH guide). Until they do, a
   reader typing "rural sanitation" gets NFHS series rows, not a chart.
 - **Terser** (section 4), if the 3% is worth a devDependency.
