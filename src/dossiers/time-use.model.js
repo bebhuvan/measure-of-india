@@ -146,7 +146,7 @@ export function timeUseModel(root = process.cwd()) {
   plate('tasks', G3, {
     meta: { sub: 'Minutes per person per day on selected tasks inside domestic work and care, age six and above. Averages across everyone.', kind: 'dumbbell', explain: 'Food is the largest single block of unpaid work. Cooking, serving and clearing up take most of a woman’s domestic time, and almost none of a man’s. In childcare, the physical work of feeding and bathing falls on women; playing with children is shared almost equally.' },
     build: (get) => ({ sortBy: 'b', unit: 'minutes', items: TASKS.map(([c, n]) => pair(get, n, (g) => detail('t8', g, c))) }),
-    title: (v, s) => `Females spend ${v(s.items[0].b)} minutes a day cooking, on average; males spend ${v(s.items[0].a)}`,
+    title: (v, s) => { const c = s.items.find((i) => i.name === 'Cooking'), k = s.items.find((i) => i.name === 'Feeding, bathing and minding children'); return `Females spend ${v(c.b)} minutes a day cooking and ${v(k.b)} on hands-on childcare, on average; males spend ${v(c.a)} and ${v(k.a)}`; },
     lead: (v, s) => ({ value: v(s.items[0].b), unit: 'minutes', label: 'Cooking, females, per person' }),
   });
   const JOBS = [['12', 'In a household business making goods (farms included)'], ['13', 'In a household business providing services'], ['11', 'In a company, government or non-profit'], ['18', 'Travelling to and from work']];
