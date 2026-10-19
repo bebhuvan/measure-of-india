@@ -129,7 +129,7 @@ export function timeUseModel(root = process.cwd()) {
   // normal and other days (t38, all recorded activities)
   const ACC = [['SNA production', 'Economic production'], ['Non-SNA production', 'Household services']];
   plate('day-type', G2, {
-    meta: { sub: 'Share who did each kind of work, on a day the informant called normal for the person and on other days. Age six and above.', kind: 'dumbbell', explain: 'Economic production is paid work plus goods made for the household’s own use; household services are domestic work and care. About one interview in nine fell on an other day, and the tables do not say what made a day unusual. This is not a weekday and weekend comparison.' },
+    meta: { sub: 'Share who did each kind of work, on a day the informant called normal for the person and on other days. Age six and above.', kind: 'dumbbell', explain: 'Economic production is paid work plus goods made for the household’s own use; household services are domestic work and care. Most interviews fell on a day called normal, and the tables do not say what made a day unusual. This is not a weekday and weekend comparison.' },
     build: (get) => {
       const t38 = (g, row, day) => one('t38', (d, s) => nat(d, g) && s.unit === 'pct' && d.day_type === day && d.source_row === row && allAges(d), `t38 ${g} ${row} ${day}`);
       return { keys: { a: 'Other day', b: 'Normal day' }, unit: 'pct', sortBy: 'none', items: [F, M].flatMap((g) => ACC.map(([row, n]) => { const nm = `${n}, ${g === F ? 'females' : 'males'}`; return { name: nm, a: get(t38(g, row, 'other'), nm + ' · other day'), b: get(t38(g, row, 'normal'), nm + ' · normal day') }; })) };
@@ -201,9 +201,9 @@ export function timeUseModel(root = process.cwd()) {
   });
   const STATUS = [['self -employed (11,12,21)', 'Self-employed'], ['regular wage/ salaried employee (31)', 'Regular wage or salary'], ['casual labour (41,51)', 'Casual labour'], ['unemployed (81)', 'Unemployed'], ['attended educational institutions (91)', 'Students'], ['attended domestic duties (92, 93)', 'Domestic duties'], ['rentiers, pensioners, remittance recipients (94)', 'Pensioners and rentiers']];
   plate('status', G5, {
-    meta: { sub: 'Domestic work by usual principal activity, age six and above. Left: share who did any during the day. Right: minutes among those who did.', kind: 'dumbbellPanels', explain: 'Usual status describes what a person mainly did over the past year, so it is a different measure from what they did on the interview day. A woman with a salaried job does less domestic work than one without, but still more than twice as much as a salaried man.' },
+    meta: { sub: 'Domestic work by usual principal activity, age six and above. Left: share who did any during the day. Right: minutes among those who did.', kind: 'dumbbellPanels', explain: 'Usual status describes what a person mainly did over the past year, so it is a different measure from what they did on the interview day. Among women who did domestic work, those with a salaried job spent less time on it than the self-employed, casual labourers or women on domestic duties, but still more than twice as long as salaried men.' },
     build: (get) => ({ panels: [['t17', 'Did any domestic work', 'pct'], ['t18', 'Minutes, among those who did', 'minutes']].map(([table, title, unit]) => ({ title, unit, items: STATUS.map(([col, n]) => pair(get, `${n} (${unit === 'pct' ? 'share' : 'minutes'})`, (g) => cut(table, g, major(3), col))).map((it) => ({ ...it, name: it.name.replace(/ \((share|minutes)\)$/, '') })) })) }),
-    title: (v, s) => { const r = s.panels[1].items[1]; return `Females with a regular salaried job still spend ${v(r.b)} minutes on domestic work on days they do it; salaried males spend ${v(r.a)}`; },
+    title: (v, s) => { const r = s.panels[1].items[1]; return `Females with a regular salaried job who did domestic work spent ${v(r.b)} minutes on it; salaried males spent ${v(r.a)}`; },
     lead: (v, s) => ({ value: v(s.panels[1].items[1].b), unit: 'minutes', label: 'Salaried females, domestic minutes among those who did it' }),
   });
   const EDU = [['not literate', 'Not literate'], ['literate / below primary', 'Below primary'], ['literate / primary', 'Primary'], ['literate / upper primary/ middle', 'Middle school'], ['literate / secondary', 'Secondary'], ['literate / higher secondary', 'Higher secondary'], ['literate / graduate and above', 'Graduate and above']];
@@ -224,7 +224,7 @@ export function timeUseModel(root = process.cwd()) {
   plate('social', G5, {
     meta: { sub: 'By household social group, age six and above. Left: share who did any employment work during the day. Right: minutes of domestic work among those who did it.', kind: 'dumbbellPanels', explain: 'Each person is placed in the social group of the household head, as reported. Females in Scheduled Tribe households are the most likely to do employment work and spend the least time on domestic work when they do it. The groups also differ in where they live and how they earn, which this table does not separate.' },
     build: (get) => ({ panels: [['t33', 1, 'Did employment work', 'pct', 'Participation rate'], ['t34', 3, 'Domestic minutes, among those who did', 'minutes', null]].map(([table, k, title, unit, m]) => ({ title, unit, items: SOCIAL.map(([col, n]) => pair(get, `${title}: ${n}`, (g) => cut(table, g, major(k), col, m))).map((it) => ({ ...it, name: it.name.split(': ')[1] })) })) }),
-    title: (v, s) => { const e = s.panels[0].items; return `${pc(v(e[0].b))} of females in Scheduled Tribe households did employment work during the day; ${pc(v(e[3].b))} in "Others" households did`; },
+    title: (v, s) => { const e = s.panels[0].items; return `${pc(v(e[0].b))} of females in Scheduled Tribe households did employment work during the day; ${pc(v(e[3].b))} in households of other groups did`; },
     lead: (v, s) => ({ value: v(s.panels[0].items[0].b), unit: 'pct', label: 'Scheduled Tribe females in employment work' }),
   });
 
@@ -269,7 +269,7 @@ export function timeUseModel(root = process.cwd()) {
   plate('precision', G7, {
     meta: { sub: 'Relative standard error of the all-India average minutes per person, by activity, age six and above. Higher means less precise.', kind: 'dumbbell', explain: 'A relative standard error of 1% means the sampling error is about one hundredth of the estimate. National averages for common activities are very precise. Rare activities, like volunteering, and activities only a few people of one sex do, like domestic work for men, are less so, and the error grows again for states and small groups.' },
     build: (get) => ({ sortBy: 'b', unit: 'pct_rse', items: RSE.map((row, k) => pair(get, majorShort[k], (g) => one('rse3_india', (d) => nat(d, g) && d.source_row === row && allAges(d), `rse3 ${row}`))) }),
-    title: (v, s) => { const vol = s.items[4]; return `Volunteering is the least precise national estimate, with a relative standard error of ${pc(v(vol.b))} for females and ${pc(v(vol.a))} for males`; },
+    title: (v, s) => { const vol = s.items[4]; return `Volunteering is the least precise national estimate, with a relative standard error of ${fmt(v(vol.b), 'pct_rse')} for females and ${fmt(v(vol.a), 'pct_rse')} for males`; },
     lead: (v, s) => ({ value: v(s.items[4].b), unit: 'pct_rse', label: 'Relative standard error, volunteering, females' }),
   });
 

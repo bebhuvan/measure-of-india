@@ -6,6 +6,51 @@ import crypto from 'node:crypto';
 import {readRaw,writeRaw,writeSeries} from '../util.mjs';
 import {writeCatalogue} from '../catalogue.mjs';
 export const timeUseKey=d=> 'c_'+crypto.createHash('sha256').update(JSON.stringify(Object.entries(d).sort(([a],[b])=>a.localeCompare(b)))).digest('hex').slice(0,24);
+// A reader's title for each source table: what is measured, over which activities, on which basis
+// and by what. The NSO caption stays whole in meta.sourceTitle; this is what lists and pages show.
+const ALL='all activities in each half-hour', MAIN='main activity of each half-hour';
+const EVERY='every activity in the classification', PAID='paid, unpaid and other activities', SNA='economic production, household services and other activities', MAJ='each major activity';
+const BY4=(n,by)=>[`Share who did ${EVERY}, by ${by}, ${MAIN}`,`Minutes per participant, ${EVERY}, by ${by}, ${MAIN}`,`Share who did ${EVERY}, by ${by}, ${ALL}`,`Minutes per participant, ${EVERY}, by ${by}, ${ALL}`].map((x,i)=>[`t${n+i}`,`Table ${n+i}: ${x}`]);
+const RSE=(n,what,india)=>`Sampling error table ${n}: relative standard errors of ${what}, ${india?'all India':'by state'}`;
+export const TIME_USE_TITLES=Object.fromEntries([
+ ...[true,false].flatMap(i=>[
+  [`rse1_${i?'india':'state'}`,RSE(1,`the share who did ${MAJ}, ${ALL}`,i)],
+  [`rse2_${i?'india':'state'}`,RSE(2,`minutes per participant in ${MAJ}, ${ALL}`,i)],
+  [`rse3_${i?'india':'state'}`,RSE(3,`minutes per person in ${MAJ}, ${ALL}`,i)],
+  [`rse4_${i?'india':'state'}`,RSE(4,`the share who did paid, unpaid and self-development activities, ${ALL}`,i)],
+  [`rse5_${i?'india':'state'}`,RSE(5,`minutes per person in paid, unpaid and self-development activities, ${ALL}`,i)],
+  [`rse6_${i?'india':'state'}`,RSE(6,`minutes per participant in paid, unpaid and self-development activities, ${ALL}`,i)],
+  [`rse7_${i?'india':'state'}`,RSE(7,`the share who did, and minutes per participant in, ${SNA}, ${MAIN}`,i)],
+  [`rse8_${i?'india':'state'}`,RSE(8,`the share who did, and minutes per participant in, ${SNA}, ${ALL}`,i)],
+ ]),
+ ['t1','Table 1: Villages, urban blocks, households and people surveyed, by state'],
+ ['t2','Table 2: Households and people by rural and urban sector, by state'],
+ ['t3','Table 3: Who answered for each person, how they cooperated and the type of day, by day of the week'],
+ ['t4',`Table 4: Share who did ${EVERY}, ${MAIN}`],
+ ['t5',`Table 5: Minutes per participant, ${EVERY}, ${MAIN}`],
+ ['t6',`Table 6: Share who did ${EVERY}, ${ALL}`],
+ ['t7',`Table 7: Minutes per participant, ${EVERY}, ${ALL}`],
+ ['t8',`Table 8: Minutes per person, ${EVERY}, ${ALL}`],
+ ['t9',`Table 9: Share who did ${PAID}, ${MAIN}`],
+ ['t10',`Table 10: Minutes per participant in ${PAID}, ${MAIN}`],
+ ['t11',`Table 11: Minutes per person in ${PAID}, ${MAIN}`],
+ ['t12',`Table 12: Share who did ${PAID}, ${ALL}`],
+ ['t13',`Table 13: Minutes per person in ${PAID}, ${ALL}`],
+ ['t14',`Table 14: Minutes per participant in ${PAID}, ${ALL}`],
+ ...BY4(15,'usual activity status'),...BY4(19,'marital status'),...BY4(23,'household spending fifth'),...BY4(27,'level of education'),...BY4(31,'household social group'),
+ ['t35',`Table 35: Share who did, and minutes per participant in, ${SNA}, by broad activity status, ${MAIN}`],
+ ['t36',`Table 36: Share who did, and minutes per participant in, ${SNA}, by broad activity status, ${ALL}`],
+ ['t37',`Table 37: Share who did, and minutes per participant in, ${SNA}, by age and type of day, ${MAIN}`],
+ ['t38',`Table 38: Share who did, and minutes per participant in, ${SNA}, by age and type of day, ${ALL}`],
+ ['t39',`Table 39: Share who did paid and unpaid activities, by place, ${MAIN}`],
+ ['t40',`Table 40: Minutes per participant in paid and unpaid activities, by place, ${MAIN}`],
+ ['t41',`Table 41: Share who did, and minutes per person and per participant in, ${PAID}, ${MAIN}`],
+ ['t42',`Table 42: Share who did, and minutes per person and per participant in, ${PAID}, ${ALL}`],
+ ['t43',`Table 43: Share who did, and minutes per person and per participant in, ${PAID}, by household social group, ${MAIN}`],
+ ['t44',`Table 44: Share who did, and minutes per person and per participant in, ${PAID}, by household social group, ${ALL}`],
+ ['t45',`Table 45: Share of the day spent on unpaid domestic work and care, by state, ${ALL}`],
+ ['t46','Table 46: Who answered for each person, by the informant’s relationship and gender'],
+]);
 export function timeUseBundles(extraction,labels=extraction.activityLabels??{}){
  const bundles=[],items=[];
  for(const t of extraction.tables){
@@ -28,7 +73,7 @@ export function timeUseBundles(extraction,labels=extraction.activityLabels??{}){
     series[key]={name:label,label,color:'#2E4BD8',unit,dims,data:[r.value],sourceCell:{sheet:r.sheet,cell:r.cell}};
    }
    if(!Object.keys(series).length)continue;
-   bundles.push({slug,bundle:{meta:{dossier:'time-use',source:'National Statistics Office, Ministry of Statistics and Programme Implementation',sourceUrl:t.sourceUrl,product:'time-use-report',coverage:(t.id==='rse8_india'?'Relative standard errors of participation and participant time in economic production, domestic and care services, and other activities; all recorded activities':t.title.replace(/^Table\s*\([^)]+\)[^:]*:\s*/,''))+(sector?' · '+sector:'')+' · '+(unit==='pct_rse'?'relative standard error (%)':unit==='minutes'?'minutes':unit==='pct'?'per cent':'source counts'),base:'Time Use Survey 2024; ICATUS 2016',geo:'IND',frequency:'irregular',unit,vintage:'2025-03-28',vintageBasis:'report-edition',reportEditionDate:'2025-03-28',releaseDate:'2025-03-28',latestPeriod:'2024',sourceTable:t.id,sourceTitle:t.title,sourceSha256:t.sourceSha256,rawFile:t.rawFile,documentSha256:t.documentSha256,csvHeaderMode:'series-name',everyCutLabelMode:'series-name',note:'January–December 2024 survey, age 6 and above unless the source header names another universe. Snapshot axis is an annual anchor, not an observation on 1 January. All-activities time is equally allocated across recorded activities within each slot; major-only time assigns the whole slot to its major activity. Source dashes are catalogued as unavailable and never changed to zero. Source revision date beyond this report edition is not supplied.'+(t.id==='rse8_india'?' The original RSE8 India workbook repeats the title of Table 36. Its attachment identity and statistical meaning follow the report’s Appendix B listing; the original header is preserved as sourceTitle.':'')},dates:['2024-01-01'],series}});
+   bundles.push({slug,bundle:{meta:{dossier:'time-use',source:'National Statistics Office, Ministry of Statistics and Programme Implementation',sourceUrl:t.sourceUrl,product:'time-use-report',coverage:(TIME_USE_TITLES[t.id]??(()=>{throw Error('time-use: no reader title for '+t.id)})())+(sector?' · '+sector:'')+' · '+(unit==='pct_rse'?'relative standard error (%)':unit==='minutes'?'minutes':unit==='pct'?'per cent':'source counts'),base:'Time Use Survey 2024; ICATUS 2016',geo:'IND',frequency:'irregular',unit,vintage:'2025-03-28',vintageBasis:'report-edition',reportEditionDate:'2025-03-28',releaseDate:'2025-03-28',latestPeriod:'2024',sourceTable:t.id,sourceTitle:t.title,sourceSha256:t.sourceSha256,rawFile:t.rawFile,documentSha256:t.documentSha256,csvHeaderMode:'series-name',everyCutLabelMode:'series-name',note:'January–December 2024 survey, age 6 and above unless the source header names another universe. Snapshot axis is an annual anchor, not an observation on 1 January. All-activities time is equally allocated across recorded activities within each slot; major-only time assigns the whole slot to its major activity. Source dashes are catalogued as unavailable and never changed to zero. Source revision date beyond this report edition is not supplied.'+(t.id==='rse8_india'?' The original RSE8 India workbook repeats the title of Table 36. Its attachment identity and statistical meaning follow the report’s Appendix B listing; the original header is preserved as sourceTitle.':'')},dates:['2024-01-01'],series}});
   }
   }
  }

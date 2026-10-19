@@ -1392,7 +1392,7 @@ export const DOSSIERS = [
   "everyCutChangeMode": "none"
 },
   {
-    slug:'time-use',no:'37',section:'Households',name:'Time use',title:'Time use',kickerTitle:'Time Use Survey, National Statistics Office',crumbTitle:'Time use',
+    slug:'time-use',no:'37',section:'Households',name:'Time use',title:'Time use',kickerTitle:'Time Use Survey, National Statistics Office',crumbTitle:'Time Use Survey',
     headline:'The work inside <i>an ordinary day.</i>',ogTitle:'The work inside an ordinary day.',
     blurb:'Paid work, housework, care, learning and rest: who does them, how long they take, and what changes across age, employment, marriage and spending groups.',
     description:'India’s Time Use Survey explained through its original detailed tables: participation, time per participant and time across everyone, unpaid work, care, employment, learning, leisure and sampling uncertainty.',

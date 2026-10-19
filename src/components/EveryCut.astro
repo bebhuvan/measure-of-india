@@ -27,7 +27,7 @@ const governed=d.sourceQualityMode==="required";
 const arcs = guideBundles(d).map((b) => ({ b, a: archiveFor(b) })).filter((x) => x.a);
 const note = (t) => {
   const pages = t.pages.length > 1 ? `, over ${t.pages.length} pages` : "";
-  if (t.kind === "bundle") { const g = new Set(t.rows.map((r) => r.group).filter(Boolean)).size; return `${t.rows[0]?.cut ?? ""}${g ? `, in ${g} groups` : ""}${pages}.`; }
+  if (t.kind === "bundle") { const g = new Set(t.rows.map((r) => r.group).filter(Boolean)).size; return `${t.rows[0]?.cut ?? ""}${g > 1 ? `, in ${fmtN(g)} groups` : ""}${pages}.`; }
   return t.bundles.length === 1 ? `One file${pages}.` : `${fmtN(t.bundles.length)} files${pages}, filterable by file.`;
 };
 ---
