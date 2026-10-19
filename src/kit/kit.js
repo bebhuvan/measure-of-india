@@ -790,6 +790,8 @@ function _dumbbell(spec) {
   // right-hand dot (on a phone, at the right end of the name line); spec.room, px kept clear at the right
   const x = lin(N.lo, N.hi, nameW + 6, W - (spec.room ?? (spec.endCol ? 72 : 40))); // optional (jobs port): spec.endCol, endText set as a right-hand column
   const fmt = spec.fmt ?? (v => num(v, { dp: spec.dp ?? 1 })), aCol = spec.aColor ?? C.comp; // spec.fmt(v): the value labels and tips
+  // a value label beside a dotted reference rule is haloed, so the rule breaks around its digits
+  const vcls = spec.ref || REFS.length ? 'tab halo' : 'tab';
   let s = svgOpen(W, H, spec.title);
   const dbands = phone ? rows.map((_, i) => { const yy = top + i * row + 22; return [yy - 7, yy + 7]; }) : null;
   if (spec.band) { const a = x(Math.max(N.lo, spec.band.from)), b = x(Math.min(N.hi, spec.band.to)); if (b > a) s += `<rect x="${r1(a)}" y="${top - 10}" width="${r1(b - a)}" height="${r1(H - 6 - top + 10)}" fill="${C.leadWash}"/>`; }
@@ -812,7 +814,7 @@ function _dumbbell(spec) {
       const xa = x(r.a), xb = x(r.b), xm = x(r.m), tip = esc(r.name + ' · ' + kb + ': ' + fmt(r.m) + (spec.unit?.suffix ?? '') + '; ' + ka + ': ' + fmt(r.a) + ' to ' + fmt(r.b));
       s += `<line x1="${r1(xa)}" x2="${r1(xb)}" y1="${r1(yy)}" y2="${r1(yy)}" stroke="${C.leadTint}" stroke-width="5" stroke-linecap="round"/>`;
       s += `<circle cx="${r1(xm)}" cy="${r1(yy)}" r="4.75" fill="${C.lead}" stroke="#fff" stroke-width="1.5" data-tip="${tip}"/>`;
-      s += T(Math.max(xa, xb) + 9, yy + 4.5, fmt(r.m), { size: 12, fill: C.ink, weight: r.highlight ? 600 : 500, cls: 'tab' });
+      s += T(Math.max(xa, xb) + 9, yy + 4.5, fmt(r.m), { size: 12, fill: C.ink, weight: r.highlight ? 600 : 500, cls: vcls });
       return;
     }
     const xa = x(r.a), xb = x(r.b);
@@ -825,12 +827,12 @@ function _dumbbell(spec) {
     if (spec.endText) s += phone ? T(W, yy - 10, spec.endText(r), { size: 12, fill: C.ink2, anchor: 'end', cls: 'tab halo' })
       : spec.endCol ? T(W, yy + 4.5, spec.endText(r), { size: 12.5, fill: r.highlight ? C.ink : C.ink2, weight: r.highlight ? 600 : 400, anchor: 'end', cls: 'tab' })
       : T((r.a == null ? xb : Math.max(xa, xb)) + 9, yy + 4.5, spec.endText(r), { size: 12, fill: C.ink, cls: 'tab' });
-    else if ((i === 0 || r.highlight || spec.labelAll || r.label) && r.a == null) s += T(xb + 9, yy + 4.5, fmt(r.b), { size: 12, fill: C.ink, weight: 600, cls: 'tab' });
+    else if ((i === 0 || r.highlight || spec.labelAll || r.label) && r.a == null) s += T(xb + 9, yy + 4.5, fmt(r.b), { size: 12, fill: C.ink, weight: 600, cls: vcls });
     else if (i === 0 || r.highlight || spec.labelAll || r.label) { // values outside the pair, never between the dots
       const ex = [r.a0, r.b0].filter(v => v != null).map(v => x(v)); // labels step past any earlier-round dots
       const [lx, rx] = (([p, q]) => [Math.min(p, ...ex), Math.max(q, ...ex)])(xa < xb ? [xa, xb] : [xb, xa]), [lv, rv] = xa < xb ? [r.a, r.b] : [r.b, r.a];
-      if (lx - 9 - tw(fmt(lv), 12) >= (phone ? 0 : nameW)) s += T(lx - 9, yy + 4.5, fmt(lv), { size: 12, fill: C.ink2, anchor: 'end', cls: 'tab' }); // no room left of the pair: the tip carries it
-      s += T(rx + 9, yy + 4.5, fmt(rv), { size: 12, fill: C.ink, weight: 600, cls: 'tab' });
+      if (lx - 9 - tw(fmt(lv), 12) >= (phone ? 0 : nameW)) s += T(lx - 9, yy + 4.5, fmt(lv), { size: 12, fill: C.ink2, anchor: 'end', cls: vcls }); // no room left of the pair: the tip carries it
+      s += T(rx + 9, yy + 4.5, fmt(rv), { size: 12, fill: C.ink, weight: 600, cls: vcls });
     }
   });
   return s + '</svg>';
@@ -1574,13 +1576,14 @@ function _rects(spec) {
   const per = d => d.per ?? d.share * d.minutes / 100;
   const line = (side, d) => `${(side === 'b' ? kb : ka)}: ${num(d.share, { dp: 1 })}% × ${num(d.minutes, { dp: 0 })} min ${d.per == null ? '≈' : '='} ${num(per(d), { dp: 0 })} min`;
   const svgs = spec.panels.map(p => {
-    const L = 0, top = 74, bot = 24, h = top + 150 + bot, R = 2;
+    // the minutes scale sits in a gutter left of the plot, so no rectangle's edge can cross a number
+    const L = Math.ceil(Math.max(...N.ticks.map(v => tw(num(v, { dp: 0 }), 11)))) + 7, top = 88, bot = 24, h = top + 150 + bot, R = 2;
     const X = v => L + v / 100 * (pw - L - R), Y = v => top + (1 - v / N.hi) * (h - top - bot);
     let s = T(0, 13, p.name, { size: 13, fill: C.ink, weight: 600 });
     s += `<rect x="0" y="23" width="10" height="10" fill="${C.leadWash}" stroke="${C.lead}" stroke-width="1.5"/>` + T(16, 32.5, line('b', p.b), { size: 12, fill: C.ink2, cls: 'tab' });
     s += `<rect x="0" y="41" width="10" height="10" fill="none" stroke="${C.comp}" stroke-width="1.5"/>` + T(16, 50.5, line('a', p.a), { size: 12, fill: C.ink2, cls: 'tab' });
     for (const v of N.ticks) s += Lh(L, pw - R, Y(v), v === 0 ? C.base : C.grid);
-    for (const v of [0, 50, 100]) s += T(X(v), h - 6, v === 100 ? '100% did it' : String(v), { size: 11, fill: C.muted, anchor: v === 0 ? 'start' : v === 100 ? 'end' : 'middle', cls: 'tab' });
+    for (const v of [0, 50, 100]) s += T(X(v), h - 6, v === 100 ? '100% did it' : String(v), { size: 11, fill: C.muted, anchor: v === 0 ? 'middle' : v === 100 ? 'end' : 'middle', cls: 'tab' });
     // the larger area underneath, so both outlines stay visible
     const order = per(p.b) >= per(p.a) ? [['b', p.b], ['a', p.a]] : [['a', p.a], ['b', p.b]];
     for (const [side, d] of order) {
@@ -1589,8 +1592,9 @@ function _rects(spec) {
         ? `<rect x="${r1(X(0))}" y="${r1(Y(d.minutes))}" width="${r1(X(d.share) - X(0))}" height="${r1(Y(0) - Y(d.minutes))}" fill="${C.leadWash}" fill-opacity=".85" stroke="${C.lead}" stroke-width="1.75" data-tip="${tip}"/>`
         : `<rect x="${r1(X(0))}" y="${r1(Y(d.minutes))}" width="${r1(X(d.share) - X(0))}" height="${r1(Y(0) - Y(d.minutes))}" fill="${C.comp}" fill-opacity=".06" stroke="${C.comp}" stroke-width="1.75" data-tip="${tip}"/>`;
     }
-    // scale labels last, haloed, so a rectangle never hides them
-    for (const v of N.ticks) if (v) s += T(L + 3, Y(v) - 4, num(v, { dp: 0, suffix: v === N.ticks.at(-1) ? ' min' : '' }), { size: 11, fill: C.muted, cls: 'tab halo' });
+    // the scale, in the gutter; its unit names the top tick's line, above the plot
+    for (const v of N.ticks) if (v) s += T(L - 5, Y(v) + 4, num(v, { dp: 0 }), { size: 11, fill: C.muted, anchor: 'end', cls: 'tab' });
+    s += T(L, Y(N.hi) - 12, 'minutes among those who did it', { size: 11, fill: C.muted });
     return finish(svgOpen(pw, h, p.name) + s + '</svg>');
   });
   // a grid of panels: rows of `across`, each row side by side
