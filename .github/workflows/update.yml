@@ -88,6 +88,10 @@ jobs:
       # not `npm run build`, which would fetch and validate a second time
       - name: Build
         run: npm run og && npx astro build
+        # The build's heap peaks near 3.3 GB on Node's default 4 GB (2026-10-19, bounded bundle cache in
+        # src/dossiers/everycut.js); 6 GB of a 16 GB runner leaves room for the data to grow.
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
 
       - name: QC (rendered numbers, charts, prose freshness)
         run: npm run qc   # qc.mjs + lint-charts.mjs — the full post-build gate

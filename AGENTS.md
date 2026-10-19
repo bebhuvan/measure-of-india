@@ -97,7 +97,9 @@ Hard rules — breaking any of these is a bug regardless of what else works:
 - Every-cut rows have one template, `src/dossiers/everycut-html.js`. A page renders its first 100
   rows and streams the rest from its gzip pack (`/ec/…`).
 - Builds can go to a RAM disk: `ATLAS_OUT_DIR=/dev/shm/x npx astro build`, then run the gates
-  with `QC_DIST=/dev/shm/x`.
+  with `QC_DIST=/dev/shm/x`. A build fits Node's default heap (peak about 3.3 GB of 4.1 GB,
+  2026-10-19: parsed bundles sit in a bounded cache, `loadBundle` in everycut.js); CI gives it 6 GB.
+  A module-level cache that holds every bundle for the whole build is what overran it before.
 - `src/seo/` — search, structured data, sitemap lastmod, feeds, llms.txt; `src/pwa/sw.js` the
   service worker. Plan and rules: `docs/PLAN-seo-pwa.md`; shape: `docs/ARCHITECTURE.md`.
   `data/releases.json` is the release log the feeds read: appended by script, never by hand.

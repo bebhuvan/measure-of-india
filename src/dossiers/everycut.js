@@ -738,20 +738,41 @@ const tidy = (t) => {
   const s = String(t ?? "").replace(/ · /g, ", ").replace(/ — /g, ": ").replace(/\s+/g, " ").trim();
   return s ? s[0].toUpperCase() + s.slice(1) : s;
 };
-const bundleCache = new Map();
+// Parsed bundles, the most recently used first out of a bounded cache. Keeping every bundle
+// a build touches held about 1.4 GB of heap for the whole build (2,643 files, 1.1 GB of JSON) and
+// ran it past Node's default heap; a build reads them guide by guide, so a window of recent ones
+// keeps nearly every hit, and the rare bundle read again later is parsed again (the same file, the
+// same object shape). A bundle's meta is small and read everywhere, so it is kept for good.
+const BUNDLE_CACHE_BYTES = 192 * 1024 * 1024;
+const bundleCache = new Map(), metaCache = new Map();
+let bundleBytes = 0;
 export function loadBundle(slug) {
-  if (!bundleCache.has(slug)) bundleCache.set(slug, JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", slug + ".json"), "utf8")));
-  return bundleCache.get(slug);
+  const hit = bundleCache.get(slug);
+  if (hit) { bundleCache.delete(slug); bundleCache.set(slug, hit); return hit.b; }
+  const text = fs.readFileSync(path.join(ROOT, "data/series", slug + ".json"), "utf8");
+  const b = JSON.parse(text);
+  metaCache.set(slug, b.meta);
+  bundleCache.set(slug, { b, bytes: text.length });
+  bundleBytes += text.length;
+  for (const [k, v] of bundleCache) {
+    if (bundleBytes <= BUNDLE_CACHE_BYTES || k === slug) break;
+    bundleCache.delete(k); bundleBytes -= v.bytes;
+  }
+  return b;
+}
+/** A bundle's meta, without holding the bundle. */
+export function bundleMeta(slug) {
+  return metaCache.has(slug) ? metaCache.get(slug) : loadBundle(slug).meta;
 }
 // a plain name for a bundle: its base and coverage, as GuideData names it
-export function bundleTitle(slug, b = loadBundle(slug)) {
+export function bundleTitle(slug, b = { meta: bundleMeta(slug) }) {
   const m = b.meta || {};
   const base = m.base && m.base !== "null" && !/^n\/a/.test(m.base) ? String(m.base) : "";
   return [tidy(m.coverage || m.product || slug).replace(/\.$/, ""), base && /\d/.test(base) ? `base ${base}` : ""].filter(Boolean).join(", ");
 }
 
 // the ruler a row is measured on, short enough to sit under every row ("base 2024=100")
-export function bundleBase(slug, b = loadBundle(slug)) {
+export function bundleBase(slug, b = { meta: bundleMeta(slug) }) {
   const base = String(b.meta?.base ?? "");
   return base && base !== "null" && /\d/.test(base) && !/^n\/a/.test(base) && base.length <= 28 ? `base ${base}` : "";
 }

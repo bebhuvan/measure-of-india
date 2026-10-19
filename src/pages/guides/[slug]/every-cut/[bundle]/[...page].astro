@@ -9,7 +9,7 @@ import Base from "../../../../../layouts/Base.astro";
 import EveryCutTable from "../../../../../components/EveryCutTable.astro";
 import { DOSSIERS, bySlug } from "../../../../../dossiers/registry.js";
 import {governedDownloadPlan} from "../../../../../dossiers/governed-downloads.js";
-import { bundleTitle, loadBundle, everyCutPlan } from "../../../../../dossiers/everycut.js";
+import { bundleTitle, bundleMeta, loadBundle, everyCutPlan } from "../../../../../dossiers/everycut.js";
 import { tailSpec, packLink } from "../../../../../dossiers/everycut-html.js";
 import { bundleFacts } from "../../../../../seo/dataset.js";
 export function getStaticPaths() {
@@ -29,8 +29,8 @@ const pages = t.pages, total = pages.length, rows = pages[n];
 const single = t.kind === "bundle";
 const governed=d.sourceQualityMode==="required";
 const downloadInfo=b=>governedDownloadPlan(b,loadBundle(b),{required:governed});
-const snapshot = t.bundles.every(b=>loadBundle(b).meta.frequency === "cross-sectional");
-const B = loadBundle(t.bundles[0]);
+const snapshot = t.bundles.every(b=>bundleMeta(b).frequency === "cross-sectional");
+const B = { meta: bundleMeta(t.bundles[0]) };
 const title = single ? bundleTitle(id) : t.label;
 // the head's name is unique across the site: a bundle sharing a plain name with another carries its
 // file name (src/seo/dataset.js), and the overflow view names its guide
@@ -40,7 +40,7 @@ const base = `/guides/${slug}/every-cut/${id}/`;
 const href = (i) => (i ? `${base}${i + 1}/` : base);
 const nAll = t.rows.length;
 const clean = (x) => String(x ?? "").replace(/ — /g, ": ").replace(/ · /g, ", ");
-const sources = [...new Set(t.bundles.map((b) => clean(loadBundle(b).meta?.source)))];
+const sources = [...new Set(t.bundles.map((b) => clean(bundleMeta(b)?.source)))];
 const src = sources.length === 1 ? sources[0] : `${sources.length} sources, named per file`;
 const titles = Object.fromEntries((single ? [] : [...new Set(rows.map((r) => r.bundle))]).map((b) => [b, bundleTitle(b)]));
 ---
