@@ -1,0 +1,959 @@
+---
+import { mastheadStamp } from "../../dossiers/headline.js";
+// Guide 39, UPI and the networks NPCI runs. Data: data/series/npci-*.json (NPCI's own product,
+// UPI ecosystem and daily statistics, captured by the local Data Bank; scripts/lib/products/npci.mjs)
+// and, read-only, the payments guide's payments-monthly for the cross-check against the RBI. Every
+// number is computed in src/dossiers/upi.model.js and written here at build time; every plate is
+// drawn at build time by the chart kit (src/dossiers/upi.charts.js).
+import * as CH from "../../dossiers/upi.charts.js";
+import { U, N } from "../../dossiers/upi.model.js";
+import Base from "../../layouts/Base.astro";
+import GuideData from "../../components/GuideData.astro";
+import EveryCut from "../../components/EveryCut.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+const D = bySlug["upi"];
+const SRC_UPI = "https://www.npci.org.in/what-we-do/upi/product-statistics", SRC_ECO = "https://www.npci.org.in/what-we-do/upi/upi-ecosystem-statistics";
+const SRC = (p) => `https://www.npci.org.in/what-we-do/${p}/product-statistics`;
+const MU = U.upi.month, MP = U.p2p.month, MA = U.apps.month, MM = U.mcc.month, MS = U.states.month, MD = U.districts.month, MI = U.imps.month, MN = U.nach.month,
+  MMS = U.mms.month, MF = U.netc.month, MAE = U.aeps.month, MC = U.cts.month, MB = U.bhim.month, ME = U.erupi.month, MSEG = U.seg.month, MDAY = U.daily.lastDay, MNC = U.nachCr.month;
+---
+<Base
+  title="UPI and NPCI's Networks · Measure of India"
+  description={D.description}
+  nav="guides"
+  dateStamp={mastheadStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="/guides/upi/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<div class="page">
+
+  <div class="titleblock break" data-inputs="npci-upi, npci-upi-p2p-p2m" data-prose="evergreen and data-bound facts">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">The National Payments Corporation of India runs the networks behind a QR code at a tea stall, a FASTag beeping through a toll, an EMI taken from a salary account on the fifth, a pension landing by Aadhaar number and a thumbprint at a village banking agent. It publishes what passes through each of them, month by month and, for UPI, app by app, shop type by shop type and district by district.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>NPCI, product and UPI ecosystem statistics</b></span>
+      <span>Frequency <b>Monthly; some tables daily</b></span>
+      <span>Window <b>UPI since April 2016; IMPS and NACH since 2013</b></span>
+      <span>Latest <b>{MU}</b></span>
+      <span>Unit <b>Number of payments; rupees</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">UPI payments, {MU}</div><div class="v acc" id="n-upi" set:html={N["n-upi"]}></div><div class="d" id="d-upi" set:html={N["d-upi"]}></div><div class="nspark" id="nspark-upi" set:html={CH.sparkUpi()} /></div>
+      <div class="num"><div class="l">Money moved by UPI, {MU}</div><div class="v" id="n-upiv" set:html={N["n-upiv"]}></div><div class="d" id="d-upiv" set:html={N["d-upiv"]}></div></div>
+      <div class="num"><div class="l">The average UPI payment</div><div class="v" id="n-avg" set:html={N["n-avg"]}></div><div class="d" id="d-avg" set:html={N["d-avg"]}></div></div>
+      <div class="num"><div class="l">Payments that went to a merchant</div><div class="v" id="n-p2m" set:html={N["n-p2m"]}></div><div class="d" id="d-p2m" set:html={N["d-p2m"]}></div></div>
+    </div>
+  </div>
+
+  <!-- § 01 lived reality. Inputs: none dated. Prose: evergreen. -->
+  <section data-inputs="npci-upi" data-prose="evergreen">
+    <div class="sec-head"><span class="no">01</span><h2>The rails under every scan</h2><span class="line"></span></div>
+    <div class="prose">
+      <p>Most Indians never deal with NPCI, but most of their money moves through it. When a vegetable seller's QR code takes ₹40, UPI carries the payment from the buyer's bank to the seller's. When a loan instalment or a mutual fund SIP leaves an account on a fixed date, NACH is the system that presents it to the bank. A cooking-gas subsidy or a farmer's instalment reaches an account through APBS, routed by Aadhaar number. A FASTag toll, a cheque, a cash withdrawal at another bank's ATM and a thumbprint withdrawal from a banking agent each run on an NPCI network too.</p>
+      <p>NPCI is owned by banks and was set up at the RBI's urging in 2008. It is not a bank and holds no one's money. It runs the switches that pass instructions between banks and settles what they owe each other. Because every payment crosses its switches, NPCI can count them in ways no bank can: by app, by type of shop, by state and district, by day.</p>
+    </div>
+  </section>
+
+  <!-- § 02 how to read. Prose: evergreen methodology. -->
+  <section id="how-to-read" data-inputs="npci-upi, npci-upi-apps, npci-upi-states, npci-upi-mcc" data-prose="evergreen methodology">
+    <div class="sec-head"><span class="no">02</span><h2>How to read NPCI's tables</h2><span class="line"></span></div>
+    <div class="prose">
+      <p><b>Volume and value.</b> Every table gives the number of transactions and the rupees they moved. NPCI prints them in million and in ₹ crore; this guide writes them in crore (ten million) and lakh crore, as Indian readers count. An average payment is the value divided by the number, worked out here; NPCI does not print it.</p>
+      <p><b>Counted where, and by whom.</b> A UPI payment is counted once, by the network. In the app table it is counted against the app the payer used; in the state table, against the state of the payer as their bank reports it; in the merchant table, against the merchant's category code (MCC), a four-digit label the merchant's bank assigns. NPCI publishes these as separate tables, never crossed: there is no table of apps by state or of categories by district, and this guide does not invent one.</p>
+      <p><b>Lists, not censuses.</b> The merchant table names only the top categories each month and folds the rest into a remainder. The app table lists the apps that cross a threshold. A category or app missing from a month was not listed, which is not the same as zero, so its line has a gap.</p>
+      <p><b>Two rulers kept apart.</b> NPCI changed what its BHIM figures count in April 2020, and it merged three regional cheque grids into one national grid in November 2023. Each is drawn as two lines with a seam between them and never joined.</p>
+      <p><b>NPCI's slips.</b> These tables are typed into NPCI's website and carry typing errors: months copied under the wrong year, shares printed as fractions, a day's FASTag count ten times too large. This guide checks every table against its own totals and against NPCI's other tables each time it is rebuilt. Slips are named and kept as printed or, where a printed share contradicts NPCI's own figures, left out; nothing is repaired by guesswork. The list is in the notes of each table's download.</p>
+      <p><b>NPCI and the RBI.</b> The RBI's payments guide counts UPI too, from its monthly payment system table. The two agree within half a per cent in almost every month; the last plate shows by how much. Use the RBI's table to compare UPI with cards, NEFT and RTGS; use NPCI's for what only NPCI can see.</p>
+    </div>
+  </section>
+
+  <!-- § 03 current reading. Inputs: npci-upi, npci-upi-p2p-p2m, npci-upi-apps, npci-upi-states, npci-nach-debit. Prose: deterministic, data-bound. -->
+  <section id="current-reading" data-inputs="npci-upi, npci-upi-p2p-p2m, npci-upi-apps, npci-upi-states, npci-nach-debit, npci-imps" data-prose="deterministic source-traced facts">
+    <div class="sec-head"><span class="no">03</span><h2>The latest month</h2><span class="line"></span><span class="unit">{MU}, NPCI</span></div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <p>UPI carried <b id="cr-n" set:html={N["ex-gr-n"]}></b> payments in {MU}, worth <b id="cr-v" set:html={N["ex-gr-v"]}></b>. The number was <b id="cr-g" set:html={N["ex-gr-g"]}></b> on a year earlier. <b id="cr-p2m" set:html={N["ex-pm-n"]}></b> of the payments went to merchants, but only <b id="cr-p2mv" set:html={N["ex-pm-v"]}></b> of the money: transfers between people are fewer and larger.</p>
+        <p>Two apps, <span id="cr-a1" set:html={N["ex-ap-1n"]}></span> and <span id="cr-a2" set:html={N["ex-ap-2n"]}></span>, made <b id="cr-top2" set:html={N["ex-ap-top2"]}></b> of the UPI payments in NPCI's app table in {MA}. In {U.apps.firstMonth}, when that table began, the two biggest apps had <b id="cr-top20" set:html={N["ex-ap-top20"]}></b>.</p>
+      </div>
+      <div class="reading-col">
+        <p>NPCI could not assign <b id="cr-un" set:html={N["ex-un-now"]}></b> of {MS}'s UPI payments to any state, up from <b id="cr-un0" set:html={N["ex-un-0"]}></b> in {U.unassigned.first}. State figures are therefore shown for one month at a time and never as a trend.</p>
+        <p>Beyond UPI, <b id="cr-nd" set:html={N["ex-nd-r"]}></b> of EMIs, SIPs and other NACH debits came back unpaid in {MN}, and IMPS, the older instant transfer, carried <b id="cr-im" set:html={N["ex-im-n"]}></b> transfers in {MI}, <b id="cr-img" set:html={N["ex-im-g"]}></b> on a year earlier.</p>
+        <p><b>What we do not know.</b> How many people use UPI. NPCI counts payments, not payers, and publishes no count of active users.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 04 anatomy: UPI month by month. Inputs: npci-upi, npci-upi-p2p-p2m, npci-daily. -->
+  <section data-inputs="npci-upi, npci-upi-p2p-p2m, npci-daily" data-prose="evergreen explanations and governed As-of readings">
+    <div class="sec-head"><span class="no">04</span><h2>UPI, month by month</h2><span class="line"></span><span class="unit">Monthly since {U.upi.firstMonth}</span></div>
+    <div class="break">
+      <figure id="cb-growth" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>From a few thousand payments to a few thousand crore, in ten years</h3>
+            <div class="sub">UPI payments a month (crore) and the money they moved (₹ lakh crore), {U.upi.firstMonth} to {MU}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-growth" set:html={N["pv-growth"]}></div><div class="c">UPI payments, {MU}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-growth" set:html={CH.growth()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, UPI product statistics (monthly). Printed in million and ₹ crore; shown in crore and lakh crore.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC_UPI} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The left chart counts payments, the right one counts rupees. The count rose much faster than the money, because UPI kept taking on smaller everyday payments. Monthly figures dip in short months like February and rise in festival months, so compare a month with the same month a year earlier.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MU}</span>
+            <p>UPI carried <b id="ex-gr-n" set:html={N["ex-gr-n"]}></b> payments worth <b id="ex-gr-v" set:html={N["ex-gr-v"]}></b>, <b id="ex-gr-g" set:html={N["ex-gr-g"]}></b> by number on a year earlier. In {U.upi.firstMonth}, its first month with a recorded payment, it carried <b id="ex-gr-n0" set:html={N["ex-gr-n0"]}></b>. Banks live on UPI went from <b id="ex-gr-banks0" set:html={N["ex-gr-banks0"]}></b> to <b id="ex-gr-banks" set:html={N["ex-gr-banks"]}></b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-yoy" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-yoy" set:html={N["h-yoy"]}></h3>
+            <div class="sub">Growth of UPI on the same month a year earlier, number of payments and their value, per cent, {U.yoy.from} to {U.yoy.month}. Earlier years are left off: UPI grew more than tenfold a year until 2018-19, which would flatten the rest.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-yoy" set:html={N["pv-yoy"]}></div><div class="c">payments, on a year earlier</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-yoy" set:html={CH.yoy()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, UPI product statistics (monthly). Growth on the same month a year earlier computed by Measure of India.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC_UPI} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each point compares a month with the same month a year before, which takes out the calendar: February's three missing days, the festival months, the March year-end. Change from one month to the next is not shown, because it mostly measures those calendar effects. The spring of 2021 stands out because it is measured against the lockdown months of 2020.</p>
+            <p>When value grows more slowly than the number of payments, the average payment is shrinking: more of UPI is small everyday spending.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MU}</span>
+            <p>The number of UPI payments was <b id="ex-yy-v" set:html={N["ex-yy-v"]}></b> on a year earlier and their value <b id="ex-yy-val" set:html={N["ex-yy-val"]}></b>. A year before, the number was growing at <b id="ex-yy-vy" set:html={N["ex-yy-vy"]}></b>; in 2019-20, at <b id="ex-yy-first" set:html={N["ex-yy-first"]}></b> on average.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-yoy-net" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>UPI's growth beside the other networks</h3>
+            <div class="sub">Growth on the same month a year earlier, per cent, from April 2023, each panel on its own scale: UPI payments, IMPS transfers, paid FASTag trips and NACH debits presented. Earlier years are measured against the 2020 and 2021 lockdowns and FASTag's compulsory rollout in 2021, which swamp everything after.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-yoy-net" set:html={N["pv-yoy-net"]}></div><div class="c">IMPS, on a year earlier</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-yoy-net" set:html={CH.yoyNetworks()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, UPI, IMPS, NETC FASTag and NACH debit product statistics (monthly). Growth computed by Measure of India.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC_UPI} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>IMPS and UPI do the same job, moving money between accounts at once, so when one grows the other can shrink. FASTag's paid trips leave out trips on the annual pass sold from August 2025, so growth after that understates FASTag use; NACH debits grow with loans, SIPs and insurance policies paid by mandate.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MU}</span>
+            <p>Growth on a year earlier, in each network's latest month: UPI <b id="ex-yn-upi" set:html={N["ex-yn-upi"]}></b> ({U.yoyNet[0].month}), IMPS <b id="ex-yn-imps" set:html={N["ex-yn-imps"]}></b> ({U.yoyNet[1].month}), FASTag <b id="ex-yn-netc" set:html={N["ex-yn-netc"]}></b> ({U.yoyNet[2].month}) and NACH debits <b id="ex-yn-nach" set:html={N["ex-yn-nach"]}></b> ({U.yoyNet[3].month}).</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-ticket" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-ticket" set:html={N["h-ticket"]}></h3>
+            <div class="sub">Average UPI payment, rupees: all UPI from {U.ticket.firstMonth} (the first month with ten lakh payments), and payments between people and to merchants from {U.p2p.firstMonth}. Value divided by number.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-ticket" set:html={N["pv-ticket"]}></div><div class="c">average UPI payment, {MU}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-ticket" set:html={CH.ticket()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, UPI product statistics and UPI ecosystem statistics (P2P and P2M). Averages computed by Measure of India.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC_ECO} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The average of all UPI payments falls as merchant payments grow, even when neither kind of payment gets smaller, because merchant payments are the small ones. That is why the blue line slides while the two lines under it stay fairly flat. An average is pulled up by a few large transfers, and NPCI publishes no typical (median) payment.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MP}</span>
+            <p>The average UPI payment was <b id="ex-tk-all" set:html={N["ex-tk-all"]}></b>: <b id="ex-tk-p2p" set:html={N["ex-tk-p2p"]}></b> between people and <b id="ex-tk-p2m" set:html={N["ex-tk-p2m"]}></b> to a merchant. In {U.p2p.firstMonth} the two were <b id="ex-tk-p2p0" set:html={N["ex-tk-p2p0"]}></b> and <b id="ex-tk-p2m0" set:html={N["ex-tk-p2m0"]}></b>. The highest monthly average of all UPI, <b id="ex-tk-max" set:html={N["ex-tk-max"]}></b>, was in {U.ticket.maxMonth}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-p2m" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-p2m" set:html={N["h-p2m"]}></h3>
+            <div class="sub">Payments to merchants (P2M) as a share of all UPI, by number and by value, per cent, {U.p2p.firstMonth} to {MP}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-p2m" set:html={N["pv-p2m"]}></div><div class="c">of payments went to merchants</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-p2m" set:html={CH.p2m()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, UPI ecosystem statistics, P2P and P2M (monthly). Shares computed by Measure of India.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC_ECO} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A person-to-merchant payment is one where the receiver is registered as a merchant, usually by scanning a shop's QR code; a person-to-person payment goes to an individual's UPI ID or phone number. Small shopkeepers who take payments on a personal QR code are counted as people, so P2M understates how much UPI spending happens at shops.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MP}</span>
+            <p>Merchants received <b id="ex-pm-n" set:html={N["ex-pm-n"]}></b> of UPI payments and <b id="ex-pm-v" set:html={N["ex-pm-v"]}></b> of the money, against <b id="ex-pm-n0" set:html={N["ex-pm-n0"]}></b> and <b id="ex-pm-v0" set:html={N["ex-pm-v0"]}></b> in {U.p2p.firstMonth}. Merchant payments first outnumbered transfers between people in {U.p2p.cross}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-daily" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Every day since May 2021, and the busiest of them</h3>
+            <div class="sub">UPI payments each day, crore, {U.daily.firstDay} to {MDAY}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-daily" set:html={N["pv-daily"]}></div><div class="c">the busiest day, {U.daily.maxDay}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-daily" set:html={CH.daily()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, UPI daily statistics. Printed in million to two decimals; shown in crore.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC_ECO} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The daily line has a saw-tooth: payments run higher in the first days of a month, when salaries and pensions land and rent and bills go out, and fall away towards its end. Festival days and the end of the financial year stand out. NPCI's daily rows add up to its monthly table in most months; the months they do not are listed in the download's notes.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MDAY}</span>
+            <p>The busiest day so far was {U.daily.maxDay}, with <b id="ex-dy-max" set:html={N["ex-dy-max"]}></b> UPI payments. The latest day in NPCI's table had <b id="ex-dy-last" set:html={N["ex-dy-last"]}></b>; the first, {U.daily.firstDay}, had <b id="ex-dy-first" set:html={N["ex-dy-first"]}></b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 anatomy: apps. Inputs: npci-upi-apps. -->
+  <section data-inputs="npci-upi-apps" data-prose="evergreen explanations and governed As-of readings">
+    <div class="sec-head"><span class="no">05</span><h2>Which app</h2><span class="line"></span><span class="unit">Monthly since {U.apps.firstMonth}</span></div>
+    <div class="break">
+      <figure id="cb-apps" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-apps" set:html={N["h-apps"]}></h3>
+            <div class="sub">Share of the UPI payments in NPCI's app table made from each app, per cent, {U.apps.firstMonth} to {MA}. Paytm's own bank app and the Paytm app on partner banks are separate lines, as NPCI lists them.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-apps" set:html={N["pv-apps"]}></div><div class="c">the two biggest apps, {MA}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-apps" set:html={CH.apps()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, UPI ecosystem statistics, UPI apps (monthly). Shares of all apps' payments in the table, computed by Measure of India.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC_ECO} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>An app here is the one the payer used. A payment from PhonePe to a shop whose QR code was printed by Paytm counts for PhonePe. Shares are of every app in NPCI's table that month, which adds up to within a per cent or two of UPI's total.</p>
+            <p>Paytm's line breaks in early 2024, when the RBI stopped Paytm Payments Bank from taking new deposits and Paytm moved its users' UPI handles to partner banks: the old bank app ends and the Paytm app on partner banks begins. Whether one app's share should be capped has been debated for years; this chart shows the shares, not an answer.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MA}</span>
+            <p><span id="ex-ap-1n" set:html={N["ex-ap-1n"]}></span> made <b id="ex-ap-1" set:html={N["ex-ap-1"]}></b> of the payments, <span id="ex-ap-2n" set:html={N["ex-ap-2n"]}></span> <b id="ex-ap-2" set:html={N["ex-ap-2"]}></b> and <span id="ex-ap-3n" set:html={N["ex-ap-3n"]}></span> <b id="ex-ap-3" set:html={N["ex-ap-3"]}></b>. The two largest together had <b id="ex-ap-top2" set:html={N["ex-ap-top2"]}></b>, against <b id="ex-ap-top20" set:html={N["ex-ap-top20"]}></b> in {U.apps.firstMonth}. NPCI listed <b id="ex-ap-n" set:html={N["ex-ap-n"]}></b> apps by name.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-apps-latest" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-apps-latest" set:html={N["h-apps-latest"]}></h3>
+            <div class="sub">The fifteen apps with the most UPI payments, share of all apps' payments, {MA}, per cent.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-apps-latest" set:html={N["pv-apps-latest"]}></div><div class="c">the largest app's share</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-apps-latest" set:html={CH.appsLatest()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, UPI ecosystem statistics, UPI apps. Shares computed by Measure of India. Every app NPCI lists is in the CSV and in the table at the end of the guide.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC_ECO} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Banks' own apps are grouped as NPCI groups them: "Axis Bank apps" is every UPI app Axis Bank runs. Apps made by companies that are not banks, such as PhonePe and Google Pay, ride on partner banks, which NPCI does not show here.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MA}</span>
+            <p>The largest app made <b id="pv-apps-latest2" set:html={N["ex-ap-1"]}></b> of the payments in NPCI's app table. The CSV lists every app with its payments and their value.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-apps-kind" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-apps-kind" set:html={N["h-apps-kind"]}></h3>
+            <div class="sub">The twelve apps carrying the most business-to-customer payments (refunds, cashbacks, payouts), lakh, {MA}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-apps-kind" set:html={N["pv-apps-kind"]}></div><div class="c">of payments started by a customer</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-apps-kind" set:html={CH.appsKind()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, UPI ecosystem statistics, UPI apps (customer-initiated, B2C and B2B columns). Shares computed by Measure of India.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC_ECO} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>NPCI splits each app's payments three ways: started by a customer, sent by a business to a customer, and sent by one business to another. The consumer apps carry only the first. Business payouts, such as a refund, an insurance claim or a cashback, go out through banks' corporate systems, which appear here as bank apps.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MA}</span>
+            <p>Customers started <b id="ex-ak-c" set:html={N["ex-ak-c"]}></b> of the payments in the app table; businesses paying customers made <b id="ex-ak-b2c" set:html={N["ex-ak-b2c"]}></b>. <span id="ex-ak-1" set:html={N["ex-ak-1"]}></span> carried the most of these, <b id="ex-ak-1v" set:html={N["ex-ak-1v"]}></b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 anatomy: merchant categories. Inputs: npci-upi-mcc, npci-upi-segments. -->
+  <section data-inputs="npci-upi-mcc, npci-upi-segments" data-prose="evergreen explanations and governed As-of readings">
+    <div class="sec-head"><span class="no">06</span><h2>What people pay for</h2><span class="line"></span><span class="unit">Payments to merchants, by category</span></div>
+    <div class="break">
+      <figure id="cb-mcc" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-mcc" set:html={N["h-mcc"]}></h3>
+            <div class="sub">The fifteen merchant categories with the most UPI payments, and the fifteen with the most money, {MM}. NPCI's remainder ("Others") left out of both rankings.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-mcc" set:html={N["pv-mcc"]}></div><div class="c">payments at grocery shops</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-mcc" set:html={CH.mcc()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, UPI ecosystem statistics, merchant category (monthly). Short names by Measure of India; the full ISO description of each code is in the CSV.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC_ECO} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A merchant category code is a label the merchant's bank gives a business when it signs it up, from an international list. It describes the business, not the purchase: a kirana store's payments all count as groceries, whatever was bought. What this guide calls loan repayments is the code for debt collection agencies, where lenders and their collection agents receive instalments, which is why so much money moves there.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MM}</span>
+            <p>Grocery shops and supermarkets received <b id="ex-mc-gr" set:html={N["ex-mc-gr"]}></b> UPI payments, <b id="ex-mc-grs" set:html={N["ex-mc-grs"]}></b> of all merchant payments. NPCI named <b id="ex-mc-n" set:html={N["ex-mc-n"]}></b> categories; its remainder held <b id="ex-mc-oth" set:html={N["ex-mc-oth"]}></b> of merchant payments.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-mcc-ticket" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-mcc-ticket" set:html={N["h-mcc-ticket"]}></h3>
+            <div class="sub">Average UPI payment in the twenty biggest merchant categories by number, rupees, {MM}. Value divided by number. The scale is logarithmic: each step is ten times the last.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-mcc-ticket" set:html={N["pv-mcc-ticket"]}></div><div class="c">average grocery payment</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-mcc-ticket" set:html={CH.mccTicket()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, UPI ecosystem statistics, merchant category. Averages computed by Measure of India.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC_ECO} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The length of a bar is the average payment in that category. Paan shops, bakeries and dairies sit at the small end, where cash used to rule; fuel, liquor and loan repayments sit in the middle; investment and digital gold purchases at the large end.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MM}</span>
+            <p>The average grocery payment was <b id="ex-mt-gr" set:html={N["ex-mt-gr"]}></b>. Among the twenty biggest categories, the largest average was at <span id="ex-mt-hin" set:html={N["ex-mt-hin"]}></span> (<b id="ex-mt-hi" set:html={N["ex-mt-hi"]}></b>) and the smallest at <span id="ex-mt-lon" set:html={N["ex-mt-lon"]}></span> (<b id="ex-mt-lo" set:html={N["ex-mt-lo"]}></b>).</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-mcc-trend" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Eight kinds of shop, each on its own scale</h3>
+            <div class="sub">UPI payments a month in eight merchant categories, crore, since December 2016. A gap is a month NPCI did not list the category.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-mcc-trend" set:html={N["pv-mcc-trend"]}></div><div class="c">grocery payments, {MM}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-mcc-trend" set:html={CH.mccTrend()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, UPI ecosystem statistics, merchant category (monthly).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC_ECO} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each panel has its own scale, so compare shapes, not heights. A merchant's code is fixed when it signs up, and banks have re-coded merchants over the years, so a jump in one month can be a re-labelling rather than a change in spending. Every category NPCI has ever listed is in the table at the end of the guide.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MM}</span>
+            <p>Grocery payments were <b id="pv-mcc-trend2" set:html={N["ex-mc-gr"]}></b> in the month. The values for each panel are in its CSV.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-segments" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Buses and trains, government fees, power bills, school fees, hospitals and farms</h3>
+            <div class="sub">UPI payments a month to merchants in six segments NPCI reports apart from its category list, {U.seg.firstMonth} to {MSEG}, each on its own scale.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-seg" set:html={N["pv-seg"]}></div><div class="c">public transport payments</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-segments" set:html={CH.segments()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, UPI ecosystem statistics, other prominent segments (monthly).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC_ECO} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>These segments group several merchant codes each (public transport takes in buses, railways, taxis and airlines) and are counted apart from the category table above, so the two should not be added. NPCI did not print some segments in two months; those are gaps.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MSEG}</span>
+            <p>Public transport received <b id="ex-seg-t" set:html={N["pv-seg"]}></b> UPI payments in the latest month NPCI printed it.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 granular: where. Inputs: npci-upi-states, npci-upi-districts. -->
+  <section data-inputs="npci-upi-states, npci-upi-districts" data-prose="evergreen explanations and governed As-of readings">
+    <div class="sec-head"><span class="no">07</span><h2>Where</h2><span class="line"></span><span class="unit">States since {U.unassigned.first}; districts since {U.districts.firstMonth}</span></div>
+    <div class="break">
+      <figure id="cb-unassigned" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-unassigned" set:html={N["h-unassigned"]}></h3>
+            <div class="sub">UPI payments NPCI could not assign to any state, per cent of all UPI payments, {U.unassigned.first} to {MS}. Computed from NPCI's volumes.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-unassigned" set:html={N["pv-unassigned"]}></div><div class="c">with no state, {MS}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-unassigned" set:html={CH.unassigned()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, UPI ecosystem statistics, state-wise ("Unclassified" row). Share computed by Measure of India from NPCI's volumes.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC_ECO} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>NPCI places a payment in the state of the payer as the payer's bank reports it. Where the bank reports no state, NPCI files the payment as "Unclassified". That share has more than tripled since the table began, so every state's count can fall or rise with how banks report, not with how people pay. State figures below are shown for one month and as shares of the payments that were assigned, and never as a trend.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MS}</span>
+            <p><b id="ex-un-now" set:html={N["ex-un-now"]}></b> of UPI payments had no state, against <b id="ex-un-0" set:html={N["ex-un-0"]}></b> in {U.unassigned.first}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-map" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-map" set:html={N["h-map"]}></h3>
+            <div class="sub">Each state's share of the UPI payments NPCI assigned to a state, {MS}, per cent. One equal tile per state and union territory.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-map" set:html={N["pv-map"]}></div><div class="c">{U.states.top.name}'s share</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-map" set:html={CH.statesMap()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, UPI ecosystem statistics, state-wise (monthly). Shares of assigned payments computed by Measure of India.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC_ECO} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Big states have more people, so they have more payments; this map shows where UPI's volume sits, not who uses it most. The shares leave out the unassigned payments, which could change the order if they fall unevenly across states. NPCI's own printed shares are of all UPI including the unassigned part; they are in the download, except a few months where NPCI printed shares that contradict its own figures.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MS}</span>
+            <p><span id="ex-st-1" set:html={N["ex-st-1"]}></span> had <b id="ex-st-1s" set:html={N["ex-st-1s"]}></b> of the assigned payments and <span id="ex-st-2" set:html={N["ex-st-2"]}></span> <b id="ex-st-2s" set:html={N["ex-st-2s"]}></b>. The top five states together had <b id="ex-st-top5" set:html={N["ex-st-top5"]}></b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-states" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Every state, by its payments and by its average payment</h3>
+            <div class="sub">UPI payments assigned to each state, crore, and the average payment, rupees, {MS}. Value divided by number.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-states" set:html={N["pv-states"]}></div><div class="c">average payment, all assigned</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-states" set:html={CH.statesRank()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, UPI ecosystem statistics, state-wise. Averages computed by Measure of India.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC_ECO} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A higher average payment can mean richer payers, more money sent home, fewer small shop payments or simply that small shops there still take cash. The table cannot tell these apart.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MS}</span>
+            <p>The average assigned payment was <b id="ex-sr-all" set:html={N["ex-sr-all"]}></b>. It was highest in <span id="ex-sr-hi" set:html={N["ex-sr-hi"]}></span> (<b id="ex-sr-hiv" set:html={N["ex-sr-hiv"]}></b>) and lowest in <span id="ex-sr-lo" set:html={N["ex-sr-lo"]}></span> (<b id="ex-sr-lov" set:html={N["ex-sr-lov"]}></b>).</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-districts" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The twenty-five districts with the most UPI payments</h3>
+            <div class="sub">The twenty-five districts with the most UPI payments, crore, {MD}. Every district NPCI lists is in the CSV and the table at the end of the guide.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-districts" set:html={N["pv-districts"]}></div><div class="c">{U.districts.top[0].name.split(",")[0]}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-districts" set:html={CH.districts()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, UPI ecosystem statistics, state-wise (district rows, from {U.districts.firstMonth}). District names as NPCI prints them.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC_ECO} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A district's count is its payers' payments, as their banks report their address. A city's payments can land in a neighbouring district where people live, and the unassigned part has no district either. NPCI's district names do not always match the Census or local-government lists.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MD}</span>
+            <p><span id="ex-di-1" set:html={N["ex-di-1"]}></span> had the most UPI payments, <b id="ex-di-1v" set:html={N["ex-di-1v"]}></b>. NPCI listed <b id="ex-di-n" set:html={N["ex-di-n"]}></b> districts; the top twenty-five had <b id="ex-di-25" set:html={N["ex-di-25"]}></b> of the payments assigned to a district.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 anatomy: the other networks. Inputs: npci-imps, npci-nach-*, npci-netc, npci-aeps, npci-cts*, npci-daily, npci-bhim*, npci-erupi. -->
+  <section data-inputs="npci-imps, npci-nach-debit, npci-nach-credit, npci-nach-mandates, npci-netc, npci-aeps, npci-cts, npci-cts-grids, npci-daily, npci-bhim, npci-bhim-2016, npci-erupi" data-prose="evergreen explanations and governed As-of readings">
+    <div class="sec-head"><span class="no">08</span><h2>The other networks</h2><span class="line"></span><span class="unit">IMPS, NACH, FASTag, AePS, cheques, ATMs, BHIM, e-RUPI</span></div>
+    <div class="break">
+      <figure id="cb-imps" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-imps" set:html={N["h-imps"]}></h3>
+            <div class="sub">IMPS transfers a month (crore) and the average transfer (rupees), {U.imps.firstMonth} to {MI}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-imps" set:html={N["pv-imps"]}></div><div class="c">IMPS transfers, {MI}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-imps" set:html={CH.imps()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, IMPS product statistics (monthly). Averages computed by Measure of India.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC("imps")} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>IMPS moves money instantly between accounts by account number and IFSC, at any hour. UPI was built on top of it. As small payments moved to UPI, IMPS was left with larger ones, such as business payments and transfers that UPI's limits do not allow, so its average rose.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MI}</span>
+            <p>IMPS carried <b id="ex-im-n" set:html={N["ex-im-n"]}></b> transfers worth <b id="ex-im-v" set:html={N["ex-im-v"]}></b>, <b id="ex-im-g" set:html={N["ex-im-g"]}></b> by number on a year earlier. The average transfer was <b id="ex-im-avg" set:html={N["ex-im-avg"]}></b>, against <b id="ex-im-avg0" set:html={N["ex-im-avg0"]}></b> in {U.imps.firstMonth}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-nach-dr" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-nach-dr" set:html={N["h-nach-dr"]}></h3>
+            <div class="sub">NACH debits presented a month (crore) and the share returned unpaid (per cent), all debit products, {U.nach.firstMonth} to {MN}. Share returned computed from NPCI's counts.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-nach-dr" set:html={N["pv-nach-dr"]}></div><div class="c">returned unpaid, {MN}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-nach-dr" set:html={CH.nachDebit()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, NACH debit product statistics (monthly). Share returned = returned ÷ presented, computed by Measure of India.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC("nach")} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A NACH debit is a payment a lender, fund house, insurer or utility pulls from an account under a standing mandate. The bank returns it when the account cannot pay it, most often for lack of balance. A returned debit is usually presented again later, so the same instalment can be counted as returned in one month and paid in the next. The rate is a measure of strain on household and small-business accounts, not of loan default.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MN}</span>
+            <p>Lenders and others presented <b id="ex-nd-n" set:html={N["ex-nd-n"]}></b> NACH debits worth <b id="ex-nd-v" set:html={N["ex-nd-v"]}></b>; <b id="ex-nd-ret" set:html={N["ex-nd-ret"]}></b> came back unpaid, <b id="ex-nd-r" set:html={N["ex-nd-r"]}></b> of the number, against <b id="ex-nd-ry" set:html={N["ex-nd-ry"]}></b> a year earlier. The highest rate was <b id="ex-nd-rmax" set:html={N["ex-nd-rmax"]}></b>, in <span id="ex-nd-rmaxm" set:html={N["ex-nd-rmaxm"]}></span>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-nach-cr" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Subsidies by Aadhaar number, salaries and pensions by account</h3>
+            <div class="sub">NACH and APBS credits that reached accounts each month, by kind, each panel on its own scale.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-nach-cr" set:html={N["pv-nach-cr"]}></div><div class="c">benefits by Aadhaar number, {MNC}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-nach-cr" set:html={CH.nachCredit()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, NACH credit product statistics (monthly), successful transactions.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC("nach")} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>NACH credit is how one payer pays many people at once: a company's salaries, a pension fund's pensions, a government's benefits. APBS finds the account from the person's Aadhaar number, which is how most direct benefit transfers reach people who do not know or did not give an account number. The panels count credits that reached an account; credits that failed are in the download.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MNC}</span>
+            <p>APBS delivered <b id="ex-nc-apbs" set:html={N["ex-nc-apbs"]}></b> benefit credits worth <b id="ex-nc-apbsv" set:html={N["ex-nc-apbsv"]}></b>. Other NACH credits by account number, salaries, pensions and dividends among them, numbered <b id="ex-nc-oth" set:html={N["ex-nc-oth"]}></b> worth <b id="ex-nc-othv" set:html={N["ex-nc-othv"]}></b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-mms" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-mms" set:html={N["h-mms"]}></h3>
+            <div class="sub">NACH mandates processed a month (lakh) and the share rejected (per cent), {U.mms.firstMonth} to {MMS}. Share computed from NPCI's counts; February 2023 has no rate, because NPCI's figures for it do not add up (a digit is missing from its rejected count).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-mms" set:html={N["pv-mms"]}></div><div class="c">of mandates rejected, {MMS}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-mms" set:html={CH.mandates()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, NACH mandate management system statistics (monthly). Share rejected computed by Measure of India.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC("nach")} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A mandate is the standing permission that lets a lender or fund debit an account. Before any debit, the payer's bank has to accept it. Banks reject mandates for mismatched names or account numbers, missing signatures and the like, and a rejected mandate is usually filed again, so the same customer can be rejected more than once. This table covers the mandates NPCI's system processes, not every mandate in India.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MMS}</span>
+            <p>NPCI processed <b id="ex-mm-n" set:html={N["ex-mm-n"]}></b> mandates; <b id="ex-mm-r" set:html={N["ex-mm-r"]}></b> were rejected.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-fastag" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>FASTag: tolls paid from a sticker, and trips on the annual pass</h3>
+            <div class="sub">FASTag toll and parking payments a month (crore), with trips on the annual pass from August 2025, and FASTags issued (crore, cumulative), {U.netc.firstMonth} to {MF}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-fastag" set:html={N["pv-fastag"]}></div><div class="c">toll and parking payments, {MF}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-fastag" set:html={CH.fastag()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, NETC FASTag statistics (monthly). Printed in million and ₹ crore.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC("netc-fastag")} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>FASTag became compulsory on national highways in February 2021, which is the steep rise in the left panel. Trips on the annual pass, sold from 15 August 2025, are not charged at the booth, so NPCI counts them in a column of their own; adding them to paid trips gives all FASTag trips. Tags issued is a running total since 2016 and includes tags no longer in use.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MF}</span>
+            <p>FASTag carried <b id="ex-ft-n" set:html={N["ex-ft-n"]}></b> toll and parking payments worth <b id="ex-ft-v" set:html={N["ex-ft-v"]}></b>, an average of <b id="ex-ft-avg" set:html={N["ex-ft-avg"]}></b>, besides <b id="ex-ft-pass" set:html={N["ex-ft-pass"]}></b> trips on the annual pass. <b id="ex-ft-tags" set:html={N["ex-ft-tags"]}></b> tags had been issued.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-aeps" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Thumbprint banking: withdrawals, transfers and identity checks by Aadhaar</h3>
+            <div class="sub">Aadhaar-enabled payments and checks a month, each panel on its own scale, {U.aeps.firstMonth} to {MAE}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-aeps" set:html={N["pv-aeps"]}></div><div class="c">AePS transactions, {MAE}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-aeps" set:html={CH.aeps()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, AePS product statistics (monthly).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC("aeps")} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>AePS lets anyone with a bank account linked to Aadhaar withdraw cash, check a balance or send money at a banking correspondent's micro-ATM, using a fingerprint. It is how many rural households draw their benefits. Off-us means the agent and the customer bank with different banks; on-us, the same bank. NPCI prints a value only for off-us transactions, and its on-us count includes balance checks.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MAE}</span>
+            <p>AePS carried <b id="ex-ae-n" set:html={N["ex-ae-n"]}></b> approved transactions: <b id="ex-ae-off" set:html={N["ex-ae-off"]}></b> off-us, averaging <b id="ex-ae-avg" set:html={N["ex-ae-avg"]}></b>, and <b id="ex-ae-on" set:html={N["ex-ae-on"]}></b> on-us. The busiest month was <span id="ex-ae-maxm" set:html={N["ex-ae-maxm"]}></span>, with <b id="ex-ae-max" set:html={N["ex-ae-max"]}></b>. Successful eKYC checks numbered <b id="ex-ae-ekyc" set:html={N["ex-ae-ekyc"]}></b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-cheques" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Cheques presented, and how many bounce</h3>
+            <div class="sub">Cheques presented a month (crore) and the share returned (per cent): three regional grids, {U.cts.gridsFrom} to {U.cts.gridsTo}, then the national grid to {MC}. The grids are not added into one line.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-cheques" set:html={N["pv-cheques"]}></div><div class="c">of cheques returned, {MC}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-cheques" set:html={CH.cheques()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, CTS grid statistics (monthly). Printed in lakh and ₹ lakh; return rates as printed.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC("cts")} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The Cheque Truncation System clears cheques by their image rather than the paper. Until October 2023 it ran as three grids, at Mumbai, Chennai and New Delhi; then they became one. NPCI's northern grid table stops in June 2023 and misses three months, so the grid lines are not summed. A returned cheque is one the payer's bank refused, for want of funds or a mistake on it.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MC}</span>
+            <p>The national grid cleared <b id="ex-cq-n" set:html={N["ex-cq-n"]}></b> cheques worth <b id="ex-cq-v" set:html={N["ex-cq-v"]}></b>, an average of <b id="ex-cq-avg" set:html={N["ex-cq-avg"]}></b>, against <b id="ex-cq-n0" set:html={N["ex-cq-n0"]}></b> in {U.cts.firstMonth}; <b id="ex-cq-r" set:html={N["ex-cq-r"]}></b> were returned.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-atm" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The shared ATM network, day by day</h3>
+            <div class="sub">Transactions on NPCI's National Financial Switch each day, lakh, {U.nfs.firstDay} to {U.nfs.lastDay}.{U.nfs.skipped.length ? ` Not drawn: ${U.nfs.skipped.join(", ")}, which NPCI printed at more than five times the days around it (kept in the data).` : ""}</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-atm" set:html={N["pv-atm"]}></div><div class="c">on {U.nfs.lastDay}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-atm" set:html={CH.atm()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, NFS daily statistics.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC_ECO} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>NFS carries a transaction when a card from one bank is used at another bank's ATM, so this is not every ATM withdrawal: using your own bank's ATM does not cross NPCI. It also counts balance enquiries and other non-cash uses. The RBI's payments guide has all ATM cash withdrawals, monthly.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {U.nfs.lastDay}</span>
+            <p>NFS carried <b id="ex-at-last" set:html={N["ex-at-last"]}></b> transactions on the latest day in NPCI's table, against <b id="ex-at-first" set:html={N["ex-at-first"]}></b> on {U.nfs.firstDay}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-bhim" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-bhim" set:html={N["h-bhim"]}></h3>
+            <div class="sub">BHIM's payments as a share of all UPI payments, per cent. NPCI changed what it counts in April 2020, from payments started in BHIM to payments where BHIM was the payer's app; the two are drawn apart.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-bhim" set:html={N["pv-bhim"]}></div><div class="c">BHIM's share, {MB}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-bhim" set:html={CH.bhim()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, BHIM and UPI product statistics. Shares computed by Measure of India.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC("bhim")} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>BHIM, launched by NPCI weeks after the 2016 note withdrawal, was the first app many people used for UPI. Its share fell as private apps grew. The pale line counts payments started in BHIM, the dark one payments where BHIM was the payer's app; they are different counts and are not joined.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {MB}</span>
+            <p>BHIM carried <b id="ex-bh-n" set:html={N["ex-bh-n"]}></b> payments, <b id="ex-bh-s" set:html={N["ex-bh-s"]}></b> of UPI, against <b id="ex-bh-s0" set:html={N["ex-bh-s0"]}></b> in {U.bhim.firstMonth} under the present count.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-erupi" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>e-RUPI: prepaid vouchers for one purpose</h3>
+            <div class="sub">e-RUPI vouchers created a month, lakh: NPCI's total to December 2023, then the sum of the issuing banks NPCI lists from January 2024. NPCI prints no total after 2023.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-erupi" set:html={N["pv-erupi"]}></div><div class="c">vouchers created, {ME}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-erupi" set:html={CH.erupi()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, e-RUPI statistics (monthly). The sum of banks from January 2024 is computed by Measure of India.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href={SRC("e-rupi")} target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>An e-RUPI voucher is paid for by a government or company and can be spent only on what it was issued for, such as a lab test, a seed purchase or a scooter subsidy, by showing a QR code or SMS. Until December 2023 NPCI listed vouchers by scheme; since then by the bank that issued them, so the two halves of the line count the same thing under different breakdowns.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {ME}</span>
+            <p>The <b id="ex-er-banks" set:html={N["ex-er-banks"]}></b> issuing banks NPCI has listed since January 2024 created <b id="ex-er-last" set:html={N["ex-er-last"]}></b> vouchers in the month.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 the cross-check. Inputs: npci-upi, payments-monthly. -->
+  <section data-inputs="npci-upi, payments-monthly" data-prose="evergreen explanations and governed As-of readings">
+    <div class="sec-head"><span class="no">09</span><h2>NPCI against the RBI</h2><span class="line"></span></div>
+    <div class="break">
+      <figure id="cb-rbi" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-rbi" set:html={N["h-rbi"]}></h3>
+            <div class="sub">Difference between NPCI's and the RBI's number of UPI payments each month, per cent of the RBI's figure, {U.rbi.from} to {U.rbi.to}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-rbi" set:html={N["pv-rbi"]}></div><div class="c">the largest monthly gap</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-rbi" set:html={CH.rbi()} />
+          <div class="plotfoot">
+            <span class="src">Source: NPCI, UPI product statistics; RBI, Payment System Indicators (DBIE report 612), from this site's payments guide. Difference computed by Measure of India.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/guides/payments/">Payments guide</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Both count the same payments, NPCI from its switch and the RBI from what NPCI and the banks report to it, and both revise. A bar is the gap in one month. Small gaps are revisions and the timing of when a payment is booked. The RBI's figure is the one to use beside cards, NEFT and RTGS; NPCI's for anything only NPCI publishes.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {U.rbi.to}</span>
+            <p>The two counts were within half a per cent in <b id="ex-rb-within" set:html={N["ex-rb-within"]}></b> of the <b id="ex-rb-n" set:html={N["ex-rb-n"]}></b> months both cover.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 10 misreadings -->
+  <section data-inputs="npci-upi, npci-upi-apps, npci-upi-states, npci-upi-mcc" data-prose="evergreen">
+    <div class="sec-head"><span class="no">10</span><h2>How to misread these numbers</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li><span class="no">1</span><div><h3>"Two thousand crore payments means a billion users."</h3><p>NPCI counts payments, not people. A shopkeeper receiving a hundred payments a day is a hundred payments. NPCI publishes no count of people who use UPI.</p></div></li>
+      <li><span class="no">2</span><div><h3>"Maharashtra's UPI fell this month."</h3><p>State counts move with the share NPCI could not assign to any state, which rose from about one in eight to more than two in five. Compare states within a month, never a state across months.</p></div></li>
+      <li><span class="no">3</span><div><h3>"Groceries are a quarter of UPI spending."</h3><p>They are about a quarter of merchant payments by number, and a far smaller share of the money. Merchant categories describe the shop, not what was bought, and a shopkeeper on a personal QR code is not in the merchant table at all.</p></div></li>
+      <li><span class="no">4</span><div><h3>"PhonePe processed the payment."</h3><p>Apps such as PhonePe and Google Pay do not hold money or settle payments; banks do, over NPCI's network. The app table counts which app the payer opened.</p></div></li>
+      <li><span class="no">5</span><div><h3>"A quarter of borrowers default every month."</h3><p>A quarter of NACH debits are returned unpaid in the first attempt. Many are paid on a later attempt, and one borrower with a shortfall can bounce several debits. The rate measures strain on accounts, not defaults.</p></div></li>
+      <li><span class="no">6</span><div><h3>"A missing app or category means it had no payments."</h3><p>NPCI lists only the apps and categories above its cut-offs each month. A gap is a month it was not listed.</p></div></li>
+    </ul>
+  </section>
+
+  <EveryCut slug="upi" />
+  <GuideData slug="upi" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>National Payments Corporation of India: product statistics (UPI, BHIM, IMPS, NETC FASTag, AePS, NACH and its mandate system, CTS, e-RUPI), UPI ecosystem statistics (P2P and P2M, apps, merchant categories and segments, states and districts) and daily statistics, as published on npci.org.in and captured by our archive from the data service behind those pages. Last captured <b id="prov-captured" set:html={N["prov-captured"]}></b>. Data vintage: <span id="prov-vintage" set:html={N["prov-vintage"]}></span> (NPCI edits past rows in place and dates none of them).</p>
+        <p>Checked by hand against NPCI's tables: UPI in September 2026, 24,068.38 million transactions worth ₹29,37,396.67 crore, identical in NPCI's product table and its P2P and P2M table; Maharashtra in September 2026, 2,364.51 million transactions, 9.82% of UPI.</p>
+      </div>
+      <div>
+        <h6>Method</h6>
+        <p>Counts and rupees as NPCI prints them, scaled from million and crore. Averages, shares and rates are computed here and labelled where shown. Each rebuild checks that NPCI's parts add to its totals, that its daily rows add to its months, that its two UPI tables agree and that its UPI agrees with the RBI's; every place NPCI's own figures disagree is named in the data notes and kept as printed. Printed state and district shares that contradict NPCI's own counts are left out.</p>
+      </div>
+      <div>
+        <h6>Revisions and breaks</h6>
+        <p>NPCI edits past rows without notice. BHIM's count changed in April 2020 and the cheque grids merged in November 2023; both are drawn apart, never joined. NPCI's website now refuses automated reading, so new months reach this guide only when our archive captures them; a capture is never filled in by hand.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Version 1.0, built October 2026 from data to {MU}. NPCI's other tables (RuPay, the monthly ATM network table, Bharat BillPay and UPI's archived tables) are not yet in our archive.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>Measure of India, UPI and NPCI's networks</span>
+      <span>Vintage <span id="prov-vintage2" set:html={N["prov-vintage2"]}></span></span>
+      <span>Set in Newsreader and Libre Franklin</span>
+    </div>
+  </footer>
+
+</div>
+<style is:global>
+  /* upi guide only */
+  .now b{white-space:nowrap}
+</style>
+<script>
+  import "../../dossiers/guide.client.js";
+</script>
+</Base>

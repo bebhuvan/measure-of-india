@@ -3781,6 +3781,204 @@ withBundle("wages-rural-2013", (b) => {
   }));
 }
 // ---- end payments ----
+// ---- npci (lb/npci): NPCI's own statistics (scripts/lib/products/npci.mjs) ----
+// Shape (meta against sources.yml and the seams registry, cadence, unit ranges, disclosed gaps),
+// then NPCI's tables' own arithmetic on the baked numbers, each with its declared exceptions
+// (NPCI's typing slips, kept as printed, named to the month so a new slip fails): P2P + P2M =
+// total; every app's total = customer + B2C + B2B; states + unclassified = UPI; districts = their
+// state; NPCI's printed state shares = volume / UPI; MCC rows = MCC total; NACH presented =
+// returned + successful and sub-products = totals; mandates processed = accepted + rejected; AePS
+// total = its parts; CTS return rate = returned / presented; each complete month of daily rows =
+// the monthly table; and NPCI's UPI against the RBI's payment system table (payments-monthly).
+{
+  const NP = cfg.dossiers.npci;
+  const FLOOR = { "npci-upi": "2026-09", "npci-upi-p2p-p2m": "2026-09", "npci-upi-mcc": "2026-09", "npci-upi-states": "2026-09", "npci-upi-apps": "2026-08",
+    "npci-imps": "2026-08", "npci-netc": "2026-08", "npci-aeps": "2026-09", "npci-nach-credit": "2026-09", "npci-nach-debit": "2026-09", "npci-nach-mandates": "2026-09",
+    "npci-cts": "2026-09", "npci-bhim": "2026-07", "npci-erupi": "2026-08", "npci-upi-segments": "2026-09", "npci-upi-districts": "2026-09", "npci-daily": "2026-10" };
+  const EXPECT = 19;
+  let n = 0;
+  for (const f of fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => /^npci-.*\.json$/.test(f)).sort()) {
+    const slug = f.replace(/\.json$/, ""), b = load(slug);
+    checkMeta(b, slug, "npci", b.meta.base, b.meta.frequency);
+    if (b.meta.frequency === "monthly") checkCadence(b.dates, 1, slug);
+    else if (b.meta.frequency === "daily") { const bad = b.dates.findIndex((d, i) => i && Date.parse(d) - Date.parse(b.dates[i - 1]) !== 864e5); if (bad > 0) fail(`${slug}: daily axis breaks at ${b.dates[bad]}`); }
+    else fail(`${slug}: frequency ${b.meta.frequency}`);
+    const sr = {};
+    for (const [k, s] of Object.entries(b.series)) { const u = s.unit ?? b.meta.unit; if (!NP.ranges[u]) fail(`${slug}.${k}: unit "${u}" has no range in sources.yml`); sr[k] = NP.ranges[u] ?? [-Infinity, Infinity]; }
+    checkRange(b, -Infinity, Infinity, slug, sr);
+    checkFreshness(b, slug, FLOOR[slug] ? { staleAfter: FLOOR[slug] } : { stale: false }, "npci");
+    n++;
+  }
+  if (n !== EXPECT) fail(`npci: ${n} bundles on disk, expected ${EXPECT}`); else ok(`npci: ${n} bundles checked for meta, cadence, unit ranges, gaps and freshness`);
+
+  // tot = sum(parts) on every date where all are present, within tol (relative) or abs (absolute,
+  // NPCI's two-decimal rounding of millions and crores), except the declared dates
+  const ident = (slug, tot, list, { tol = 0, abs = 0, minN = 1, known = [], label } = {}) => withBundle(slug, (b) => {
+    let k = 0; const bad = [], seen = new Set();
+    b.dates.forEach((d, i) => {
+      const t = b.series[tot]?.data[i]; if (t == null) return;
+      const ps = list.map((p) => b.series[p]?.data[i]); if (ps.some((v) => v == null)) return;
+      const sum = ps.reduce((a, c) => a + c, 0); k++;
+      const off = Math.abs(sum - t) > Math.max(abs, Math.abs(t) * tol);
+      if (known.includes(d)) { seen.add(d); if (!off) bad.push(`${d} is declared an exception but now agrees`); }
+      else if (off) bad.push(`${d}: ${t} vs ${sum}`);
+    });
+    for (const d of known) if (!seen.has(d)) bad.push(`declared exception ${d} not checked (a part is missing)`);
+    const what = label ?? `${tot} = ${list.join(" + ")}`;
+    if (k < minN) fail(`${slug}: ${what} checked on only ${k} dates`);
+    else if (bad.length) fail(`${slug}: ${what} fails: ${bad.slice(0, 6).join("; ")}${bad.length > 6 ? ` (+${bad.length - 6})` : ""}`);
+    else ok(`${slug}: ${what} on ${k} dates${known.length ? ` (${known.length} declared NPCI slips kept as printed)` : ""}`);
+  });
+  const MN = 2e4, CR = 2e5;   // half of NPCI's last printed digit, a few times over: 0.02 million, ₹0.02 crore
+  ident("npci-upi-p2p-p2m", "total_volume", ["p2p_volume", "p2m_volume"], { abs: MN, minN: 70 });
+  ident("npci-upi-p2p-p2m", "total_value", ["p2p_value", "p2m_value"], { abs: CR, minN: 70 });
+  // NPCI's two monthly UPI tables agree
+  withBundle("npci-upi", (u) => withBundle("npci-upi-p2p-p2m", (p) => {
+    let k = 0; const bad = [];
+    p.dates.forEach((d, i) => { const j = u.dates.indexOf(d); if (j < 0) return; k++;
+      for (const m of ["volume", "value"]) { const a = u.series[m].data[j], c = p.series[`total_${m}`].data[i]; if (a == null || c == null) continue;
+        const off = Math.abs(a - c) > Math.max(m === "volume" ? MN : CR, c * 1e-4);
+        // April 2023: NPCI revised the product table's month (8,863.26 million, which its daily rows sum to); the ecosystem table keeps the first print (8,898.14 million)
+        if (d === "2023-04-01") { if (!off) bad.push(`${d} ${m} is declared a revision but now agrees`); } else if (off) bad.push(`${d} ${m} ${a} vs ${c}`); } });
+    if (bad.length) fail(`npci: the UPI product table and the P2P/P2M table disagree: ${bad.slice(0, 5).join("; ")}`); else ok(`npci: the UPI product table equals the P2P/P2M table's total on ${k} months, within 0.01% (April 2023 declared: NPCI revised one table and not the other)`);
+  }));
+  // apps: total = customer + B2C + B2B, every app and month (a few NPCI rows, June 2023)
+  withBundle("npci-upi-apps", (b) => {
+    const apps = [...new Set(Object.keys(b.series).map((k) => k.split("__").slice(0, -1).join("__")))];
+    let k = 0; const bad = [];
+    for (const a of apps) for (const m of ["volume", "value"]) {
+      const T = b.series[`${a}__total_${m}`]; if (!T) continue;
+      b.dates.forEach((d, i) => { const t = T.data[i]; if (t == null) return;
+        const s = ["customer", "b2c", "b2b"].reduce((x, p) => x + (b.series[`${a}__${p}_${m}`]?.data[i] ?? 0), 0), on = b.series[`${a}__onus_${m}`]?.data[i]; k++;
+        const near = (x) => Math.abs(x - t) <= Math.max(m === "volume" ? 0.06e6 : 0.06e7, Math.abs(t) * 0.001);
+        // NPCI's total is the three parts, or, for some apps to early 2024, the parts and on-us payments
+        if (!near(s) && !(on != null && near(s + on))) bad.push(`${a} ${m} ${d}`); });
+    }
+    // NPCI's own slips, kept as printed: a total that is neither the parts nor the parts and on-us
+    const KNOWN_APPS = new Set(["axisbankapps volume 2023-05-01", "centralbankofindiaapps value 2023-06-01", "indianbankapps value 2023-05-01", "indianbankapps value 2023-06-01"]);
+    const unexpected = bad.filter((x) => !KNOWN_APPS.has(x)), stale = [...KNOWN_APPS].filter((x) => !bad.includes(x));
+    if (unexpected.length) fail(`npci-upi-apps: an app's total differs from customer + B2C + B2B: ${unexpected.slice(0, 8).join("; ")}${unexpected.length > 8 ? ` (+${unexpected.length - 8})` : ""}`);
+    else if (stale.length) fail(`npci-upi-apps: declared app slips that now agree: ${stale.join("; ")}`);
+    else ok(`npci-upi-apps: every app's total = customer + B2C + B2B (with on-us where NPCI included it) on ${k} app-months (${KNOWN_APPS.size} declared NPCI slips)`);
+  });
+  // states: states + unclassified = UPI's volume; printed shares = volume / UPI (two-decimal rounding)
+  withBundle("npci-upi-states", (s) => withBundle("npci-upi", (u) => {
+    const states = [...new Set(Object.keys(s.series).map((k) => k.split("__")[0]))];
+    let k = 0; const bad = [], badShare = [];
+    s.dates.forEach((d, i) => {
+      const t = u.series.volume.data[u.dates.indexOf(d)]; if (t == null) return; k++;
+      const sum = states.reduce((a, g) => a + (s.series[`${g}__volume`]?.data[i] ?? 0), 0);
+      if (Math.abs(sum - t) / t > 0.002 && d !== "2026-05-01") bad.push(`${d}: states ${sum} vs UPI ${t}`);
+      for (const g of states) { const v = s.series[`${g}__volume`]?.data[i], sh = s.series[`${g}__volume_share`]?.data[i]; if (v == null || sh == null) continue;
+        if (Math.abs(100 * v / sum - sh) > 0.0101) badShare.push(`${g} ${d}`); }
+    });
+    if (bad.length) fail(`npci-upi-states: states + unclassified != UPI: ${bad.join("; ")}`); else ok(`npci-upi-states: states + unclassified = UPI's volume within 0.2% on ${k - 1} months (May 2026 declared: NPCI's states sum 1.4% above its UPI total)`);
+    if (badShare.length) fail(`npci-upi-states: printed shares differ from volume / sum of states: ${badShare.slice(0, 6).join("; ")} (${badShare.length})`); else ok(`npci-upi-states: every printed volume share = volume / all states and unclassified, to NPCI's two decimals`);
+  }));
+  // districts = their state's total
+  withBundle("npci-upi-districts", (dd) => withBundle("npci-upi-states", (s) => {
+    let k = 0; const bad = [];
+    for (const g of new Set(Object.keys(dd.series).map((x) => x.split("__")[0]))) for (const m of ["volume", "value"]) {
+      const ks = Object.keys(dd.series).filter((x) => x.startsWith(g + "__") && x.endsWith("__" + m));
+      dd.dates.forEach((d, i) => { const t = s.series[`${g}__${m}`]?.data[s.dates.indexOf(d)]; if (t == null) return;
+        const sum = ks.reduce((a, x) => a + (dd.series[x].data[i] ?? 0), 0); k++;
+        if (Math.abs(sum - t) > Math.max(m === "volume" ? 0.031e6 : 0.031e7, t * 1e-4)) bad.push(`${g} ${m} ${d}: ${sum} vs ${t}`); });
+    }
+    if (bad.length) fail(`npci-upi-districts: districts do not add to their state: ${bad.slice(0, 6).join("; ")} (${bad.length})`); else ok(`npci-upi-districts: districts add to their state's total on ${k} state-months (within 0.03 million or ₹0.03 crore: NPCI rounds some state totals to two decimals)`);
+  }));
+  // MCC: listed categories + NPCI's remainder = total
+  withBundle("npci-upi-mcc", (b) => {
+    for (const m of ["volume", "value"]) {
+      let k = 0; const bad = [];
+      const ks = Object.keys(b.series).filter((x) => x.endsWith("__" + m) && x !== `total__${m}`);
+      b.dates.forEach((d, i) => { const t = b.series[`total__${m}`].data[i]; if (t == null) return;
+        const sum = ks.reduce((a, x) => a + (b.series[x].data[i] ?? 0), 0); k++;
+        if (Math.abs(sum - t) > Math.max(m === "volume" ? 0.06e6 : 0.06e7, t * 1e-5)) bad.push(`${d}: ${sum} vs ${t}`); });
+      if (bad.length) fail(`npci-upi-mcc: categories + remainder != total (${m}): ${bad.slice(0, 6).join("; ")}`); else ok(`npci-upi-mcc: listed categories + NPCI's remainder = total (${m}) on ${k} months`);
+    }
+  });
+  ident("npci-upi-segments", "grand_total__volume", ["agriculture__volume", "education__volume", "government_services__volume", "hospital__volume", "public_transport__volume", "utility__volume", "all_other_segments__volume"], { abs: 0.06e6, minN: 25 });
+  ident("npci-upi-segments", "grand_total__value", ["agriculture__value", "education__value", "government_services__value", "hospital__value", "public_transport__value", "utility__value", "all_other_segments__value"], { abs: 0.06e7, minN: 25 });
+  // NACH: presented = returned + successful, on every line; sub-products = the tab total.
+  // NPCI's own arithmetic slips (swapped or copied cells), each kept as printed and named here
+  // (the Data Bank's audit lists the same months: 2013-07, 2014-09, 2016-03, 2020-10, 2022-09)
+  const NACH_SLIPS = {
+    "npci-nach-credit:apbs__dbt:presented": ["2014-09-01"], "npci-nach-credit:apbs__dbt:presented_value": ["2013-07-01"],
+    "npci-nach-credit:apbs__other_credits:presented_value": ["2022-09-01"], "npci-nach-credit:credit_156__other_credits:presented_value": ["2013-07-01", "2020-10-01"],
+    "npci-nach-credit:credit_306__other_credits:presented_value": ["2013-07-01"], "npci-nach-credit:total_credit:presented": ["2014-09-01"],
+    "npci-nach-credit:total_credit:presented_value": ["2013-07-01", "2020-10-01", "2022-09-01"],
+    "npci-nach-debit:debit_156__recurring_payments:presented_value": ["2016-03-01"], "npci-nach-debit:debit_306__recurring_payments:presented": ["2014-09-01"],
+    "npci-nach-debit:debit_306__recurring_payments:presented_value": ["2013-07-01"], "npci-nach-debit:total_debit:presented": ["2014-09-01"],
+    "npci-nach-debit:total_debit:presented_value": ["2013-07-01", "2016-03-01"], "npci-nach-debit:total_nach_credit_and_debit:presented": ["2014-09-01"],
+    "npci-nach-debit:total_nach_credit_and_debit:presented_value": ["2013-07-01", "2016-03-01", "2020-10-01", "2022-09-01"],
+  };
+  for (const slug of ["npci-nach-credit", "npci-nach-debit"]) withBundle(slug, (b) => {
+    const rows = [...new Set(Object.keys(b.series).map((x) => x.split("__").slice(0, -1).join("__")))];
+    for (const r of rows) for (const [p, a, c] of [["presented", "returned", "successful"], ["presented_value", "returned_value", "successful_value"]])
+      ident(slug, `${r}__${p}`, [`${r}__${a}`, `${r}__${c}`], { abs: p.endsWith("value") ? 2 : 0, known: NACH_SLIPS[`${slug}:${r}:${p}`] ?? [], label: `${r}: ${p} = ${a} + ${c}` });
+  });
+  // total credit = APBS (three) + NACH-306 (three) + NACH-156 other credits where printed
+  const PARTS_CREDIT = (m) => withBundle("npci-nach-credit", (b) => {
+    const P6 = ["apbs__dbt", "apbs__dbt_lpg", "apbs__other_credits", "credit_306__dbt", "credit_306__dbt_lpg", "credit_306__other_credits"].map((r) => b.series[`${r}__${m}`]);
+    let k = 0; const bad = [];
+    b.dates.forEach((d, i) => { const t = b.series[`total_credit__${m}`]?.data[i]; if (t == null || d < "2018-05-01") return;
+      if (P6.some((x) => x?.data[i] == null)) return;
+      const sum = P6.reduce((a, x) => a + x.data[i], 0) + (b.series[`credit_156__other_credits__${m}`]?.data[i] ?? 0); k++;
+      if (Math.abs(sum - t) > Math.max(m.endsWith("value") ? 10 : 0, t * 1e-6)) bad.push(`${d}: ${t} vs ${sum}`); });
+    if (bad.length) fail(`npci-nach-credit: total credit != its sub-products (${m}): ${bad.slice(0, 6).join("; ")} (${bad.length})`); else ok(`npci-nach-credit: total credit = its seven sub-products (${m}) on ${k} months`);
+  });
+  for (const m of ["presented", "presented_value"]) {
+    PARTS_CREDIT(m);
+  }
+  ident("npci-nach-mandates", "processed", ["accepted", "rejected"], { known: ["2023-02-01"], minN: 100 });
+  // AePS: February 2023's total differs from its parts; December 2024 and January 2025's total leaves BHIM Aadhaar Pay out (NPCI's slips)
+  ident("npci-aeps", "total", ["offus_volume", "onus_volume", "bhim_aadhaar_pay_volume"], { abs: MN, minN: 100, known: ["2023-02-01", "2024-12-01", "2025-01-01"] });
+  // CTS: the printed return rate = returned / presented
+  for (const [slug, pre] of [["npci-cts", ""], ["npci-cts-grids", "northern__"], ["npci-cts-grids", "southern__"], ["npci-cts-grids", "western__"]]) withBundle(slug, (b) => {
+    let k = 0; const bad = [];
+    b.dates.forEach((d, i) => { const r = b.series[`${pre}return_rate`]?.data[i], a = b.series[`${pre}returned`]?.data[i], p = b.series[`${pre}presented`]?.data[i]; if ([r, a, p].includes(undefined) || r == null || a == null || p == null) return; k++;
+      if (Math.abs(100 * a / p - r) > 0.06) bad.push(`${d}: printed ${r}%, computed ${(100 * a / p).toFixed(2)}%`); });
+    if (bad.length) fail(`${slug}: ${pre}return rate != returned / presented: ${bad.join("; ")}`); else ok(`${slug}: ${pre || "national "}printed return rate = returned / presented on ${k} months`);
+  });
+  // daily: every complete month's days = the monthly table, within the daily table's two-decimal
+  // rounding (0.01 million and ₹0.01 crore a day) or 0.05%. The months where NPCI's two tables part,
+  // each named: revisions made to the monthly table and not the daily one, and the daily slips the
+  // bundle note lists (FASTag 19 November 2022 printed as 103.0 million; IMPS February 2023 understated)
+  const DAILY_SLIPS = ["upi 2021-05 value", "upi 2021-07 value", "upi 2022-04 value", "upi 2022-05 value", "upi 2023-03 value",
+    "imps 2021-07 volume", "imps 2021-07 value", "imps 2022-04 volume", "imps 2022-04 value", "imps 2022-09 volume", "imps 2022-09 value", "imps 2023-02 volume", "imps 2023-02 value",
+    "imps 2023-03 volume", "imps 2023-03 value", "imps 2023-05 volume", "imps 2023-05 value", "imps 2026-03 volume", "imps 2026-03 value",
+    "netc 2022-04 volume", "netc 2022-04 value", "netc 2022-11 volume"];
+  withBundle("npci-daily", (dly) => {
+    const pairs = [["upi", "npci-upi", "volume", "value"], ["imps", "npci-imps", "volume", "value"], ["netc", "npci-netc", "volume", "value"]];
+    for (const [t, slug, vk, ak] of pairs) withBundle(slug, (mb) => {
+      let k = 0; const bad = [];
+      mb.dates.forEach((m, i) => {
+        if (m < "2021-05-01") return;
+        const idx = dly.dates.map((d, j) => (d.slice(0, 7) === m.slice(0, 7) ? j : -1)).filter((j) => j >= 0);
+        const dim = new Date(Date.UTC(+m.slice(0, 4), +m.slice(5, 7), 0)).getUTCDate(); if (idx.length !== dim) return;
+        for (const [dk, mk, unit] of [[`${t}_volume`, vk, 1e4 * dim], [`${t}_value`, ak, 1e5 * dim]]) {
+          const vals = idx.map((j) => dly.series[dk].data[j]); if (vals.some((v) => v == null) || mb.series[mk].data[i] == null) continue;
+          const sum = vals.reduce((a, c) => a + c, 0), t2 = mb.series[mk].data[i]; k++;
+          if (Math.abs(sum - t2) > Math.max(unit, t2 * 0.0005)) bad.push(`${m.slice(0, 7)} ${mk}: days ${sum} vs month ${t2}`);
+        }
+      });
+      const known = DAILY_SLIPS.filter((x) => x.startsWith(t + " "));
+      const unexpected = bad.filter((x) => !known.some((kx) => x.startsWith(kx.slice(t.length + 1)))), stale = known.filter((kx) => !bad.some((x) => x.startsWith(kx.slice(t.length + 1))));
+      if (unexpected.length) fail(`npci-daily: ${t} days do not add to ${slug}'s month: ${unexpected.join("; ")}`);
+      else if (stale.length) fail(`npci-daily: declared ${t} slips that now agree: ${stale.join("; ")}`);
+      else ok(`npci-daily: ${t} days add to ${slug}'s month on ${k} month-measures (${known.length} declared NPCI slips)`);
+    });
+  });
+  // NPCI's UPI against the RBI's payment system table (both count UPI; small revisions apart)
+  withBundle("npci-upi", (u) => withBundle("payments-monthly", (r) => {
+    let k = 0, worst = 0, at = ""; const bad = [];
+    u.dates.forEach((d, i) => { const j = r.dates.indexOf(d); if (j < 0 || d < "2017-01-01") return;
+      for (const m of ["volume", "value"]) { const a = u.series[m].data[i], c = r.series[`upi_${m}`]?.data[j]; if (a == null || c == null) continue; k++;
+        const rel = Math.abs(a - c) / c; if (rel > worst) { worst = rel; at = `${d} ${m}`; } if (rel > 0.02) bad.push(`${d} ${m}: NPCI ${a}, RBI ${c}`); } });
+    if (bad.length) fail(`npci-upi: NPCI and the RBI differ by more than 2%: ${bad.join("; ")}`); else ok(`npci-upi: NPCI's UPI within 2% of the RBI's payment system table on ${k} month-measures (worst ${(worst * 100).toFixed(2)}% at ${at})`);
+  }));
+}
+// ---- end npci ----
 
 /* ---- farms (lb/farms): the crop tables' own identities ---- */
 withBundle("farms-production", (b) => withBundle("farms-area", (a) => withBundle("farms-yield", (y) => {

@@ -70,8 +70,24 @@ const investorQC=investorMods?investorMods[0].investorModel():null;
 const pensionQC=guideRegistry.pensions?pensionsModel():null;
 import {timeUseModel} from '../src/dossiers/time-use.model.js';
 import {timeUseFormat} from '../src/dossiers/time-use.format.js';
+// upi (lb/npci): the guide's numbers come from its model; the title block is also recomputed here
+// from the bundles alone, so a model bug cannot pass by agreeing with itself
+import {N as upiN} from '../src/dossiers/upi.model.js';
+const upiText=(h)=>String(h).replace(/<[^>]+>/g,'');
 const timeUseQC=timeUseModel();
 const PAGES = [
+  {url:'/guides/upi/',slug:null,minPlots:29,checks:[
+    ['n-upi',(b)=>PF.crore(b['npci-upi'].series.volume.data.at(-1))],
+    ['n-upiv',(b)=>PF.lakhCrore(b['npci-upi'].series.value.data.at(-1))],
+    ['n-avg',(b)=>PF.rupees(b['npci-upi'].series.value.data.at(-1)/b['npci-upi'].series.volume.data.at(-1))],
+    ['n-p2m',(b)=>{const s=b['npci-upi-p2p-p2m'].series;return (100*s.p2m_volume.data.at(-1)/s.total_volume.data.at(-1)).toFixed(1)+'%';}],
+    ['pv-nach-dr',(b)=>{const s=b['npci-nach-debit'].series;return (100*s.total_debit__returned.data.at(-1)/s.total_debit__presented.data.at(-1)).toFixed(1)+'%';}],
+    ['pv-fastag',(b)=>PF.crore(b['npci-netc'].series.volume.data.at(-1))],
+    ['pv-yoy',(b)=>{const u=b['npci-upi'],d=u.dates.at(-1),j=u.dates.indexOf(`${+d.slice(0,4)-1}${d.slice(4)}`);return PF.growth(u.series.volume.data.at(-1),u.series.volume.data[j]);}],
+    ['pv-imps',(b)=>PF.crore(b['npci-imps'].series.volume.data.at(-1))],
+    ['pv-cheques',(b)=>b['npci-cts'].series.return_rate.data.at(-1).toFixed(1)+'%'],
+    ['prov-vintage',(b)=>vintageText(b['npci-upi'].meta)],
+    ...Object.entries(upiN).map(([id,v])=>[id,()=>upiText(v)])]},
   {url:'/guides/time-use/',slug:null,minPlots:timeUseQC.plates.length,exactPlots:timeUseQC.plates.length,checks:[...Object.entries(timeUseQC.facts).map(([id,f])=>['n-'+id,()=>timeUseFormat(f.value,f.unit)]),...timeUseQC.plates.map(p=>['pv-'+p.id,()=>timeUseFormat(p.lead.value,p.lead.unit)])]},
   ...(investorQC?[{url:"/guides/investor-participation/",slug:null,minPlots:investorQC.plates.length,exactPlots:investorQC.plates.length,sourceTableSelector:'[data-investor-layout="source-table"] table',checks:[...investorQC.facts.map(f=>["n-"+f.id,()=>investorFormat(f.value,f.unit)]),...investorQC.plates.map(p=>["pv-"+p.id,()=>investorFormat(p.rows[0].value,p.unit)])]}]:[]),
   ...(pensionQC?[{url:'/guides/pensions/',slug:null,minPlots:pensionQC.plates.length,checks:[['n-pensions-apy',()=>pensionFormat(pensionQC.headline.lastSourceValue,pensionQC.headline.unit)],...pensionQC.plates.map(p=>['pv-'+p.id,()=>pensionFormat(p.rows[0].value,p.unit)]),['prov-vintage',()=> 'Source revision date: not published.']]}]:[]),

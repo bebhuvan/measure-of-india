@@ -20,6 +20,10 @@ const OTHER_GEOGRAPHY = [
   [/^gender-t130$/, "high courts, several of which serve more than one state"],
   [/^states-hbs-t102$/, "IMD meteorological sub-divisions (East Uttar Pradesh, Konkan and Goa), not states"],
   [/^payments-cheques-(1970|centres)$/, "cheque clearing centres (cities and the national grid), not states"],   // payments (lb/payments)
+  // upi (lb/npci)
+  [/^npci-upi-apps$/, "one row per UPI app; some banks' apps carry a state's name (Bank of Maharashtra, Karnataka Bank, Jammu and Kashmir Bank)"],
+  [/^npci-cts-grids$/, "cheque clearing grids at Mumbai, Chennai and New Delhi, not states"],
+  [/^npci-erupi$/, "voucher schemes and issuing banks; some schemes are a state government's, some banks carry a state's name"],
   // banks (lb/banks)
   [/^banks-(?!ucb-states)(?!groups-)(balance-sheet|asset-quality|capital|profitability|performance|sectoral|priority|infra|infra-2014|shares|ucb-banks-)/, "one row per bank; some banks carry a state's name (Bank of Maharashtra, Jammu and Kashmir Bank, Punjab and Sind Bank)"],
 ];
@@ -38,6 +42,7 @@ const NON_STATE_ROWS = [
   [/^profiles-mospi-/, (s, k) => /^(other|zone|all_india)_/.test(k ?? ""), "rows the bake keyed as another geography, or All India by its state field"],
   [/^gender-t16[4-7]$/, (s) => /, Central$/.test(s.label), "central school boards (CBSE, NIOS), not a state"],
   [/^gender-t031$/, (s) => /, (Jammu|Kashmir)$/.test(s.label), "the Jammu and Kashmir divisions, below the state"],
+  [/^npci-upi-states$/, (s, k) => /^unclassified__/.test(k ?? ""), "NPCI's UPI payments whose bank reported no state ('Unclassified'); never assigned to India or a state"],
 ];
 // Labels that name a state and then a finer place inside it (districts, boards, banks in a state).
 const HIERARCHICAL = [/-districts?(-|$)/, /^gender-t16[46]$/, /^credit-deep-tp-ucb-/];

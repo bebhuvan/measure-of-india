@@ -92,6 +92,7 @@ export function tlabel(d, freq) {
   if (freq === 'fy') return `${y}-${String((+y + 1) % 100).padStart(2, '0')}`; // Indian financial year, April start
   if (freq === 'year' || !m) return y;
   if (freq === 'quarter') return `${MON[+m - 1]}–${MON[(+m + 1) % 12]} ${y}`;
+  if (freq === 'day') return `${+String(d).split('-')[2]} ${MON[+m - 1]} ${y}`; // a daily series (npci port): the day itself
   return `${MON[+m - 1]} ${y}`;
 }
 function timeTicks(t0, t1, width) {

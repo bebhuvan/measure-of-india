@@ -83,11 +83,11 @@ export function dbieProviders(root, reportId) {
  *  The view can hold the same observation once per parse run: SELECT DISTINCT (or group by
  *  the key and keep the latest source_retrieved_at) before baking.
  *  Returns { rows, provenance } and throws loudly on any CLI failure. */
-export function databankQuery(root, dataset, sql) {
+export function databankQuery(root, dataset, sql, { warehouse = false } = {}) {
   if (!/\border\s+by\b/i.test(sql)) throw new Error(`databankQuery(${dataset}): SQL needs an ORDER BY so the archive is deterministic`);
   let out;
   try {
-    out = execFileSync("uv", ["run", "--quiet", "databank", "query", "sql", dataset, sql, "--json"], {
+    out = execFileSync("uv", ["run", "--quiet", "databank", warehouse ? "warehouse" : "query", "sql", dataset, sql, "--json"], {
       cwd: root, encoding: "utf8", maxBuffer: 1 << 30, stdio: ["ignore", "pipe", "pipe"],
     });
   } catch (e) {
@@ -98,10 +98,14 @@ export function databankQuery(root, dataset, sql) {
   const rows = JSON.parse(out.slice(start));
   return {
     rows,
-    provenance: { dataset, sql, rows: rows.length,
+    provenance: { dataset, sql, rows: rows.length, ...(warehouse ? { layer: "warehouse (latest validated publication)" } : {}),
       sha256: crypto.createHash("sha256").update(out.slice(start)).digest("hex") },
   };
 }
+/** Rows from a dataset's latest warehouse publication (`databank warehouse sql`): one validated
+ *  snapshot, so no observation repeats across parse runs and a row the Data Bank later rejected
+ *  cannot linger from an older run. Same contract as databankQuery (ORDER BY required). */
+export const databankWarehouse = (root, dataset, sql) => databankQuery(root, dataset, sql, { warehouse: true });
 
 // Many DBIE reports carry several data providers: a "Final" and an "Old" table, a food-credit
 // table beside the business table (credit), two trade classifications that are different

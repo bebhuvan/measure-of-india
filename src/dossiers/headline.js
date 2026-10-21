@@ -80,6 +80,8 @@ export const HEADLINE = {
   trade:         { value: (b) => `${last(b, "balance") < 0 ? "−" : ""}$${Math.abs(last(b, "balance") / 1000).toFixed(1)} bn`, what: "merchandise trade balance (exports minus imports)", period: month },
   // payments (lb/payments): UPI payments in the month, crore
   payments:      { value: (b) => `${Math.round(last(b, "upi_volume") / 1e7).toLocaleString("en-IN")} crore`, what: "UPI payments made in the month", period: month },
+  // upi (lb/npci): UPI payments in the month by NPCI's count, crore
+  upi:           { value: (b) => `${Math.round(last(b, "volume") / 1e7).toLocaleString("en-IN")} crore`, what: "UPI payments in the month, NPCI's count", period: month },
   // farms (lb/farms): the latest final foodgrain harvest, million tonnes
   farms:         { value: (b) => `${(last(b, "foodgrains") / 1000).toFixed(1)} million tonnes`, what: "foodgrains harvested in the crop year (final estimate)", period: fy },
   // banks (lb/banks): all scheduled commercial banks' bad loans, the quarter's end
@@ -136,6 +138,7 @@ export const SPARK = {
   credit:        { bundle: "credit-growth", series: "headline" },
   trade:         { bundle: "trade-total", series: "exports", n: 60 },   // trade (lb/trade)
   payments:      { bundle: "payments-monthly", series: "upi_volume" },   // payments (lb/payments)
+  upi:           { bundle: "npci-upi", series: "volume" },   // upi (lb/npci)
   farms:         { bundle: "farms-production", series: "foodgrains" },   // farms (lb/farms)
   banks:         { bundle: "banks-health", series: "all_gnpa" },   // banks (lb/banks)
   // public-finance (lb/public-finance): the Centre's deficit, April to each month

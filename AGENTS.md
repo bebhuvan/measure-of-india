@@ -121,6 +121,9 @@ Hard rules — breaking any of these is a bug regardless of what else works:
 - `skills/` — task playbooks for agents (see skills/README.md)
 - Time Use Survey (guide 37, live 2026-10-19): source decision, checks and remaining scope in
   `docs/status/time-use-expansion.md`. Browser gates here need `ATLAS_CHROME_CHANNEL=chrome` (no Playwright download).
+- UPI and NPCI's networks (`/guides/upi/`, branch lb/npci, not deployed): NPCI's own tables read from the
+  Data Bank's capture (never payments.report); NPCI's site now blocks automated reading, so refresh waits on the
+  Data Bank. Status, checks and gaps in `docs/status/upi-expansion.md`.
 - Current coverage expansion: read `skills/atlas-comprehensive-expansion/SKILL.md`
   and `docs/PLAN-coverage-expansion.md`. The owner's rule is: when in doubt,
   more data points, granularity, cuts, explanations and charts. Account for every

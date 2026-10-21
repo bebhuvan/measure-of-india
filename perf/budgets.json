@@ -75,6 +75,9 @@
    "css": 11264,
    "js": 41984
   },
+  "/guides/": {
+   "html": 19456
+  },
   "/guides/aishe/": {
    "html": 44032,
    "js": 9216,
@@ -91,7 +94,7 @@
   },
   "/guides/climate/": {
    "html": 98304,
-   "js": 9216,
+   "js": 10240,
    "json": 1024,
    "fonts": 249856,
    "css": 12288
@@ -286,7 +289,7 @@
    "fonts": 257024
   },
   "/guides/rates/": {
-   "js": 9216,
+   "js": 10240,
    "css": 12288,
    "json": 1024,
    "html": 105472,
@@ -308,7 +311,7 @@
   },
   "/guides/states/": {
    "html": 55296,
-   "js": 9216,
+   "js": 10240,
    "json": 1024,
    "fonts": 257024,
    "css": 12288
@@ -317,6 +320,13 @@
    "html": 81920,
    "js": 11264,
    "json": 14336,
+   "fonts": 257024,
+   "css": 12288
+  },
+  "/guides/upi/": {
+   "html": 105472,
+   "js": 9216,
+   "json": 1024,
    "fonts": 257024,
    "css": 12288
   },
@@ -970,6 +980,16 @@
    "date": "2026-10-19",
    "what": "explore.html: 1 ceiling(s), /explore/ 4 -> 5 KB",
    "why": "the masthead search box on every page (lb/search, reader feedback 2026-10-18): about 90 B gzip of HTML; these ceilings had 25 and 56 B of headroom, and every other page absorbed it. Measured 4,161 and 5,160 B against 4,071 and 5,064 B at 5d3e5100 (docs/status/search-and-perf.md)"
+  },
+  {
+   "date": "2026-10-21",
+   "what": "/guides/ html 17 -> 19 KB; /guides/states/ js 9 -> 10 KB",
+   "why": "the UPI guide (lb/npci): one more guide card and spark on the guides index (16.0 -> 17.4 KB gzip), and the kit hover's day labels for daily series (+13 bytes gzip) on a states page that sat at its recorded ceiling"
+  },
+  {
+   "date": "2026-10-21",
+   "what": "/guides/climate/ and /guides/rates/ js 9 -> 10 KB",
+   "why": "chart downloads as a designed card (src/kit/card.js: brand, title, headline figure, embedded faces). The card's 2.8 KB loads only on a click; the dynamic import adds about 200 B of Vite and Astro preload helper to the shared chart script, which these two pages, at their recorded ceilings, could not absorb"
   }
  ]
 }

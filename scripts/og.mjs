@@ -311,6 +311,15 @@ const CARDS = [
     prep: (S) => { S.upi_volume = { ...S.upi_volume, label: "UPI", color: "#2E4BC4" }; S.cards_volume = { ...S.cards_volume, label: "Cards", color: "#A3A9B4" }; },
     foot: (b) => { const d = b.dates.at(-1); return `Payments a month, crore, November 2019 to ${["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}. Source: RBI, payment system indicators`; },
   },
+  // upi (lb/npci): UPI payments a month since 2016, NPCI's count, crore
+  {
+    slug: "upi", bundleSlug: "npci-upi",
+    keys: ["volume"], d0: 0, d1: 3000,   // raise d1 when UPI passes 3,000 crore a month
+    band: null, trend: null,
+    scale: 1e-7, yStep: 500, fmt: (v) => v.toFixed(0) + " crore", mr: 220,
+    prep: (S) => { S.volume = { ...S.volume, label: "UPI", color: "#2E4BC4" }; },
+    foot: (b) => { const d = b.dates.at(-1); return `UPI payments a month, crore, April 2016 to ${["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}. Source: NPCI, UPI product statistics`; },
+  },
 
   {
     slug: "manufacturing", bundleSlug: "wdi-manufacturing",

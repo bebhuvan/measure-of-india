@@ -7,7 +7,7 @@
 const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
 const tnum = (d) => { const [y, m = 1, dd = 1] = String(d).split("-").map(Number); return y + (m - 1) / 12 + (dd - 1) / 365; };
-const tlabel = (d, f) => { const [y, m] = String(d).split("-"); if (f === "fy") return `${y}-${String((+y + 1) % 100).padStart(2, "0")}`; if (f === "year" || !m) return y;if (f === "quarter") return `${MON[+m - 1]}–${MON[(+m + 1) % 12]} ${y}`; return `${MON[+m - 1]} ${y}`; };
+const tlabel = (d, f) => { const [y, m] = String(d).split("-"); if (f === "fy") return `${y}-${String((+y + 1) % 100).padStart(2, "0")}`; if (f === "year" || !m) return y;if (f === "quarter") return `${MON[+m - 1]}–${MON[(+m + 1) % 12]} ${y}`; if (f === "day") return `${+String(d).split("-")[2]} ${MON[+m - 1]} ${y}`; return `${MON[+m - 1]} ${y}`; };
 const group = (i) => { const l = i.slice(-3), r = i.slice(0, -3); return (r ? r.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," : "") + l; };
 const num = (v, [pre, suf, dp]) => { if (v == null) return "–"; const [i, f] = Math.abs(v).toFixed(dp).split("."); return (v < 0 && +Math.abs(v).toFixed(dp) ? "−" : "") + pre + group(i) + (f ? "." + f : "") + suf; };
 
@@ -56,23 +56,6 @@ function save(name, blob) {
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
   document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
-// A standalone drawing: the title above, the source below, the chart face named inline.
-function standalone(fig) {
-  const box = fig.closest("figure") ?? fig;
-  // a plate with several drawings (learn port: a level above its rate) downloads them all, stacked
-  const svgs = (box === fig ? [fig] : [...box.querySelectorAll(".akf")]).map((f) => visibleSVG(f).cloneNode(true));
-  const w = Math.max(...svgs.map((s) => +s.getAttribute("width"))), h = svgs.reduce((a, s) => a + +s.getAttribute("height"), 0) + 24 * (svgs.length - 1);
-  let at = 0; const body = svgs.map((s) => { const g = `<g transform="translate(0,${at})">${s.innerHTML}</g>`; at += +s.getAttribute("height") + 24; return g; }).join("");
-  const title = (box.querySelector(".akf-title, .plate-head h3")?.textContent ?? "").trim();
-  const src = (box.querySelector(".akf-src, .plotfoot .src")?.textContent ?? "").replace(/\s+/g, " ").trim();
-  const NS = "http://www.w3.org/2000/svg", out = document.createElementNS(NS, "svg"), H = h + 64;
-  out.setAttribute("xmlns", NS); out.setAttribute("width", w); out.setAttribute("height", H); out.setAttribute("viewBox", `0 0 ${w} ${H}`);
-  out.setAttribute("font-family", "'Libre Franklin', 'Helvetica Neue', Arial, sans-serif");
-  out.innerHTML = `<rect width="${w}" height="${H}" fill="#fff"/><text x="0" y="18" font-size="15" font-weight="600" fill="#15171A">${esc(title)}</text>` +
-    `<g transform="translate(0,34)">${body}</g><text x="0" y="${H - 6}" font-size="11" fill="#6B7078">${esc(src)}</text>`;
-  out.querySelectorAll(".ak-hit").forEach((n) => n.remove());
-  return { text: new XMLSerializer().serializeToString(out), w, h: H };
-}
 async function download(fig, kind) {
   const name = fig.dataset.file || "india-atlas_chart";
   if (kind === "csv") {
@@ -88,7 +71,9 @@ async function download(fig, kind) {
     const box = fig.closest("figure") ?? fig, src = box.querySelector(".akf-src, .plotfoot .src")?.textContent?.replace(/\s+/g, " ").trim();
     save(name + ".csv", new Blob([[d.cols, ...d.rows].map((r) => r.map(cell).join(",")).join("\n") + (src ? `\n\n${cell(src)}\n` : "\n")], { type: "text/csv" }));
   } else {
-    const { text, w, h } = standalone(fig);
+    // the card's code, faces and mark load only when a reader asks for an image (src/kit/card.js)
+    const { standalone } = await import("./card.js");
+    const { text, w, h } = await standalone(fig, { visibleSVG, kit });
     if (kind === "svg") return save(name + ".svg", new Blob([text], { type: "image/svg+xml" }));
     const img = new Image(), k = 2;
     img.onload = () => { const c = document.createElement("canvas"); c.width = w * k; c.height = h * k; const x = c.getContext("2d"); x.scale(k, k); x.drawImage(img, 0, 0); c.toBlob((b) => save(name + ".png", b)); };

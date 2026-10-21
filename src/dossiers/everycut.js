@@ -543,6 +543,13 @@ export const CUT_BY_BUNDLE = {
   "payments-growth-wss": "Payment system", "payments-infra": "Instrument or device", "payments-infra-2004": "Instrument or device",
   "payments-cheques-1970": "Clearing centre", "payments-cheques-centres": "Clearing centre", "payments-clearing-houses": "Managing bank", "payments-erupee": "Denomination",
   // --- end payments ---
+  // --- upi (lb/npci) ---
+  "npci-upi": "Measure", "npci-upi-p2p-p2m": "Payee and measure", "npci-upi-apps": "App and kind of payment", "npci-upi-mcc": "Merchant category",
+  "npci-upi-segments": "Merchant segment", "npci-upi-states": "State and measure", "npci-upi-districts": "District and measure", "npci-daily": "Network",
+  "npci-imps": "Measure", "npci-nach-debit": "NACH product and stage", "npci-nach-credit": "NACH product and stage", "npci-nach-mandates": "Mandate outcome",
+  "npci-netc": "Measure", "npci-aeps": "Kind of transaction", "npci-cts": "Measure", "npci-cts-grids": "Grid and measure", "npci-bhim": "Measure", "npci-bhim-2016": "Measure",
+  "npci-erupi": "Scheme or issuing bank",
+  // --- end upi ---
   // ---- farms (lb/farms) ----
   "farms-production": "Crop", "farms-area": "Crop", "farms-yield": "Crop", "farms-advance": "Crop and measure",
   "farms-index-1982": "Crop and measure", "farms-index-1994": "Crop and measure", "farms-index-2008": "Crop and measure",

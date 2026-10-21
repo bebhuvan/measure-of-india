@@ -1404,6 +1404,34 @@ export const DOSSIERS = [
     register:{id:'reg-time-use',label:'Time use',unit:'Survey snapshot; minutes per person per day; age six and above',historyCol:'Survey year'},
     bundles:TIME_USE_BUNDLES,
   },
+  // ---- upi (lb/npci): UPI and the networks NPCI runs, from NPCI's own statistics ----
+  {
+    slug: "upi",
+    no: "38",   // next free number on this branch (lb/next also uses 38, for environment); the coordinator renumbers at merge
+    section: "Money",
+    name: "UPI and NPCI's networks",
+    title: "UPI and the payment networks",   // the topic as a reader names it: nav, lists, search
+    kickerTitle: "Product and UPI ecosystem statistics, NPCI",
+    crumbTitle: "UPI",
+    headline: "The rails under <i>every scan.</i>",
+    ogTitle: "The rails under every scan.",
+    blurb: "UPI by app, by kind of shop, by state and district and by day, and the other networks NPCI runs: IMPS, EMI and SIP debits and how often they bounce, benefits paid by Aadhaar number, FASTag, thumbprint banking and cheques.",
+    description: "NPCI's own statistics: UPI since 2016 by app, merchant category, state and district, person-to-person and person-to-merchant, and every day since May 2021; IMPS, NACH debits and their bounce rate, benefits by Aadhaar number, mandates, FASTag, AePS, cheque clearing, the ATM network, BHIM and e-RUPI.",
+    rssDescription: "UPI and NPCI's other networks from NPCI's own tables: apps, shops, states, districts, daily payments and bounce rates.",
+    stamp: { dateStyle: "month", vintageStyle: "vintage" },
+    statusNote: "Monthly and daily, NPCI's own tables",
+    version: "v1.0",
+    currentBundle: "npci-upi",
+    calendar: "fiscal-apr",
+    bands: null,
+    prose: false,
+    proseConstants: [],
+    spark: { bundle: "npci-upi", series: "volume" },
+    register: { id: "reg-upi", label: "UPI (NPCI)", unit: "Monthly, number of transactions and value, NPCI product and ecosystem statistics", historyCol: "Since 2016" },
+    bundles: ["npci-upi", "npci-upi-p2p-p2m", "npci-upi-apps", "npci-upi-mcc", "npci-upi-segments", "npci-upi-states", "npci-upi-districts", "npci-daily",
+      "npci-imps", "npci-nach-debit", "npci-nach-credit", "npci-nach-mandates", "npci-netc", "npci-aeps", "npci-cts", "npci-cts-grids", "npci-bhim", "npci-bhim-2016", "npci-erupi"],
+  },
+  // ---- end upi ----
 ];
 export const bySlug = Object.fromEntries(DOSSIERS.map((d) => [d.slug, d]));
 

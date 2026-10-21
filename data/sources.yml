@@ -1746,6 +1746,25 @@ dossiers:
       inr: [0, 2.0e9]
       pct_yoy: [-100, 1000]
   # ---- end payments ----
+  # ---- npci (lb/npci): UPI and NPCI's other networks, NPCI's own statistics (scripts/lib/products/npci.mjs) ----
+  npci:
+    # regression floor: the Data Bank capture of 11 October 2026 reaches September 2026 (UPI)
+    stale_after: "2026-08"
+    family: databank
+    geo: IND
+    product: npci
+    frequency: monthly
+    frequency_exempt: true      # the daily tables beside the monthly ones
+    release_calendar: "UPI's monthly table on the first of the next month; AePS, NACH and CTS within about ten days; IMPS, NETC and e-RUPI about six weeks after the month; the UPI ecosystem tables (apps, states, merchant categories) two to six weeks after; daily tables the next day"
+    revision_policy: "NPCI edits past rows in place without notice (it revised April 2023's UPI volume, and NETC's February and March 2026 in October 2026). Each capture is the table as NPCI then showed it; the Data Bank keeps every capture."
+    source_agency: "National Payments Corporation of India (NPCI), product and UPI ecosystem statistics, captured by the local Data Bank"
+    release_url: https://www.npci.org.in/what-we-do/upi/product-statistics
+    ranges:
+      count: [-1.0e8, 1.0e12]
+      inr_amount: [0, 1.0e16]
+      pct_share: [0, 100.5]
+      percent: [0, 100]
+  # ---- end npci ----
 
   # ---- banks (lb/banks): banks one by one, co-operative banks, financial institutions ----
   # scripts/lib/products/banks.mjs (+ banks-ucb.mjs, banks-fi.mjs). Prompt-gated DBIE reports
@@ -2649,6 +2668,73 @@ seams:
       to: null
       bundles: [payments-erupee]
   # ---- end payments ----
+  # ---- npci (lb/npci): NPCI's own tables; each listed bundle is one ruler ----
+  npci:
+    - base: "NPCI UPI product statistics (from April 2016)"
+      from: "2016-04"
+      to: null
+      bundles: [npci-upi]
+    - base: "BHIM as the app that started the payment (December 2016 to March 2020)"
+      from: "2016-12"
+      to: "2020-03"
+      bundles: [npci-bhim-2016]
+    - base: "BHIM as the payer's app (from April 2020)"
+      from: "2020-04"
+      to: null
+      bundles: [npci-bhim]
+    - base: "NPCI IMPS product statistics"
+      from: "2013-09"
+      to: null
+      bundles: [npci-imps]
+    - base: "NPCI NETC FASTag statistics"
+      from: "2016-11"
+      to: null
+      bundles: [npci-netc]
+    - base: "NPCI AePS product statistics"
+      from: "2017-04"
+      to: null
+      bundles: [npci-aeps]
+    - base: "NPCI NACH product statistics"
+      from: "2013-04"
+      to: null
+      bundles: [npci-nach-credit, npci-nach-debit]
+    - base: "NPCI NACH mandate management (MMS)"
+      from: "2017-04"
+      to: null
+      bundles: [npci-nach-mandates]
+    - base: "CTS regional grids (April 2021 to October 2023)"
+      from: "2021-04"
+      to: "2023-10"
+      bundles: [npci-cts-grids]
+    - base: "CTS national grid (from November 2023)"
+      from: "2023-11"
+      to: null
+      bundles: [npci-cts]
+    - base: "NPCI e-RUPI statistics"
+      from: "2022-09"
+      to: null
+      bundles: [npci-erupi]
+    - base: "NPCI UPI ecosystem statistics"
+      from: "2016-12"
+      to: null
+      bundles: [npci-upi-p2p-p2m, npci-upi-mcc, npci-upi-segments]
+    - base: "NPCI UPI ecosystem statistics: apps (from December 2020)"
+      from: "2020-12"
+      to: null
+      bundles: [npci-upi-apps]
+    - base: "NPCI UPI ecosystem statistics: states (from April 2023)"
+      from: "2023-04"
+      to: null
+      bundles: [npci-upi-states]
+    - base: "NPCI UPI ecosystem statistics: districts (from March 2026)"
+      from: "2026-03"
+      to: null
+      bundles: [npci-upi-districts]
+    - base: "NPCI daily statistics (from May 2021)"
+      from: "2021-05"
+      to: null
+      bundles: [npci-daily]
+  # ---- end npci ----
   # ---- farms (lb/farms) ----
   farms:
     - base: "ministry final estimates"

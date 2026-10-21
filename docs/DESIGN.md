@@ -139,6 +139,13 @@ The downloaded image (`composeCardSVG`) is the same card for a feed: the finding
 readout on the right, the subtitle, the key drawn as short lines, the chart with the page's
 lifted colours and halos inlined, a hairline, the source, and the site's name.
 
+Chart-kit plates (v5) download through `src/kit/card.js`, loaded only on a click (2026-10-21):
+the site's mark and name with the guide's name on the right over an ink hairline; the title in
+Newsreader 500 at 30 px with the plate's headline figure (Newsreader 300) and its caption on the
+right; the subtitle in Libre Franklin; the 720 px drawing whatever the reader's screen; a hairline,
+the source, and the chart's own address. 44 px margins. Newsreader and Libre Franklin travel inside
+the file as base64 woff2, so the PNG (2x) and the SVG keep the site's faces anywhere.
+
 ### 0.4a Categorical plates on a phone
 
 Below 700 px of viewport, a plate whose y axis is names (bars, dot strips, dumbbells) is drawn
